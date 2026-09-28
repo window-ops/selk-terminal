@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Selk, developer notes</title>
+    <link rel="stylesheet" href="../css/tokens.css">
+    <link rel="stylesheet" href="notes.css?v=2">
+    <script src="wrap-pretty.js" defer></script>
+    <style>
+      body {
+        margin: 0;
+        background: var(--wall);
+        color: var(--haze);
+        font-family: var(--font-mono);
+        line-height: 1.6;
+      }
+      main {
+        max-width: 84ch;
+        margin: 0 auto;
+        padding: 3rem 1.25rem 5rem;
+      }
+      h1, h2, h3 {
+        font-family: var(--font-crt);
+        font-weight: 400;
+        line-height: 1.1;
+      }
+      h1 {
+        font-size: 3rem;
+        margin: 0 0 0.5rem;
+      }
+      h2 {
+        font-size: 1.9rem;
+        margin: 1.8rem 0 2rem;
+        border-bottom: 1px solid var(--rib);
+        padding-bottom: 0.3rem;
+      }
+      h3 {
+        font-size: 1.4rem;
+        margin: 1.5rem 0 0.3rem;
+      }
+      .dim {
+        color: var(--dust);
+      }
+      .warn {
+        border: 1px solid var(--flag);
+        color: var(--flag);
+        padding: 0.6rem 0.9rem;
+      }
+      .sysfile {
+        background: #1a1f22;
+        border-left: 2px solid var(--rib);
+        padding: 0.6rem 0.9rem;
+        margin: 0.3rem 0;
+      }
+      .sysfile p {
+        margin: 0.2rem 0;
+      }
+      .sys-sec {
+        color: var(--titan);
+        margin-top: 0.4rem;
+      }
+      .etable.wraps td {
+        overflow-wrap: anywhere;
+      }
+      caption {
+        text-align: left;
+        color: var(--dust);
+      }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        font-size: 0.92rem;
+      }
+      th, td {
+        text-align: left;
+        padding: 0.25rem 0.6rem 0.25rem 0;
+        border-bottom: 1px solid var(--rib);
+        vertical-align: top;
+      }
+      th {
+        color: var(--titan);
+        font-weight: 500;
+      }
+      .graph {
+        overflow-x: auto;
+        background: #1a1f22;
+        padding: 1rem;
+      }
+      .graph svg {
+        display: block;
+        min-width: 680px;
+        width: 100%;
+        height: auto;
+      }
+      .tag {
+        color: var(--flag);
+      }
+      .fields {
+        display: grid;
+        grid-template-columns: minmax(8em, max-content) 1fr;
+        gap: 0.1rem 1.2rem;
+        margin: 0.3rem 0;
+        padding: 0.6rem 0.9rem;
+        background: #1a1f22;
+        border-left: 2px solid var(--rib);
+      }
+      .fields dt {
+        color: var(--dust);
+      }
+      .fields dd {
+        margin: 0;
+      }
+      .etable-wrap {
+        overflow-x: auto;
+        background: #1a1f22;
+        border-left: 2px solid var(--rib);
+        padding: 0.4rem 0.9rem;
+        margin: 0.3rem 0;
+      }
+      .paras p {
+        margin: 0 0 0.3rem;
+      }
+      @media (max-width: 520px) {
+        .fields {
+          grid-template-columns: 1fr;
+        }
+        .fields dd {
+          margin-bottom: 0.4rem;
+        }
+      }
+      .notes-list {
+        font-size: 0.9rem;
+        color: var(--dust);
+        margin: 0.2rem 0 0;
+        padding-left: 1.2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <nav class="note-nav drawing-back" aria-label="Back to Selk credits">
+        <a class="note-button" href="credits.html">Back to Selk credits</a>
+      </nav>
+      <h1>Selk developer notes</h1>
+      <p class="warn">These notes contain every answer, password and ending.</p>
+      <p class="dim">Original concept and story. Coding and implementation assisted by Claude (Anthropic) and Codex (OpenAI).</p>
+      <h2>Design</h2>
+      <p>Selk is a database investigation game on the model of Lost wiki Kozlovka. The player is the only supervisor of a CESEA construction site on Titan, woken from a long sleep because the main tower is failing. The audit office on Earth sends report pages with blanks. The player fills each blank with the name of the database entry that answers it.</p>
+      <p>Two paths explain the failure. Path A follows the life-detection gate: an update restored a hydrogen baseline from 2083, the export plant had already lowered local hydrogen, and the gate froze repairs across zone 14. Path B follows the crack detector: the same update installed a model trained on Earth steel and concrete, and cutter units removed sound parts. Both paths lead to HX Holdings and a CESEA insider who holds release key 7.</p>
+      <p>Three kinds of unreliable text test the player. Model summaries contain errors. Some author labels are false, which the player can detect by comparing staff signatures with the dates of the long sleep, since the site has one crew member. Three handbook notes are outdated, which the edition year reveals.</p>
+      <h2>Graph</h2>
+      <div class="graph" id="graph"></div>
+      <h2>Passwords</h2>
+      <div id="locks"></div>
+      <h2>Report answers</h2>
+      <div id="reports"></div>
+      <h2>Unreliable text</h2>
+      <div id="unreliable"></div>
+      <h2>Messages</h2>
+      <div id="messages"></div>
+      <h2>Endings</h2>
+      <div id="endings"></div>
+      <h2>All articles</h2>
+      <div id="articles"></div>
+      <nav class="note-nav" aria-label="Notes pages">
+        <a class="note-button" href="credits.html">Selk credits</a>
+        <a class="note-button" href="concept.html">Game concept</a>
+        <a class="note-button" href="drawings.html">Drawings</a>
+        <a class="note-button" href="glossary.html">Glossary</a>
+        <a class="note-button" href="themes.html">Political and design context</a>
+        <a class="note-button" href="warranty.html">Warranty and licenses</a>
+      </nav>
+    </main>
+    <script src="../js/data/notes.js"></script>
+    <script src="../js/data/entries.js"></script>
+    <script src="../js/data/story.js"></script>
+    <script src="../js/data/endings.js"></script>
+    <script src="../js/render.js"></script>
+    <script src="../js/devnotes.js"></script>
+  </body>
+</html>

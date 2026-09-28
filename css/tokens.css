@@ -1,0 +1,40 @@
+@font-face {
+  font-family: "Plex Mono";
+  src: url("../fonts/IBMPlexMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Plex Mono";
+  src: url("../fonts/IBMPlexMono-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "VT323";
+  src: url("../fonts/VT323-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+:root {
+  color-scheme: dark;
+  --hall: #1E2427;
+  --rib: #3A4448;
+  --haze: #D6C396;
+  --dust: #8F9A9A;
+  --titan: #C7843A;
+  --flag: #C0604A;
+  --lamp: #A7B07C;
+  --wall: #151719;
+  --bezel: #2C2A27;
+  --bezel-edge: #3A3733;
+  --paper: #D6C396;
+  --ink: #1E2427;
+  --ink-soft: #5A5140;
+  --font-mono: "Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-crt: "VT323", "Plex Mono", ui-monospace, monospace;
+  --glow: 0 0 3px rgba(214, 195, 150, 0.55), 0 0 12px rgba(214, 195, 150, 0.18);
+}
