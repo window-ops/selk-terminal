@@ -42,7 +42,7 @@
 
   /* 2. Hooks into game functions */
   function hooks() {
-    wrap(S, "msg", function (out, a) { S.announce(a[0], a[1] === "err"); });
+    wrap(S, "msg", function (out, a) { S.announce(S.t(a[0]), a[1] === "err"); });
     if (S.scr && S.scr.type) {
       var type = S.scr.type;
       S.scr.type = function () {
@@ -56,9 +56,9 @@
     if (S.transmit) {
       var tx = S.transmit;
       S.transmit = function (label) {
-        S.announce("Transmitting " + label + " to Earth.");
+        S.announce(S.t("Transmitting {label} to Earth.", { label: label }));
         var p = tx.apply(this, arguments);
-        if (p && p.then) { p.then(function () { S.announce(label + " delivered to Earth."); }); }
+        if (p && p.then) { p.then(function () { S.announce(S.t("{label} delivered to Earth.", { label: label })); }); }
         return p;
       };
     }
@@ -69,7 +69,7 @@
       set(box, "aria-modal", "true");
       var t = box.querySelector(".dlg-title"), b = box.querySelector(".dlg-body");
       if (t) { set(box, "aria-labelledby", idOf(t, "dlg-title")); }
-      if (b) { set(box, "aria-describedby", idOf(b, "dlg-body")); }
+      if (b && !b.querySelector("button, input, select, textarea, [role='group'], [role='listbox']")) { set(box, "aria-describedby", idOf(b, "dlg-body")); }
       ov.addEventListener("keydown", trap);
     });
     var open = S.dialog;
@@ -86,7 +86,9 @@
 
   function trap(e) {
     if (e.key !== "Tab") { return; }
-    var f = [].filter.call(e.currentTarget.querySelectorAll("button, input, [tabindex='0']"), function (n) { return !n.disabled && n.offsetParent; });
+    var f = [].filter.call(e.currentTarget.querySelectorAll("button:not([disabled]), a[href], input:not([type='hidden']):not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1']), [contenteditable='true']"), function (n) {
+      return !n.disabled && !n.hidden && !n.closest("[hidden], [inert], [aria-hidden='true']") && n.getClientRects().length > 0;
+    });
     if (!f.length) { return; }
     var first = f[0], lastEl = f[f.length - 1];
     if (e.shiftKey && document.activeElement === first) { e.preventDefault(); lastEl.focus(); }
@@ -97,16 +99,16 @@
   function applyMode() {
     var on = S.syncContext().sr;
     var b = document.querySelector("[data-a11y='sr']");
-    if (b) { b.textContent = "SCREEN READER MODE: " + (on ? "ON" : "OFF"); set(b, "aria-pressed", on ? "true" : "false"); }
+    if (b) { b.textContent = on ? S.t("SCREEN READER MODE: ON") : S.t("SCREEN READER MODE: OFF"); set(b, "aria-pressed", on ? "true" : "false"); }
   }
   function toggleMode() {
     S.state.settings.sr = !S.state.settings.sr;
     S.save(); S.applySettings();
-    S.announce("Screen reader mode " + (S.state.settings.sr ? "on. Text appears at once and screen effects are off." : "off."));
+    S.announce(S.state.settings.sr ? S.t("Screen reader mode on. Text appears at once and screen effects are off.") : S.t("Screen reader mode off."));
   }
 
   /* 4. Roles, names and states for dynamic content */
-  var DRAG = "Can fill a report blank: press F4 in FILES, or open the context menu with Shift+F10.";
+  function DRAG() { return S.t("Can fill a report blank: press F4 in FILES, or open the context menu with Shift+F10."); }
   function fix(root) {
     var q = function (s, fn) { (root.querySelectorAll ? root : document).querySelectorAll(s).forEach(fn); };
 
@@ -123,28 +125,32 @@
     q(".pane", function (p) {
       var h = p.querySelector(".pane-name");
       set(p, "role", "region");
-      set(p, "aria-label", (h ? txt(h) : "Pane") + (p.classList.contains("cur") ? ", active pane" : ""));
+      set(p, "aria-label", (h ? txt(h) : S.t("Pane")) + (p.classList.contains("cur") ? S.t(", active pane") : ""));
       if (h) { set(h, "aria-hidden", "true"); }
     });
-    q(".tmux-win", function (b) { set(b, "aria-label", "Window " + txt(b).replace("*", "")); if (b.classList.contains("act")) { set(b, "aria-current", "true"); } else { b.removeAttribute("aria-current"); } });
+    q(".tmux-win", function (b) { set(b, "aria-label", S.t("Window {name}", { name: txt(b).replace("*", "") })); if (b.classList.contains("act")) { set(b, "aria-current", "true"); } else { b.removeAttribute("aria-current"); } });
 
     q(".mc-panel", function (p, i) {
       var list = p.querySelector(".mc-list"), head = p.querySelector(".mc-head");
       if (!list) { return; }
       set(list, "role", "listbox");
       set(list, "tabindex", p.classList.contains("act") ? "0" : "-1");
-      set(list, "aria-label", head && txt(head) !== "/" ? "Entries in " + txt(head) : "Sections");
+      set(list, "aria-label", head && txt(head) !== "/" ? S.t("Entries in {name}", { name: txt(head) }) : S.t("Sections"));
       var cols = p.querySelector(".mc-cols"); if (cols) { set(cols, "aria-hidden", "true"); }
       if (head) { set(head, "aria-hidden", "true"); }
-      list.querySelectorAll(".mc-row").forEach(function (r) {
+      var rows = list.querySelectorAll(".mc-row"), rowCount = rows.length;
+      rows.forEach(function (r, i) {
         set(r, "role", "option");
         idOf(r, "mc-row");
         set(r, "aria-selected", r.classList.contains("sel") ? "true" : "false");
+        set(r, "aria-posinset", String(i + 1));
+        set(r, "aria-setsize", String(rowCount));
         var n = txt(r.querySelector(".mc-n")), info = txt(r.querySelector(".mc-i"));
-        set(r, "aria-label", n + (info ? ", " + info : "") + (r.classList.contains("lock") ? ", locked" : "") + (r.classList.contains("read") ? ", read" : ""));
-        if (r.dataset.entry) { set(r, "aria-description", DRAG); }
+        set(r, "aria-label", n + (info ? ", " + info : "") + (r.classList.contains("lock") ? S.t(", locked") : "") + (r.classList.contains("read") ? S.t(", read") : ""));
+        if (r.dataset.entry) { set(r, "aria-description", DRAG()); }
         if (r.classList.contains("sel")) { set(list, "aria-activedescendant", r.id); }
       });
+      if (!list.querySelector(".mc-row.sel")) { list.removeAttribute("aria-activedescendant"); }
     });
     q(".mc-mini", function (n) { set(n, "aria-hidden", "true"); });
 
@@ -154,15 +160,16 @@
       set(ic, "role", "button");
       if (!ic.hasAttribute("tabindex")) { ic.tabIndex = 0; }
       var l = txt(ic.querySelector(".wb-label"));
-      set(ic, "aria-label", l + (ic.classList.contains("locked") ? ", locked drawer" : ""));
-      if (ic.dataset.entry) { set(ic, "aria-description", DRAG); }
+      set(ic, "aria-label", l + (ic.classList.contains("locked") ? S.t(", locked drawer") : ""));
+      if (ic.dataset.entry) { set(ic, "aria-description", DRAG()); }
       var lk = ic.querySelector(".wb-lock"); if (lk) { set(lk, "aria-hidden", "true"); }
     });
     q(".wb-group", function (g) { set(g, "role", "group"); var t = g.querySelector(".wb-gtitle"); if (t) { set(g, "aria-labelledby", idOf(t, "wb-group")); } });
-    q(".wb-back", function (n) { set(n, "role", "region"); set(n, "aria-label", "Desktop"); });
-    q(".wb-bar", function (n) { set(n, "role", "region"); set(n, "aria-label", "Workbench title bar"); });
+    q(".wb-back", function (n) { set(n, "role", "region"); set(n, "aria-label", S.t("Desktop")); });
+    q(".wb-bar", function (n) { set(n, "role", "region"); set(n, "aria-label", S.t("Workbench title bar")); });
     q(".wb-win", function (w) {
       set(w, "role", "region");
+      if (w.classList.contains("act")) { set(w, "aria-current", "true"); } else { w.removeAttribute("aria-current"); }
       var t = w.querySelector(".wb-wtitle"); if (t) { set(w, "aria-labelledby", idOf(t, "wb-title")); }
       var s = w.querySelector(".wb-size"); if (s) { set(s, "aria-hidden", "true"); }
     });
@@ -174,32 +181,35 @@
     q(".blank", function (b) {
       var line = b.closest(".paper-line"), n = b.dataset.n || "";
       var filled = b.classList.contains("filled");
-      set(b, "aria-label", "Blank " + n + ": " + (filled ? txt(b) : "empty") + (line ? ". Sentence: " + txt(line).replace(txt(b), "blank").replace(/\sx\s?/, " ") : ""));
+      set(b, "aria-label", S.t("Blank {n}: {value}", { n: n, value: filled ? txt(b) : S.t("empty") }) + (line ? ". " + S.t("Sentence: {text}", { text: txt(line).replace(txt(b), S.t("blank")).replace(/\sx\s?/, " ") }) : ""));
       set(b, "aria-pressed", b.classList.contains("sel") ? "true" : "false");
     });
-    q(".unfill", function (u) { var b = u.parentNode && u.parentNode.querySelector(".blank"); set(u, "aria-label", "Clear blank " + (b ? b.dataset.n : "")); });
+    q(".unfill", function (u) { var b = u.parentNode && u.parentNode.querySelector(".blank"); set(u, "aria-label", S.t("Clear blank {n}", { n: b ? b.dataset.n : "" })); });
     q(".tab", function (t) { if (t.classList.contains("act")) { set(t, "aria-current", "page"); } else { t.removeAttribute("aria-current"); } });
 
     q(".entry", function (e) { set(e, "role", "article"); var t = e.querySelector(".entry-title"); if (t) { set(e, "aria-labelledby", idOf(t, "entry")); } });
-    q(".entry-title[data-entry]", function (t) { set(t, "aria-description", DRAG); });
+    q(".entry-title[data-entry]", function (t) { set(t, "aria-description", DRAG()); });
     q(".note", function (n) { set(n, "role", "note"); });
-    q(".term", function (b) { set(b, "aria-label", "Handbook note: " + txt(b)); });
-    q(".lnk.locked", function (b) { set(b, "aria-label", txt(b).replace(/\s*\[locked\]$/, "") + ", in a locked section"); });
-    q(".lnk[data-entry]", function (b) { set(b, "aria-description", DRAG); });
-    q(".mrow", function (b) { set(b, "aria-label", txt(b).replace(/ NEW$/, ", unread")); });
+    q(".term", function (b) {
+      var cmd = b.dataset.cmd || "", id = cmd.replace(/^note\s+/, "").toLowerCase(), note = S.i18n.note(id);
+      set(b, "aria-label", S.t("Handbook note: {name}", { name: note ? note[0] : txt(b) }));
+    });
+    q(".lnk.locked", function (b) { set(b, "aria-label", txt(b).replace(/\s*\[locked\]$/, "") + S.t(", in a locked section")); });
+    q(".lnk[data-entry]", function (b) { set(b, "aria-description", DRAG()); });
+    q(".mrow", function (b) { set(b, "aria-label", txt(b).replace(new RegExp(" " + S.t("NEW") + "$"), S.t(", unread"))); });
     q(".count", function (c) { set(c, "aria-hidden", "true"); });
-    q(".watch", function (w) { set(w, "role", "region"); set(w, "aria-label", "Site telemetry"); });
-    q(".viewer", function (v) { set(v, "role", "region"); set(v, "aria-label", "Viewer"); });
+    q(".watch", function (w) { set(w, "role", "region"); set(w, "aria-label", S.t("Site telemetry")); });
+    q(".viewer", function (v) { set(v, "role", "region"); set(v, "aria-label", S.t("Viewer")); });
     q(".v-head", function (h) { set(h, "role", "heading"); set(h, "aria-level", "2"); });
-    q(".reportpane", function (r) { set(r, "role", "region"); set(r, "aria-label", "Report page"); });
-    q(".mailpane", function (r) { set(r, "role", "region"); set(r, "aria-label", "Mail inbox"); });
-    q(".chooser", function (c) { set(c, "role", "group"); set(c, "aria-label", "Choose what this pane shows"); });
-    q(".ctx", function (m) { set(m, "aria-label", "Context menu"); });
+    q(".reportpane", function (r) { set(r, "role", "region"); set(r, "aria-label", S.t("Report page")); });
+    q(".mailpane", function (r) { set(r, "role", "region"); set(r, "aria-label", S.t("Mail inbox")); });
+    q(".chooser", function (c) { set(c, "role", "group"); set(c, "aria-label", S.t("Choose what this pane shows")); });
+    q(".ctx", function (m) { set(m, "aria-label", S.t("Context menu")); });
     q(".tut", function (t) {
       set(t, "role", "dialog"); set(t, "aria-modal", "false");
       var h = t.querySelector(".tut-head"); if (h) { set(t, "aria-labelledby", idOf(h, "tut")); }
     });
-    q(".switcher", function (s) { set(s, "aria-label", "Windows"); });
+    q(".switcher", function (s) { set(s, "aria-label", S.t("Windows")); });
     q(".glass, .drag-ghost", function (g) { set(g, "aria-hidden", "true"); });
   }
 
@@ -210,9 +220,9 @@
     var t = n.matches(".tut") ? n : n.querySelector && n.querySelector(".tut");
     if (t && !seen.has(t)) { seen.add(t); S.announce(txt(t.querySelector(".tut-head")) + ". " + [].map.call(t.querySelectorAll("p"), txt).join(" ")); }
     var m = n.matches(".ctx") ? n : null;
-    if (m) { S.announce("Context menu, " + m.querySelectorAll(".ctx-item").length + " items. Use arrow keys, Enter to choose, Escape to close."); }
+    if (m) { S.announce(S.tn("Context menu, {n} items. Use arrow keys, Enter to choose, Escape to close.", m.querySelectorAll(".ctx-item").length)); }
     var sw = n.matches(".switcher") ? n : null;
-    if (sw) { S.announce("Window switcher: " + txt(sw.querySelector(".switcher-item.on"))); }
+    if (sw) { S.announce(S.t("Window switcher: {name}", { name: txt(sw.querySelector(".switcher-item.on")) })); }
   }
 
   /* Keep focus in the explorer after it redraws */
@@ -224,7 +234,7 @@
     if (list) { list.focus({ preventScroll: true }); }
   }
 
-  /* 5. Keyboard: context menu from the keyboard, arrow keys inside menus, Space on icon buttons */
+  /* 5. Keyboard access to context menus and their menu-item navigation */
   function openMenuFor(node) {
     if (!node) { return; }
     var ad = node.getAttribute && node.getAttribute("aria-activedescendant");
@@ -242,16 +252,21 @@
       if (items[n]) { items[n].focus(); }
       return;
     }
-    if (menu && e.key === "Tab") { e.preventDefault(); if (S.closeMenu) { S.closeMenu(); } return; }
+    if (menu && e.key === "Tab") {
+      e.preventDefault();
+      var opener = menu._opener, focusable = [].filter.call(document.querySelectorAll("button:not([disabled]), a[href], input:not([type='hidden']):not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex='-1'])"), function (n) {
+        return !menu.contains(n) && !n.closest("[hidden], [inert], [aria-hidden='true']") && n.getClientRects().length > 0;
+      });
+      var oi = focusable.indexOf(opener), next = focusable[oi + (e.shiftKey ? -1 : 1)];
+      if (S.closeMenu) { S.closeMenu(); }
+      if (!next) { next = e.shiftKey ? focusable[focusable.length - 1] : focusable[0]; }
+      if (next) { next.focus(); }
+      return;
+    }
     if ((e.key === "ContextMenu" || (e.shiftKey && e.key === "F10")) && S.mode === "shell") {
       e.preventDefault(); e.stopImmediatePropagation();
       openMenuFor(document.activeElement);
       return;
-    }
-    var t = e.target;
-    if (e.key === " " && t && t.classList && t.classList.contains("wb-icon")) {
-      e.preventDefault();
-      t.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
     }
   }, true);
 
@@ -259,8 +274,8 @@
   document.addEventListener("DOMContentLoaded", function () {
     polite = region("polite"); urgent = region("assertive");
     var screen = $("screen");
-    set(screen, "role", "main"); set(screen, "aria-label", "Selk site terminal");
-    set($("desk"), "aria-label", "Desktop");
+    set(screen, "role", "main"); set(screen, "aria-label", S.t("Selk site terminal"));
+    set($("desk"), "aria-label", S.t("Desktop"));
     var st = document.querySelector(".tmux"); if (st) { set(st, "role", "region"); }
     ["st-clock", "st-uplink", "st-user"].forEach(function (k) { var n = $(k); if (n) { set(n, "aria-live", "off"); } });
     hooks();

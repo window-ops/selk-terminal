@@ -49,6 +49,9 @@ html, body, .screen, .dlg-ov {
 button, a, .lnk, .term, .mc-row, .wb-icon, .tab, .mrow, .opt, .blank, .ctx-item, .switcher-item, .wb-gad, .st-btn, .wb-btn, .wb-title, .tmux-win, .fbar button, .paper-btn, .unfill, .use, .title-go, [data-cmd], [data-title], input[type="range"] {
   cursor: var(--cur-hand);
 }
+select, select option {
+  cursor: var(--cur-hand);
+}
 .lnk.locked {
   cursor: var(--cur-hand);
 }
@@ -97,6 +100,10 @@ body.scroll-panning, body.scroll-panning * {
 }
 .scroll-pan.scroll-panning {
   cursor: var(--cur-grabbing) !important;
+}
+/* Text strips keep the normal pointer while they are dragged */
+body.scroll-panning.pan-text, body.scroll-panning.pan-text *, .mc-mini.scroll-pan, .mc-mini.scroll-panning {
+  cursor: var(--cur-arrow) !important;
 }
 .scroll-pan::-webkit-scrollbar {
   display: none;

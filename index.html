@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="description" content="Selk, a database investigation game on a failing Titan megastructure.">
-    <title>Selk terminal</title>
+    <title data-i18n>Selk terminal</title>
     <link rel="stylesheet" href="css/tokens.css">
     <link rel="stylesheet" href="css/crt.css">
     <link rel="stylesheet" href="css/terminal.css">
@@ -17,30 +17,31 @@
         <div id="screen" class="screen">
           <div id="panes" class="panes"></div>
           <div id="desk" class="desk" hidden></div>
-          <nav class="fbar" aria-label="Function keys">
-            <button type="button" data-f="1"><span class="fk">1</span>HELP</button>
-            <button type="button" data-f="2"><span class="fk">2</span>MAIL</button>
-            <button type="button" data-f="3"><span class="fk">3</span>VIEW</button>
-            <button type="button" data-f="4"><span class="fk">4</span>USE</button>
-            <button type="button" data-f="5"><span class="fk">5</span>REPORT</button>
-            <button type="button" data-f="6"><span class="fk">6</span>HINTS</button>
-            <button type="button" data-f="7"><span class="fk">7</span>UNLOCK</button>
-            <button type="button" data-f="8"><span class="fk">8</span>WATCH</button>
-            <button type="button" data-f="9"><span class="fk">9</span>SETUP</button>
-            <button type="button" data-f="10"><span class="fk">10</span>EXIT</button>
+          <nav class="fbar" aria-label="Function keys" data-i18n-attr="aria-label">
+            <button type="button" data-f="1" data-i18n><span class="fk">1</span>HELP</button>
+            <button type="button" data-f="2" data-i18n><span class="fk">2</span>MAIL</button>
+            <button type="button" data-f="3" data-i18n><span class="fk">3</span>VIEW</button>
+            <button type="button" data-f="4" data-i18n><span class="fk">4</span>USE</button>
+            <button type="button" data-f="5" data-i18n><span class="fk">5</span>REPORT</button>
+            <button type="button" data-f="6" data-i18n><span class="fk">6</span>HINTS</button>
+            <button type="button" data-f="7" data-i18n><span class="fk">7</span>UNLOCK</button>
+            <button type="button" data-f="8" data-i18n><span class="fk">8</span>WATCH</button>
+            <button type="button" data-f="9" data-i18n><span class="fk">9</span>SETUP</button>
+            <button type="button" data-f="10" data-i18n><span class="fk">10</span>EXIT</button>
           </nav>
-          <footer class="tmux" aria-label="Session status">
+          <footer class="tmux" aria-label="Session status" data-i18n-attr="aria-label">
             <span id="tmux-wins" class="tmux-wins"></span>
-            <input id="tmux-prompt" class="tmux-prompt" type="text" hidden autocomplete="off" spellcheck="false" aria-label="tmux command prompt">
+            <input id="tmux-prompt" class="tmux-prompt" type="text" hidden autocomplete="off" spellcheck="false" aria-label="tmux command prompt" data-i18n-attr="aria-label">
             <span id="tmux-msg" class="tmux-msg" role="status"></span>
             <span class="tmux-right">
               <button type="button" id="tmux-shell-action" class="st-btn tmux-shell-action" hidden>POP OUT SHELL</button>
-              <button type="button" id="st-mail" class="st-btn">MAIL</button>
-              <button type="button" id="st-report" class="st-btn">REPORT</button>
-              <span id="st-uplink"></span>
-              <span id="st-hint" class="st-hint" hidden>HINT</span>
+              <button type="button" id="st-mail" class="st-btn" data-i18n>MAIL</button>
+              <button type="button" id="st-report" class="st-btn" data-i18n>REPORT</button>
+              <button type="button" id="st-uplink" class="st-btn st-uplink" data-status="uplink" title="Show uplink status" aria-label="Show uplink status" aria-expanded="false" aria-controls="status-info-pop" data-i18n data-i18n-attr="title,aria-label"></button>
+              <span id="st-hint" class="st-hint" hidden data-i18n>HINT</span>
+              <button type="button" id="st-save" class="st-save" data-status="storage" hidden title="Show storage status" aria-label="Show storage status" aria-expanded="false" aria-controls="status-info-pop" data-i18n data-i18n-attr="title,aria-label">SAVED</button>
               <button type="button" id="st-sound" class="st-btn" aria-pressed="true">SOUND ON</button>
-              <button type="button" id="st-mode" class="st-btn" title="Switch to desktop mode">DESKTOP</button>
+              <button type="button" id="st-mode" class="st-btn" title="Switch to desktop mode" data-i18n data-i18n-attr="title">DESKTOP</button>
               <span id="st-user" class="st-user"></span>
               <span id="st-clock"></span>
             </span>
@@ -49,7 +50,7 @@
         </div>
         <div class="badge" aria-hidden="true">
           <span class="brand">CESEA</span>
-          <span class="ledbox"><span class="led pwr"></span><span class="ledlab">POWER</span></span>
+          <span class="ledbox"><span class="led pwr"></span><span class="ledlab" data-i18n>POWER</span></span>
           <span class="ledbox"><span id="led-hdd" class="led hdd"></span><span class="ledlab">HDD</span></span>
         </div>
       </div>
@@ -59,7 +60,7 @@
         <div id="log" class="log scroll" role="log" aria-live="polite"></div>
         <div class="inputline">
           <label id="prompt" class="prompt" for="cmd">selk:/&gt;</label>
-          <input id="cmd" class="cmd" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send" aria-label="Command">
+          <input id="cmd" class="cmd" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send" aria-label="Command" data-i18n-attr="aria-label">
         </div>
       </div>
     </div>
@@ -67,24 +68,46 @@
     <script src="js/data/entries.js"></script>
     <script src="js/data/story.js"></script>
     <script src="js/data/endings.js"></script>
-    <script src="js/state.js"></script>
-    <script src="js/context.js"></script>
-    <script src="js/sound.js"></script>
-    <script src="js/screen.js"></script>
-    <script src="js/render.js"></script>
-    <script src="js/panes.js"></script>
-    <script src="js/views.js"></script>
-    <script src="js/explorer.js"></script>
-    <script src="js/report.js"></script>
-    <script src="js/live.js"></script>
-    <script src="js/watch.js"></script>
-    <script src="js/desktop.js"></script>
-    <script src="js/extras.js"></script>
-    <script src="js/scroll.js"></script>
-    <script src="js/ending.js"></script>
-    <script src="js/commands.js"></script>
+    <script src="js/core/dom.js"></script>
+    <script src="js/core/state.js"></script>
+    <script src="js/core/i18n.js"></script>
+    <script src="js/lang/en.js"></script>
+    <script src="js/core/context.js"></script>
+    <script src="js/audio/sound.js"></script>
+    <script src="js/audio/ui-sound.js"></script>
+    <script src="js/shell/screen.js"></script>
+    <script src="js/shell/render.js"></script>
+    <script src="js/ui/tmux.js"></script>
+    <script src="js/ui/status.js"></script>
+    <script src="js/ui/howto.js"></script>
+    <script src="js/ui/viewer.js"></script>
+    <script src="js/ui/dialogs.js"></script>
+    <script src="js/ui/save.js"></script>
+    <script src="js/ui/setup.js"></script>
+    <script src="js/ui/storage.js"></script>
+    <script src="js/ui/effects.js"></script>
+    <script src="js/ui/explorer.js"></script>
+    <script src="js/game/report.js"></script>
+    <script src="js/game/live.js"></script>
+    <script src="js/game/watch.js"></script>
+    <script src="js/ui/desktop.js"></script>
+    <script src="js/ui/common.js"></script>
+    <script src="js/ui/contextmenu.js"></script>
+    <script src="js/ui/about.js"></script>
+    <script src="js/ui/tour.js"></script>
+    <script src="js/ui/shortcuts.js"></script>
+    <script src="js/ui/switcher.js"></script>
+    <script src="js/shell/scroll.js"></script>
+    <script src="js/game/scenes.js"></script>
+    <script src="js/ui/cinema.js"></script>
+    <script src="js/game/ending.js"></script>
+    <script src="js/shell/cmdkit.js"></script>
+    <script src="js/game/mail.js"></script>
+    <script src="js/game/hints.js"></script>
+    <script src="js/shell/listing.js"></script>
+    <script src="js/shell/commands.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/a11y.js"></script>
-    <script src="js/debug.js"></script>
+    <script src="js/ui/a11y.js"></script>
+    <script src="js/dev/debug.js"></script>
   </body>
 </html>

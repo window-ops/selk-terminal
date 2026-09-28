@@ -5,62 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Selk glossary</title>
     <link rel="stylesheet" href="../css/tokens.css">
-    <link rel="stylesheet" href="notes.css?v=2">
+    <link rel="stylesheet" href="notes.css?v=3">
+    <link rel="stylesheet" href="../css/cursors.css">
     <script src="wrap-pretty.js" defer></script>
-    <style>
-      body {
-        margin: 0;
-        background: var(--wall);
-        color: var(--haze);
-        font-family: var(--font-mono);
-        line-height: 1.6;
-      }
-      main {
-        max-width: 74ch;
-        margin: 0 auto;
-        padding: 2rem 1.25rem 4rem;
-      }
-      h1, h2 {
-        font-family: var(--font-crt);
-        font-weight: 400;
-        line-height: 1.1;
-      }
-      h1 {
-        font-size: 3rem;
-        margin: 0 0 1rem;
-      }
-      h2 {
-        font-size: 1.8rem;
-        margin: 1.8rem 0 0.6rem;
-        border-bottom: 1px solid var(--rib);
-        padding-bottom: 0.3rem;
-      }
-      .terms dt {
-        margin-top: 1rem;
-        color: var(--titan);
-        font-family: var(--font-crt);
-        font-size: 1.2rem;
-      }
-      .terms dd {
-        margin: 0.15rem 0 0;
-      }
-      .note {
-        border-left: 2px solid var(--titan);
-        background: #1a1f22;
-        padding: 0.6rem 0.9rem;
-      }
-      @media (max-width: 520px) {
-        main {
-          padding: 1.5rem 1rem 3rem;
-        }
-        h1 {
-          font-size: 2.4rem;
-        }
-      }
-    </style>
   </head>
-  <body>
-    <main>
+  <body class="page-glossary cur-s">
+    <main data-i18n-page="glossary">
       <nav class="note-nav drawing-back" aria-label="Back to Selk credits">
         <a class="note-button" href="credits.html">Back to Selk credits</a>
       </nav>
@@ -107,5 +57,10 @@
         <a class="note-button" href="warranty.html">Warranty and licenses</a>
       </nav>
     </main>
+    <script src="../js/core/dom.js"></script>
+    <script src="../js/core/state.js"></script>
+    <script src="../js/core/i18n.js"></script>
+    <script src="../js/lang/en.js"></script>
+    <script src="page-i18n.js"></script>
   </body>
 </html>

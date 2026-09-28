@@ -1,7 +1,6 @@
-/* tmux mode. Holds the window model (what is open), builds windows and panes
-   from it, handles Ctrl+B keys, the status bar, messages and the clock. */
+/* tmux mode: the window model, windows and panes built from it, and Ctrl+B keys. */
 (function () {
-  var S = window.SELK;
+  var S = window.SELK, el = S.el, $ = S.$;
   var KINDS = [
     "FILES",
     "VIEW",
@@ -14,16 +13,6 @@
   S.registerKind = function (k, el) {
     S.kinds[k] = el;
   };
-  function $(id) {
-    return document.getElementById(id);
-  }
-  function el(tag, cls, text) {
-    var n = document.createElement(tag); if (cls) {
-      n.className = cls;
-    } if (text != null) {
-      n.textContent = text;
-    } return n;
-  }
   S.notificationHost = function () {
     var screen = $("screen"), host = screen && screen.querySelector(".notification-stack");
     if (!screen) {
@@ -32,7 +21,7 @@
     if (!host) {
       host = document.createElement("div");
       host.className = "notification-stack";
-      host.setAttribute("aria-label", "Notifications and tutorial");
+      host.setAttribute("aria-label", S.t("Notifications and tutorial"));
       screen.appendChild(host);
     }
     return host;
@@ -200,12 +189,12 @@
     p._leaf = n;
     var idx = leaves(win().root).indexOf(n);
     var head = el("div", "pane-head");
-    head.appendChild(el("span", "pane-name", idx + ": " + n.kind + (T.zoom ? " [ZOOM]" : "")));
+    head.appendChild(el("span", "pane-name", idx + ": " + S.t(n.kind) + (T.zoom ? " " + S.t("[ZOOM]") : "")));
     /* Header buttons: SHELL can pop out of DESK into its own window and back in;
        REPORT, MAIL and WATCH can close. */
     if (n.kind === "SHELL" && (T.canPopOut(n) || T.canPopInShell())) {
-      var pop = el("button", "pane-close", T.open.shellOut ? "POP IN" : "POP OUT"); pop.type = "button";
-      pop.setAttribute("aria-label", T.open.shellOut ? "Put the shell back into DESK" : "Give the shell its own window");
+      var pop = el("button", "pane-close", T.open.shellOut ? S.t("POP IN") : S.t("POP OUT")); pop.type = "button";
+      pop.setAttribute("aria-label", T.open.shellOut ? S.t("Put the shell back into DESK") : S.t("Give the shell its own window"));
       pop.addEventListener("click", function (e) {
         e.stopPropagation(); T.cur = n;
         if (T.open.shellOut) { T.popInShell(); } else { T.popOutShell(); }
@@ -213,8 +202,8 @@
       head.appendChild(pop);
     }
     if (CLOSABLE.indexOf(n.kind) !== -1) {
-      var x = el("button", "pane-close", "CLOSE"); x.type = "button";
-      x.setAttribute("aria-label", "Close the " + n.kind + " pane");
+      var x = el("button", "pane-close", S.t("CLOSE")); x.type = "button";
+      x.setAttribute("aria-label", S.t("Close the {pane} pane", { pane: S.t(n.kind) }));
       x.addEventListener("click", function (e) { e.stopPropagation(); T.closePane(n); });
       head.appendChild(x);
     }
@@ -235,19 +224,41 @@
     });
   }
   /* Keyboard focus follows the active pane: the shell gets the command line. */
+  function paneFocusTarget(pane, kind) {
+    if (!pane) { return null; }
+    if (kind === "FILES") { return pane.querySelector(".mc-panel.act .mc-list"); }
+    if (kind === "VIEW") { return pane.querySelector(".v-body"); }
+    if (kind === "REPORT") {
+      return pane.querySelector(".blank.sel, .tab.act, .reportpane button, .reportpane");
+    }
+    if (kind === "MAIL") {
+      return pane.querySelector(".mrow.unread, .mrow, .mailpane");
+    }
+    if (kind === "WATCH") {
+      return pane.querySelector("button, [tabindex='0'], .watch") || pane;
+    }
+    return pane;
+  }
   function focusCur() {
     var cmd = $("cmd");
-    var k = S.isDesktop && S.isDesktop() && T.attached ? S.desk.activeKind() : (T.cur && T.cur.kind);
-    if (k === "SHELL") {
-      if (!("ontouchstart" in window)) {
-        cmd.focus( {
-          preventScroll: true
-        });
-      }
+    var desktop = S.isDesktop && S.isDesktop() && T.attached;
+    var kind = desktop ? S.desk.activeKind() : (T.cur && T.cur.kind);
+    if (kind === "SHELL") {
+      if (cmd) { cmd.focus({ preventScroll: true }); }
+      return;
     }
-    else if (document.activeElement === cmd) {
-      cmd.blur();
+    if (!T.attached || !kind) {
+      if (document.activeElement === cmd) { cmd.blur(); }
+      return;
     }
+    var pane = document.querySelector("#panes .pane.cur");
+    var target = paneFocusTarget(pane, kind) || pane;
+    if (!target) {
+      if (document.activeElement === cmd) { cmd.blur(); }
+      return;
+    }
+    if (!target.matches("button, input, select, textarea, a, [tabindex]")) { target.tabIndex = -1; }
+    target.focus({ preventScroll: true });
   }
   T.focusCur = focusCur;
   function syncShellAction() {
@@ -258,7 +269,7 @@
     var canPopOut = T.canPopOutShell && T.canPopOutShell();
     var canPopIn = T.canPopInShell && T.canPopInShell();
     shellAction.hidden = !(canPopOut || canPopIn);
-    shellAction.textContent = canPopIn ? "POP IN SHELL" : "POP OUT SHELL";
+    shellAction.textContent = canPopIn ? S.t("POP IN SHELL") : S.t("POP OUT SHELL");
     if (!shellAction._bound) {
       shellAction.addEventListener("click", function () {
         if (T.canPopInShell()) {
@@ -280,8 +291,9 @@
       return;
     }
     T.windows.forEach(function (x, i) {
-      var b = el("button", "tmux-win" + (i === T.w ? " act" : ""), i + ":" + x.name + (i === T.w ? "*" : ""));
+      var b = el("button", "tmux-win" + (i === T.w ? " act" : ""), i + ":" + S.t(x.name) + (i === T.w ? "*" : ""));
       b.type = "button";
+      b.dataset.win = x.name;
       b.addEventListener("click", function () {
         T.select(i);
       });
@@ -329,7 +341,7 @@
     T.open[k] = false;
     var here = win() && win().name;
     rebuild(here === k ? "DESK" : here, null);
-    if (S.msg) { S.msg(k + " closed. Open it again from the bar at the bottom."); }
+    if (S.msg) { S.msg(S.t("{pane} closed. Open it again from the bar at the bottom.", { pane: S.t(k) })); }
   };
   T.isClosable = function (kind) { return CLOSABLE.indexOf(kind) !== -1; };
   /* True when this SHELL pane could pop out (ignores which pane is active). */
@@ -416,90 +428,16 @@
     var p = $("tmux-prompt");
     p.hidden = false; p.value = ""; p.focus();
   };
-  var msgTimer;
-  S.msg = function (text, cls) {
-    var m = $("tmux-msg"), w = $("wb-msg");
-    m.textContent = text; m.className = "tmux-msg " + (cls || "");
-    if (w) {
-      w.textContent = text; w.className = "wb-msg " + (cls || "");
-    }
-    clearTimeout(msgTimer);
-    msgTimer = setTimeout(function () {
-      m.textContent = ""; var x = $("wb-msg"); if (x) {
-        x.textContent = "";
-      }
-    }, 3500);
-  };
-  S.feedback = function (text, cls) {
-    S.scr.line(text, cls);
-    if (!T.visible("SHELL")) {
-      S.msg(text, cls);
-    }
-  };
-  S.clockSec = 0;
-  S.clockText = function () {
-    var s = S.clockSec; return S.fmtTime(S.state.clock) + ":" + (s < 10 ? "0" : "") + s;
-  };
-  setInterval(function () {
-    S.clockSec++;
-    if (S.clockSec >= 60) {
-      S.clockSec = 0;
-      if (T.attached) {
-        S.tick(1); S.save();
-      }
-    }
-    var c = $("st-clock"); if (c) {
-      c.textContent = S.clockText();
-    }
-    var w = $("wb-clock"); if (w) {
-      w.textContent = S.clockText();
-    }
-    var u = document.getElementById("about-uptime"); if (u) {
-      u.textContent = S.uptimeText();
-    }
-    var k = document.getElementById("about-clock"); if (k) {
-      k.textContent = S.clockText() + " UTC";
-    }
-  }, 1000);
-  /* Refresh the status bar: clock, user, uplink, sound, hint light and mail count. */
-  S.status = function () {
-    var st = S.state;
-    $("st-clock").textContent = S.clockText();
-    $("st-user").textContent = st.name || "";
-    var up = st.pending.length ? "RX" : (S.transmitting ? "TX" : "IDLE");
-    $("st-uplink").textContent = "UPLINK " + up;
-    $("st-uplink").classList.toggle("live", up !== "IDLE");
-    $("st-sound").textContent = st.sound ? "SOUND ON" : "SOUND OFF";
-    $("st-sound").setAttribute("aria-pressed", st.sound ? "true" : "false");
-    $("st-hint").hidden = !st.light;
-    $("st-hint").classList.toggle("lit", !!S.hintLit);
-    var unread = st.mail.filter(function (m) {
-      return !m.read;
-    }).length;
-    if (unread === 0 && S.dismissMailToast) {
-      S.dismissMailToast();
-    }
-    $("st-mail").textContent = unread ? "MAIL " + unread : "MAIL";
-    $("st-mail").classList.toggle("live", unread > 0);
-    var wc = $("wb-clock"); if (wc) {
-      wc.textContent = S.clockText();
-    }
-    var wm = $("wb-mail"); if (wm) {
-      wm.textContent = unread ? "MAIL " + unread : "MAIL"; wm.classList.toggle("live", unread > 0);
-    }
-    var wh = $("wb-hint"); if (wh) {
-      wh.hidden = !st.light; wh.classList.toggle("lit", !!S.hintLit);
-    }
-    var ws = $("wb-sound"); if (ws) {
-      ws.textContent = st.sound ? "SOUND ON" : "SOUND OFF";
-    }
-  };
   window.addEventListener("resize", function () {
     if (!T.attached) {
       return;
     }
-    if (S.isDesktop()) {
-      $("screen").classList.toggle("desk-mobile", T.mobile()); return;
+    var inDesk = $("screen").classList.contains("desktop");
+    if (inDesk !== S.isDesktop()) {
+      S.syncContext(); S.enterMode(); return;
+    }
+    if (inDesk) {
+      return;
     }
     if (T.mobile() !== T.wasMobile) {
       var k = T.cur && T.cur.kind; T.init(k);

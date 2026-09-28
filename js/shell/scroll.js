@@ -3,6 +3,10 @@
 (function () {
   "use strict";
   var selectors = ".scroll, .etable-wrap, .graph, .wb-wbody, .entry-body, .mail-body, .paras, .mc-mini";
+  /* One-line text strips: no scrollbar, an ellipsis at rest, and dragging on
+     them scrolls the line with the normal pointer, since their text cannot be
+     selected anyway */
+  var STRIPS = ".mc-mini";
   var active = null, moved = false, startX = 0, startY = 0, left = 0, top = 0, suppressClick = false;
 
   function canScroll(node) {
@@ -39,7 +43,7 @@
     if (active) {
       active.classList.remove("scroll-panning");
     }
-    document.body.classList.remove("scroll-panning");
+    document.body.classList.remove("scroll-panning", "pan-text");
     document.querySelectorAll(".scroll-pan.scroll-panning").forEach(function (node) {
       node.classList.remove("scroll-panning");
     });
@@ -73,10 +77,11 @@
   }
 
   document.addEventListener("pointerdown", function (event) {
-    if (event.pointerType === "mouse" && overText(event.clientX, event.clientY)) {
+    if (event.pointerType === "mouse" && !event.target.closest(STRIPS) && overText(event.clientX, event.clientY)) {
       return;
     }
-    if (event.button !== 0 || event.pointerType === "touch" || event.target.closest("button, a, input, textarea, select, [draggable='true'], .grip, .wb-badge, .blank, .unfill")) {
+    var strip = event.target.closest(STRIPS);
+    if (event.button !== 0 || (event.pointerType === "touch" && !strip) || event.target.closest("button, a, input, textarea, select, [draggable='true'], .grip, .wb-badge, .blank, .unfill")) {
       return;
     }
     var node = event.target.closest(selectors);
@@ -104,8 +109,10 @@
     event.preventDefault();
     active.classList.add("scroll-panning");
     document.body.classList.add("scroll-panning");
+    document.body.classList.toggle("pan-text", active.matches(STRIPS));
     active.scrollLeft = left - dx;
     active.scrollTop = top - dy;
+    active.classList.toggle("scrolled", active.scrollLeft > 0);
   }, { passive: false });
 
   document.addEventListener("pointerup", finish);

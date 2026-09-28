@@ -90,3 +90,413 @@ main a.citation-button:focus-visible {
   color: var(--dust);
   font-size: 0.8em;
 }
+
+
+/* Page styles, moved here from each page's <style> block. Rules shared by
+   every notes page come first; the rest apply to one page through the
+   page-<name> class on its <body>. */
+body {
+  margin: 0;
+  background: var(--wall);
+  color: var(--haze);
+  font-family: var(--font-mono);
+  line-height: 1.6;
+}
+
+/* concept.html */
+.page-concept main {
+  max-width: 74ch;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 5rem;
+}
+.page-concept h1, .page-concept h2, .page-concept h3 {
+  font-family: var(--font-crt);
+  font-weight: 400;
+  line-height: 1.1;
+}
+.page-concept h1 {
+  font-size: 3rem;
+  margin: 0 0 0.5rem;
+}
+.page-concept h2 {
+  font-size: 1.9rem;
+  margin: 1.8rem 0 2rem;
+  border-bottom: 1px solid var(--rib);
+  padding-bottom: 0.3rem;
+}
+.page-concept h3 {
+  font-size: 1.4rem;
+  margin: 1.5rem 0 0.3rem;
+}
+.page-concept .dim {
+  color: var(--dust);
+}
+.page-concept .callout {
+  border-left: 2px solid var(--titan);
+  background: #1a1f22;
+  padding: 0.6rem 0.9rem;
+}
+@media (max-width: 520px) {
+  .page-concept main {
+    padding: 2rem 1rem 3rem;
+  }
+  .page-concept h1 {
+    font-size: 2.4rem;
+  }
+}
+
+/* credits.html */
+.page-credits main {
+  max-width: 74ch;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 4rem;
+}
+.page-credits h1, .page-credits h2 {
+  font-family: var(--font-crt);
+  font-weight: 400;
+  line-height: 1.1;
+}
+.page-credits h1 {
+  font-size: 3rem;
+  margin: 0 0 1rem;
+}
+.page-credits h2 {
+  font-size: 1.8rem;
+  margin: 1.8rem 0 0.6rem;
+  border-bottom: 1px solid var(--rib);
+  padding-bottom: 0.3rem;
+}
+.page-credits p, .page-credits li {
+  color: var(--haze);
+}
+.page-credits .dim {
+  color: var(--dust);
+}
+.page-credits ul {
+  padding-left: 1.2rem;
+}
+
+/* devnotes.html */
+.page-devnotes main {
+  max-width: 84ch;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 5rem;
+}
+.page-devnotes h1, .page-devnotes h2, .page-devnotes h3 {
+  font-family: var(--font-crt);
+  font-weight: 400;
+  line-height: 1.1;
+}
+.page-devnotes h1 {
+  font-size: 3rem;
+  margin: 0 0 0.5rem;
+}
+.page-devnotes h2 {
+  font-size: 1.9rem;
+  margin: 1.8rem 0 2rem;
+  border-bottom: 1px solid var(--rib);
+  padding-bottom: 0.3rem;
+}
+.page-devnotes h3 {
+  font-size: 1.4rem;
+  margin: 1.5rem 0 0.3rem;
+}
+.page-devnotes .dim {
+  color: var(--dust);
+}
+.page-devnotes .warn {
+  border: 1px solid var(--flag);
+  color: var(--flag);
+  padding: 0.6rem 0.9rem;
+}
+.page-devnotes .sysfile {
+  background: #1a1f22;
+  border-left: 2px solid var(--rib);
+  padding: 0.6rem 0.9rem;
+  margin: 0.3rem 0;
+}
+.page-devnotes .sysfile p {
+  margin: 0.2rem 0;
+}
+.page-devnotes .sys-sec {
+  color: var(--titan);
+  margin-top: 0.4rem;
+}
+.page-devnotes .etable.wraps td {
+  overflow-wrap: anywhere;
+}
+.page-devnotes caption {
+  text-align: left;
+  color: var(--dust);
+}
+.page-devnotes table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.92rem;
+}
+.page-devnotes th, .page-devnotes td {
+  text-align: left;
+  padding: 0.25rem 0.6rem 0.25rem 0;
+  border-bottom: 1px solid var(--rib);
+  vertical-align: top;
+}
+.page-devnotes th {
+  color: var(--titan);
+  font-weight: 500;
+}
+.page-devnotes .graph {
+  overflow-x: auto;
+  background: #1a1f22;
+  padding: 1rem;
+}
+.page-devnotes .graph svg {
+  display: block;
+  min-width: 680px;
+  width: 100%;
+  height: auto;
+}
+.page-devnotes .tag {
+  color: var(--flag);
+}
+.page-devnotes .fields {
+  display: grid;
+  grid-template-columns: minmax(8em, max-content) 1fr;
+  gap: 0.1rem 1.2rem;
+  margin: 0.3rem 0;
+  padding: 0.6rem 0.9rem;
+  background: #1a1f22;
+  border-left: 2px solid var(--rib);
+}
+.page-devnotes .fields dt {
+  color: var(--dust);
+}
+.page-devnotes .fields dd {
+  margin: 0;
+}
+.page-devnotes .etable-wrap {
+  overflow-x: auto;
+  background: #1a1f22;
+  border-left: 2px solid var(--rib);
+  padding: 0.4rem 0.9rem;
+  margin: 0.3rem 0;
+}
+.page-devnotes .paras p {
+  margin: 0 0 0.3rem;
+}
+@media (max-width: 520px) {
+  .page-devnotes .fields {
+    grid-template-columns: 1fr;
+  }
+  .page-devnotes .fields dd {
+    margin-bottom: 0.4rem;
+  }
+}
+.page-devnotes .notes-list {
+  font-size: 0.9rem;
+  color: var(--dust);
+  margin: 0.2rem 0 0;
+  padding-left: 1.2rem;
+}
+
+/* drawings.html */
+.page-drawings main {
+  max-width: 74ch;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+.page-drawings h1, .page-drawings h2 {
+  font-family: var(--font-crt);
+  font-weight: 400;
+  line-height: 1.1;
+}
+.page-drawings h1 {
+  font-size: 3rem;
+  margin: 0 0 1rem;
+}
+.page-drawings h2 {
+  font-size: 1.8rem;
+  margin: 1.8rem 0 0.6rem;
+  border-bottom: 1px solid var(--rib);
+  padding-bottom: 0.3rem;
+}
+.page-drawings p {
+  color: var(--haze);
+}
+@media (max-width: 520px) {
+  .page-drawings main {
+    padding: 1.5rem 1rem 3rem;
+  }
+  .page-drawings h1 {
+    font-size: 2.4rem;
+  }
+}
+
+/* glossary.html */
+.page-glossary main {
+  max-width: 74ch;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+.page-glossary h1, .page-glossary h2 {
+  font-family: var(--font-crt);
+  font-weight: 400;
+  line-height: 1.1;
+}
+.page-glossary h1 {
+  font-size: 3rem;
+  margin: 0 0 1rem;
+}
+.page-glossary h2 {
+  font-size: 1.8rem;
+  margin: 1.8rem 0 0.6rem;
+  border-bottom: 1px solid var(--rib);
+  padding-bottom: 0.3rem;
+}
+.page-glossary .terms dt {
+  margin-top: 1rem;
+  color: var(--titan);
+  font-family: var(--font-crt);
+  font-size: 1.2rem;
+}
+.page-glossary .terms dd {
+  margin: 0.15rem 0 0;
+}
+.page-glossary .note {
+  border-left: 2px solid var(--titan);
+  background: #1a1f22;
+  padding: 0.6rem 0.9rem;
+}
+@media (max-width: 520px) {
+  .page-glossary main {
+    padding: 1.5rem 1rem 3rem;
+  }
+  .page-glossary h1 {
+    font-size: 2.4rem;
+  }
+}
+
+/* themes.html */
+.page-themes main {
+  max-width: 74ch;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+.page-themes h1, .page-themes h2 {
+  font-family: var(--font-crt);
+  font-weight: 400;
+  line-height: 1.1;
+}
+.page-themes h1 {
+  font-size: 3rem;
+  margin: 0 0 1rem;
+}
+.page-themes h2 {
+  font-size: 1.8rem;
+  margin: 1.8rem 0 0.6rem;
+  border-bottom: 1px solid var(--rib);
+  padding-bottom: 0.3rem;
+}
+.page-themes p, .page-themes li {
+  color: var(--haze);
+}
+.page-themes .note {
+  border-left: 2px solid var(--titan);
+  background: #1a1f22;
+  padding: 0.6rem 0.9rem;
+}
+@media (max-width: 520px) {
+  .page-themes main {
+    padding: 1.5rem 1rem 3rem;
+  }
+  .page-themes h1 {
+    font-size: 2.4rem;
+  }
+}
+
+/* warranty.html */
+.page-warranty main {
+  max-width: 74ch;
+  margin: 0 auto;
+  padding: 2rem 1.25rem 4rem;
+}
+.page-warranty h1, .page-warranty h2 {
+  font-family: var(--font-crt);
+  font-weight: 400;
+  line-height: 1.1;
+}
+.page-warranty h1 {
+  font-size: 3rem;
+  margin: 0 0 1rem;
+}
+.page-warranty h2 {
+  font-size: 1.8rem;
+  margin: 1.8rem 0 0.6rem;
+  border-bottom: 1px solid var(--rib);
+  padding-bottom: 0.3rem;
+}
+@media (max-width: 520px) {
+  .page-warranty main {
+    padding: 1.5rem 1rem 3rem;
+  }
+  .page-warranty h1 {
+    font-size: 2.4rem;
+  }
+}
+
+/* Language picker aligned with each notes page heading */
+.notes-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.notes-head-row > h1 {
+  min-width: 0;
+  margin-bottom: 0 !important;
+}
+.lang-bar {
+  margin: 0 0 0 auto;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.6rem;
+  color: var(--dust);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+}
+.lang-bar select {
+  font: inherit;
+  color: var(--haze);
+  background: var(--hall);
+  border: 1px solid var(--rib);
+  padding: 0.1rem 0.3rem;
+  transition: background-color 100ms ease, color 100ms ease, border-color 100ms ease;
+}
+.lang-bar select:hover,
+.lang-bar select:focus-visible {
+  color: var(--hall);
+  background: var(--haze);
+  border-color: var(--titan);
+  outline: none;
+}
+.lang-note {
+  max-width: 74ch;
+  margin: 0 auto 1rem;
+  padding: 0 1.25rem;
+  color: var(--dust);
+  font-size: 0.85rem;
+}
+@media (max-width: 520px) {
+  .notes-head-row {
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+  .notes-head-row > h1 {
+    font-size: 2.1rem;
+  }
+  .lang-bar {
+    justify-content: flex-end;
+    font-size: 0.8rem;
+  }
+}

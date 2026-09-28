@@ -2,6 +2,7 @@
    routing, clicks on command buttons, and the F-key actions. */
 (function () {
   var S = window.SELK;
+  var $ = S.$;
   S.fast = /[?&]fast\b/.test(location.search);
   S.motionQuery = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
   S.systemReduced = !!(S.motionQuery && S.motionQuery.matches);
@@ -20,9 +21,6 @@
       if (S.debug) { S.debug("save", "shell history saved to sessionStorage, key " + S.HIST_KEY); }
     } catch (e) {}
   }
-  function $(id) {
-    return document.getElementById(id);
-  }
   S.promptText = function () {
     return S.mode === "login" ? "login:" : "selk:/" + (S.state.cwd || "") + ">";
   };
@@ -35,12 +33,12 @@
     scr.node(function () {
       var w = scr.el("div", "title");
       w.appendChild(scr.el("div", "title-big", "SELK"));
-      w.appendChild(scr.el("div", "title-sub", "CESEA site terminal 01, Titan"));
+      w.appendChild(scr.el("div", "title-sub", S.t("CESEA site terminal 01, Titan")));
       w.appendChild(scr.el("div", "title-sub dim", "7.0 N, 199.0 W"));
-      var go = scr.el("button", "btn primary title-go", "POWER ON");
+      var go = scr.el("button", "btn primary title-go", S.t("POWER ON"));
       go.type = "button"; go.dataset.title = "power";
       w.appendChild(go);
-      w.appendChild(scr.el("div", "title-sub dim", "Select POWER ON to begin"));
+      w.appendChild(scr.el("div", "title-sub dim", S.t("Select POWER ON to begin")));
       var row = scr.el("div", "title-row");
       [
         [
@@ -56,7 +54,7 @@
           "credits"
         ]
       ].forEach(function (b) {
-        var x = scr.el("button", "btn", b[0]); x.type = "button"; x.dataset.title = b[1];
+        var x = scr.el("button", "btn", S.t(b[0])); x.type = "button"; x.dataset.title = b[1];
         if (b[1] === "tutorial") {
           x.setAttribute("aria-pressed", "false");
         }
@@ -64,7 +62,7 @@
       });
       w.appendChild(row);
       var toggles = scr.el("div", "title-row title-toggles");
-      var tour = scr.el("button", "btn", "TOUR AFTER LOGIN: OFF"); tour.type = "button"; tour.dataset.title = "tutorial";
+      var tour = scr.el("button", "btn", S.t("TOUR AFTER LOGIN: OFF")); tour.type = "button"; tour.dataset.title = "tutorial";
       tour.setAttribute("aria-pressed", "false");
       toggles.appendChild(tour);
       w.appendChild(toggles);
@@ -85,20 +83,25 @@
   }
   function boot() {
     var scr = S.scr, returning = !!S.state.name;
-    var lines = [
-      "CESEA SITE OS 7.2 (c) 2079 CESEA",
-      "Memory check ............ 64 GB OK",
-      "Drive 0 ................. spun up, 4 TB",
-      "Reactor link ............ 48 MW OK",
-      "Uplink relay ............ R-09 idle",
-      "Directory ............... ldaps://dir.selk.cesea.internal OK",
-      "Unit bus ................ 31 units online",
-      "Structure monitor ....... ALARM",
-      "Supervisor sleep ........ ended 26-02-2097"
-    ];
+    /* Boot checks: label, dot leader, result. The leader is sized from the
+       longest translated label, so the results line up in every language. */
+    var checks = [
+      ["Memory check", "64 GB OK"],
+      ["Drive 0", "spun up, 4 TB"],
+      ["Reactor link", "48 MW OK"],
+      ["Uplink relay", "R-09 idle"],
+      ["Directory", "ldaps://dir.selk.cesea.internal OK"],
+      ["Unit bus", "31 units online"],
+      ["Structure monitor", "ALARM"],
+      ["Supervisor sleep", "ended 26-02-2097"]
+    ].map(function (c) { return [S.t(c[0]), S.t(c[1])]; });
+    var widest = Math.max.apply(null, checks.map(function (c) { return c[0].length; }));
+    var lines = ["CESEA SITE OS 7.2 (c) 2079 CESEA"].concat(checks.map(function (c) {
+      return c[0] + " " + new Array(widest - c[0].length + 5).join(".") + " " + c[1];
+    }));
     scr.wait(500);
     if (S.wiped) {
-      scr.line("Wipe on refresh is on. All saved data was erased.", "warn", 0);
+      scr.line(S.t("Wipe on refresh is on. All saved data was erased."), "warn", 0);
     }
     lines.forEach(function (l, i) {
       scr.type(l, i === 7 ? "err" : "", returning ? 400 : 140);
@@ -116,7 +119,7 @@
     });
     scr.line("", "", 200);
     if (returning) {
-      scr.type("login: " + S.state.name, "", 60);
+      scr.type(S.t("login:") + " " + S.state.name, "", 60);
       ssoLines(true);
       scr.task(function () {
         attach(true);
@@ -124,7 +127,7 @@
     } else {
       scr.task(function () {
         S.mode = "login"; S.prompt(); S.status(); $("cmd").focus();
-        scr.line("Enter your name. Sign-in uses CESEA SSO through the site directory.", "dim", 0);
+        scr.line(S.t("Enter your name. Sign-in uses CESEA SSO through the site directory."), "dim", 0);
       });
     }
   }
@@ -140,9 +143,9 @@
       S.prompt(); S.status();
       S.watch.start();
     });
-    scr.line("Welcome, supervisor " + S.state.name + ".", "ok", 120);
-    scr.line(returning ? "Session restored." : "Start with HOME / README in FILES, then read MSG 001 when it arrives.", "dim");
-    scr.line(S.tmux.mobile() ? "Use the bottom buttons to move between FILES, MAIL and REPORT. Tap a blank, then choose an entry and USE." : "F1 help, F9 setup. Drag entry names onto report blanks.", "dim");
+    scr.line(S.t("Welcome, supervisor {name}.", { name: S.state.name }), "ok", 120);
+    scr.line(returning ? S.t("Session restored.") : S.t("Start with HOME / README in FILES, then read MSG 001 when it arrives."), "dim");
+    scr.line(S.howTo("keys"), "dim");
     scr.task(function () {
       var st = S.state;
       if (!st.mail.length && !st.pending.length) {
@@ -154,7 +157,7 @@
         }, S.fast ? 80 : 3000);
       });
       if (st.decision && returning) {
-        scr.line("The final decision is open. Type decide.", "warn");
+        scr.line(S.tc("The final decision is open. Type {decide}."), "warn");
       }
       if (!returning) {
         if (S.tutAsk) {
@@ -170,18 +173,18 @@
   }
   function ssoLines(returning) {
     var u = S.userId(), scr = S.scr;
-    scr.line("Authenticating " + u + " with CESEA SSO", "dim", 200);
-    scr.line("Directory: uid=" + u + ",ou=crew,dc=selk,dc=cesea,dc=internal", "dim", returning ? 60 : 240);
-    scr.line("Kerberos ticket issued for " + u + "@SELK.CESEA.INTERNAL, valid 10 h", "ok", returning ? 60 : 260);
+    scr.line(S.t("Authenticating {user} with CESEA SSO", { user: u }), "dim", 200);
+    scr.line(S.t("Directory:") + " uid=" + u + ",ou=crew,dc=selk,dc=cesea,dc=internal", "dim", returning ? 60 : 240);
+    scr.line(S.t("Kerberos ticket issued for {user}@SELK.CESEA.INTERNAL, valid 10 h", { user: u }), "ok", returning ? 60 : 260);
   }
   function doLogin(v) {
     var name = v.trim().replace(/\s+/g, " ");
-    S.scr.line("login: " + name, "echo", 0);
+    S.scr.line(S.t("login:") + " " + name, "echo", 0);
     if (!name) {
-      S.snd.error(); S.scr.line("Enter a name to log in.", "err"); return;
+      S.snd.error(); S.scr.line(S.t("Enter a name to log in."), "err"); return;
     }
     if (!NAME_RULE.test(name)) {
-      S.snd.error(); S.scr.line("Use letters, digits, spaces, periods, hyphens or apostrophes.", "err"); return;
+      S.snd.error(); S.scr.line(S.t("Use letters, digits, spaces, periods, hyphens or apostrophes."), "err"); return;
     }
     S.state.name = name; S.save();
     ssoLines(false);
@@ -194,8 +197,8 @@
     S.closeDialog();
     S.tmux.detach();
     S.snd.spindown();
-    S.scr.line("[detached (from session selk)]", "dim");
-    S.scr.line("Session ended. Progress kept on this terminal.", "dim");
+    S.scr.line(S.t("[detached (from session selk)]"), "dim");
+    S.scr.line(S.t("Session ended. Progress kept on this terminal."), "dim");
     S.scr.task(function () {
       S.mode = "login"; S.prompt(); S.status(); $("cmd").focus();
     });
@@ -246,7 +249,7 @@
         S.msg("Click a blank on a report page first", "err"); S.snd.error();
       }
       else if (!id) {
-        S.msg(S.isDesktop() ? "Select an entry icon or open an entry, then press F4" : "Highlight an entry in FILES, then press F4", "err"); S.snd.error();
+        S.msg(S.isDesktop() ? "Select an entry icon or open an entry, then press F4" : "Select an entry in FILES, then press F4", "err"); S.snd.error();
       }
       else {
         S.rep.fillBlank(sel.r, sel.n, id);
@@ -309,9 +312,6 @@
         hPos = history.length; $("cmd").value = "";
       } return;
     }
-    if (e.key === "Tab") {
-      e.preventDefault(); $("cmd").value = S.complete($("cmd").value); return;
-    }
     if (e.key.length === 1 || e.key === "Backspace") {
       S.snd.key();
     }
@@ -348,8 +348,13 @@
     if (S.mode !== "shell") {
       return;
     }
+    /* Native controls keep their own keys: Enter activates buttons, select
+       arrows change options, and Tab always advances through the page. */
+    if (t && t.closest && t.closest("button, a, input, select, textarea, [contenteditable='true']")) {
+      return;
+    }
     var k = S.ui.active();
-    if (k === "FILES" && S.ex.key(e)) {
+    if (k === "FILES" && t && t.closest && t.closest(".mc-list") && S.ex.key(e)) {
       e.preventDefault(); return;
     }
     if (k === "SHELL" && e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
@@ -358,6 +363,10 @@
   }
   document.addEventListener("DOMContentLoaded", function () {
     S.load();
+    /* Wait for the language file, which also translates the story data */
+    S.i18n.ready.then(startUp);
+  });
+  function startUp() {
     S.registerKind("SHELL", $("k-shell"));
     S.scr.init($("log"));
     S.applySettings();
@@ -380,11 +389,6 @@
     tp.addEventListener("blur", function () {
       tp.hidden = true;
     });
-    document.addEventListener("pointerdown", function (e) {
-      if (e.target.closest("button, .mc-row, [data-cmd]")) {
-        S.snd.click();
-      }
-    });
     $("screen").addEventListener("click", function (e) {
       if (S.mode === "title") {
         if (S.dlg || !e.target.isConnected || e.target.closest(".dlg-ov, .ctx")) {
@@ -406,7 +410,7 @@
         }
         else if (act === "tutorial") {
           S.tutAsk = !S.tutAsk;
-          tb.textContent = "TOUR AFTER LOGIN: " + (S.tutAsk ? "ON" : "OFF");
+          tb.textContent = S.tutAsk ? S.t("TOUR AFTER LOGIN: ON") : S.t("TOUR AFTER LOGIN: OFF");
           tb.setAttribute("aria-pressed", S.tutAsk ? "true" : "false");
           tb.classList.toggle("primary", S.tutAsk);
         }
@@ -468,5 +472,5 @@
         }
       });
     }
-  });
+  }
 })();

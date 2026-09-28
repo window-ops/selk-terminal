@@ -80,7 +80,6 @@ button {
 .pane-title {
   font-family: var(--font-crt);
   font-size: 1.35em;
-  line-height: 1.1;
   margin-bottom: 0.4em;
 }
 .shell {
@@ -125,7 +124,6 @@ button {
 .head-s {
   font-family: var(--font-crt);
   font-size: 1.5em;
-  line-height: 1.1;
   letter-spacing: 0.04em;
   margin-top: 0.4em;
 }
@@ -156,8 +154,8 @@ button {
   text-decoration: none;
 }
 :focus-visible {
-  outline: 1px solid var(--haze);
-  outline-offset: 2px;
+  outline: 2px solid var(--titan);
+  outline-offset: 3px;
 }
 .btn,
 .use,
@@ -204,7 +202,6 @@ button {
 .entry-title {
   font-family: var(--font-crt);
   font-size: 1.5em;
-  line-height: 1.1;
 }
 .rule {
   height: 1px;
@@ -255,7 +252,6 @@ button {
 .mail-head {
   font-family: var(--font-crt);
   font-size: 1.3em;
-  line-height: 1.1;
 }
 .hintbox {
   margin: 0.5em 0;
@@ -385,10 +381,16 @@ button {
   font-size: 0.85em;
   color: var(--dust);
   white-space: nowrap;
-  overflow-x: auto;
-  overflow-y: hidden;
-  text-overflow: clip;
+  overflow: hidden;
+  text-overflow: ellipsis;
   user-select: none;
+}
+.mc-mini.scrolled {
+  text-overflow: clip;
+}
+/* Horizontal finger drags go to the strip's own drag-to-scroll */
+.mc-mini {
+  touch-action: pan-y;
 }
 .mc-use {
   display: block;
@@ -585,13 +587,94 @@ button {
     opacity: 0.65;
   }
 }
-#st-uplink.live {
+/* Uplink and save buttons sit on the titan status bar (and the haze desktop
+   bar), so they take the bar's dark text colour */
+.st-uplink,
+.st-save {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 1px solid transparent;
+  padding: 0 0.4em;
+  white-space: nowrap;
+}
+.st-uplink.live {
   font-weight: 500;
+}
+.st-uplink:hover,
+.st-uplink:focus-visible,
+.st-save:hover,
+.st-save:focus-visible {
+  background: rgba(30, 36, 39, 0.12);
+  border-color: rgba(30, 36, 39, 0.5);
+  outline-offset: 1px;
 }
 .st-hint {
   border: 1px solid rgba(30, 36, 39, 0.5);
   padding: 0 0.4em;
   opacity: 0.5;
+}
+/* Save lamp: faint while progress lives in this tab, solid when saving fails */
+.st-save.fail {
+  opacity: 1;
+  background: var(--hall);
+  color: var(--flag);
+}
+.status-info-pop {
+  position: absolute;
+  z-index: 8;
+  width: min(26em, calc(100% - 16px));
+  max-height: calc(100% - 8px);
+  overflow-y: auto;
+  padding: 0.7em;
+  border: 1px solid var(--titan);
+  background: var(--hall);
+  color: var(--haze);
+  box-shadow: 0.25em 0.25em 0 rgba(0, 0, 0, 0.5);
+  font-size: 0.9em;
+  line-height: 1.4;
+  text-shadow: none;
+  pointer-events: auto;
+  text-wrap: pretty;
+}
+.status-info-head {
+  display: block;
+  color: var(--titan);
+  letter-spacing: 0.04em;
+}
+.status-info-copy {
+  margin-top: 0.25em;
+}
+/* History rows: event and time on one baseline, the same size, with equal
+   space above and below each row; the last row ends on the pop-up's padding */
+.status-history {
+  margin-top: 0.6em;
+  border-top: 1px solid var(--rib);
+}
+.status-history-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.7em;
+  padding: 0.35em 0;
+}
+.status-history-row + .status-history-row {
+  border-top: 1px solid rgba(214, 195, 150, 0.16);
+}
+.status-history-row:last-child {
+  padding-bottom: 0;
+}
+.status-history-event {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.status-history-time,
+.status-history-empty {
+  color: var(--dust);
+  white-space: nowrap;
+}
+.status-history-empty {
+  padding-top: 0.35em;
 }
 .st-hint.lit {
   opacity: 1;
@@ -698,7 +781,7 @@ button {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1em;
+  gap: 0.2em 1em;
   flex-wrap: wrap;
 }
 .set-label {
@@ -706,7 +789,7 @@ button {
 }
 .set-ctl {
   display: flex;
-  gap: 0.3em;
+  gap: 0.2em 0.3em;
   align-items: center;
   flex-wrap: wrap;
 }
@@ -763,8 +846,7 @@ body.dragging .blank:not(:disabled) {
   outline-offset: 2px;
 }
 @media (max-width: 700px) {
-  .st-user,
-  #st-uplink {
+  .st-user {
     display: none;
   }
   .tmux {
@@ -842,8 +924,9 @@ body.dragging .blank:not(:disabled) {
     display: none;
   }
   .tab,
-  .mrow {
-    min-height: 2.75rem;
+  .mrow,
+  .mc-use {
+    min-height: var(--tap-mobile);
   }
 }
 .livecam {
@@ -856,6 +939,18 @@ canvas.live {
   image-rendering: pixelated;
   border: 1px solid var(--rib);
   background: #a88d5c;
+}
+.set-select {
+  font: inherit;
+  color: var(--haze);
+  background: var(--hall);
+  border: 1px solid var(--rib);
+  padding: 0.1em 0.3em;
+  max-width: 100%;
+}
+.set-select:focus {
+  border-color: var(--titan);
+  outline: none;
 }
 .set-range {
   width: min(14em, 40vw);
@@ -1095,18 +1190,6 @@ canvas.live {
   height: 0.9em;
   background: linear-gradient(135deg, transparent 50%, var(--dust) 50%);
   touch-action: none;
-}
-.screen.desk-mobile .wb-win {
-  left: 0 !important;
-  top: 0 !important;
-  width: 100% !important;
-  height: 100% !important;
-}
-.screen.desk-mobile .wb-tools {
-  right: 0.3em;
-}
-.screen.desk-mobile .wb-info {
-  display: none;
 }
 .fields {
   display: grid;
@@ -1356,7 +1439,6 @@ canvas.live {
   font-family: var(--font-crt);
   font-size: 1.25em;
   color: var(--titan);
-  line-height: 1.1;
 }
 .tut p {
   margin: 0.35em 0 0.6em;
@@ -1365,11 +1447,15 @@ canvas.live {
   display: flex;
   gap: 0.6em;
 }
+/* The tour panel is the first child of the stack. Where the stack hangs from
+   the bottom edge, the order is reversed so the panel stays on that edge and
+   mail toasts pile up above it. */
 .screen.desktop .notification-stack {
   top: auto;
   bottom: 1em;
   right: auto;
   left: 1em;
+  flex-direction: column-reverse;
 }
 @media (max-width: 700px) {
   .notification-stack {
@@ -1379,15 +1465,36 @@ canvas.live {
     left: 0.45em;
     width: auto;
     max-height: min(60%, 27rem);
+    flex-direction: column-reverse;
+  }
+  .notification-stack.tut-mobile-top {
+    top: 0.45em;
+    bottom: auto;
+    flex-direction: column;
+  }
+  .notification-stack.tut-mobile-bottom {
+    top: auto;
+    bottom: 8.7rem;
+    flex-direction: column-reverse;
   }
   .screen.desktop .notification-stack {
     bottom: 9.7rem;
+  }
+  .tut {
+    padding: 0.45em 0.65em 0.5em;
+    font-size: 0.9em;
+  }
+  .tut-head {
+    font-size: 1.1em;
+  }
+  .tut p {
+    margin: 0.25em 0 0.4em;
   }
   .tut-btns {
     flex-wrap: wrap;
   }
   .tut-btns .btn {
-    min-height: 2.75rem;
+    min-height: var(--tap-mobile);
   }
 }
 .title-row {
@@ -1562,7 +1669,6 @@ canvas.live {
   justify-content: space-between;
   font-family: var(--font-crt);
   font-size: 1.2em;
-  line-height: 1.1;
   color: var(--titan);
   border-bottom: 1px solid var(--rib);
   padding-bottom: 0.3em;
@@ -1624,7 +1730,8 @@ body.sr-mode .blink {
   outline-offset: -1px;
 }
 
-.screen.title-screen #st-mode {
+.screen.title-screen #st-mode,
+[data-screen="narrow"] #st-mode {
   display: none;
 }
 .title-toggles {
@@ -1686,13 +1793,14 @@ body.sr-mode .tut-spot {
 .set-tip {
   position: absolute;
   z-index: 2;
-  max-width: min(24em, calc(100% - 16px));
+  max-width: min(22em, calc(100% - 16px));
   padding: 0.35em 0.6em;
   background: var(--haze);
   color: var(--hall);
   text-shadow: none;
   font-size: 0.85em;
   line-height: 1.4;
+  text-wrap: pretty;
   box-shadow: 0.25em 0.25em 0 rgba(0, 0, 0, 0.5);
   pointer-events: none;
 }
@@ -1711,7 +1819,87 @@ body.sr-mode .tut-spot {
   color: var(--titan);
   font-size: 0.85em;
   letter-spacing: 0.1em;
-  margin: 0.2em 0 0.1em;
+  margin: 0.2em 0;
+}
+/* Setup sections. FULL LIST stacks them under plain headings; SECTIONS folds
+   each one behind a header row laid out like a line in FILES: name on the
+   left, count on the right. Open rows hang from a rule on the left. */
+.set-list,
+.set-sec-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35em;
+}
+.set-sec-body {
+  margin: 0.35em 0 0.35em 0.35em;
+  padding-left: 0.8em;
+  border-left: 2px solid var(--rib);
+}
+.set-sec-body[hidden] {
+  display: none;
+}
+.set-body.set-folding {
+  gap: 0;
+}
+.set-folding > .set-row {
+  margin-bottom: 0.35em;
+}
+.set-sec:last-child > .set-sec-body {
+  margin-bottom: 0;
+}
+/* Notice under the Language row in a translated game */
+.set-note {
+  margin: 0 0 0.35em;
+  color: var(--dust);
+  font-size: 0.85em;
+  line-height: 1.4;
+}
+/* Warning under incompatible settings */
+.set-warn p {
+  margin: 0;
+}
+.set-warn p + p {
+  margin-top: 0.5em;
+}
+.set-warn {
+  color: var(--flag);
+  font-size: 0.85em;
+  line-height: 1.4;
+  padding-left: 0.6em;
+  border-left: 2px solid var(--flag);
+}
+.set-sec-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6em;
+  width: 100%;
+  font: inherit;
+  font-size: 0.85em;
+  letter-spacing: 0.1em;
+  text-align: left;
+  color: var(--titan);
+  text-shadow: inherit;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--rib);
+  padding: 0.35em 0.1em;
+}
+.set-sec-mark {
+  color: var(--dust);
+}
+.set-sec-name {
+  flex: 1 1 auto;
+}
+.set-sec-count {
+  color: var(--dust);
+  letter-spacing: 0;
+}
+.set-sec-head:hover .set-sec-name,
+.set-sec-head.open .set-sec-name {
+  color: var(--haze);
+}
+.set-sec-head.open .set-sec-mark {
+  color: var(--titan);
 }
 .dbg {
   position: absolute;
@@ -1785,4 +1973,220 @@ body.sr-mode .tut-spot {
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
+}
+
+/* Setup screen: equal top and bottom padding around the settings and the
+   button row. Other dialogs keep the shared values. */
+.dlg-body.set-body {
+  padding: 0.6em 1em;
+}
+.dlg-body.set-body + .dlg-btns {
+  padding: 0.6em 1em;
+}
+
+.dlg:focus {
+  outline: none;
+}
+/* Storage page rows: readable name, then where it is kept, size and raw key */
+.storage-name {
+  display: grid;
+  min-width: 0;
+}
+.storage-meta {
+  font-size: 0.82em;
+  overflow-wrap: anywhere;
+}
+
+/* Decision time: everything around the shell steps back */
+.screen .fbar,
+.screen .tmux,
+.screen .wb-bar,
+.screen .pane-head {
+  transition: opacity 2.5s ease;
+}
+.screen.finale .fbar,
+.screen.finale .tmux,
+.screen.finale .wb-bar,
+.screen.finale .pane-head {
+  opacity: 0.12;
+}
+.screen.finale .notification-stack {
+  display: none;
+}
+[data-motion="reduced"] .screen .fbar,
+[data-motion="reduced"] .screen .tmux,
+[data-motion="reduced"] .screen .wb-bar,
+[data-motion="reduced"] .screen .pane-head {
+  transition: none;
+}
+.ln.epilogue {
+  color: var(--haze);
+  max-width: 62ch;
+  line-height: 1.6;
+}
+
+/* Finale cinema: a black stage over the whole terminal. Everything is centred
+   with even space around it; each card fades in on its own. */
+.cine {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5em;
+  background: #000;
+  color: var(--haze);
+  opacity: 0;
+  transition: opacity 1.6s ease;
+  outline: none;
+  overflow: hidden;
+}
+.cine.on {
+  opacity: 1;
+}
+.cine-stage {
+  width: 100%;
+  max-width: 46em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.2em;
+  text-align: center;
+}
+.cine-lines {
+  display: grid;
+  gap: 1em;
+}
+.cine-line {
+  margin: 0;
+  font-family: var(--font-crt);
+  font-size: 1.5em;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+.cine-head {
+  font-family: var(--font-crt);
+  font-size: 1.6em;
+  color: var(--titan);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.4em;
+}
+.cine-choices {
+  display: grid;
+  gap: 0.45em;
+  width: min(100%, 32em);
+}
+.cine-choice {
+  font: inherit;
+  text-align: left;
+  color: var(--haze);
+  background: none;
+  border: 1px solid var(--rib);
+  padding: 0.55em 0.8em;
+  display: flex;
+  justify-content: space-between;
+  gap: 1em;
+}
+.cine-choice:hover:not(:disabled),
+.cine-choice:focus-visible {
+  border-color: var(--titan);
+  color: var(--titan);
+  outline: none;
+}
+.cine-choice:disabled {
+  color: var(--rib);
+}
+.cine-note {
+  color: var(--flag);
+  font-size: 0.85em;
+}
+.cine-frame {
+  width: min(100%, 44em);
+  opacity: 0;
+  transition: opacity 1.4s ease;
+}
+.cine-frame.on {
+  opacity: 1;
+}
+.scene {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--rib);
+  background: #000;
+}
+.cine-caption {
+  margin: 1em auto 0;
+  max-width: 38em;
+  min-height: 3.2em;
+  font-family: var(--font-crt);
+  font-size: 1.35em;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+/* The office's letter: paper with the same space on every side */
+.cine-letter {
+  width: min(100%, 34em);
+  padding: 1.4em;
+  background: var(--paper);
+  color: var(--ink);
+  text-align: left;
+  text-shadow: none;
+  box-shadow: 0.4em 0.4em 0 rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transform: translateY(0.6em);
+  transition: opacity 1.2s ease, transform 1.2s ease;
+}
+.cine-letter.on {
+  opacity: 1;
+  transform: none;
+}
+.cine-letter-head {
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.cine-letter-meta {
+  color: var(--ink-soft);
+  font-size: 0.85em;
+}
+.cine-letter-body {
+  margin: 1em 0 0;
+  line-height: 1.55;
+}
+.cine-title {
+  opacity: 0;
+  transition: opacity 2s ease;
+}
+.cine-title.on {
+  opacity: 1;
+}
+.cine-kicker {
+  color: var(--dust);
+  letter-spacing: 0.3em;
+}
+.cine-name {
+  margin: 0.15em 0 0.3em;
+  font-family: var(--font-crt);
+  font-weight: 400;
+  font-size: 3.2em;
+  line-height: 1;
+  color: var(--titan);
+  text-transform: uppercase;
+}
+.cine-sub {
+  color: var(--dust);
+}
+.cine-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6em;
+  margin-top: 1.6em;
+}
+[data-motion="reduced"] .cine,
+[data-motion="reduced"] .cine-frame,
+[data-motion="reduced"] .cine-letter,
+[data-motion="reduced"] .cine-title {
+  transition: none;
 }

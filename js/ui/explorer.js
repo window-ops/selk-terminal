@@ -2,13 +2,7 @@
    Left panel lists sections, right panel lists the entries of the selected section. */
 (function () {
   var S = window.SELK;
-  function el(tag, cls, text) {
-    var n = document.createElement(tag); if (cls) {
-      n.className = cls;
-    } if (text != null) {
-      n.textContent = text;
-    } return n;
-  }
+  var el = S.el;
   var root = el("div", "mc");
   S.registerKind("FILES", root);
   var X = S.ex = {
@@ -53,10 +47,11 @@
     var p = el("div", "mc-panel" + (X.side === side ? " act" : ""));
     p.appendChild(el("div", "mc-head", " " + path + " "));
     var cols = el("div", "mc-row mc-cols");
-    cols.appendChild(el("span", "mc-n", "NAME"));
-    cols.appendChild(el("span", "mc-i", side === "L" ? "SIZE" : "WRITTEN BY"));
+    cols.appendChild(el("span", "mc-n", S.t("NAME")));
+    cols.appendChild(el("span", "mc-i", side === "L" ? S.t("SIZE") : S.t("WRITTEN BY")));
     p.appendChild(cols);
     var list = el("div", "mc-list scroll");
+    list.tabIndex = X.side === side ? 0 : -1;
     rows.forEach(function (r, i) {
       var row = el("div", "mc-row" + (i === idx ? " sel" : "") + (r.lock ? " lock" : "") + (r.read ? " read" : ""));
       if (r.id) {
@@ -144,7 +139,7 @@
     } else if (k === "End") {
       move(99);
     }
-    else if (k === "Tab" || k === "ArrowRight" || k === "ArrowLeft") {
+    else if (k === "ArrowRight" || k === "ArrowLeft") {
       X.side = (k === "ArrowLeft") ? "L" : (k === "ArrowRight" ? "R" : (X.side === "L" ? "R" : "L"));
       if (X.side === "R" && !S.isUnlocked(sec().id)) {
         X.side = "L";
@@ -169,7 +164,7 @@
       var open = S.isUnlocked(s.id);
       return {
         name: s.name.toUpperCase(),
-        info: open ? entriesOf(s.id).length + " ITEMS" : "LOCKED",
+        info: open ? S.tn("{n} ITEMS", entriesOf(s.id).length) : S.t("LOCKED"),
         lock: !open,
         sec: s.id
       };
@@ -180,7 +175,7 @@
         if (it.up) {
           return {
             name: "/..",
-            info: "UP"
+            info: S.t("UP")
           };
         }
         if (it.sys) {
@@ -201,8 +196,8 @@
     } else {
       rows = [
         {
-          name: "LOCKED",
-          info: "PRESS F7 OR ENTER",
+          name: S.t("LOCKED"),
+          info: S.t("PRESS F7 OR ENTER"),
           lock: true
         }
       ];
@@ -212,16 +207,16 @@
     var mini = el("div", "mc-mini"), id = X.highlighted();
     if (id) {
       var e = S.entryById(id);
-      mini.textContent = S.entryTitle(id) + " / written by: " + e.by;
+      mini.textContent = S.entryTitle(id) + " / " + S.t("written by") + ": " + e.by;
       if (S.state.sel) {
-        mini.textContent += " / F4 USE puts it in blank " + S.state.sel.n;
+        mini.textContent += " / " + S.t("F4 USE puts it in blank {n}", { n: S.state.sel.n });
       }
     } else {
-      mini.textContent = S.isUnlocked(s.id) ? s.name.toUpperCase() + ", " + entriesOf(s.id).length + " items. Enter opens." : s.name.toUpperCase() + " is locked. F7 unlocks.";
+      mini.textContent = S.isUnlocked(s.id) ? S.tn("{name}, {n} items. Enter opens.", entriesOf(s.id).length, { name: s.name.toUpperCase() }) : S.t("{name} is locked. F7 unlocks.", { name: s.name.toUpperCase() });
     }
     root.appendChild(mini);
     if (S.tmux.mobile() && S.state.sel && id) {
-      var use = el("button", "mc-use", "USE THIS RECORD FOR BLANK " + S.state.sel.n);
+      var use = el("button", "mc-use", S.t("USE THIS RECORD FOR BLANK {n}", { n: S.state.sel.n }));
       use.type = "button";
       use.addEventListener("click", function () {
         S.rep.fillBlank(S.state.sel.r, S.state.sel.n, id);

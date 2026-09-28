@@ -1,7 +1,5 @@
 # Selk
 
-NOTE: THIS IS A MANUAL COPY OF THE REPOSITORY [FROM GITLAB](https://gitlab.com/window-ops-web/selk-terminal) BECAUSE I AM TOO TIRED TO ALSO MIRROR THIS REPOSITORY. MAY BE OUTDATED.
-
 Selk is a short, browser-based investigation game set at a fictional research and construction site inside the real Selk crater on Titan. Read the site's files, follow the evidence, complete reports, and decide what happens to the base.
 
 The game explores possible microbial life, automated infrastructure, and turbocapitalism. Its setting imagines a future led by an Eastern European space agency. The Selk Operating System, CESEA, HX Holdings, and the mission are fictional.
@@ -53,6 +51,22 @@ On mobile, use the bottom navigation buttons to switch between the available vie
 - [Developer notes](notes/devnotes.html) (spoilers)
 
 The Selk scenes were independently composed with two RADIOSOL images as visual references. They depict the colony at different states and dates.
+
+## Code layout
+
+The game is plain JavaScript loaded by `index.html` in dependency order. Every file adds its part to the shared `SELK` object.
+
+- `js/core/`: shared DOM helpers, game state and saving, localization, the context rules and the event bus
+- `js/audio/`: the synthesized sounds and the interface sounds shared by every control
+- `js/shell/`: the terminal screen, text rendering, scrolling and the shell commands
+- `js/game/`: mail, hints, reports, the ending, telemetry and the live camera
+- `js/ui/`: tmux and desktop modes, the status bar, dialogs, Setup, the Storage page, the tour and the other interface parts
+- `js/dev/`: the debug panel and the developer notes page
+- `js/data/`, `js/lang/`: story data and language files
+
+## Languages
+
+The game ships in English and Romanian. Each language is one file in `js/lang/`, and the language menu sits at the top of Setup and of every notes page. Every language other than English is generated automatically, and the game says so wherever it is in use. [TRANSLATING.md](TRANSLATING.md) describes the file format, and `node tools/i18n-catalog.js template xx` starts a new language.
 
 ## Credits
 

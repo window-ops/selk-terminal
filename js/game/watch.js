@@ -2,13 +2,7 @@
    for wind gusts and structure creaks. */
 (function () {
   var S = window.SELK;
-  function el(tag, cls, text) {
-    var n = document.createElement(tag); if (cls) {
-      n.className = cls;
-    } if (text != null) {
-      n.textContent = text;
-    } return n;
-  }
+  var el = S.el;
   var root = el("div", "watch scroll");
   S.registerKind("WATCH", root);
   var W = S.watch = {
@@ -52,12 +46,13 @@
     if (!W.fig) {
       W.fig = el("figure", "cam livecam");
       W.fig.appendChild(S.live.canvas());
-      W.fig.appendChild(el("figcaption", "dim", "SV-4 LIVE, MAST-01"));
+      W.fig.appendChild(el("figcaption", "dim", S.t("SV-4 LIVE, MAST-01")));
     }
     root.appendChild(W.fig);
-    root.appendChild(el("div", "head-s", "SELK SITE TELEMETRY " + S.fmtTime(st.clock)));
+    root.appendChild(el("div", "head-s", S.t("SELK SITE TELEMETRY") + " " + S.fmtTime(st.clock)));
     var dl = el("dl", "fields telem");
     function meter(label, val, max, text, cls) {
+      label = S.t(label); text = S.t(text);
       dl.appendChild(el("dt", cls || "", label));
       var W2 = 20, n = Math.max(0, Math.min(W2, Math.round(val / max * W2)));
       var dd = el("dd", cls || ""), m = el("span", "cbar", "[" + new Array(n + 1).join("|") + new Array(W2 - n + 1).join(" ") + "]");
@@ -66,11 +61,11 @@
       dd.appendChild(m); dd.appendChild(el("span", "meter-text", text)); dl.appendChild(dd);
     }
     function field(label, text, cls) {
-      dl.appendChild(el("dt", cls || "", label)); dl.appendChild(el("dd", cls || "", text));
+      dl.appendChild(el("dt", cls || "", S.t(label))); dl.appendChild(el("dd", cls || "", S.t(text)));
     }
-    meter("MAST-01 load", v.load, 150, v.load ? v.load.toFixed(1) + " %" : "removed", v.load > 100 ? "err" : "");
-    meter("Wind", v.wind, 12, v.wind.toFixed(1) + " m/s", v.wind > 5 ? "warn" : "");
-    meter("Dust", 14 - v.vis, 14, "visibility " + v.vis.toFixed(1) + " km");
+    meter("MAST-01 load", v.load, 150, v.load ? S.t("{v} %", { v: S.num(v.load, 1) }) : "removed", v.load > 100 ? "err" : "");
+    meter("Wind", v.wind, 12, S.num(v.wind, 1) + " m/s", v.wind > 5 ? "warn" : "");
+    meter("Dust", 14 - v.vis, 14, S.t("visibility {km} km", { km: S.num(v.vis, 1) }));
     field("Reactor", "48 MW heat, 11 MW electric");
     field("Uplink", st.pending.length ? "receiving" : S.transmitting ? "sending" : "idle, relay R-09", st.pending.length || S.transmitting ? "warn" : "");
     field("CRANE-L", v.wind > 5 ? "stowed, wind above 5 m/s" : "parked, zone 14 hold", v.wind > 5 ? "warn" : "");
@@ -82,7 +77,7 @@
       "Battery",
       "Task"
     ].forEach(function (h) {
-      var th = el("th", "", h); th.scope = "col"; hr.appendChild(th);
+      var th = el("th", "", S.t(h)); th.scope = "col"; hr.appendChild(th);
     });
     var thead = el("thead"); thead.appendChild(hr); tb.appendChild(thead);
     var body = el("tbody");
@@ -130,16 +125,16 @@
       [
         u[0],
         u[1],
-        u[2] + " %",
+        S.t("{v} %", { v: u[2] }),
         u[3]
       ].forEach(function (c) {
-        tr.appendChild(el("td", "", c));
+        tr.appendChild(el("td", "", S.t(String(c))));
       });
       body.appendChild(tr);
     });
     tb.appendChild(body); wrap.appendChild(tb); root.appendChild(wrap);
     if (v.wind > 5 && !W.stowNoted) {
-      W.stowNoted = true; S.msg("CRANE-L stowed, wind above 5 m/s", "warn");
+      W.stowNoted = true; S.msg(S.t("CRANE-L stowed, wind above 5 m/s"), "warn");
     }
   };
   function interfere() {

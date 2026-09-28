@@ -2,16 +2,7 @@
    movable windows. It hosts the same window kinds as tmux mode through S.desk. */
 (function () {
   var S = window.SELK;
-  function $(id) {
-    return document.getElementById(id);
-  }
-  function el(tag, cls, text) {
-    var n = document.createElement(tag); if (cls) {
-      n.className = cls;
-    } if (text != null) {
-      n.textContent = text;
-    } return n;
-  }
+  var el = S.el, $ = S.$;
   var ICONS = {
     disk: '<svg viewBox="0 0 16 12" shape-rendering="crispEdges"><rect x="1" y="0" width="14" height="12" fill="#1E2427"/><rect x="2" y="1" width="12" height="10" fill="#D6C396"/><rect x="4" y="1" width="7" height="4" fill="#8F9A9A"/><rect x="9" y="2" width="1" height="2" fill="#1E2427"/><rect x="4" y="7" width="8" height="4" fill="#F2E6C4"/></svg>',
     drawer: '<svg viewBox="0 0 16 12" shape-rendering="crispEdges"><rect x="0" y="2" width="16" height="10" fill="#1E2427"/><rect x="1" y="3" width="14" height="8" fill="#D6C396"/><rect x="1" y="6" width="14" height="1" fill="#1E2427"/><rect x="6" y="4" width="4" height="1" fill="#C7843A"/><rect x="6" y="8" width="4" height="1" fill="#C7843A"/></svg>',
@@ -130,7 +121,7 @@
   var root, back;
   function icon(label, kind, open, opts) {
     var b = el("div", "wb-icon" + (opts && opts.dim ? " dim" : "") + (kind === "locked" ? " locked" : ""));
-    b.tabIndex = 0;
+    b.tabIndex = 0; b.setAttribute("role", "button");
     var img = el("span", "wb-img"); img.innerHTML = ICONS[kind];
     b.appendChild(img);
     b.appendChild(el("span", "wb-label", label));
@@ -138,7 +129,7 @@
       b.dataset.sec = opts.sec;
     }
     if (kind === "locked") {
-      b.title = "Locked. Open it to enter the password."; b.appendChild(el("span", "wb-lock", "LOCKED"));
+      b.title = S.t("Locked. Open it to enter the password."); b.appendChild(el("span", "wb-lock", S.t("LOCKED")));
     }
     b.addEventListener("click", function (e) {
       e.stopPropagation();
@@ -155,8 +146,14 @@
       e.stopPropagation(); open();
     });
     b.addEventListener("keydown", function (e) {
-      if (e.key === "Enter") {
-        open();
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault(); open();
+      } else if (["ArrowLeft", "ArrowUp", "ArrowRight", "ArrowDown", "Home", "End"].indexOf(e.key) !== -1) {
+        var icons = [].slice.call(b.parentNode.querySelectorAll(".wb-icon")), i = icons.indexOf(b), next = i;
+        if (e.key === "Home") { next = 0; }
+        else if (e.key === "End") { next = icons.length - 1; }
+        else { next += (e.key === "ArrowLeft" || e.key === "ArrowUp") ? -1 : 1; }
+        if (icons[next]) { e.preventDefault(); icons[next].focus(); }
       }
     });
     if (opts && opts.id) {
@@ -166,8 +163,8 @@
         S.dragStart(e, opts.id);
       });
       var badge = el("span", "wb-badge");
-      badge.title = "Drag onto a report blank, or right-click for options";
-      badge.setAttribute("role", "img"); badge.setAttribute("aria-label", "Can fill a report blank");
+      badge.title = S.t("Drag onto a report blank, or right-click for options");
+      badge.setAttribute("role", "img"); badge.setAttribute("aria-label", S.t("Can fill a report blank"));
       badge.appendChild(el("span", "wb-dots"));
       img.appendChild(badge);
     }
@@ -225,7 +222,7 @@
       return w.id === o.id;
     })[0];
     if (found) {
-      front(found); return found;
+      front(found, true); return found;
     }
     var r = place(o), w = {
       id: o.id,
@@ -235,9 +232,9 @@
     var box = el("div", "wb-win");
     box.style.left = r.x + "px"; box.style.top = r.y + "px"; box.style.width = r.w + "px"; box.style.height = r.h + "px";
     var bar = el("div", "wb-tbar");
-    var close = el("button", "wb-gad wb-close", ""); close.type = "button"; close.title = "Close"; close.setAttribute("aria-label", "Close window");
-    var depth = el("button", "wb-gad wb-depth", ""); depth.type = "button"; depth.title = "Depth"; depth.setAttribute("aria-label", "Send window back or forward");
-    bar.appendChild(close); bar.appendChild(el("span", "wb-wtitle", o.title)); bar.appendChild(depth);
+    var close = el("button", "wb-gad wb-close", ""); close.type = "button"; close.title = S.t("Close"); close.setAttribute("aria-label", S.t("Close window"));
+    var depth = el("button", "wb-gad wb-depth", ""); depth.type = "button"; depth.title = S.t("Depth"); depth.setAttribute("aria-label", S.t("Send window back or forward"));
+    bar.appendChild(close); bar.appendChild(el("span", "wb-wtitle", S.t(o.title))); bar.appendChild(depth);
     var body = el("div", "wb-wbody");
     var size = el("div", "wb-size");
     box.appendChild(bar); box.appendChild(body); box.appendChild(size);
@@ -263,6 +260,9 @@
     box.addEventListener("pointerdown", function () {
       front(w);
     });
+    box.addEventListener("focusin", function () {
+      if (D.active !== w) { front(w); }
+    });
     drag(bar, function (dx, dy, s) {
       box.style.left = clamp(s.l + dx, 0, back.clientWidth - box.offsetWidth) + "px";
       box.style.top = clamp(s.t + dy, 0, back.clientHeight - box.offsetHeight) + "px";
@@ -274,7 +274,7 @@
     back.appendChild(box);
     D.wins.push(w);
     fit(w);
-    front(w);
+    front(w, true);
     S.snd.hdd(2);
     return w;
   }
@@ -345,13 +345,19 @@
     }
   });
   D.order = [];
-  function front(w) {
+  function focusWindow(w) {
+    var target = w && w.el.querySelector(".wb-icon, button:not(.wb-gad), [tabindex='0']");
+    if (!target && w) { target = w.el.querySelector(".wb-close"); }
+    if (target) { target.focus({ preventScroll: true }); }
+  }
+  function front(w, moveFocus) {
     D.z++; w.el.style.zIndex = D.z; D.active = w; mark(); S.tmux.focusCur();
     D.order = [
       w
     ].concat(D.order.filter(function (x) {
       return x !== w;
     }));
+    if (moveFocus) { focusWindow(w); }
   }
   function mark() {
     D.wins.forEach(function (w) {
@@ -359,6 +365,7 @@
     });
   }
   function closeWin(w) {
+    var restoreFocus = w.el.contains(document.activeElement);
     if (w.kind) {
       var k = S.kinds[w.kind]; if (k.parentNode === w.body) {
         $("kind-park").appendChild(k);
@@ -372,6 +379,10 @@
       return x !== w;
     });
     D.active = D.wins[D.wins.length - 1] || null; mark();
+    if (restoreFocus) {
+      if (D.active) { focusWindow(D.active); }
+      else { var title = document.querySelector(".wb-title"); if (title) { title.focus({ preventScroll: true }); } }
+    }
   }
   function openDisk() {
     win( {
@@ -404,7 +415,7 @@
     var n = D.wins.length;
     win( {
       id: "drawer-" + sec,
-      title: "SELK:" + sec.toUpperCase(),
+      title: "SELK:" + S.sectionById(sec).name.toUpperCase(),
       x: 0.06 + 0.02 * (n % 5),
       y: 0.12 + 0.03 * (n % 5),
       w: 0.34,
@@ -456,7 +467,7 @@
   };
   D.front = function (w) {
     if (w) {
-      front(w);
+      front(w, true);
     }
   };
   D.closeAll = function () {
@@ -542,32 +553,44 @@
     root = $("desk");
     root.textContent = "";
     var bar = el("div", "wb-bar");
-    var ttl = el("button", "wb-title", "SELK WORKBENCH 1.0"); ttl.type = "button"; ttl.title = "About Selk OS";
+    var ttl = el("button", "wb-title", "SELK WORKBENCH 1.0"); ttl.type = "button"; ttl.title = S.t("About Selk OS");
     ttl.addEventListener("click", function () {
       S.about();
     });
     bar.appendChild(ttl);
-    bar.appendChild(el("span", "wb-info", "4 096 000 bytes free"));
+    bar.appendChild(el("span", "wb-info", S.t("4 096 000 bytes free")));
     var msg = el("span", "wb-msg"); msg.id = "wb-msg"; msg.setAttribute("role", "status"); bar.appendChild(msg);
     var right = el("span", "wb-right");
-    var mail = el("button", "wb-btn", "MAIL"); mail.id = "wb-mail"; mail.type = "button";
+    var mail = el("button", "wb-btn", S.t("MAIL")); mail.id = "wb-mail"; mail.type = "button";
     mail.addEventListener("click", function () {
       D.goto("MAIL");
     });
-    var report = el("button", "wb-btn", "REPORT"); report.id = "wb-report"; report.type = "button";
+    var report = el("button", "wb-btn", S.t("REPORT")); report.id = "wb-report"; report.type = "button";
     report.addEventListener("click", function () {
       D.goto("REPORT"); S.emit("report-open");
     });
-    var mode = el("button", "wb-btn", "TMUX"); mode.type = "button"; mode.title = "Switch to tmux mode";
+    var mode = el("button", "wb-btn", "TMUX"); mode.type = "button"; mode.title = S.t("Switch to tmux mode");
     mode.addEventListener("click", function () {
       S.setMode("tmux");
     });
-    var snd = el("button", "wb-btn", S.state.sound ? "SOUND ON" : "SOUND OFF"); snd.id = "wb-sound"; snd.type = "button";
+    var snd = el("button", "wb-btn", S.state.sound ? S.t("SOUND ON") : S.t("SOUND OFF")); snd.id = "wb-sound"; snd.type = "button";
     snd.addEventListener("click", function () {
       S.run("sound " + (S.state.sound ? "off" : "on"), false);
     });
     /* HINT lamp, as in the tmux status bar: shown when Hint light is on, lit when the open entry answers a blank */
-    var hintLamp = el("span", "st-hint", "HINT"); hintLamp.id = "wb-hint"; hintLamp.hidden = true; right.appendChild(hintLamp);
+    var hintLamp = el("span", "st-hint", S.t("HINT")); hintLamp.id = "wb-hint"; hintLamp.hidden = true; right.appendChild(hintLamp);
+    var uplink = el("button", "st-btn st-uplink", S.t("UPLINK") + " " + S.t(S.state.pending.length ? "RX" : (S.transmitting ? "TX" : "IDLE")));
+    uplink.id = "wb-uplink"; uplink.type = "button"; uplink.dataset.status = "uplink";
+    uplink.title = S.t("Show uplink status"); uplink.setAttribute("aria-label", uplink.title);
+    uplink.setAttribute("aria-expanded", "false"); uplink.setAttribute("aria-controls", "status-info-pop");
+    right.appendChild(uplink);
+    var saveLamp = el("button", "st-save", S.t("SAVED")); saveLamp.id = "wb-save"; saveLamp.type = "button"; saveLamp.hidden = true;
+    saveLamp.dataset.status = "storage";
+    saveLamp.title = S.t("Show storage status");
+    saveLamp.setAttribute("aria-label", S.t("Show storage status"));
+    saveLamp.setAttribute("aria-expanded", "false");
+    saveLamp.setAttribute("aria-controls", "status-info-pop");
+    right.appendChild(saveLamp);
     right.appendChild(mail); right.appendChild(report); right.appendChild(snd); right.appendChild(mode);
     right.appendChild(el("span", "", "")); var clock = el("span", "wb-clock"); clock.id = "wb-clock"; right.appendChild(clock);
     bar.appendChild(right);
@@ -581,10 +604,10 @@
     var tools = el("div", "wb-tools");
     GROUPS.forEach(function (gr) {
       var box = el("div", "wb-group");
-      box.appendChild(el("div", "wb-gtitle", gr[0]));
+      box.appendChild(el("div", "wb-gtitle", S.t(gr[0])));
       var grid = el("div", "wb-ggrid");
       gr[1].forEach(function (t) {
-        grid.appendChild(icon(t[0], t[1], t[2]));
+        grid.appendChild(icon(S.t(t[0]), t[1], t[2]));
       });
       box.appendChild(grid); tools.appendChild(box);
     });
@@ -600,9 +623,6 @@
     build();
     D.wins = []; D.active = null;
     S.tmux.attached = true;
-    if (S.tmux.mobile()) {
-      scr.classList.add("desk-mobile");
-    }
     openDisk();
     S.status();
   };
@@ -611,7 +631,7 @@
     var r = $("desk"); if (r) {
       r.hidden = true; r.textContent = "";
     }
-    $("screen").classList.remove("desktop", "desk-mobile");
+    $("screen").classList.remove("desktop");
   };
   S.isDesktop = function () {
     return S.ctx().desktop;
@@ -629,6 +649,9 @@
   S.setMode = function (m) {
     if (m !== "tmux" && m !== "desktop") {
       return;
+    }
+    if (m === "desktop" && S.tmux.mobile()) {
+      S.msg("Desktop mode needs a wider screen.", "err"); return;
     }
     S.state.settings.mode = m; S.save();
     S.syncContext();

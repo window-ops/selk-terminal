@@ -1,4 +1,4 @@
-/* Debug log. When Setup > Debug log is on, everything the game does is printed to
+/* Debug log. When Setup > Debug > Debug log is on, everything the game does is printed to
    the browser's JavaScript console: commands, events, window changes, dialogs,
    messages, shell output, mail, transmissions, saves and settings. It wraps the
    game's main functions from the outside, so no other file needs to know about it.
@@ -10,7 +10,7 @@
     message: "#D6C396", shell: "#8F9A9A", mail: "#C7843A", uplink: "#C7843A", save: "#8F9A9A",
     settings: "#5E8CC7", error: "#C0604A", mode: "#6FBF5A" };
 
-  function on() { return !!(S.state && S.state.settings && S.state.settings.debug); }
+  function on() { return !!(S.state && S.state.settings && S.state.settings.debugLog); }
   function log(kind) {
     if (!on()) { return; }
     var args = [].slice.call(arguments, 1);
@@ -69,9 +69,9 @@
       var ok = save.apply(this, arguments), now = Date.now();
       if (on() && now - lastSave > 2000) {
         lastSave = now;
-        var inLocal = null;
-        try { inLocal = localStorage.getItem(S.KEY); } catch (e) {}
-        log("save", ok && inLocal ? "game state saved to localStorage, key " + S.KEY + " (" + inLocal.length + " characters)" : "game state NOT saved (storage unavailable or full)");
+        var saved = null, where = S.saveLocal() ? "localStorage" : "sessionStorage";
+        try { saved = S.store().getItem(S.KEY); } catch (e) {}
+        log("save", ok && saved ? "game state saved to " + where + ", key " + S.KEY + " (" + saved.length + " characters)" : "game state NOT saved (storage unavailable or full)");
       }
       return ok;
     };
@@ -91,13 +91,14 @@
   }, 500);
 })();
 
-/* DEBUG panel. Shown while Debug log is on: a small movable overlay with the
+/* DEBUG panel. Shown while Setup > Debug > Debug panel is on: a small movable overlay with the
    current situation and buttons that trigger game actions on purpose, so a
-   developer can reach any state quickly. Every action is also logged. */
+   developer can reach any state quickly. Actions are also logged while the
+   debug log is on. */
 (function () {
   "use strict";
   var S = window.SELK, panel = null, info = null, collapsed = false;
-  function el(tag, cls, text) { var n = document.createElement(tag); if (cls) { n.className = cls; } if (text != null) { n.textContent = text; } return n; }
+  var el = S.el;
   function on() { return !!(S.state && S.state.settings && S.state.settings.debug); }
   function refresh() {
     if (S.ex && S.ex.render) { S.ex.render(); }
@@ -150,17 +151,17 @@
     ].join("\n");
   }
   function build() {
-    panel = el("div", "dbg"); panel.setAttribute("role", "region"); panel.setAttribute("aria-label", "Debug tools");
+    panel = el("div", "dbg"); panel.setAttribute("role", "region"); panel.setAttribute("aria-label", S.t("Debug tools"));
     var head = el("div", "dbg-head");
     head.appendChild(el("span", "", "DEBUG"));
-    var fold = el("button", "dbg-fold", "HIDE"); fold.type = "button";
-    fold.addEventListener("click", function () { collapsed = !collapsed; panel.classList.toggle("folded", collapsed); fold.textContent = collapsed ? "SHOW" : "HIDE"; });
+    var fold = el("button", "dbg-fold", S.t("HIDE")); fold.type = "button";
+    fold.addEventListener("click", function () { collapsed = !collapsed; panel.classList.toggle("folded", collapsed); fold.textContent = collapsed ? S.t("SHOW") : S.t("HIDE"); });
     head.appendChild(fold);
     panel.appendChild(head);
     info = el("div", "dbg-info"); panel.appendChild(info);
     var grid = el("div", "dbg-grid");
     ACTIONS.forEach(function (a) {
-      var b = el("button", "btn", a[0]); b.type = "button"; b.title = a[1];
+      var b = el("button", "btn", S.t(a[0])); b.type = "button"; b.title = S.t(a[1]);
       b.addEventListener("click", function () {
         if (S.debug) { S.debug("command", "debug action: " + a[0]); }
         try { a[2](); } catch (e) { console.error(e); }

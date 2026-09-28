@@ -2,6 +2,7 @@
    inline markup for handbook notes, entry links and the player's name. */
 (function () {
   var S = window.SELK;
+  var el = S.el;
   var log = null, chain = Promise.resolve(), pending = 0, skipping = false;
   function factor() {
     var s = S.state.settings.speed;
@@ -50,16 +51,6 @@
     });
     return chain;
   }
-  function el(tag, cls, text) {
-    var n = document.createElement(tag);
-    if (cls) {
-      n.className = cls;
-    }
-    if (text != null) {
-      n.textContent = text;
-    }
-    return n;
-  }
   function cmdButton(label, cmd, cls) {
     var b = el("button", cls || "lnk", label);
     b.type = "button";
@@ -75,19 +66,23 @@
         parent.appendChild(document.createTextNode(text.slice(i, m.index)));
       }
       if (m[1]) {
-        parent.appendChild(cmdButton(m[1], "note " + m[2], "term"));
+        var term = cmdButton(m[1], "note " + m[2], "term"), note = S.i18n.note(m[2].toLowerCase());
+        if (note) {
+          term.title = S.t("Handbook note: {name}", { name: note[0] });
+        }
+        parent.appendChild(term);
       } else if (m[3]) {
         var label = m[4] || m[3].split("/")[1];
         var lk = cmdButton(label, "open " + m[3]);
         if (S.isUnlocked && !S.isUnlocked(m[3].split("/")[0])) {
-          lk.classList.add("locked"); lk.title = "In a locked section";
+          lk.classList.add("locked"); lk.title = S.t("In a locked section");
         }
         else {
           lk.dataset.entry = m[3];
         }
         parent.appendChild(lk);
       } else {
-        parent.appendChild(document.createTextNode(S.state.name || "SUPERVISOR"));
+        parent.appendChild(document.createTextNode(S.state.name || S.t("SUPERVISOR")));
       }
       i = MARK.lastIndex;
     }

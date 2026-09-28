@@ -195,7 +195,7 @@
     canvas: function () {
       var c = document.createElement("canvas");
       c.width = W; c.height = H; c.className = "live";
-      c.setAttribute("role", "img"); c.setAttribute("aria-label", "Live camera view of MAST-01");
+      c.setAttribute("role", "img"); c.setAttribute("aria-label", S.t("Live camera view of MAST-01"));
       canvases.push(c);
       return c;
     },

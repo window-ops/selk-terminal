@@ -10,10 +10,13 @@
   S.ctx = function () {
     var s = (S.state && S.state.settings) || {};
     var sr = !!s.sr, motion = s.motion || "system", sys = !!S.systemReduced;
+    /* Desktop mode exists on wide screens only. On mobile the game always runs
+       tmux; the saved choice comes back when the screen is wide again. */
+    var mobile = !!(narrow && narrow.matches), desktop = s.mode === "desktop" && !mobile;
     return {
-      mode: s.mode === "desktop" ? "desktop" : "tmux",
-      desktop: s.mode === "desktop",
-      mobile: !!(narrow && narrow.matches),
+      mode: desktop ? "desktop" : "tmux",
+      desktop: desktop,
+      mobile: mobile,
       sr: sr,
       motion: motion,
       systemReduced: sys,
@@ -24,7 +27,7 @@
   };
 
   S.syncContext = function () {
-    var c = S.ctx(), h = document.documentElement, b = document.body;
+    var c = S.ctx(), h = document.documentElement, b = document.body, s = (S.state && S.state.settings) || {};
     h.dataset.mode = c.mode;
     h.dataset.sr = c.sr ? "on" : "off";
     h.dataset.motion = c.reduced ? "reduced" : "full";
@@ -35,6 +38,8 @@
       b.classList.toggle("motion-force", !c.reduced && c.systemReduced);
       b.classList.toggle("motion-reduce", c.reduced && !c.systemReduced);
       b.classList.toggle("sr-mode", c.sr);
+      /* The rolling scanline moves, so it runs only when motion is not reduced */
+      b.classList.toggle("scan-roll", !!s.scanRoll && !c.reduced);
     }
     return c;
   };
@@ -42,9 +47,13 @@
   /* Which Setup rows make sense in which situation, in one table */
   S.SETTING_RULES = {
     layout: function (c) { return !c.desktop; },
+    tooltips: function (c) { return !c.mobile; },
+    mode: function (c) { return !c.mobile; },
     motion: function (c) { return !c.sr; },
     speed: function (c) { return !c.sr; },
     scan: function (c) { return !c.sr; },
+    scanRoll: function (c) { return !c.reduced; },
+    redirectNotes: function () { return !S.state || S.state.settings.shellOut !== "shell"; },
     flicker: function (c) { return !c.sr; },
     interfere: function (c) { return !c.sr; },
     poweron: function (c) { return !c.sr; }

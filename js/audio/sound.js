@@ -58,6 +58,8 @@
     }
     Object.keys(BUS).forEach(function (k) {
       var busVol = on ? (set()[BUS[k]] != null ? set()[BUS[k]] : 100) / 100 : 0;
+      /* Wind is background: well under the machine, the interface and the structure */
+      if (k === "wind") { busVol *= 0.35; }
       try {
         bus[k].gain.cancelScheduledValues(0);
         bus[k].gain.setValueAtTime(busVol, t);
@@ -253,6 +255,67 @@
     init: init,
     apply: apply,
     ambient: ambient,
+    /* Ending swell, after the THX Deep Note: voices wander between 200 and 400 Hz,
+       then glide to a chord spread over several octaves while the whole thing
+       swells and opens up, holds, and fades. The chord follows the ending:
+       "hope" lands on D major, "hollow" on open fifths with no third, "dark"
+       on a cluster of semitones and tritones that never resolves. Each voice is
+       slightly detuned so the chord shimmers. Returns its length in seconds. */
+    swell: function (mood) {
+      if (!ctx || !on) {
+        return 0;
+      }
+      var D = 36.71, t0 = ctx.currentTime + 0.05;
+      var CHORDS = {
+        hope: [1, 2, 3, 4, 6, 8, 12, 16, 20, 24, 32],
+        hollow: [1, 2, 3, 4, 6, 8, 12, 16, 24, 32],
+        dark: [2, 2.119, 2.828, 4, 4.238, 5.657, 8, 8.476, 11.31, 15.1, 16]
+      };
+      var ratios = CHORDS[mood] || CHORDS.hollow, N = 24;
+      var out = ctx.createGain(), lp = ctx.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.setValueAtTime(500, t0);
+      lp.frequency.exponentialRampToValueAtTime(mood === "dark" ? 2400 : 5200, t0 + 11);
+      out.gain.setValueAtTime(0.0001, t0);
+      out.gain.exponentialRampToValueAtTime(0.06, t0 + 3);
+      out.gain.exponentialRampToValueAtTime(0.32, t0 + 11);
+      out.gain.setValueAtTime(0.32, t0 + 15);
+      out.gain.exponentialRampToValueAtTime(0.0001, t0 + 22);
+      out.connect(lp); lp.connect(master);
+      for (var i = 0; i < N; i++) {
+        var o = ctx.createOscillator(), g = ctx.createGain();
+        o.type = "sawtooth";
+        var f = 200 + Math.random() * 200;
+        o.frequency.setValueAtTime(f, t0);
+        /* Wandering: small random steps for the first five seconds */
+        for (var k = 1; k <= 12; k++) {
+          f = Math.max(180, Math.min(420, f + (Math.random() - 0.5) * 60));
+          o.frequency.linearRampToValueAtTime(f, t0 + k * 0.42);
+        }
+        var target = D * ratios[i % ratios.length] * Math.pow(2, (Math.random() - 0.5) * 0.012);
+        o.frequency.exponentialRampToValueAtTime(target, t0 + 11);
+        g.gain.value = 1 / N;
+        o.connect(g); g.connect(out);
+        o.start(t0); o.stop(t0 + 22.5);
+      }
+      return 22;
+    },
+    /* Decision time: the machine and the wind sink over two seconds, so the
+       structure and the interface carry the moment; hush(false) restores the
+       levels from Setup */
+    hush: function (on) {
+      if (!ctx) {
+        return;
+      }
+      if (!on) {
+        apply(); return;
+      }
+      var t = ctx.currentTime;
+      try {
+        bus.machine.gain.setTargetAtTime(bus.machine.gain.value * 0.2, t, 0.7);
+        bus.wind.gain.setTargetAtTime(bus.wind.gain.value * 0.5, t, 0.7);
+      } catch (e) {}
+    },
     machine: machine,
     setOn: function (v) {
       on = !!v;
@@ -303,7 +366,9 @@
       tone(140 + Math.random() * 40, 0.03, "triangle", 0.03);
     },
     click: function () {
-      if (!on) return; burst(3200, 2.5, 0.16, 0.018); burst(900, 1.2, 0.08, 0.03, 0.035);
+      if (!on || (S.state && !S.state.sound)) return;
+      if (!ctx) init();
+      burst(3200, 2.5, 0.16, 0.018); burst(900, 1.2, 0.08, 0.03, 0.035);
     },
     hdd: function (n) {
       led();

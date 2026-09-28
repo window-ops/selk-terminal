@@ -2,12 +2,15 @@
    unreliable-text lists and every article from the same data files as the game. */
 (function () {
   var S = window.SELK;
-  function $(id) {
-    return document.getElementById(id);
+  var $ = S.$;
+  var tr = function (x) { return S.t ? S.t(x) : x; };
+  function esc(x) {
+    return String(x).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
   }
+  function start() {
   function el(tag, text, cls) {
     var n = document.createElement(tag); if (text != null) {
-      n.textContent = text;
+      n.textContent = tr(text);
     } if (cls) {
       n.className = cls;
     } return n;
@@ -16,6 +19,7 @@
     parent.appendChild(document.createTextNode(plain(t)));
   }
   function title(id) {
+    if (S.entryTitle) { return S.entryTitle(id); }
     var p = id.split("/"); return p[0].toUpperCase() + " / " + p[1];
   }
   function plain(t) {
@@ -43,14 +47,14 @@
     return t;
   }
   $("graph").innerHTML =
-  '<svg viewBox="0 0 680 600" role="img" aria-label="Sections, passwords, reports and endings" font-family="IBM Plex Mono, monospace" font-size="12">' +
+  '<svg viewBox="0 0 680 650" role="img" aria-label="' + esc(tr("Sections, passwords, reports and endings")) + '" font-family="IBM Plex Mono, monospace" font-size="12">' +
   '<defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#8F9A9A" stroke-width="1.5"/></marker></defs>' +
   '<g fill="none" stroke="#8F9A9A" stroke-width="1" marker-end="url(#a)">' +
   '<line x1="340" y1="56" x2="340" y2="78"/><line x1="300" y1="116" x2="130" y2="148"/><line x1="340" y1="116" x2="340" y2="148"/><line x1="380" y1="116" x2="550" y2="148"/>' +
   '<line x1="130" y1="190" x2="130" y2="228"/><line x1="340" y1="190" x2="340" y2="228"/><line x1="550" y1="190" x2="550" y2="228"/>' +
   '<path d="M130 270 L130 318 L248 318"/><path d="M550 270 L550 318 L432 318"/>' +
-  '<line x1="340" y1="344" x2="340" y2="386"/><line x1="130" y1="270" x2="130" y2="386"/><line x1="550" y1="270" x2="550" y2="386"/>' +
-  '<line x1="130" y1="428" x2="130" y2="498"/><line x1="550" y1="428" x2="550" y2="498"/><line x1="340" y1="428" x2="340" y2="468"/>' +
+  '<path d="M340 344 L340 450"/><path d="M130 428 L130 450 L250 450"/><path d="M550 428 L550 450 L430 450"/><line x1="550" y1="270" x2="550" y2="386"/>' +
+  '<line x1="130" y1="428" x2="130" y2="558"/><line x1="550" y1="428" x2="550" y2="558"/><line x1="340" y1="510" x2="340" y2="538"/>' +
   '</g>' +
   box(250, 20, 180, 36, "HOME, SITE", "open at login") +
   box(250, 80, 180, 36, "REPORTS 1, 2", "Site, Bio, Structure") +
@@ -62,14 +66,17 @@
   box(460, 230, 180, 40, "EXPORT", "118 from SV-1", "#7E6FA8", 1) +
   box(250, 298, 180, 46, "POWER", "AMBER + 2291", null, 1) +
   box(40, 388, 180, 40, "REPORT 3A", "Archive", "#5E8C7F") +
-  box(250, 388, 180, 40, "REPORT 4", "Power, Export") +
   box(460, 388, 180, 40, "REPORT 3B", "Units, Comms, Export", "#7E6FA8") +
-  box(250, 470, 180, 40, "FINAL DECISION", "after Report 4") +
-  box(40, 500, 180, 40, "RESEARCH", "needs 3A", "#5E8C7F") +
-  box(460, 500, 180, 40, "TRANSMIT", "needs 3B", "#7E6FA8") +
-  box(250, 540, 180, 40, "DISMANTLE, EXPORT, HABITATION", "always open") +
+  box(250, 470, 180, 40, "REPORT 4", "3A, 3B, Power, Export") +
+  box(250, 538, 180, 40, "FINAL DECISION", "after Report 4") +
+  box(40, 560, 180, 40, "RESEARCH", "needs 3A", "#5E8C7F") +
+  box(460, 560, 180, 40, "TRANSMIT", "needs 3B", "#7E6FA8") +
+  box(250, 610, 180, 40, "DISMANTLE, EXPORT, HABITATION", "always open") +
   '</svg>';
   function box(x, y, w, h, t, s, c, locked) {
+    /* A single section name comes from the section list, so it matches the game */
+    var sec = (S.SECTIONS || []).filter(function (z) { return z.id.toUpperCase() === t; })[0];
+    t = esc(sec ? sec.name.toUpperCase() : tr(t)); s = esc(tr(s));
     return '<g><rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="4" fill="#1E2427" stroke="' + (c || "#8F9A9A") + '"' + (locked ? ' stroke-dasharray="4 3"' : '') + '/>' +
     '<text x="' + (x + w / 2) + '" y="' + (y + 16) + '" text-anchor="middle" fill="#D6C396" font-size="' + (t.length > 20 ? 10 : 12) + '">' + t + '</text>' +
     '<text x="' + (x + w / 2) + '" y="' + (y + h - 8) + '" text-anchor="middle" fill="#8F9A9A" font-size="10.5">' + s + '</text></g>';
@@ -198,7 +205,7 @@
     if (sec !== cur) {
       cur = sec; $("articles").appendChild(el("h3", sec.toUpperCase()));
     }
-    var head = el("p", (e.path || title(e.id)) + ", written by: " + e.by);
+    var head = el("p", (e.path || title(e.id)) + ", " + tr("written by") + ": " + e.by);
     if (S.FALSE_LABELS.indexOf(e.id) !== -1) {
       head.appendChild(el("span", " [false label]", "tag"));
     }
@@ -213,11 +220,13 @@
     if (keys.length) {
       var ul = el("ul", null, "notes-list");
       keys.forEach(function (k) {
-        var n = S.NOTES[k]; if (n) {
+        var n = S.i18n.note(k); if (n) {
           ul.appendChild(el("li", n[0] + " (" + n[2] + "): " + n[1]));
         }
       });
       $("articles").appendChild(ul);
     }
   });
+  }
+  (S.i18n && S.i18n.ready ? S.i18n.ready : Promise.resolve()).then(start);
 })();

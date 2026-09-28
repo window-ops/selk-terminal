@@ -1,0 +1,163 @@
+#!/usr/bin/env node
+/* Translation catalog for Selk.
+
+   node tools/i18n-catalog.js template xx   prints a new js/lang/xx.js with every
+                                             string in English, ready to translate
+   node tools/i18n-catalog.js check xx      lists what js/lang/xx.js still lacks
+   node tools/i18n-catalog.js keys          prints the interface keys, one per line
+
+   Interface keys are found by scanning the scripts for string literals that
+   read as visible text; a few extra keys are harmless, since unused ones are
+   never looked up. Story text comes from the data files, and the notes pages
+   from the <main> element of each page. See TRANSLATING.md. */
+"use strict";
+const fs = require("fs"), path = require("path"), vm = require("vm");
+const ROOT = path.join(__dirname, "..");
+const read = (p) => fs.readFileSync(path.join(ROOT, p), "utf8");
+
+function loadGame() {
+  const ctx = { window: {} };
+  ctx.window.SELK = ctx.SELK = {};
+  ctx.window.window = ctx.window;
+  ctx.document = { documentElement: {}, head: { appendChild() {} }, querySelectorAll: () => [] };
+  ctx.navigator = { languages: ["en"] };
+  ctx.Intl = Intl; ctx.Promise = Promise;
+  vm.createContext(ctx);
+  ["js/data/notes.js", "js/data/entries.js", "js/data/story.js", "js/data/endings.js", "js/core/dom.js", "js/core/i18n.js", "js/lang/en.js"]
+    .forEach((f) => vm.runInContext(read(f), ctx, { filename: f }));
+  return ctx.SELK;
+}
+
+/* Interface keys */
+/* Scripts to scan, relative to js/: every folder except the data and the languages */
+const SKIP_FILES = new Set(["core/i18n.js", "core/dom.js", "core/context.js", "core/state.js", "audio/sound.js", "shell/render.js", "shell/scroll.js"]);
+function jsFiles(dir) {
+  return fs.readdirSync(path.join(ROOT, "js", dir), { withFileTypes: true }).flatMap((d) => {
+    const rel = dir ? dir + "/" + d.name : d.name;
+    if (d.isDirectory()) return rel === "data" || rel === "lang" ? [] : jsFiles(rel);
+    return d.name.endsWith(".js") ? [rel] : [];
+  });
+}
+function uiKeys() {
+  const keys = new Set();
+  const files = jsFiles("").filter((f) => !SKIP_FILES.has(f));
+  const lit = /"((?:[^"\\\n]|\\.)*)"/g;
+  const add = (t) => {
+    t = t.replace(/\\"/g, '"').replace(/\\n/g, "\n");
+    if (!/[A-Za-z]{2}/.test(t)) return;
+    if (/^[a-z0-9_:\-.\/#\[\]=*>+~ ,()'^!]*$/.test(t) && !/ [a-z]+ [a-z]+/.test(t)) return; // ids, classes, selectors, event names
+    if (/^[a-z]+[A-Z]\w*$/.test(t) || /^_\w+$/.test(t)) return;                              // identifiers
+    if (/^(Key|Arrow|Digit)\w+$|^(Escape|Enter|Tab|Backspace|Home|End|Backquote|DOMContentLoaded)$/.test(t)) return;
+    if (/^#[0-9A-Fa-f]{3,8}$|^rgba?\(|^url\(|^%c|;font-weight/.test(t)) return;
+    if (/^(localStorage|sessionStorage|crispEdges|button, input.*)$/.test(t)) return;
+    if (/^\(prefers-/.test(t)) return;
+    if (t !== t.trim() || /' \+|^&\w+;$|\}: $|monospace$|^MSG\d+$/.test(t)) return;       // fragments of built strings
+    if (/^(ContextMenu|Control|Meta|Shift|Alt|DT)$/.test(t)) return;                     // key and tag names
+    keys.add(t);
+  };
+  /* Anything passed straight to S.t, S.tc or S.tn is a key, whatever it looks like */
+  const direct = /S\.t[cn]?\(\s*"((?:[^"\\\n]|\\.)*)"/g;
+  files.concat(["core/i18n.js"]).forEach((f) => {
+    const src = read("js/" + f);
+    let m;
+    while ((m = direct.exec(src))) keys.add(m[1].replace(/\\"/g, '"'));
+  });
+  /* Values that pass through S.t inside helpers (watch.js meter, field and table
+     cells) but look like identifiers to the filter above */
+  ["active", "camera, mast", "idle", "none", "parked, zone 14 hold", "receiving", "removed",
+    "rib 7 repair", "sending", "working", "zone 14", "{v} %"].forEach((k) => keys.add(k));
+  const notice = read("js/core/i18n.js").match(/NOTICE: "([^"]+)"/);
+  if (notice) keys.add(notice[1]);
+  files.forEach((f) => {
+    read("js/" + f).split("\n").forEach((line) => {
+      const s = line.trim();
+      if (s.startsWith("/*") || s.startsWith("*") || s.startsWith("//")) return;
+      let m; lit.lastIndex = 0;
+      while ((m = lit.exec(line))) add(m[1]);
+    });
+  });
+  /* Static page text marked with data-i18n */
+  const html = read("index.html");
+  (html.match(/<[^>]*data-i18n[^>]*>[^<]*(<span[^>]*>[^<]*<\/span>)?[^<]*</g) || []).forEach((tag) => {
+    const text = tag.replace(/<span[^>]*>[^<]*<\/span>/, "").replace(/^<[^>]*>/, "").replace(/<$/, "").trim();
+    if (text) add(text);
+  });
+  (html.match(/(title|aria-label)="([^"]+)"[^>]*data-i18n-attr/g) || []).forEach((a) => add(a.replace(/^[^"]*"([^"]+)".*$/, "$1")));
+  return [...keys].sort((a, b) => a.localeCompare(b));
+}
+
+/* Story fields worth translating, in the shape a pack's story block takes */
+function storySkeleton(S) {
+  const story = { sections: {}, entries: {}, messages: {}, notes: {}, reports: {}, locks: {}, endings: {} };
+  S.SECTIONS.forEach((s) => { story.sections[s.id] = s.name; });
+  S.ENTRIES.forEach((e) => {
+    if (e.sys) return;                                       // system files stay as they are
+    const o = { by: e.by, body: e.body };
+    if (e.cap) o.cap = e.cap;
+    story.entries[e.id] = o;
+  });
+  Object.keys(S.MESSAGES).forEach((k) => { story.messages[k] = { body: S.MESSAGES[k].body }; });
+  Object.keys(S.NOTES).forEach((k) => { story.notes[k] = [S.NOTES[k][0], S.NOTES[k][1]]; });
+  Object.keys(S.REPORTS).forEach((k) => {
+    const r = S.REPORTS[k];
+    story.reports[k] = { brief: r.brief, title: r.title, lines: r.lines.map((ln) => [ln[0], null, ln[2]]), hints: r.hints };
+  });
+  Object.keys(S.LOCKS).forEach((k) => { story.locks[k] = { hint: S.LOCKS[k].hint, nudge: S.LOCKS[k].nudge }; });
+  S.ENDINGS.forEach((e) => {
+    const o = { label: e.label };
+    ["log", "reply", "title", "epilogue"].forEach((f) => { if (e[f] != null) o[f] = e[f]; });
+    ["yes", "no"].forEach((f) => { if (e[f]) o[f] = { log: e[f].log, reply: e[f].reply, title: e[f].title, epilogue: e[f].epilogue }; });
+    story.endings[e.id] = o;
+  });
+  return story;
+}
+
+function pages() {
+  const out = {};
+  fs.readdirSync(path.join(ROOT, "notes")).filter((f) => f.endsWith(".html")).sort().forEach((f) => {
+    const h = read("notes/" + f), id = f.slice(0, -5);
+    const m = h.match(/<main data-i18n-page="[^"]+">([\s\S]*?)<\/main>/);
+    const t = h.match(/<title>([^<]*)<\/title>/);
+    if (m) out[id] = m[1].trim();
+    if (t) out[id + ":title"] = t[1];
+  });
+  return out;
+}
+
+function flat(o, pre, out) {
+  out = out || {};
+  if (typeof o === "string") out[pre] = o;
+  else if (Array.isArray(o)) o.forEach((v, i) => flat(v, pre + "[" + i + "]", out));
+  else if (o && typeof o === "object") Object.keys(o).forEach((k) => flat(o[k], pre ? pre + "." + k : k, out));
+  return out;
+}
+
+const [cmd, code] = process.argv.slice(2);
+const S = loadGame();
+const en = S.i18n; // English pack registered through i18n.js
+const enPack = (() => { let p; const r = S.i18n.register; S.i18n.register = (c, pk) => { p = pk; }; vm.runInNewContext(read("js/lang/en.js"), { SELK: S }); S.i18n.register = r; return p; })();
+
+if (cmd === "keys") {
+  process.stdout.write(uiKeys().join("\n") + "\n");
+} else if (cmd === "template" && code) {
+  const ui = {};
+  uiKeys().forEach((k) => { ui[k] = enPack.ui[k] != null ? enPack.ui[k] : k; });
+  const pack = { meta: { name: code, dir: "ltr" }, ui, commands: enPack.commands, args: enPack.args, story: storySkeleton(S), pages: pages() };
+  process.stdout.write("/* " + code + ". Generated by tools/i18n-catalog.js; translate every value. See TRANSLATING.md. */\n" +
+    "SELK.i18n.register(" + JSON.stringify(code) + ", " + JSON.stringify(pack, null, 2) + ");\n");
+} else if (cmd === "check" && code) {
+  let pack;
+  S.i18n.register = (c, pk) => { if (c === code) pack = pk; };
+  vm.runInNewContext(read("js/lang/" + code + ".js"), { SELK: S });
+  const missing = [];
+  uiKeys().forEach((k) => { if (!pack.ui || pack.ui[k] == null) missing.push("ui: " + k); });
+  const want = flat(storySkeleton(S), ""), have = flat(pack.story || {}, "");
+  Object.keys(want).forEach((k) => { if (have[k] == null && want[k] !== "") missing.push("story: " + k); });
+  Object.keys(pages()).forEach((k) => { if (!pack.pages || !pack.pages[k]) missing.push("page: " + k); });
+  Object.keys(enPack.commands).forEach((k) => { if (!pack.commands || !pack.commands[k]) missing.push("command: " + k); });
+  Object.keys(enPack.args).forEach((k) => { if (!pack.args || !pack.args[k]) missing.push("arg: " + k); });
+  process.stdout.write(missing.length ? missing.join("\n") + "\n" + missing.length + " missing\n" : "complete\n");
+  process.exitCode = missing.length ? 1 : 0;
+} else {
+  process.stdout.write("usage: node tools/i18n-catalog.js template xx | check xx | keys\n");
+}

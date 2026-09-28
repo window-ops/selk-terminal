@@ -92,12 +92,6 @@ SELK.REPORTS = {
       "The rule that stops units near life is in Bio.",
       "The first flagged zone has its own entry in Bio."
     ],
-    nudges: [
-      "Look for a local map or survey.",
-      "An early research record may explain the site's purpose.",
-      "Check how the site protects nearby life.",
-      "A repair timeline may show where work first stopped."
-    ],
     reply: "MSG002"
   },
   R2: {
@@ -141,12 +135,6 @@ SELK.REPORTS = {
       "The crane entry names the zone its path crosses.",
       "Compare the Structure index with the mast entry."
     ],
-    nudges: [
-      "Structural readings may point to the strain.",
-      "Look for dated repair records.",
-      "Site hazards may explain the obstruction.",
-      "Compare records that describe the same system."
-    ],
     reply: "MSG003"
   },
   R3A: {
@@ -187,12 +175,6 @@ SELK.REPORTS = {
       "The hidden lines of a zone entry survive in an older revision.",
       "Hydrogen readings over the years sit in the Archive.",
       "The site has one crew member. Compare staff signatures with the dates of the long sleep."
-    ],
-    nudges: [
-      "Older revisions may preserve the change.",
-      "Look beneath the visible surface of the site records.",
-      "Atmosphere readings may tell a longer story.",
-      "Compare who signed records with when they were made."
     ],
     reply: "MSG004"
   },
@@ -236,12 +218,6 @@ SELK.REPORTS = {
       "Comms keeps a list of approved relays.",
       "Export lists each shipment by number."
     ],
-    nudges: [
-      "Check how the relevant tool changed over time.",
-      "Incoming package records may matter.",
-      "Look at the route used to send updates.",
-      "Shipment paperwork may describe what left the site."
-    ],
     reply: "MSG005"
   },
   R4: {
@@ -284,12 +260,6 @@ SELK.REPORTS = {
       "Power names the warming program.",
       "One Power entry claims more than its own data supports."
     ],
-    nudges: [
-      "Ownership records may show who operates the site.",
-      "Follow where the reactor's output is allocated.",
-      "A named program appears in older records.",
-      "Look for a safety claim that is hard to verify."
-    ],
     reply: "MSG006"
   }
 };
@@ -315,24 +285,29 @@ AUDIT DESK 4`
   MSG003: {
     opens: [
       "R3A",
-      "R3B",
-      "R4"
+      "R3B"
     ],
     body:
     `REPORT 2 accepted.
-The office requests three further pages: 3A on the gate history, 3B on the update history, 4 on who gained from the site. Four sections are locked. Their passwords changed while you slept. Each password appears in an entry you can already open, as a name, a word or a number.
+The office requests two further pages: 3A on the gate history and 3B on the update history. Four sections are locked. Their passwords changed while you slept. Each password appears in an entry you can already open, as a name, a word or a number.
 AUDIT DESK 4`
   },
   MSG004: {
+    opens: [
+      "R4"
+    ],
     body:
     `REPORT 3A accepted.
-If cells live under FOOTING-B, zone 14 is partly real. Gate records forwarded to CESEA biology.
+If cells live under FOOTING-B, zone 14 is partly real. Gate records forwarded to CESEA biology. The final page opens after both follow-up reports are accepted.
 AUDIT DESK 4`
   },
   MSG005: {
+    opens: [
+      "R4"
+    ],
     body:
     `REPORT 3B accepted.
-Release key 7 belongs to our own signing office. It has been flagged for review.
+Release key 7 belongs to our own signing office. It has been flagged for review. The final page opens after both follow-up reports are accepted.
 AUDIT DESK 4`
   },
   MSG006: {

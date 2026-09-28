@@ -10,7 +10,6 @@
 .paper-title {
   font-family: var(--font-crt);
   font-size: 1.55em;
-  line-height: 1.1;
 }
 .paper-from {
   color: var(--ink-soft);
@@ -78,12 +77,6 @@
   margin-top: 0.4em;
   font-size: 0.85em;
 }
-.paper-nudge {
-  margin-top: 0.35em;
-  color: var(--ink-soft);
-  font-size: 0.82em;
-  font-style: italic;
-}
 .paper-mobile-flow {
   display: grid;
   gap: 0.45em;
@@ -95,7 +88,7 @@
   margin: 0;
 }
 .paper-mobile-flow .paper-btn.paper-files {
-  min-height: 2.75rem;
+  min-height: var(--tap-mobile);
   background: var(--ink);
   color: var(--paper);
 }
@@ -120,7 +113,7 @@
   }
   .blank {
     min-width: 7ch;
-    min-height: 2.75rem;
+    min-height: var(--tap-mobile);
     margin: 0.15em 0.1em;
     padding: 0.2em 0.35em;
     vertical-align: middle;
@@ -135,7 +128,7 @@
     margin-left: 0;
   }
   .paper-btn {
-    min-height: 2.75rem;
+    min-height: var(--tap-mobile);
   }
 }
 .paper-foot {

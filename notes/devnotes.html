@@ -5,140 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Selk, developer notes</title>
     <link rel="stylesheet" href="../css/tokens.css">
-    <link rel="stylesheet" href="notes.css?v=2">
+    <link rel="stylesheet" href="notes.css?v=3">
+    <link rel="stylesheet" href="../css/cursors.css">
     <script src="wrap-pretty.js" defer></script>
-    <style>
-      body {
-        margin: 0;
-        background: var(--wall);
-        color: var(--haze);
-        font-family: var(--font-mono);
-        line-height: 1.6;
-      }
-      main {
-        max-width: 84ch;
-        margin: 0 auto;
-        padding: 3rem 1.25rem 5rem;
-      }
-      h1, h2, h3 {
-        font-family: var(--font-crt);
-        font-weight: 400;
-        line-height: 1.1;
-      }
-      h1 {
-        font-size: 3rem;
-        margin: 0 0 0.5rem;
-      }
-      h2 {
-        font-size: 1.9rem;
-        margin: 1.8rem 0 2rem;
-        border-bottom: 1px solid var(--rib);
-        padding-bottom: 0.3rem;
-      }
-      h3 {
-        font-size: 1.4rem;
-        margin: 1.5rem 0 0.3rem;
-      }
-      .dim {
-        color: var(--dust);
-      }
-      .warn {
-        border: 1px solid var(--flag);
-        color: var(--flag);
-        padding: 0.6rem 0.9rem;
-      }
-      .sysfile {
-        background: #1a1f22;
-        border-left: 2px solid var(--rib);
-        padding: 0.6rem 0.9rem;
-        margin: 0.3rem 0;
-      }
-      .sysfile p {
-        margin: 0.2rem 0;
-      }
-      .sys-sec {
-        color: var(--titan);
-        margin-top: 0.4rem;
-      }
-      .etable.wraps td {
-        overflow-wrap: anywhere;
-      }
-      caption {
-        text-align: left;
-        color: var(--dust);
-      }
-      table {
-        border-collapse: collapse;
-        width: 100%;
-        font-size: 0.92rem;
-      }
-      th, td {
-        text-align: left;
-        padding: 0.25rem 0.6rem 0.25rem 0;
-        border-bottom: 1px solid var(--rib);
-        vertical-align: top;
-      }
-      th {
-        color: var(--titan);
-        font-weight: 500;
-      }
-      .graph {
-        overflow-x: auto;
-        background: #1a1f22;
-        padding: 1rem;
-      }
-      .graph svg {
-        display: block;
-        min-width: 680px;
-        width: 100%;
-        height: auto;
-      }
-      .tag {
-        color: var(--flag);
-      }
-      .fields {
-        display: grid;
-        grid-template-columns: minmax(8em, max-content) 1fr;
-        gap: 0.1rem 1.2rem;
-        margin: 0.3rem 0;
-        padding: 0.6rem 0.9rem;
-        background: #1a1f22;
-        border-left: 2px solid var(--rib);
-      }
-      .fields dt {
-        color: var(--dust);
-      }
-      .fields dd {
-        margin: 0;
-      }
-      .etable-wrap {
-        overflow-x: auto;
-        background: #1a1f22;
-        border-left: 2px solid var(--rib);
-        padding: 0.4rem 0.9rem;
-        margin: 0.3rem 0;
-      }
-      .paras p {
-        margin: 0 0 0.3rem;
-      }
-      @media (max-width: 520px) {
-        .fields {
-          grid-template-columns: 1fr;
-        }
-        .fields dd {
-          margin-bottom: 0.4rem;
-        }
-      }
-      .notes-list {
-        font-size: 0.9rem;
-        color: var(--dust);
-        margin: 0.2rem 0 0;
-        padding-left: 1.2rem;
-      }
-    </style>
   </head>
-  <body>
-    <main>
+  <body class="page-devnotes cur-s">
+    <main data-i18n-page="devnotes">
       <nav class="note-nav drawing-back" aria-label="Back to Selk credits">
         <a class="note-button" href="credits.html">Back to Selk credits</a>
       </nav>
@@ -176,7 +48,12 @@
     <script src="../js/data/entries.js"></script>
     <script src="../js/data/story.js"></script>
     <script src="../js/data/endings.js"></script>
-    <script src="../js/render.js"></script>
-    <script src="../js/devnotes.js"></script>
+    <script src="../js/core/dom.js"></script>
+    <script src="../js/core/state.js"></script>
+    <script src="../js/core/i18n.js"></script>
+    <script src="../js/lang/en.js"></script>
+    <script src="page-i18n.js"></script>
+    <script src="../js/shell/render.js"></script>
+    <script src="../js/dev/devnotes.js"></script>
   </body>
 </html>
