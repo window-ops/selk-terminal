@@ -2,7 +2,28 @@
    wind, structure creaks and interface tones, mixed on separate volume buses. */
 (function () {
   var S = window.SELK;
-  var ctx = null, master = null, bus = {}, noiseBuf = null, amb = null, mach = null, on = true, lastKey = 0, wind = 0.2;
+  var swellNow = null, ctx = null, master = null, bus = {}, pan = {}, hp = null, noiseBuf = null, amb = null, mach = null, on = true, lastKey = 0, wind = 0.2;
+  /* Sound presets. Each sets the four channel levels once (the sliders stay
+     free afterwards), a high-pass that keeps out bass the speakers cannot
+     play, and how wide the stereo image is. DESK SPEAKERS suits a left and
+     right pair without a subwoofer. */
+  var PRESETS = {
+    balanced: { vMachine: 70, vWind: 40, vUi: 75, vStruct: 65, hp: 40, width: 0.35 },
+    speakers: { vMachine: 60, vWind: 30, vUi: 85, vStruct: 60, hp: 110, width: 0.6 },
+    headphones: { vMachine: 55, vWind: 35, vUi: 65, vStruct: 55, hp: 30, width: 0.3 },
+    quiet: { vMachine: 30, vWind: 15, vUi: 60, vStruct: 35, hp: 60, width: 0.3 }
+  };
+  function preset() {
+    return PRESETS[(S.state && S.state.settings.soundPreset) || "balanced"] || PRESETS.balanced;
+  }
+  /* A destination placed left (-1) or right (1) of a channel */
+  function placed(dest, where) {
+    if (!ctx.createStereoPanner) {
+      return dest;
+    }
+    var p = ctx.createStereoPanner(); p.pan.value = Math.max(-1, Math.min(1, where));
+    p.connect(dest); return p;
+  }
   function set() {
     return S.state.settings;
   }
@@ -23,10 +44,19 @@
       return;
     }
     ctx = new AC();
+    /* master > high-pass (no sub-bass booms) > gentle compressor (no sudden peaks) > speakers */
     master = ctx.createGain();
-    master.connect(ctx.destination);
+    hp = ctx.createBiquadFilter(); hp.type = "highpass"; hp.Q.value = 0.7;
+    var comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -14; comp.knee.value = 12; comp.ratio.value = 3; comp.attack.value = 0.01; comp.release.value = 0.25;
+    master.connect(hp); hp.connect(comp); comp.connect(ctx.destination);
     Object.keys(BUS).forEach(function (k) {
-      bus[k] = ctx.createGain(); bus[k].connect(master);
+      bus[k] = ctx.createGain();
+      if (ctx.createStereoPanner) {
+        pan[k] = ctx.createStereoPanner(); bus[k].connect(pan[k]); pan[k].connect(master);
+      } else {
+        bus[k].connect(master);
+      }
     });
     apply();
     if (!on) {
@@ -48,7 +78,10 @@
       return;
     }
     var t = ctx.currentTime || 0;
-    var masterVol = on ? set().vol / 100 : 0;
+    var masterVol = on ? set().vol / 100 : 0, pr = preset();
+    if (hp) { hp.frequency.value = pr.hp; }
+    /* The computer's hum sits a little to the left; everything else is centred on its channel */
+    if (pan.machine) { pan.machine.pan.value = -0.5 * pr.width; }
     try {
       master.gain.cancelScheduledValues(0);
       master.gain.value = masterVol;
@@ -143,17 +176,17 @@
       [
         [
           "s1",
-          20,
+          45,
           90
         ],
         [
           "s2",
-          20,
+          60,
           180
         ],
         [
           "s3",
-          20,
+          80,
           270
         ]
       ].forEach(function (x) {
@@ -200,11 +233,17 @@
       return;
     }
     if (start && !amb) {
+      /* Wind fades in over a few seconds, spread across both speakers */
+      var w = preset().width;
       amb = {
-        low: loopNoise(300, 0.7, "lowpass", 0.1 + 0.25 * wind, bus.wind),
-        howl: loopNoise(900, 6, "bandpass", 0.02 + 0.12 * wind, bus.wind),
-        hiss: loopNoise(3500, 0.8, "bandpass", 0.004 + 0.03 * wind, bus.wind)
+        low: loopNoise(300, 0.7, "lowpass", 0.0001, bus.wind),
+        howl: loopNoise(900, 6, "bandpass", 0.0001, placed(bus.wind, 0.7 * w)),
+        hiss: loopNoise(3500, 0.8, "bandpass", 0.0001, placed(bus.wind, -0.7 * w))
       };
+      var t0 = ctx.currentTime;
+      amb.low.g.gain.setTargetAtTime(0.1 + 0.25 * wind, t0, 1.2);
+      amb.howl.g.gain.setTargetAtTime(0.02 + 0.12 * wind, t0, 1.5);
+      amb.hiss.g.gain.setTargetAtTime(0.004 + 0.03 * wind, t0, 1.5);
       var l1 = ctx.createOscillator(), l1g = ctx.createGain();
       l1.frequency.value = 0.07; l1g.gain.value = 220; l1.connect(l1g); l1g.connect(amb.low.f.frequency); l1.start();
       var l2 = ctx.createOscillator(), l2g = ctx.createGain();
@@ -255,6 +294,16 @@
     init: init,
     apply: apply,
     ambient: ambient,
+    PRESETS: PRESETS,
+    /* Choosing a preset sets the four channel levels; the rest follows from it */
+    preset: function (name) {
+      var pr = PRESETS[name];
+      if (!pr) { return; }
+      var st = S.state.settings;
+      st.soundPreset = name;
+      ["vMachine", "vWind", "vUi", "vStruct"].forEach(function (k) { st[k] = pr[k]; });
+      apply();
+    },
     /* Ending swell, after the THX Deep Note: voices wander between 200 and 400 Hz,
        then glide to a chord spread over several octaves while the whole thing
        swells and opens up, holds, and fades. The chord follows the ending:
@@ -265,6 +314,8 @@
       if (!ctx || !on) {
         return 0;
       }
+      /* One swell at a time: a replay stops the one still fading out */
+      S.snd.stopSwell();
       var D = 36.71, t0 = ctx.currentTime + 0.05;
       var CHORDS = {
         hope: [1, 2, 3, 4, 6, 8, 12, 16, 20, 24, 32],
@@ -282,6 +333,8 @@
       out.gain.setValueAtTime(0.32, t0 + 15);
       out.gain.exponentialRampToValueAtTime(0.0001, t0 + 22);
       out.connect(lp); lp.connect(master);
+      var voices = [];
+      swellNow = { out: out, voices: voices };
       for (var i = 0; i < N; i++) {
         var o = ctx.createOscillator(), g = ctx.createGain();
         o.type = "sawtooth";
@@ -296,13 +349,28 @@
         o.frequency.exponentialRampToValueAtTime(target, t0 + 11);
         g.gain.value = 1 / N;
         o.connect(g); g.connect(out);
-        o.start(t0); o.stop(t0 + 22.5);
+        o.start(t0); o.stop(t0 + 22.5); voices.push(o);
       }
       return 22;
     },
-    /* Decision time: the machine and the wind sink over two seconds, so the
-       structure and the interface carry the moment; hush(false) restores the
-       levels from Setup */
+    /* Stops the swell with a short fade, when the player leaves the ending */
+    stopSwell: function () {
+      if (!ctx || !swellNow) {
+        return;
+      }
+      var t = ctx.currentTime, s = swellNow;
+      swellNow = null;
+      try {
+        s.out.gain.cancelScheduledValues(t);
+        s.out.gain.setValueAtTime(s.out.gain.value, t);
+        s.out.gain.setTargetAtTime(0.0001, t, 0.12);
+        s.voices.forEach(function (o) { o.stop(t + 0.6); });
+      } catch (e) {}
+    },
+    /* The ending is silent but for the swell: every channel of the game
+       (machine, wind, structure, interface) fades out over a second and a
+       half. The swell goes straight to the master, so it still plays.
+       hush(false) restores the levels from Setup. */
     hush: function (on) {
       if (!ctx) {
         return;
@@ -311,10 +379,13 @@
         apply(); return;
       }
       var t = ctx.currentTime;
-      try {
-        bus.machine.gain.setTargetAtTime(bus.machine.gain.value * 0.2, t, 0.7);
-        bus.wind.gain.setTargetAtTime(bus.wind.gain.value * 0.5, t, 0.7);
-      } catch (e) {}
+      Object.keys(bus).forEach(function (k) {
+        try {
+          bus[k].gain.cancelScheduledValues(t);
+          bus[k].gain.setValueAtTime(bus[k].gain.value, t);
+          bus[k].gain.setTargetAtTime(0, t, 0.5);
+        } catch (e) {}
+      });
     },
     machine: machine,
     setOn: function (v) {
@@ -362,13 +433,13 @@
         return;
       }
       lastKey = now;
-      burst(1800 + Math.random() * 1800, 1.4, 0.2, 0.035);
-      tone(140 + Math.random() * 40, 0.03, "triangle", 0.03);
+      burst(1800 + Math.random() * 1800, 1.4, 0.38, 0.035);
+      tone(160 + Math.random() * 40, 0.03, "triangle", 0.05);
     },
     click: function () {
       if (!on || (S.state && !S.state.sound)) return;
       if (!ctx) init();
-      burst(3200, 2.5, 0.16, 0.018); burst(900, 1.2, 0.08, 0.03, 0.035);
+      burst(3200, 2.5, 0.32, 0.018); burst(1100, 1.2, 0.15, 0.03, 0.035);
     },
     hdd: function (n) {
       led();
@@ -406,11 +477,11 @@
       if (!ctx || !on) {
         return;
       }
-      var s = strength || 0.5;
-      tone(70 + Math.random() * 40, 1.2 + s, "sawtooth", 0.02 + 0.03 * s, 0, 45 + Math.random() * 20, bus.struct);
-      burst(180 + Math.random() * 120, 6, 0.15 * s, 0.9 + s * 0.6, 0.05, null, bus.struct);
+      var s = strength || 0.5, where = placed(bus.struct, (Math.random() * 2 - 1) * preset().width);
+      tone(90 + Math.random() * 40, 1.2 + s, "sawtooth", 0.02 + 0.03 * s, 0, 60 + Math.random() * 20, where);
+      burst(180 + Math.random() * 120, 6, 0.15 * s, 0.9 + s * 0.6, 0.05, null, where);
       if (Math.random() < 0.35 * s) {
-        tone(55, 0.7, "sine", 0.12 * s, 0.9, 32, bus.struct);
+        tone(80, 0.7, "sine", 0.1 * s, 0.9, 55, where);
       }
     },
     gust: function (strength) {
@@ -423,7 +494,7 @@
       burst(3000, 0.8, 0.05 * s, 1.8, 0.2, null, bus.wind);
     },
     tick: function () {
-      if (!on) return; tone(1320, 0.03, "square", 0.025);
+      if (!on) return; tone(1320, 0.03, "square", 0.045);
     },
     ok: function () {
       if (!on) return; tone(880, 0.06, "square", 0.04); tone(1320, 0.08, "square", 0.04, 0.07);

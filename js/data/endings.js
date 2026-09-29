@@ -18,10 +18,10 @@ SELK.ENDINGS = [
     reply: "Report received. Dismantling noted. Export contracts at Selk suspended for review. Relief crew: not scheduled.",
     title: "Dismantled",
     epilogue: [
-      "The tower comes down one piece at a time. The units lower each block as carefully as they once raised it.",
-      "By September the crater is quiet. Only FOOTING-B stays, a concrete lid over plot 9.",
-      "Nobody on Earth asks what the cells beneath it were doing.",
-      "You stay until the reactor is cold. The relief crew is never scheduled."
+      "The units take MAST-01 apart and lower each block to the ground.",
+      "By September the tower is gone. FOOTING-B stays in place over plot 9.",
+      "No one samples the soil under it.",
+      "You stay in the shelter until the reactor is shut down. No relief crew is scheduled."
     ]
   },
   {
@@ -40,12 +40,12 @@ SELK.ENDINGS = [
       "Lab          reopened"
     ],
     reply: "Report received. Selk reclassified as research site. Plot 9 listed as protected. Export license withdrawn.",
-    title: "The station",
+    title: "Research station",
     epilogue: [
-      "The intake closes, and the hydrogen comes back to the crater a hundredth of a percent at a time.",
-      "In April the gate reads zone 14 as clean. This time it is right.",
-      "The lab lights come on for the first time in five years. Plot 3 is still alive.",
-      "Titan has neighbours now, and you are the one who keeps their records."
+      "The EX-1 intake is closed. Hydrogen near the ground returns to 0.10 percent.",
+      "In April the gate lifts the flag on zone 14, except for plot 9.",
+      "The lab reopens. Plot 3 still shows active cells.",
+      "Selk becomes a research station, and you keep its records from the shelter."
     ]
   },
   {
@@ -58,15 +58,15 @@ SELK.ENDINGS = [
       "             MANIFEST-2291, OWNER",
       "15-03-2097   relay R-14 disconnected",
       "15-03-2097   HX-ROOT access removed",
-      "MAST-01      load 117 %, repairs still held"
+      "MAST-01      high load, repairs still held"
     ],
     reply: "Evidence received. Release key 7 revoked. Key holder M. Horák, release signing office, suspended. HX Holdings contracts frozen. Tanker T-5 recalled. Repair orders follow within 3 passes.",
     title: "The evidence",
     epilogue: [
-      "The packets leave on the R-09 pass. For 79 minutes they are the only honest thing between Saturn and Earth.",
-      "R-14 goes dark. HX-ROOT stops answering.",
-      "The mast still leans at 117 percent while Earth argues over who signed what.",
-      "The repair orders will come. Until then you listen to the tower and wait for the next pass."
+      "The packets go out on the R-09 pass and reach Earth 79 minutes later.",
+      "Relay R-14 is disconnected. The HX-ROOT account no longer works.",
+      "MAST-01 stays under high load while the office reviews the evidence.",
+      "Repair orders are due within three passes. You wait for them in the shelter."
     ]
   },
   {
@@ -86,10 +86,10 @@ SELK.ENDINGS = [
     reply: "Report received. No further action required.",
     title: "Business as usual",
     epilogue: [
-      "The gate falls silent, and the repairs start again the same afternoon.",
-      "By August the mast stands straight, and the tanker leaves on schedule.",
-      "In June 2098 the bio cells deliver their last tenth of a kilowatt. Then nothing.",
-      "The label on T-5 says green. Nobody on Earth has a reason to look closer."
+      "The gate is switched off, and the repairs start again the same day.",
+      "By August the load on MAST-01 falls to 94 percent. Tanker T-5 leaves on schedule.",
+      "In June 2098 the bio cells stop producing power.",
+      "T-5 is labelled green hydrogen. No one on Earth checks the label."
     ]
   },
   {
@@ -108,12 +108,12 @@ SELK.ENDINGS = [
         "Fire tests   requested, none done"
       ],
       reply: "Habitation study approved. Crew of 4 planned for 2104. Fire tests at 94 K required before arrival.",
-      title: "Air for someone else",
+      title: "Habitation with oxygen",
       epilogue: [
-        "Oxygen keeps rising near the vent: 0.7 percent, then 1.3.",
-        "The cells stop answering in 2099, poisoned by the air meant to make Titan kinder.",
-        "The fire tests are requested every year. None is ever run.",
-        "In 2104 four people will breathe here, in air that has never met a spark."
+        "Oxygen near the vent rises to 0.7 percent in 2098 and 1.3 percent in 2100.",
+        "The bio cells stop producing power in 2099.",
+        "The office asks for fire tests at 94 K every year. None is carried out.",
+        "A crew of four is planned for 2104. The air has never been tested for fire."
       ]
     },
     no: {
@@ -127,12 +127,12 @@ SELK.ENDINGS = [
         "Plot 9       status unknown"
       ],
       reply: "Warming study approved. Gate readings at Selk are no longer usable for life detection.",
-      title: "Warmth without witnesses",
+      title: "Warming without oxygen",
       epilogue: [
-        "Part O stops. Hydrogen still leaves the mast top, and the haze above Selk warms by a fraction of a degree.",
-        "Zone 14 creeps to 0.11 percent. The gate stops flagging anything, anywhere at Selk.",
-        "Whatever lives under plot 9 is now invisible to every instrument you have.",
-        "The question of who lived here first is closed, and nobody closed it on purpose."
+        "Part O stops. Hydrogen is still released from the top of the mast.",
+        "Hydrogen in zone 14 rises to 0.11 percent, and the gate stops flagging anything at Selk.",
+        "Any life under plot 9 can no longer be detected by the site's instruments.",
+        "The warming study goes ahead. The question of life at Selk is left open."
       ]
     }
   }

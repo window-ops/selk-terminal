@@ -175,8 +175,8 @@
       }
       S.snd.tick();
       var box = scr().el("div", "note");
-      box.appendChild(scr().el("div", "note-title", n[0]));
-      box.appendChild(scr().el("div", "", n[1]));
+      box.appendChild(S.speakText(scr().el("div", "note-title"), n[0]));
+      box.appendChild(S.speakText(scr().el("div", ""), n[1]));
       box.appendChild(scr().el("div", "dim", S.t("CESEA field handbook, edition {year}", { year: n[2] })));
       S.display(n[0], box, true);
     },

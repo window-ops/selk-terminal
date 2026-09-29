@@ -136,7 +136,7 @@
   ], [
     [
       "STRUCTURE / INDEX",
-      "claims all parts are within limits, MAST-01 is at 117 %"
+      "claims all parts are within limits, MAST-01 is over its safe load"
     ],
     [
       "UNITS / SV-1",

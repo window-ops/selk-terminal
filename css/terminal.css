@@ -220,6 +220,11 @@ button {
   white-space: pre-wrap;
   margin: 0.6em 0;
 }
+/* The last paragraph of a message ends on the box's own padding */
+.mail > :last-child,
+.mail-body:last-child {
+  margin-bottom: 0;
+}
 .cam {
   margin: 0.9em 0 0;
 }
@@ -2002,7 +2007,7 @@ body.sr-mode .tut-spot {
 .screen .tmux,
 .screen .wb-bar,
 .screen .pane-head {
-  transition: opacity 2.5s ease;
+  transition: opacity var(--fade, 0.7s) ease-in-out;
 }
 .screen.finale .fbar,
 .screen.finale .tmux,
@@ -2031,6 +2036,7 @@ body.sr-mode .tut-spot {
   position: absolute;
   inset: 0;
   z-index: 30;
+  will-change: opacity;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2038,7 +2044,7 @@ body.sr-mode .tut-spot {
   background: #000;
   color: var(--haze);
   opacity: 0;
-  transition: opacity 1.6s ease;
+  transition: opacity var(--fade, 0.7s) ease-in-out;
   outline: none;
   overflow: hidden;
 }
@@ -2103,11 +2109,6 @@ body.sr-mode .tut-spot {
 }
 .cine-frame {
   width: min(100%, 44em);
-  opacity: 0;
-  transition: opacity 1.4s ease;
-}
-.cine-frame.on {
-  opacity: 1;
 }
 .scene {
   display: block;
@@ -2134,13 +2135,6 @@ body.sr-mode .tut-spot {
   text-align: left;
   text-shadow: none;
   box-shadow: 0.4em 0.4em 0 rgba(0, 0, 0, 0.6);
-  opacity: 0;
-  transform: translateY(0.6em);
-  transition: opacity 1.2s ease, transform 1.2s ease;
-}
-.cine-letter.on {
-  opacity: 1;
-  transform: none;
 }
 .cine-letter-head {
   font-weight: 500;
@@ -2153,13 +2147,6 @@ body.sr-mode .tut-spot {
 .cine-letter-body {
   margin: 1em 0 0;
   line-height: 1.55;
-}
-.cine-title {
-  opacity: 0;
-  transition: opacity 2s ease;
-}
-.cine-title.on {
-  opacity: 1;
 }
 .cine-kicker {
   color: var(--dust);
@@ -2177,16 +2164,122 @@ body.sr-mode .tut-spot {
 .cine-sub {
   color: var(--dust);
 }
+/* Button groups: each row centred, a short caption before its buttons */
 .cine-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5em;
+  margin-top: 1.6em;
+}
+.cine-group {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.6em;
-  margin-top: 1.6em;
+  align-items: center;
+  gap: 0.5em;
 }
-[data-motion="reduced"] .cine,
-[data-motion="reduced"] .cine-frame,
-[data-motion="reduced"] .cine-letter,
-[data-motion="reduced"] .cine-title {
+.cine-choices .cine-group {
+  margin-top: 0.8em;
+}
+.cine-group-label {
+  color: var(--dust);
+  font-size: 0.8em;
+  letter-spacing: 0.15em;
+}
+/* Cards cross-fade: layers share one grid cell, the new one fades in over
+   the old one as it fades out */
+.cine-stage {
+  display: grid;
+}
+.cine-layer {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2em;
+  transition: opacity var(--fade, 0.45s) ease-in-out;
+}
+.cine-layer.fading {
+  opacity: 0;
+}
+.cine-layer.leaving {
+  pointer-events: none;
+}
+[data-motion="reduced"] .cine-layer {
   transition: none;
+}
+[data-motion="reduced"] .cine {
+  transition: none;
+}
+
+/* Setup rows that cannot apply right now */
+.set-unavail .set-label,
+.set-unavail .set-ctl {
+  opacity: 0.55;
+}
+.set-why {
+  display: block;
+  font-size: 0.8em;
+  color: var(--dust);
+}
+/* Choice notes sit on the choice's centre line */
+.cine-choice {
+  align-items: center;
+}
+
+/* Decision report page */
+.decision-list {
+  margin: 0.8em 0;
+  padding-left: 1.6em;
+  display: grid;
+  gap: 0.35em;
+}
+
+.cine-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 1.2em;
+  text-align: center;
+  color: var(--dust);
+  font-size: 0.85em;
+}
+
+/* The page fades in from black when it loads */
+.room {
+  animation: page-in var(--fade, 0.7s) ease-in-out both;
+}
+@keyframes page-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .room {
+    animation: none;
+  }
+}
+[data-motion="reduced"] .room {
+  animation: none;
+}
+
+/* The Continue control of the ending: out of sight until it has focus */
+.cine-next {
+  position: absolute;
+  left: 50%;
+  bottom: 3em;
+  transform: translateX(-50%);
+  font: inherit;
+  color: var(--haze);
+  background: #000;
+  border: 1px solid var(--titan);
+  padding: 0.3em 0.9em;
+  opacity: 0;
+  pointer-events: none;
+}
+.cine-next:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+  outline: none;
 }

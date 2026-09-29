@@ -12,7 +12,8 @@
       frame: "full",
       layout: "four",
       scan: true,
-      scanRoll: true,
+      scanRoll: false,
+      crtCurve: false,
       flicker: true,
       glow: true,
       interfere: true,
@@ -20,7 +21,8 @@
       vol: 75,
       vMachine: 70,
       vWind: 40,
-      vUi: 60,
+      vUi: 75,
+      soundPreset: "balanced",
       vStruct: 65,
       speed: "instant",
       size: "m",
@@ -124,10 +126,10 @@
           S.state = Object.assign(fresh(), data);
           var ds = data.settings || {};
           S.state.settings = ds.sv === 2 ? Object.assign(defaults(), ds) : defaults();
-          /* The rolling scanline was briefly off by default; saves that never
-             chose it get the current default back */
+          /* Saves from the builds where the rolling scanline was on by default
+             go back to off, unless the player chose it */
           if (!S.state.settings.scanRollChosen) {
-            S.state.settings.scanRoll = true;
+            S.state.settings.scanRoll = false;
           }
           /* Debug used to be one switch for the panel and the console log. A save
              from then keeps both on. */

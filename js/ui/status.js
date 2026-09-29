@@ -17,7 +17,7 @@
   function info(bubble, head, copy) {
     bubble.appendChild(el("strong", "status-info-head", head));
     if (copy) {
-      bubble.appendChild(el("div", "status-info-copy", copy));
+      bubble.appendChild(S.speakText(el("div", "status-info-copy"), copy));
     }
   }
   function uplinkInfo(bubble) {

@@ -63,10 +63,11 @@
     MARK.lastIndex = 0;
     while ((m = MARK.exec(text))) {
       if (m.index > i) {
-        parent.appendChild(document.createTextNode(text.slice(i, m.index)));
+        S.speakInto(parent, text.slice(i, m.index));
       }
       if (m[1]) {
         var term = cmdButton(m[1], "note " + m[2], "term"), note = S.i18n.note(m[2].toLowerCase());
+        if (m[1].indexOf(" > ") !== -1) { term.setAttribute("aria-label", S.spoken(m[1])); }
         if (note) {
           term.title = S.t("Handbook note: {name}", { name: note[0] });
         }
@@ -87,7 +88,7 @@
       i = MARK.lastIndex;
     }
     if (i < text.length) {
-      parent.appendChild(document.createTextNode(text.slice(i)));
+      S.speakInto(parent, text.slice(i));
     }
     return parent;
   }
@@ -162,7 +163,17 @@
        so the setting applies to every piece of shell output. */
     line: function (text, cls, ms) {
       return enqueue(function () {
-        var d = el("div", "ln " + (cls || ""), text);
+        var d = el("div", "ln " + (cls || ""));
+        /* An echoed command: the prompt is shown, and "Command:" is said */
+        var ps = S.promptText ? S.promptText() : "";
+        if (/\becho\b/.test(cls || "") && ps && String(text).indexOf(ps) === 0) {
+          var p = el("span", "", ps); p.setAttribute("aria-hidden", "true");
+          d.appendChild(p);
+          d.appendChild(el("span", "sr-only", S.t("Command:") + " "));
+          d.appendChild(document.createTextNode(String(text).slice(ps.length)));
+        } else if (text != null) {
+          S.speakInto(d, String(text));
+        }
         log.appendChild(d);
         return reveal(d, queueSkipped);
       }, ms == null ? 12 : ms);

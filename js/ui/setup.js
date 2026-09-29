@@ -38,14 +38,19 @@
     ] },
     { id: "effects", title: "SCREEN EFFECTS", rows: [
       ["Scanlines", "scan"],
-      ["Rolling scanline", "scanRoll"],
       ["Flicker", "flicker"],
       ["Glow", "glow"],
       ["Interference", "interfere"],
       ["Power-on", "poweron"]
     ] },
+    /* Optional CRT effects, apart from the main ones */
+    { id: "crt", title: "CRT EXTRAS", rows: [
+      ["Rolling scanline", "scanRoll"],
+      ["Vignette and curvature", "crtCurve"]
+    ] },
     { id: "sound", title: "SOUND", rows: [
       ["Sound", "_sound"],
+      ["Preset", "soundPreset", [["balanced", "BALANCED"], ["speakers", "DESK SPEAKERS"], ["headphones", "HEADPHONES"], ["quiet", "QUIET"]]],
       ["Master", "vol", "range"],
       ["Machine", "vMachine", "range"],
       ["Wind", "vWind", "range"],
@@ -119,6 +124,9 @@
       if (k === "scanRoll") {
         st.settings.scanRollChosen = true;
       }
+      if (k === "soundPreset") {
+        S.snd.preset(v);
+      }
       var old = st.settings[k]; st.settings[k] = v; if (k === "layout" && old !== v && S.tmux.attached) {
         S.tmux.init();
       }
@@ -146,7 +154,9 @@
     size: "Size of all text in the game.",
     cursor: "Size of the mouse pointer. SYSTEM uses your computer's own pointer.",
     scan: "Thin horizontal lines, like an old tube screen. They stay still.",
-    scanRoll: "A faint band that sweeps down the screen, like the refresh of a tube monitor. Available only when motion is not reduced.",
+    scanRoll: "A second layer of scanlines that drifts down the screen with a slow bright band, like the refresh of a tube monitor. Available only when motion is not reduced.",
+    soundPreset: "Levels and tone for what you listen on. DESK SPEAKERS suits a left and right pair without a subwoofer: no deep bass, clearer clicks and a wider stereo image. HEADPHONES keeps the stereo gentle. QUIET lowers the machine and the wind. The sliders below stay adjustable.",
+    crtCurve: "Dimmer edges, a faint glare and the curved outline of a tube's glass. Not used with the MONITOR frame, which draws its own glass.",
     flicker: "A faint, irregular flicker of the screen.",
     glow: "A soft glow around the letters.",
     interfere: "The screen shakes briefly during strong wind gusts.",
@@ -223,14 +233,16 @@
   };
   var tip = null, tipSeq = 0;
   function showTip(row, key, optKey, ev) {
-    if (S.ctx().mobile || S.state.settings.tooltips === false) { hideTip(); return; }
+    if (S.state.settings.tooltips === false) { hideTip(); return; }
     var box = row.closest(".dlg");
     if (!box || !HELP[key]) { return; }
     if (!tip) { tip = el("div", "set-tip"); tip.setAttribute("aria-hidden", "true"); }
     if (tip.parentNode !== box) { box.appendChild(tip); }
+    if (tip.hidden || tip._row !== row) { tip._shownAt = Date.now(); }
     tip._row = row;
     var extra = optKey && OPTION_HELP[key] && OPTION_HELP[key][optKey];
-    tip.textContent = S.t(extra || HELP[key]);
+    /* Tooltips end without a period */
+    tip.textContent = S.t(extra || HELP[key]).replace(/\.\s*$/, "");
     tip.hidden = false;
     prettyWrapTip(tip);
     var bb = box.getBoundingClientRect(), th = tip.offsetHeight, tw = tip.offsetWidth;
@@ -286,6 +298,22 @@
     });
     row.addEventListener("mousemove", function (e) { if (!e.target.closest("button, input, select")) { showTip(row, key, null, e); } });
     row.addEventListener("mouseleave", hideTip);
+    /* Touch screens have no hover: tapping the label shows or hides its
+       tooltip. Screen readers hear it as a button that reveals the tooltip. */
+    var label = row.querySelector(".set-label");
+    if (S.state.settings.tooltips !== false) {
+      label.setAttribute("role", "button");
+      label.tabIndex = -1;
+      var how = el("span", "sr-only", S.t("Click to reveal the tooltip")); how.id = "set-how-" + (++tipSeq);
+      row.appendChild(how);
+      label.setAttribute("aria-describedby", how.id);
+    }
+    label.addEventListener("click", function (e) {
+      /* A tap also sends a mousemove that opens the tip first; only a tip that
+         was already open before this tap closes */
+      if (tip && !tip.hidden && tip._row === row && Date.now() - tip._shownAt > 400) { hideTip(); return; }
+      showTip(row, key, null, e);
+    });
   }
 
   function makeRow(r, body) {
@@ -356,7 +384,7 @@
   function sectionHead(sec, n, part) {
     var h = el("div", "set-sec-h"); h.setAttribute("role", "heading"); h.setAttribute("aria-level", "3");
     var b = el("button", "set-sec-head"); b.type = "button";
-    var mark = el("span", "set-sec-mark");
+    var mark = el("span", "set-sec-mark"); mark.setAttribute("aria-hidden", "true");
     b.appendChild(mark);
     b.appendChild(el("span", "set-sec-name", S.t(sec.title)));
     b.appendChild(el("span", "set-sec-count", S.tn("{n} SETTINGS", n)));
@@ -394,7 +422,16 @@
         return;
       }
       var part = el("div", folding ? "set-sec-body" : "set-list");
-      rows.forEach(function (r) { part.appendChild(makeRow(r, body)); });
+      rows.forEach(function (r) {
+        var row = makeRow(r, body), why = S.settingOff(r[1]);
+        /* A setting that cannot apply right now stays in view, greyed, with the reason */
+        if (why) {
+          row.classList.add("set-unavail");
+          row.querySelectorAll("button, input, select").forEach(function (c) { c.disabled = true; });
+          row.querySelector(".set-label").appendChild(el("span", "set-why", S.t(why)));
+        }
+        part.appendChild(row);
+      });
       if (sec.id === "data" && saveConflict()) {
         part.appendChild(conflictNote());
       }

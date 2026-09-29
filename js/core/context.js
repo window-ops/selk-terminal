@@ -39,7 +39,11 @@
       b.classList.toggle("motion-reduce", c.reduced && !c.systemReduced);
       b.classList.toggle("sr-mode", c.sr);
       /* The rolling scanline moves, so it runs only when motion is not reduced */
-      b.classList.toggle("scan-roll", !!s.scanRoll && !c.reduced);
+      /* CRT extras are decoration: off in screen reader mode */
+      b.classList.toggle("scan-roll", !!s.scanRoll && !c.reduced && !c.sr);
+      var curved = !!s.crtCurve && s.frame !== "monitor" && !c.sr;
+      b.classList.toggle("crt-curve", curved);
+      if (S.crtMask) { S.crtMask.fit(); }
     }
     return c;
   };
@@ -47,16 +51,23 @@
   /* Which Setup rows make sense in which situation, in one table */
   S.SETTING_RULES = {
     layout: function (c) { return !c.desktop; },
-    tooltips: function (c) { return !c.mobile; },
     mode: function (c) { return !c.mobile; },
     motion: function (c) { return !c.sr; },
     speed: function (c) { return !c.sr; },
     scan: function (c) { return !c.sr; },
-    scanRoll: function (c) { return !c.reduced; },
     redirectNotes: function () { return !S.state || S.state.settings.shellOut !== "shell"; },
     flicker: function (c) { return !c.sr; },
     interfere: function (c) { return !c.sr; },
     poweron: function (c) { return !c.sr; }
+  };
+  /* Settings that stay in view but cannot apply right now, with the reason */
+  S.SETTING_OFF = {
+    scanRoll: function (c) { return c.sr ? "Off in screen reader mode" : c.reduced ? "Off while motion is reduced" : ""; },
+    crtCurve: function (c) { return c.sr ? "Off in screen reader mode" : S.state && S.state.settings.frame === "monitor" ? "Not used with the MONITOR frame" : ""; }
+  };
+  S.settingOff = function (key) {
+    var rule = S.SETTING_OFF[key];
+    return rule ? rule(S.ctx()) : "";
   };
   S.settingVisible = function (key) {
     var rule = S.SETTING_RULES[key];

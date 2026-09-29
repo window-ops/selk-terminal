@@ -500,3 +500,20 @@ body {
     font-size: 0.8rem;
   }
 }
+
+/* Ending scenes on the drawings page */
+.scene-gallery {
+  max-width: 74ch;
+  margin: 0 auto;
+  padding: 0 1.25rem 4rem;
+}
+.scene-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
+  gap: 0.6rem;
+}
+.scene-grid .scene {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--rib);
+}

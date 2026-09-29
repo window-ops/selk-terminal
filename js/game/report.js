@@ -21,7 +21,7 @@
     return st.reports[key];
   }
   function openKeys() {
-    return Object.keys(S.state.reports).filter(S.reportReady);
+    return Object.keys(S.state.reports).filter(function (k) { return S.REPORTS[k] && S.reportReady(k); });
   }
   function say(t, c) {
     S.feedback(t, c);
@@ -134,6 +134,26 @@
     }
     return b;
   }
+  /* The decision report: what is at stake, the options, and the way in */
+  function decisionPage() {
+    var paper = el("div", "paper decision-paper");
+    paper.appendChild(el("div", "paper-title", S.t("DECISION REPORT / SELK")));
+    paper.appendChild(el("div", "paper-from", S.t("From supervisor {name}, Selk site.", { name: S.state.name }) + " " +
+      S.t("The office cannot act before the equinox storms. Choose one action for the site.")));
+    var list = el("ol", "decision-list");
+    S.ENDINGS.forEach(function (e) {
+      var ok = !e.needs || (S.state.reports[e.needs] && S.state.reports[e.needs].done);
+      var li = el("li", ok ? "" : "dim", e.label);
+      if (!ok) { li.appendChild(el("span", "err", " " + S.t("needs report {code}", { code: S.REPORTS[e.needs].code }))); }
+      list.appendChild(li);
+    });
+    paper.appendChild(list);
+    var go = el("button", "paper-btn", S.t("OPEN THE FINAL DECISION")); go.type = "button";
+    go.addEventListener("click", function () { S.run("decide"); });
+    var foot = el("div", "paper-foot"); foot.appendChild(go);
+    paper.appendChild(foot);
+    return paper;
+  }
   function page(key) {
     var def = S.REPORTS[key], r = rs(key);
     var paper = el("div", "paper");
@@ -195,7 +215,7 @@
         restoreFocus();
         return;
       }
-      if (!S.state.active || keys.indexOf(S.state.active) === -1) {
+      if (!S.state.active || (keys.indexOf(S.state.active) === -1 && !(S.state.active === "DECISION" && S.state.decision))) {
         S.state.active = keys.filter(function (k) {
           return !rs(k).done;
         })[0] || keys[0];
@@ -211,20 +231,20 @@
         tabs.appendChild(t);
       });
       if (S.state.decision) {
-        var d = el("button", "tab decide", S.t("DECIDE")); d.type = "button";
+        var d = el("button", "tab decide" + (S.state.active === "DECISION" ? " act" : ""), S.t("DECISION")); d.type = "button";
         d.dataset.kbFocus = "decide";
         d.addEventListener("click", function () {
-          S.run("decide");
+          S.state.active = "DECISION"; S.save(); S.rep.render();
         });
         tabs.appendChild(d);
       }
       root.appendChild(tabs);
-      root.appendChild(page(S.state.active));
+      root.appendChild(S.state.active === "DECISION" ? decisionPage() : page(S.state.active));
       root.tabIndex = -1;
       root.querySelectorAll(".paper-btn").forEach(function (b) {
         b.dataset.kbFocus = "submit:" + S.state.active;
       });
-      if (!rs(S.state.active).done) {
+      if (S.REPORTS[S.state.active] && !rs(S.state.active).done) {
         if (S.tmux.mobile()) {
           var selected = S.state.sel && S.state.sel.r === S.state.active;
           var flow = el("div", "paper-mobile-flow");

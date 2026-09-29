@@ -156,8 +156,12 @@
           S.deliver(id);
         }, S.fast ? 80 : 3000);
       });
-      if (st.decision && returning) {
-        scr.line(S.tc("The final decision is open. Type {decide}."), "warn");
+      if (st.ended) {
+        /* The game was finished: the endgame card comes back until the player
+           loads the save from before the decision */
+        setTimeout(S.end.endgame, S.fast ? 50 : 1200);
+      } else if (st.decision && returning) {
+        scr.line(S.tc("The final decision is open. Type {decide}, or open the DECISION page in REPORT."), "warn");
       }
       if (!returning) {
         if (S.tutAsk) {

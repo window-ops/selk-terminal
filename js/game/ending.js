@@ -1,4 +1,8 @@
 /* Final decision and endings, played as a short film over the terminal.
+   The state is saved just before the decision (preDecision). After the film
+   the game is in its endgame (S.state.ended): the last card offers to load
+   that save or to return to the title screen, and it comes back at every
+   sign-in until the earlier save is loaded.
    decide: the interface steps back (windows and toasts close, the bars fade,
    the machine and wind sink), a black stage opens, three lines lead in, and
    the choices wait alone on the screen. An ending then plays in this order:
@@ -46,7 +50,7 @@
     S.tick(99);
     scr.node(function () {
       var box = S.scr.el("div", "mail");
-      box.appendChild(S.scr.el("div", "mail-head", S.t("AUDIT DESK 4 > SELK SITE")));
+      box.appendChild(S.speakText(S.scr.el("div", "mail-head"), S.t("AUDIT DESK 4 > SELK SITE"), "to"));
       box.appendChild(S.scr.el("div", "dim", S.t("received") + " " + S.fmtTime(S.state.clock) + " UTC, " + S.t("route {route}", { route: route })));
       box.appendChild(S.scr.el("p", "mail-body", data.reply));
       return box;
@@ -55,20 +59,63 @@
       S.state.endings.push(data.id);
     }
     S.state.lastEnding = data.id;
+    S.state.ended = { id: data.id, title: data.title || label };
     S.recordUplink("sent", S.t("DECISION LOG"));
     S.save(); S.status();
   }
   function backToTerminal() {
+    S.snd.stopSwell();
     S.cine.close();
     S.end.release();
     S.mode = "shell";
-    S.scr.line(S.tc("The site state was saved before the decision. Type {decide} to choose again."), "dim", 0);
     S.prompt();
   }
-  function film(label, data) {
+  /* Reload into the title screen; the saved state decides what comes next */
+  function restart() {
+    S.save(); S.leaving = true;
+    S.snd.stopSwell();
+    setTimeout(function () { location.reload(); }, S.fast ? 0 : 450);
+  }
+  /* The ending data for an id, including the two habitation variants */
+  function endingById(id) {
+    var found = null;
+    S.ENDINGS.forEach(function (e) {
+      if (e.id === id) { found = e; }
+      if (e.choice && e.yes.id === id) { found = e.yes; }
+      if (e.choice && e.no.id === id) { found = e.no; }
+    });
+    return found;
+  }
+  function loadBefore() {
+    var seen = S.state.endings.slice(), snap = S.state.preDecision, settings = S.state.settings;
+    if (snap) {
+      S.state = JSON.parse(snap);
+      /* Settings are the player's, not part of the story: keep the current ones */
+      S.state.settings = settings;
+      seen.forEach(function (id) { if (S.state.endings.indexOf(id) === -1) { S.state.endings.push(id); } });
+    }
+    S.state.ended = null; S.state.active = "DECISION";
+    S.save();
+    S.snd.stopSwell();
+    /* Restored in place: no reload, so the title screen never comes back */
+    S.cine.close();
+    stage(false);
+    S.mode = "shell";
+    S.enterMode();
+    S.status();
+    S.ui.open("REPORT");
+    S.scr.line(S.t("The save from before the decision is loaded."), "ok", 0);
+    S.prompt();
+  }
+  function film(label, data, replay) {
     var C = S.cine;
-    record(label, data);
-    S.snd.swell(data.mood || "hollow");
+    if (!replay) {
+      record(label, data);
+    }
+    /* Step by step is for reading: no swell */
+    if (!(replay && C.manual)) {
+      S.snd.swell(data.mood || "hollow");
+    }
     var epi = data.epilogue || [], chain = Promise.resolve();
     epi.forEach(function (line, i) {
       chain = chain.then(function () { return C.scene(data.id, SCENE_OF_LINE[i] || 0, line); });
@@ -78,11 +125,7 @@
         [S.t("received") + " " + S.fmtTime(S.state.clock) + " UTC, " + S.t("route {route}", { route: data.route || "R-09" })],
         data.reply);
     }).then(function () {
-      S.snd.chime();
-      C.title(S.t("ENDING"), data.title || label,
-        S.t("{n} of {total} endings seen.", { n: S.state.endings.length, total: S.ENDING_COUNT }),
-        [{ label: S.t("CHOOSE AGAIN"), fn: function () { S.end.decide(); } },
-          { label: S.t("RETURN TO TERMINAL"), fn: backToTerminal }]);
+      S.end.endgame();
     });
   }
   function oxygen(e) {
@@ -97,7 +140,64 @@
       return film(e.label + (i === 0 ? S.t(", oxygen kept") : S.t(", oxygen stopped")), i === 0 ? e.yes : e.no);
     });
   }
+  /* The scenes before the decision: the shelter, then the site map */
+  function intro(manual) {
+    var C = S.cine;
+    C.setManual(manual);
+    return C.scene("intro", 0, S.t("You are in the site shelter, at the old terminal CESEA left behind.")).then(function () {
+      return C.scene("intro", 1, S.t("MAST-01 is over its safe load. Most of the site is under sand."));
+    }).then(function () {
+      return C.scene("intro", 1, S.t("No one on Earth can reach Selk before the equinox storms. The office has left the decision to you."));
+    }).then(function () {
+      C.setManual(false);
+    });
+  }
+  /* The choice list, with the intro one click away */
+  function choices() {
+    var C = S.cine;
+    return C.choose(S.ENDINGS.map(function (e) {
+      return available(e) ? { label: e.label.toUpperCase() } :
+        { label: e.label.toUpperCase(), disabled: true, note: S.t("needs report {code}", { code: S.REPORTS[e.needs].code }) };
+    }), S.t("FINAL DECISION"), backToTerminal, [
+      { label: S.t("REPLAY"), buttons: [
+        { label: S.t("INTRO"), title: S.t("Replay the scenes before the decision"), fn: function () { intro(false).then(choices); } },
+        { label: S.t("STEP BY STEP"), title: S.t("Replay the scenes before the decision, one at a time"), fn: function () { intro(true).then(choices); } }
+      ] }
+    ]).then(function (i) {
+      var e = S.ENDINGS[i];
+      return e.choice ? oxygen(e) : film(e.label, e);
+    });
+  }
   S.end = {
+    /* The endgame card: the ending's title, how many endings were seen, and
+       the two ways on */
+    endgame: function () {
+      var e = S.state.ended;
+      if (!e) { return; }
+      S.mode = "busy";
+      S.cine.open().then(function () {
+        stage(true);
+        S.cine.setManual(false);
+        S.cine.title(S.t("ENDING"), e.title,
+        S.t("{n} of {total} endings seen.", { n: S.state.endings.length, total: S.ENDING_COUNT }),
+        [{ label: S.t("REPLAY"), buttons: [
+          { label: S.t("ENDING"), title: S.t("Replay the ending"), fn: function () { S.end.replay(false); } },
+          { label: S.t("STEP BY STEP"), title: S.t("Replay the ending, one card at a time"), fn: function () { S.end.replay(true); } },
+          { label: S.t("INTRO"), title: S.t("Replay the scenes before the decision"), fn: function () { intro(false).then(S.end.endgame); } }
+        ] }, { label: S.t("CONTINUE"), buttons: [
+          { label: S.t("LOAD SAVE"), title: S.t("Load the save from before the decision"), fn: loadBefore },
+          { label: S.t("TITLE SCREEN"), title: S.t("Return to the title screen"), fn: restart }
+        ] }]);
+      });
+    },
+    /* Replay the last ending, on its own timing or one card at a time */
+    replay: function (manual) {
+      var e = S.state.ended, data = e && endingById(e.id);
+      if (!data) { return; }
+      S.cine.open();
+      S.cine.setManual(manual);
+      film(e.title, data, true);
+    },
     release: function () {
       if (!S.finale) {
         return;
@@ -112,24 +212,20 @@
         return;
       }
       var C = S.cine, first = !C.isOpen();
-      stage(true);
-      S.mode = "busy";
-      C.open();
-      var lead = first ? (S.snd.creak(0.8), C.lines([
-        S.t("The mast groans. For a moment even the fans seem to hold still."),
-        S.t("No one on Earth can reach Selk before the equinox storms."),
-        S.t("What happens to the site now depends on one line you type.")
-      ], 36, 1300)) : Promise.resolve();
+      /* The save to return to after the ending */
+      var snap = JSON.parse(JSON.stringify(S.state));
+      delete snap.preDecision; snap.ended = null;
+      S.state.preDecision = JSON.stringify(snap);
       S.save();
-      lead.then(function () {
-        return C.choose(S.ENDINGS.map(function (e) {
-          return available(e) ? { label: e.label.toUpperCase() } :
-            { label: e.label.toUpperCase(), disabled: true, note: S.t("needs report {code}", { code: S.REPORTS[e.needs].code }) };
-        }), S.t("FINAL DECISION"), backToTerminal);
-      }).then(function (i) {
-        var e = S.ENDINGS[i];
-        return e.choice ? oxygen(e) : film(e.label, e);
-      });
+      /* Decision time: sound sinks and the screen fades to black first; the
+         windows close behind the black, then the intro begins */
+      S.mode = "busy";
+      if (S.snd.hush) { S.snd.hush(true); }
+      document.getElementById("screen").classList.add("finale");
+      C.open().then(function () {
+        stage(true);
+        return first ? intro(false) : null;
+      }).then(choices);
     },
     /* Typed commands pick in the open choice list */
     choose: function (n) {

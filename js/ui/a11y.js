@@ -190,9 +190,12 @@
     q(".entry", function (e) { set(e, "role", "article"); var t = e.querySelector(".entry-title"); if (t) { set(e, "aria-labelledby", idOf(t, "entry")); } });
     q(".entry-title[data-entry]", function (t) { set(t, "aria-description", DRAG()); });
     q(".note", function (n) { set(n, "role", "note"); });
+    /* Tooltips and names that use ">" as a separator are read with a pause */
+    q("[title*=' > ']", function (n) { set(n, "title", S.spoken(n.getAttribute("title"))); });
+    q("[aria-label*=' > ']", function (n) { set(n, "aria-label", S.spoken(n.getAttribute("aria-label"))); });
     q(".term", function (b) {
       var cmd = b.dataset.cmd || "", id = cmd.replace(/^note\s+/, "").toLowerCase(), note = S.i18n.note(id);
-      set(b, "aria-label", S.t("Handbook note: {name}", { name: note ? note[0] : txt(b) }));
+      set(b, "aria-label", S.spoken(S.t("Handbook note: {name}", { name: note ? note[0] : txt(b) })));
     });
     q(".lnk.locked", function (b) { set(b, "aria-label", txt(b).replace(/\s*\[locked\]$/, "") + S.t(", in a locked section")); });
     q(".lnk[data-entry]", function (b) { set(b, "aria-description", DRAG()); });
@@ -285,12 +288,21 @@
       if (S.motionQuery.addEventListener) { S.motionQuery.addEventListener("change", onChange); } else if (S.motionQuery.addListener) { S.motionQuery.addListener(onChange); }
     }
     fix(document);
-    var pending = false;
+    /* Parts that only animate or tick: their changes never need a pass */
+    var QUIET = ".scene, .cine-caption, .watch, .cam, .livecam, canvas, #st-clock, .dbg-info, .count, .tmux-msg, .glass";
+    var timer = null, last = 0, GAP = 300;
+    function run() { timer = null; last = Date.now(); fix(document); refocusExplorer(); }
     new MutationObserver(function (list) {
-      list.forEach(function (m) { [].forEach.call(m.addedNodes, announceNew); });
-      if (pending) { return; }
-      pending = true;
-      requestAnimationFrame(function () { pending = false; fix(document); refocusExplorer(); });
+      var busy = false;
+      list.forEach(function (m) {
+        var t = m.target.nodeType === 1 ? m.target : m.target.parentElement;
+        if (t && t.closest && t.closest(QUIET)) { return; }
+        busy = true;
+        [].forEach.call(m.addedNodes, announceNew);
+      });
+      /* At most one full pass every GAP ms, with a final pass after the last change */
+      if (!busy || timer) { return; }
+      timer = setTimeout(run, Math.max(0, GAP - (Date.now() - last)));
     }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
   });
 })();

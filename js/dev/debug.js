@@ -158,7 +158,7 @@
     fold.addEventListener("click", function () { collapsed = !collapsed; panel.classList.toggle("folded", collapsed); fold.textContent = collapsed ? S.t("SHOW") : S.t("HIDE"); });
     head.appendChild(fold);
     panel.appendChild(head);
-    info = el("div", "dbg-info"); panel.appendChild(info);
+    info = el("div", "dbg-info"); info.setAttribute("aria-live", "off"); panel.appendChild(info);
     var grid = el("div", "dbg-grid");
     ACTIONS.forEach(function (a) {
       var b = el("button", "btn", S.t(a[0])); b.type = "button"; b.title = S.t(a[1]);
@@ -183,7 +183,12 @@
       document.addEventListener("pointermove", mv); document.addEventListener("pointerup", up);
     });
   }
-  function update() { if (panel && info) { info.textContent = describe(); } }
+  /* Rewritten only when something changed, and never announced */
+  function update() {
+    if (!panel || !info) { return; }
+    var t = describe();
+    if (info.textContent !== t) { info.textContent = t; }
+  }
   setInterval(function () {
     var screen = document.getElementById("screen");
     if (!screen) { return; }

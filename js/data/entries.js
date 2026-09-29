@@ -204,7 +204,7 @@ Built from      {printed ice|printedice},
                 {carbon fibre ties|ties}
 Height now      1 180 m
 Height planned  1 400 m
-{Load|load}            117 % of safe limit
+{Load|load}            over the safe limit
 Last repair     05-01-2097
 Repairs now     stopped, see [[bio/ZONE-14]]`,
   {

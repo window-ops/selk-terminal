@@ -142,7 +142,7 @@
     S.snd.hdd(2);
     S.display("MSG " + num, (function () {
       var box = scr().el("div", "mail");
-      box.appendChild(scr().el("div", "mail-head", S.t("AUDIT DESK 4 > SELK SITE    MSG {num}", { num: num })));
+      box.appendChild(S.speakText(scr().el("div", "mail-head"), S.t("AUDIT DESK 4 > SELK SITE    MSG {num}", { num: num }), "to"));
       /* Labels are padded to the longer one, so the times line up in any language */
       var lSent = S.t("sent"), lRecv = S.t("received"), w = Math.max(lSent.length, lRecv.length) + 2;
       box.appendChild(scr().el("div", "dim", lSent.padEnd(w) + S.fmtTime(m.t - 79) + " UTC"));

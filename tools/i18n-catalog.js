@@ -30,7 +30,7 @@ function loadGame() {
 
 /* Interface keys */
 /* Scripts to scan, relative to js/: every folder except the data and the languages */
-const SKIP_FILES = new Set(["core/i18n.js", "core/dom.js", "core/context.js", "core/state.js", "audio/sound.js", "shell/render.js", "shell/scroll.js"]);
+const SKIP_FILES = new Set(["core/i18n.js", "core/dom.js", "core/context.js", "core/state.js", "audio/sound.js", "shell/render.js", "shell/scroll.js", "ui/crtmask.js"]);
 function jsFiles(dir) {
   return fs.readdirSync(path.join(ROOT, "js", dir), { withFileTypes: true }).flatMap((d) => {
     const rel = dir ? dir + "/" + d.name : d.name;
