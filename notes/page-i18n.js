@@ -6,8 +6,8 @@
   "use strict";
   var S = window.SELK;
   /* Language picker above the page, shared with the game: a choice made here
-     applies to the game as well. The notice appears for every language other
-     than English. */
+     applies to the game as well. The notice sits under the picker for every
+     language other than English. */
   function languageBar() {
     var bar = document.createElement("div");
     bar.className = "lang-bar";
@@ -40,15 +40,16 @@
     }
     var heading = main.querySelector("h1");
     if (heading) {
-      var row = document.createElement("div"), bar = languageBar();
-      row.className = "notes-head-row";
+      var row = document.createElement("div"), box = document.createElement("div");
+      row.className = "notes-head-row"; box.className = "lang-box";
       heading.parentNode.insertBefore(row, heading);
-      row.appendChild(heading); row.appendChild(bar);
+      box.appendChild(languageBar());
       if (S.i18n.lang() !== "en") {
         var note = document.createElement("p");
         note.className = "lang-note"; note.textContent = S.t(S.i18n.NOTICE);
-        row.parentNode.insertBefore(note, row.nextSibling);
+        box.appendChild(note);
       }
+      row.appendChild(heading); row.appendChild(box);
     }
   });
 })();

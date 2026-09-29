@@ -222,7 +222,19 @@
       if (Math.pow(px - cx, 2) + Math.pow(py - cy, 2) < (r - 1) * (r - 1)) { P(g, px, py, C.haze, 0.5); }
     }
     if (view.mast !== false) {
-      for (var m = 0; m < 26; m++) { P(g, cx + 6 + (view.lean || 0) * m / 26, cy + 4 - m, C.dark); }
+      /* The tower in the window: a slight bulge above the foot, tapering to a
+         crossbar and a beacon, kept inside the frame at any lean */
+      var lean = view.lean || 0, tx = cx + 6, ty = cy + 4;
+      for (var m = 0; m < 26; m++) {
+        var mx = Math.round(cx + 6 + lean * m / 26), my = cy + 4 - m;
+        var mw = m < 2 ? 2 : m < 9 ? 3 : m < 16 ? 2 : 1, ml = mx - (mw >> 1);
+        if (Math.pow(ml + mw - 1 - cx, 2) + Math.pow(my - cy, 2) > (r - 4) * (r - 4)) { break; }
+        R(g, ml, my, mw, 1, C.dark);
+        if (mw === 3 && m % 3 === 1) { P(g, ml + 1, my, C.steel); }
+        tx = mx; ty = my;
+      }
+      R(g, tx - 1, ty, 3, 1, C.rib);
+      if (Math.floor(t * 1.5) % 2 === 0) { P(g, tx, ty - 1, C.red); }
     }
     if (view.lab) { R(g, cx - 14, cy + 1, 9, 4, C.dark); R(g, cx - 13, cy + 2, 7, 1, C.amber); }
     R(g, cx - 12, cy + 4, 24, 2, C.rim);

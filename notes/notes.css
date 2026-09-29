@@ -454,8 +454,15 @@ body {
   min-width: 0;
   margin-bottom: 0 !important;
 }
-.lang-bar {
+.lang-box {
   margin: 0 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.3rem;
+}
+.lang-bar {
+  margin: 0;
   padding: 0;
   display: flex;
   flex-wrap: wrap;
@@ -481,11 +488,11 @@ body {
   outline: none;
 }
 .lang-note {
-  max-width: 74ch;
-  margin: 0 auto 1rem;
-  padding: 0 1.25rem;
+  max-width: 30ch;
+  margin: 0;
   color: var(--dust);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  text-align: right;
 }
 @media (max-width: 520px) {
   .notes-head-row {
@@ -502,11 +509,6 @@ body {
 }
 
 /* Ending scenes on the drawings page */
-.scene-gallery {
-  max-width: 74ch;
-  margin: 0 auto;
-  padding: 0 1.25rem 4rem;
-}
 .scene-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr));
