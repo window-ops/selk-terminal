@@ -68,7 +68,25 @@
     host.classList.toggle("tut-mobile-top", mobile && top);
     host.classList.toggle("tut-mobile-bottom", mobile && !top);
   }
-  setInterval(function () { applySpot(); positionMobileTour(); }, 700);
+  /* On a narrow screen the panel can be rolled up to its header line, so it
+     stops covering the pane underneath. The choice is kept for the whole tour. */
+  function applyRoll() {
+    if (!panel) { return; }
+    var st = S.state.tut, rolled = !!(st && st.rolled) && S.tmux.mobile();
+    panel.classList.toggle("rolled", rolled);
+    var btn = panel.querySelector(".tut-roll");
+    if (btn) {
+      btn.textContent = S.t(rolled ? "SHOW" : "HIDE");
+      btn.setAttribute("aria-expanded", rolled ? "false" : "true");
+    }
+  }
+  function toggleRoll() {
+    var st = S.state.tut;
+    if (!st || !st.on || !S.tmux.mobile()) { return; }
+    st.rolled = !st.rolled; S.save(); S.snd.tick();
+    applyRoll(); positionMobileTour();
+  }
+  setInterval(function () { applySpot(); applyRoll(); positionMobileTour(); }, 700);
   var panel = null;
   function satisfied(on) {
     var st = S.state, reps = Object.keys(st.reports).map(function (k) {
@@ -124,8 +142,15 @@
       panel = el("div", "tut"); panel.setAttribute("role", "region"); panel.setAttribute("aria-label", S.t("Interactive tutorial")); panel.setAttribute("aria-live", "polite");
     }
     panel.textContent = "";
-    panel.appendChild(el("div", "tut-head", S.t("TOUR, STEP {n} OF {total}", { n: st.step + 1, total: steps.length })));
-    [].concat(s.t).forEach(function (para) { panel.appendChild(el("p", "", S.tc(para))); });
+    var bar = el("div", "tut-bar");
+    bar.appendChild(el("div", "tut-head", S.t("TOUR, STEP {n} OF {total}", { n: st.step + 1, total: steps.length })));
+    var roll = el("button", "btn tut-roll"); roll.type = "button"; roll.setAttribute("aria-controls", "tut-body");
+    bar.appendChild(roll);
+    bar.addEventListener("click", toggleRoll);
+    panel.appendChild(bar);
+    var body = el("div", "tut-body"); body.id = "tut-body";
+    panel.appendChild(body);
+    [].concat(s.t).forEach(function (para) { body.appendChild(el("p", "", S.tc(para))); });
     var row = el("div", "tut-btns");
     if (s.action) {
       var actions = {
@@ -163,7 +188,8 @@
     row.appendChild(next); if (!s.last) {
       row.appendChild(skip);
     }
-    panel.appendChild(row);
+    body.appendChild(row);
+    applyRoll();
     var host = S.notificationHost && S.notificationHost();
     if (host && (panel.parentNode !== host || host.firstChild !== panel)) {
       host.insertBefore(panel, host.firstChild);

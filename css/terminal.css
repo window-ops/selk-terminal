@@ -1452,6 +1452,38 @@ canvas.live {
   display: flex;
   gap: 0.6em;
 }
+.tut-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6em;
+}
+/* The roll toggle exists on narrow screens only; tour.js keeps .rolled off
+   elsewhere, so a wide screen always shows the whole panel. */
+.tut-roll {
+  display: none;
+  flex: 0 0 auto;
+}
+.tut.rolled .tut-body {
+  display: none;
+}
+/* Compact size shared with the notes navigation buttons. The whole header
+   bar toggles the panel, so the tap target stays the full width. */
+[data-screen="narrow"] .tut-roll {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.6rem;
+  padding: 0.15em 0.55em;
+  font-size: 0.85em;
+  line-height: 1.3;
+}
+[data-screen="narrow"] .tut-bar {
+  cursor: pointer;
+}
+[data-screen="narrow"] .tut.rolled {
+  padding-bottom: 0.45em;
+  box-shadow: 0.25em 0.25em 0 rgba(0, 0, 0, 0.5);
+}
 /* The tour panel is the first child of the stack. Where the stack hangs from
    the bottom edge, the order is reversed so the panel stays on that edge and
    mail toasts pile up above it. */
@@ -1489,8 +1521,10 @@ canvas.live {
     padding: 0.45em 0.65em 0.5em;
     font-size: 0.9em;
   }
+  /* Same rendered size as .mail-toast-head (1.2em of the screen font),
+     compensating for the 0.9em panel font above */
   .tut-head {
-    font-size: 1.1em;
+    font-size: 1.3333em;
   }
   .tut p {
     margin: 0.25em 0 0.4em;

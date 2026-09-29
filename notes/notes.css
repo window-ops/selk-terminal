@@ -39,16 +39,19 @@ main a.citation-button:focus-visible {
 .note-nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.6rem;
+  gap: 0.45rem;
   margin-top: 1.2rem;
 }
+/* Compact size shared with the tour's HIDE/SHOW button in the game */
 .note-button {
   display: inline-flex;
   align-items: center;
-  min-height: 2rem;
-  padding: 0.2rem 0.65rem;
+  min-height: 1.6rem;
+  padding: 0.15em 0.55em;
   border: 1px solid var(--rib);
   color: var(--titan);
+  font-size: 0.85em;
+  line-height: 1.3;
   text-decoration: none;
 }
 .drawing-back {

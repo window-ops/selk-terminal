@@ -33,7 +33,7 @@
     h.className = "mail-toast-head";
     var tag = document.createElement("span");
     tag.className = "mail-toast-tag blink"; tag.textContent = S.t("[NEW TRANSMISSION]");
-    h.appendChild(tag); h.appendChild(document.createTextNode(" AUDIT DESK 4"));
+    h.appendChild(tag); h.appendChild(document.createTextNode(" " + S.t("AUDIT DESK 4")));
     var close = document.createElement("button");
     close.type = "button";
     close.className = "mail-toast-close";
