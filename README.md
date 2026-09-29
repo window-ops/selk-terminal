@@ -1,5 +1,7 @@
 # Selk
 
+NOTE: THIS IS A MANUAL COPY OF THE REPOSITORY [FROM GITLAB](https://gitlab.com/window-ops-web/selk-terminal) BECAUSE I AM TOO TIRED TO ALSO MIRROR THIS REPOSITORY. MAY BE OUTDATED.
+
 Selk is a short, browser-based investigation game set at a fictional research and construction site inside the real Selk crater on Titan. Read the site's files, follow the evidence, complete reports, and decide what happens to the base.
 
 The game explores possible microbial life, automated infrastructure, and turbocapitalism. Its setting imagines a future led by an Eastern European space agency. The Selk Operating System, CESEA, HX Holdings, and the mission are fictional.
