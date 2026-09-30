@@ -62,7 +62,7 @@
       });
       w.appendChild(row);
       var toggles = scr.el("div", "title-row title-toggles");
-      var tour = scr.el("button", "btn", S.t("TOUR AFTER LOGIN: OFF")); tour.type = "button"; tour.dataset.title = "tutorial";
+      var tour = scr.el("button", "btn", S.t("NO TOUR: OFF")); tour.type = "button"; tour.dataset.title = "tutorial";
       tour.setAttribute("aria-pressed", "false");
       toggles.appendChild(tour);
       w.appendChild(toggles);
@@ -164,12 +164,11 @@
         scr.line(S.tc("The final decision is open. Type {decide}, or open the DECISION page in REPORT."), "warn");
       }
       if (!returning) {
-        if (S.tutAsk) {
-          S.tutAsk = false; S.tut.start();
-        } else {
-          S.run("open home/README", false);
+        S.run("open home/README", false);
+        if (!S.noTour) {
           S.tut.offer();
         }
+        S.noTour = false;
       } else {
         S.tut.redraw();
       }
@@ -420,10 +419,10 @@
           window.open("notes/credits.html", "_blank");
         }
         else if (act === "tutorial") {
-          S.tutAsk = !S.tutAsk;
-          tb.textContent = S.tutAsk ? S.t("TOUR AFTER LOGIN: ON") : S.t("TOUR AFTER LOGIN: OFF");
-          tb.setAttribute("aria-pressed", S.tutAsk ? "true" : "false");
-          tb.classList.toggle("primary", S.tutAsk);
+          S.noTour = !S.noTour;
+          tb.textContent = S.noTour ? S.t("NO TOUR: ON") : S.t("NO TOUR: OFF");
+          tb.setAttribute("aria-pressed", S.noTour ? "true" : "false");
+          tb.classList.toggle("primary", S.noTour);
         }
         else {
           start();
