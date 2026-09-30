@@ -253,7 +253,9 @@
         S.msg("Click a blank on a report page first", "err"); S.snd.error();
       }
       else if (!id) {
-        S.msg(S.isDesktop() ? "Select an entry icon or open an entry, then press F4" : "Select an entry in FILES, then press F4", "err"); S.snd.error();
+        var keys = S.ctx().keys;
+        S.msg(S.isDesktop() ? (keys ? "Select an entry icon or open an entry, then press F4" : "Select an entry icon or open an entry first") :
+          (keys ? "Select an entry in FILES, then press F4" : "Select an entry in FILES first"), "err"); S.snd.error();
       }
       else {
         S.rep.fillBlank(sel.r, sel.n, id);
@@ -323,7 +325,12 @@
   function globalKey(e) {
     if (S.dlg) {
       if (e.key === "Escape") {
-        S.closeDialog();
+        /* An open drop-down list inside the dialog closes first */
+        if (S.closePick) {
+          S.closePick();
+        } else {
+          S.closeDialog();
+        }
       } return;
     }
     if (S.mode === "title") {

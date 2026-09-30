@@ -92,7 +92,7 @@
   background: var(--ink);
   color: var(--paper);
 }
-.paper-mobile-flow .paper-btn.paper-files:hover {
+.paper-mobile-flow .paper-btn.paper-files:not(:disabled):hover {
   background: var(--ink-soft);
   color: var(--paper);
 }

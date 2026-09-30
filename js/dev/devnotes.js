@@ -47,15 +47,27 @@
     return t;
   }
   $("graph").innerHTML =
-  '<svg viewBox="0 0 680 650" role="img" aria-label="' + esc(tr("Sections, passwords, reports and endings")) + '" font-family="IBM Plex Mono, monospace" font-size="12">' +
+  '<svg viewBox="0 0 680 786" role="img" aria-label="' + esc(tr("Sections, passwords, reports and endings")) + '" font-family="IBM Plex Mono, monospace" font-size="12">' +
   '<defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="#8F9A9A" stroke-width="1.5"/></marker></defs>' +
   '<g fill="none" stroke="#8F9A9A" stroke-width="1" marker-end="url(#a)">' +
+  /* Login, reports 1 and 2, the open sections and the locked ones */
   '<line x1="340" y1="56" x2="340" y2="78"/><line x1="300" y1="116" x2="130" y2="148"/><line x1="340" y1="116" x2="340" y2="148"/><line x1="380" y1="116" x2="550" y2="148"/>' +
   '<line x1="130" y1="190" x2="130" y2="228"/><line x1="340" y1="190" x2="340" y2="228"/><line x1="550" y1="190" x2="550" y2="228"/>' +
-  '<path d="M130 270 L130 318 L248 318"/><path d="M550 270 L550 318 L432 318"/>' +
-  '<path d="M340 344 L340 450"/><path d="M130 428 L130 450 L250 450"/><path d="M550 428 L550 450 L430 450"/><line x1="550" y1="270" x2="550" y2="386"/>' +
-  '<line x1="130" y1="428" x2="130" y2="558"/><line x1="550" y1="428" x2="550" y2="558"/><line x1="340" y1="510" x2="340" y2="538"/>' +
+  /* Archive and Export give the two parts of the Power password; Export hops the 3B channel */
+  '<path d="M130 270 L130 318 L248 318"/><path d="M550 270 L550 318 L451 318 A6 6 0 0 0 439 318 L432 318"/>' +
+  /* Report 3A reads Archive; report 3B reads Units, Comms and Export */
+  '<line x1="130" y1="270" x2="130" y2="386"/>' +
+  '<path d="M430 170 L445 170 L445 408 L458 408"/><path d="M430 250 L445 250 L445 408 L458 408"/><line x1="550" y1="270" x2="550" y2="386"/>' +
+  /* Report 4 reads 3A, 3B, Power and Export */
+  '<path d="M340 344 L340 468"/><path d="M130 428 L130 490 L248 490"/><path d="M550 428 L550 482 L432 482"/><path d="M640 250 L656 250 L656 500 L432 500"/>' +
+  '<line x1="340" y1="510" x2="340" y2="536"/>' +
+  /* The final decision lists the five choices in the game's order; habitation splits on oxygen */
+  '<path d="M340 578 L340 638"/>' +
+  '<path d="M340 612 L92 612 L92 638"/><path d="M340 612 L216 612 L216 638"/><path d="M340 612 L464 612 L464 638"/><path d="M340 612 L588 612 L588 638"/>' +
+  '<path d="M588 680 L588 716"/><path d="M588 698 L464 698 L464 716"/>' +
   '</g>' +
+  '<rect x="20" y="596" width="640" height="176" rx="6" fill="none" stroke="#8F9A9A" stroke-dasharray="2 4"/>' +
+  '<text x="32" y="610" fill="#8F9A9A" font-size="10.5">' + esc(tr("ENDINGS")) + '</text>' +
   box(250, 20, 180, 36, "HOME, SITE", "open at login") +
   box(250, 80, 180, 36, "REPORTS 1, 2", "Site, Bio, Structure") +
   box(40, 150, 180, 40, "BIO, STRUCTURE", "path A, open", "#5E8C7F") +
@@ -69,9 +81,13 @@
   box(460, 388, 180, 40, "REPORT 3B", "Units, Comms, Export", "#7E6FA8") +
   box(250, 470, 180, 40, "REPORT 4", "3A, 3B, Power, Export") +
   box(250, 538, 180, 40, "FINAL DECISION", "after Report 4") +
-  box(40, 560, 180, 40, "RESEARCH", "needs 3A", "#5E8C7F") +
-  box(460, 560, 180, 40, "TRANSMIT", "needs 3B", "#7E6FA8") +
-  box(250, 610, 180, 40, "DISMANTLE, EXPORT, HABITATION", "always open") +
+  box(34, 640, 116, 40, "DISMANTLE", "always open") +
+  box(158, 640, 116, 40, "RESEARCH", "needs 3A", "#5E8C7F") +
+  box(282, 640, 116, 40, "TRANSMIT", "needs 3B", "#7E6FA8") +
+  box(406, 640, 116, 40, "EXPORT", "always open") +
+  box(530, 640, 116, 40, "HABITATION", "always open") +
+  box(406, 718, 116, 40, "OXYGEN KEPT", "oxygen yes") +
+  box(530, 718, 116, 40, "OXYGEN STOPPED", "oxygen no") +
   '</svg>';
   function box(x, y, w, h, t, s, c, locked) {
     /* A single section name comes from the section list, so it matches the game */

@@ -51,6 +51,7 @@ On mobile, use the bottom navigation buttons to switch between the available vie
 - [Credits and research references](notes/credits.html)
 - [Warranty and licenses](notes/warranty.html)
 - [Developer notes](notes/devnotes.html) (spoilers)
+- [Developing Selk](DEVELOPING.md)
 
 The Selk scenes were independently composed with two RADIOSOL images as visual references. They depict the colony at different states and dates.
 
@@ -66,9 +67,11 @@ The game is plain JavaScript loaded by `index.html` in dependency order. Every f
 - `js/dev/`: the debug panel and the developer notes page
 - `js/data/`, `js/lang/`: story data and language files
 
+[DEVELOPING.md](DEVELOPING.md) describes the data files, the progression, the saved state, the interfaces and the development tools.
+
 ## Languages
 
-The game ships in English and Romanian. Each language is one file in `js/lang/`, and the language menu sits at the top of Setup and of every notes page. Every language other than English is generated automatically, and the game says so wherever it is in use. [TRANSLATING.md](TRANSLATING.md) describes the file format, and `node tools/i18n-catalog.js template xx` starts a new language.
+The game ships in English and Romanian. Each language is one file in `js/lang/`, and the language menu sits at the top of Setup and of every notes page. Every language other than English is generated automatically, and the game says so wherever it is in use. [TRANSLATING.md](TRANSLATING.md) describes the file format. `node tools/i18n-catalog.js template xx` starts a new language, `check xx` lists what a language file lacks, and `unused xx` lists what it has that the game no longer uses.
 
 ## Credits
 

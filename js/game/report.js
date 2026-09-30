@@ -251,6 +251,7 @@
           flow.appendChild(el("div", "paper-help", selected ? S.t("Next, choose the record that answers blank {n}.", { n: S.state.sel.n }) : S.howTo("fill")));
           var files = el("button", "paper-btn paper-files", S.t("CHOOSE FROM FILES"));
           files.type = "button";
+          files.disabled = !selected;
           files.addEventListener("click", function () {
             S.ui.open("FILES");
           });
@@ -305,7 +306,7 @@
         S.ex.render();
       }
       if (S.state.sel) {
-        S.msg(S.t("Blank {n} selected. Open an entry and press USE, or F4 in FILES.", { n: n }));
+        S.msg(S.t(S.ctx().keys ? "Blank {n} selected. Open an entry and press USE, or F4 in FILES." : "Blank {n} selected. Open an entry and press USE.", { n: n }));
       }
     },
     fillBlank: function (key, n, id) {

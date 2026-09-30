@@ -265,7 +265,7 @@
           navigator.clipboard.readText().then(function (txt) {
             inp.value = inp.value.slice(0, s) + txt + inp.value.slice(e); inp.focus();
           }, function () {
-            S.msg("Paste was blocked. Use Ctrl+V.", "err");
+            S.msg(S.ctx().keys ? "Paste was blocked. Use Ctrl+V." : "Paste was blocked.", "err");
           });
         } : null,
         "CTRL+V"

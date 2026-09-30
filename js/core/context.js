@@ -6,6 +6,10 @@
   "use strict";
   var S = window.SELK;
   var narrow = window.matchMedia ? window.matchMedia("(max-width: 700px)") : null;
+  /* A touch-first screen (phone or tablet) has a coarse primary pointer. */
+  var coarse = window.matchMedia ? window.matchMedia("(pointer: coarse)") : null;
+  /* Set once a hardware keyboard has typed something during this visit. */
+  var kbdSeen = false;
 
   S.ctx = function () {
     var s = (S.state && S.state.settings) || {};
@@ -13,10 +17,14 @@
     /* Desktop mode exists on wide screens only. On mobile the game always runs
        tmux; the saved choice comes back when the screen is wide again. */
     var mobile = !!(narrow && narrow.matches), desktop = s.mode === "desktop" && !mobile;
+    /* Key hints (F2, F4, Ctrl+V) apply only where a keyboard is at hand: never
+       on phones, and on tablets only after a hardware keyboard has been used. */
+    var keys = !mobile && (!(coarse && coarse.matches) || kbdSeen);
     return {
       mode: desktop ? "desktop" : "tmux",
       desktop: desktop,
       mobile: mobile,
+      keys: keys,
       sr: sr,
       motion: motion,
       systemReduced: sys,
@@ -33,6 +41,7 @@
     h.dataset.motion = c.reduced ? "reduced" : "full";
     h.dataset.frame = c.frame;
     h.dataset.screen = c.mobile ? "narrow" : "wide";
+    h.dataset.keys = c.keys ? "on" : "off";
     S.reduced = c.reduced;
     if (b) {
       b.classList.toggle("motion-force", !c.reduced && c.systemReduced);
@@ -73,6 +82,19 @@
     var rule = S.SETTING_RULES[key];
     return !rule || rule(S.ctx());
   };
+
+  /* On-screen keyboards send keys only into text fields, and Android ones send
+     "Unidentified". A key pressed outside a text field, a function, Escape or
+     navigation key, or a Ctrl, Alt or Cmd combination comes from a hardware
+     keyboard. Tab is left out because the iPad on-screen keyboard has one. */
+  var HW_KEYS = /^(F\d{1,2}|Escape|Arrow\w+|Home|End|PageUp|PageDown|Insert|Delete)$/;
+  document.addEventListener("keydown", function (e) {
+    if (kbdSeen || !e.isTrusted || e.isComposing || e.keyCode === 229 || !e.key || e.key === "Unidentified") { return; }
+    var t = e.target, typing = !!(t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName)));
+    if (typing && !HW_KEYS.test(e.key) && !e.ctrlKey && !e.altKey && !e.metaKey) { return; }
+    kbdSeen = true;
+    if (document.body) { S.syncContext(); }
+  }, true);
 
   if (narrow) {
     var onNarrow = function () { if (document.body) { S.syncContext(); } };

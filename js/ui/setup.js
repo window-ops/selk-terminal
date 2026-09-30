@@ -136,6 +136,91 @@
       S.previewInterference(!!v);
     }
   }
+  /* A drop-down list drawn by the game. A native <select> opens a list drawn
+     by the system, which shows the system pointer and cannot follow the game's
+     styles. The button looks like every other option; its list opens under it,
+     takes the arrow keys, Home, End, Enter and Space, and closes on Escape,
+     Tab or a press outside it. */
+  function pick(k, v, label, choices) {
+    var wrap = el("span", "set-pick");
+    var btn = el("button", "opt set-pick-btn"); btn.type = "button";
+    btn.setAttribute("aria-haspopup", "listbox");
+    btn.setAttribute("aria-expanded", "false");
+    btn.dataset.value = v;
+    var list = null;
+    function nameOf(code) {
+      var c = choices.filter(function (x) { return x[0] === code; })[0];
+      return c ? c[1] : code;
+    }
+    function show() {
+      btn.textContent = nameOf(btn.dataset.value);
+      btn.lang = btn.dataset.value;
+      btn.setAttribute("aria-label", label + ": " + nameOf(btn.dataset.value));
+    }
+    function items() { return list ? [].slice.call(list.children) : []; }
+    function close(refocus) {
+      if (!list) { return; }
+      list.remove(); list = null; S.closePick = null;
+      btn.setAttribute("aria-expanded", "false");
+      document.removeEventListener("pointerdown", outside, true);
+      if (refocus) { btn.focus({ preventScroll: true }); }
+    }
+    function outside(e) {
+      if (!wrap.contains(e.target)) { close(false); }
+    }
+    function choose(code) {
+      close(true);
+      if (code === btn.dataset.value) { return; }
+      btn.dataset.value = code; show();
+      S.snd.tick();
+      setv(k, code);
+    }
+    function open() {
+      if (list) { return; }
+      hideTip();
+      list = el("span", "set-pick-list");
+      list.setAttribute("role", "listbox");
+      list.setAttribute("aria-label", label);
+      choices.forEach(function (c) {
+        var o = el("button", "set-pick-item", c[1]); o.type = "button"; o.tabIndex = -1;
+        o.lang = c[0]; o.dataset.value = c[0];
+        o.setAttribute("role", "option");
+        o.setAttribute("aria-selected", c[0] === btn.dataset.value ? "true" : "false");
+        o.addEventListener("click", function () { choose(c[0]); });
+        list.appendChild(o);
+      });
+      list.addEventListener("keydown", function (e) {
+        var all = items(), i = all.indexOf(document.activeElement), n = -1;
+        if (e.key === "ArrowDown") { n = (i + 1) % all.length; }
+        else if (e.key === "ArrowUp") { n = (i - 1 + all.length) % all.length; }
+        else if (e.key === "Home") { n = 0; }
+        else if (e.key === "End") { n = all.length - 1; }
+        else if (e.key === "Escape" || e.key === "Tab") {
+          e.preventDefault(); e.stopPropagation(); close(true); return;
+        }
+        else { return; }
+        e.preventDefault(); e.stopPropagation();
+        all[n].focus({ preventScroll: true });
+      });
+      wrap.appendChild(list);
+      S.closePick = function () { close(true); };
+      btn.setAttribute("aria-expanded", "true");
+      document.addEventListener("pointerdown", outside, true);
+      var cur = list.querySelector("[aria-selected='true']") || list.firstChild;
+      cur.focus({ preventScroll: true });
+    }
+    btn.addEventListener("click", function () {
+      if (list) { close(true); } else { open(); }
+    });
+    btn.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault(); e.stopPropagation(); open();
+      }
+    });
+    show();
+    wrap.appendChild(btn);
+    return wrap;
+  }
   function opt(label, on, fn) {
     var b = el("button", "opt" + (on ? " on" : ""), S.t(label)); b.type = "button"; b.setAttribute("aria-pressed", on ? "true" : "false"); b.addEventListener("click", fn); return b;
   }
@@ -281,18 +366,15 @@
     row.appendChild(d);
     row.querySelectorAll("button, input, select").forEach(function (c) {
       c.setAttribute("aria-describedby", d.id);
-      var ok = c.dataset.value;
-      if (c.localName !== "select") {
-        c.addEventListener("mousemove", function (e) { showTip(row, key, ok, e); });
-      }
+      var ok = c.dataset.value, popup = c.getAttribute("aria-haspopup");
+      c.addEventListener("mousemove", function (e) {
+        /* An open drop-down list covers the place where the tip would go */
+        if (popup && c.getAttribute("aria-expanded") === "true") { return; }
+        showTip(row, key, popup ? null : ok, e);
+      });
       c.addEventListener("focus", function () {
-        if (c.localName === "select" && tip && !tip.hidden && tip._row === row) { return; }
-        if (c.localName === "select") {
-          var rect = c.getBoundingClientRect();
-          showTip(row, key, ok, { clientX: rect.left + rect.width / 2, clientY: rect.top + rect.height / 2 });
-          return;
-        }
-        showTip(row, key, ok);
+        if (popup && c.getAttribute("aria-expanded") === "true") { return; }
+        showTip(row, key, popup ? null : ok);
       });
       c.addEventListener("blur", hideTip);
     });
@@ -326,19 +408,7 @@
       }));
     }
     else if (r[2] === "select") {
-      var sel = el("select", "set-select");
-      sel.setAttribute("aria-label", S.t(r[0]));
-      sel.dataset.value = v;
-      S.i18n.choices().forEach(function (c) {
-        var o = el("option", "", c[1]); o.value = c[0]; o.lang = c[0];
-        o.selected = c[0] === v;
-        sel.appendChild(o);
-      });
-      sel.addEventListener("change", function () {
-        sel.dataset.value = sel.value;
-        setv(k, sel.value);
-      });
-      ctl.appendChild(sel);
+      ctl.appendChild(pick(k, v, S.t(r[0]), S.i18n.choices()));
     }
     else if (r[2] === "range") {
       var rg = el("input", "set-range"); rg.type = "range"; rg.min = 0; rg.max = 100; rg.step = 5; rg.value = v;

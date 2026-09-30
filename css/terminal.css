@@ -552,6 +552,12 @@ button {
   color: var(--hall);
   padding: 0 0.4em;
 }
+/* The global .ok and .warn colours vanish on the titan bar, which left the
+   mobile message row looking empty */
+.tmux-msg.ok,
+.tmux-msg.warn {
+  color: var(--hall);
+}
 .screen.prefix .tmux-sess::after {
   content: " ^B";
 }
@@ -650,7 +656,7 @@ button {
 .status-info-copy {
   margin-top: 0.25em;
 }
-/* History rows: event and time on one baseline, the same size, with equal
+/* History rows: event and time centred vertically, the same size, with equal
    space above and below each row; the last row ends on the pop-up's padding */
 .status-history {
   margin-top: 0.6em;
@@ -659,7 +665,7 @@ button {
 .status-history-row {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: center;
   gap: 0.7em;
   padding: 0.35em 0;
 }
@@ -854,6 +860,9 @@ body.dragging .blank:not(:disabled) {
   .st-user {
     display: none;
   }
+  .status-info-pop {
+    width: calc(100% - 16px);
+  }
   .tmux {
     gap: 0.3em 0.5em;
     flex-wrap: wrap;
@@ -945,16 +954,59 @@ canvas.live {
   border: 1px solid var(--rib);
   background: #a88d5c;
 }
-.set-select {
-  font: inherit;
-  color: var(--haze);
-  background: var(--hall);
-  border: 1px solid var(--rib);
-  padding: 0.1em 0.3em;
+/* Drop-down list in Setup: an option button with a list in the style of the
+   context menu */
+.set-pick {
+  position: relative;
+  display: inline-block;
   max-width: 100%;
 }
-.set-select:focus {
-  border-color: var(--titan);
+.set-pick-btn::after {
+  content: "";
+  display: inline-block;
+  width: 0.6em;
+  height: 0.35em;
+  margin-left: 0.6em;
+  vertical-align: middle;
+  background: currentColor;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.set-pick-btn[aria-expanded="true"] {
+  border-color: var(--dust);
+}
+.set-pick-list {
+  position: absolute;
+  z-index: 6;
+  top: 100%;
+  left: 0;
+  min-width: 100%;
+  margin-top: 2px;
+  padding: 0.2em 0;
+  background: var(--hall);
+  border: 1px solid var(--haze);
+  box-shadow: 0.35em 0.35em 0 rgba(0, 0, 0, 0.55);
+  font-size: 0.9em;
+}
+.set-pick-item {
+  display: block;
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  white-space: nowrap;
+  color: var(--haze);
+  background: none;
+  border: 0;
+  padding: 0.15em 0.9em;
+  text-shadow: inherit;
+}
+.set-pick-item[aria-selected="true"] {
+  background: var(--rib);
+}
+.set-pick-item:hover,
+.set-pick-item:focus-visible {
+  background: var(--haze);
+  color: var(--hall);
+  text-shadow: none;
   outline: none;
 }
 .set-range {

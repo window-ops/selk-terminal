@@ -118,7 +118,7 @@
     var n = st.mail.length;
     S.snd.chime(); S.snd.hdd(3);
     S.mailpane.render(); S.rep.render();
-    S.msg(S.t("New message from AUDIT DESK 4. Press F2 or MAIL."), "warn");
+    S.msg(S.ctx().keys ? "New message from AUDIT DESK 4. Press F2 or MAIL." : "New message from AUDIT DESK 4. Press MAIL.", "warn");
     showMailToast(n);
     scr().node(function () {
       var d = scr().el("div", "ln warn");

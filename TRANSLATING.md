@@ -8,6 +8,9 @@ Each language is one file, `js/lang/<code>.js`, where `<code>` is the ISO 639-1 
 2. Translate every value in the file. Keys stay in English.
 3. Add the code to `AVAILABLE` in `js/core/i18n.js`, and the language's own name to `LANGS` in the same file.
 4. Check what is still missing: `node tools/i18n-catalog.js check ro`
+5. Check what is no longer used: `node tools/i18n-catalog.js unused ro`. Run it after any change to the game's text as well, since a reworded line in the code leaves its old key behind in every language file.
+
+Both checks exit with code 1 when they find something. An interface key counts as used when its English text appears whole in a script or page, so code that builds a key from pieces makes that key look unused.
 
 Every language other than English shows a notice in Setup and on the notes pages saying that it was generated automatically. Remove the notice for a language only after a native speaker has reviewed the whole file.
 
