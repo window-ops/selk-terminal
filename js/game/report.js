@@ -187,6 +187,8 @@
   S.rep = {
     openKeys: openKeys,
     render: function () {
+      /* The USE button under the open entry follows the selected blank */
+      if (S.refreshUse) { S.refreshUse(); }
       var active = document.activeElement;
       var hadFocus = root.contains(active), focusKey = hadFocus && active.getAttribute("data-kb-focus");
       function restoreFocus() {

@@ -961,13 +961,23 @@ canvas.live {
   display: inline-block;
   max-width: 100%;
 }
+/* Down arrow after the button text. Buttons show their text in capitals,
+   and vertical-align: middle puts the arrow too low for capitals. So the
+   arrow is lifted until its middle lines up with the middle of the capital
+   letters, which in Plex Mono is 0.349em above the baseline.
+   Width and height are rounded to whole pixels to keep the edges sharp, and
+   the width to an even number so the tip lands on a pixel. Browsers without
+   round() use the plain em values. */
 .set-pick-btn::after {
   content: "";
   display: inline-block;
   width: 0.6em;
+  width: round(0.6em, 2px);
   height: 0.35em;
+  height: round(0.35em, 1px);
   margin-left: 0.6em;
-  vertical-align: middle;
+  vertical-align: 0.175em;
+  vertical-align: calc(0.349em - round(0.35em, 1px) / 2);
   background: currentColor;
   clip-path: polygon(0 0, 100% 0, 50% 100%);
 }

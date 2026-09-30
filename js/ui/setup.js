@@ -163,7 +163,8 @@
       list.remove(); list = null; S.closePick = null;
       btn.setAttribute("aria-expanded", "false");
       document.removeEventListener("pointerdown", outside, true);
-      if (refocus) { btn.focus({ preventScroll: true }); }
+      /* Focus returns to the button without bringing up its tip */
+      if (refocus) { btn._quiet = true; btn.focus({ preventScroll: true }); btn._quiet = false; }
     }
     function outside(e) {
       if (!wrap.contains(e.target)) { close(false); }
@@ -226,22 +227,25 @@
   }
   /* Help for each Setup row, shown as a tooltip on hover or keyboard focus and
      linked to the controls with aria-describedby so screen readers read it too.
-     OPTION_HELP adds a line about the specific option under the pointer. */
+     HELP is one short line about the row, shown over its label. OPTION_HELP has
+     one line for each button, shown in its place while that button is under the
+     pointer or has the focus, so each tip stays short. A button's screen reader
+     description is the row line followed by its own. */
   var HELP = {
-    sr: "Makes the game work well with a screen reader: text appears at once and moving screen effects are switched off.",
+    sr: "Adapts the game to a screen reader.",
     motion: "Motion settings.",
-    mode: "TMUX shows the game as terminal panes. DESKTOP shows it as icons and windows, like an old home computer.",
+    mode: "How the game is shown.",
     tooltips: "Show or hide setup tooltips.",
-    frame: "FULL SCREEN uses the whole browser window. MONITOR draws the game inside an old monitor with POWER and HDD lights.",
+    frame: "How the screen is framed.",
     layout: "How the terminal panes are arranged on the main DESK window.",
     click: "Whether one click or two clicks opens a record, drawer or icon.",
-    speed: "How quickly text appears. A click or key press finishes the line; reduced motion shows text at once.",
+    speed: "How quickly text appears. A click or key press finishes the line.",
     size: "Size of all text in the game.",
-    cursor: "Size of the mouse pointer. SYSTEM uses your computer's own pointer.",
-    scan: "Thin horizontal lines, like an old tube screen. They stay still.",
-    scanRoll: "A second layer of scanlines that drifts down the screen with a slow bright band, like the refresh of a tube monitor. Available only when motion is not reduced.",
-    soundPreset: "Levels and tone for what you listen on. DESK SPEAKERS suits a left and right pair without a subwoofer: no deep bass, clearer clicks and a wider stereo image. HEADPHONES keeps the stereo gentle. QUIET lowers the machine and the wind. The sliders below stay adjustable.",
-    crtCurve: "Dimmer edges, a faint glare and the curved outline of a tube's glass. Not used with the MONITOR frame, which draws its own glass.",
+    cursor: "Size of the mouse pointer.",
+    scan: "Thin horizontal lines, like an old tube screen.",
+    scanRoll: "A bright band of scanlines that drifts down the screen.",
+    soundPreset: "Levels and tone for what you listen on. The sliders below stay adjustable.",
+    crtCurve: "The curved glass of a tube screen, outside the MONITOR frame.",
     flicker: "A faint, irregular flicker of the screen.",
     glow: "A soft glow around the letters.",
     interfere: "The screen shakes briefly during strong wind gusts.",
@@ -253,18 +257,22 @@
     vUi: "Clicks, key presses and alert tones.",
     vStruct: "Creaks and thuds from the tower.",
     _hintsOn: "The HINTS command shows clues one at a time.",
-    _light: "A HINT lamp lights up when the open record answers a gap in the report.",
-    lang: "Language of the whole game, story included. The page reloads to switch, and progress is kept.",
-    _saveLocal: "THIS TAB keeps progress until the tab is closed. THIS COMPUTER keeps it in this browser, so the game can continue another day.",
-    _wipe: "Erases all progress each time the page reloads. Useful for testing, not for playing.",
-    _storage: "Lists the data this game keeps in your browser. Each key can be viewed or deleted there.",
-    shellOut: "IN VIEW opens what a typed command shows in the VIEW window. IN SHELL prints it in the shell, so the shell works on its own.",
-    redirectNotes: "When a shell command shows its result in VIEW, the shell prints a short note saying so.",
-    debug: "Shows a movable DEBUG panel with the current situation and buttons that trigger game actions for testing.",
-    debugLog: "Prints everything the game does (commands, events, windows, messages, saves) to the browser's JavaScript console. Filter the console by SELK.",
-    setupView: "SECTIONS folds the settings into groups that open from their headers. FULL LIST shows every setting at once."
+    _light: "A HINT lamp in the status bar.",
+    lang: "Language of the whole game. Switching keeps progress.",
+    _saveLocal: "Where progress is saved.",
+    _wipe: "Erases progress at every reload.",
+    _storage: "The data this game keeps in your browser.",
+    shellOut: "Where typed commands show their results.",
+    redirectNotes: "A note in the shell when a result opens in VIEW.",
+    debug: "A movable DEBUG panel for testing.",
+    debugLog: "A log of everything the game does, in the browser's console.",
+    setupView: "How Setup lists the settings."
   };
   var OPTION_HELP = {
+    sr: {
+      on: "Text appears at once and moving effects stop.",
+      off: "Standard display and effects."
+    },
     speed: {
       instant: "Text appears immediately.",
       vfast: "450 letters per second.",
@@ -273,16 +281,17 @@
       slow: "55 letters per second."
     },
     motion: {
+      system: "Follow your computer's setting.",
       always: "Always animate.",
-      reduce: "Minimize movement."
+      reduce: "Minimize movement. Text appears at once."
     },
     mode: {
       tmux: "Terminal panes.",
-      desktop: "Windows and icons."
+      desktop: "Icons and windows, like an old home computer."
     },
     frame: {
       full: "Use the full browser window.",
-      monitor: "Use the monitor frame."
+      monitor: "An old monitor with POWER and HDD lights."
     },
     layout: {
       four: "Show four panes.",
@@ -292,6 +301,11 @@
     click: {
       single: "Open with one click.",
       double: "Open with two clicks."
+    },
+    size: {
+      s: "Small text.",
+      m: "Medium text.",
+      l: "Large text."
     },
     cursor: {
       s: "Small custom cursor.",
@@ -303,16 +317,81 @@
       on: "Show tooltips.",
       off: "Hide tooltips."
     },
-    lang: {
-      en: "English interface.",
-      ro: "Romanian interface."
+    scan: {
+      on: "Show still lines over the screen.",
+      off: "Hide the lines."
+    },
+    scanRoll: {
+      on: "Show the drifting band, when motion is not reduced.",
+      off: "Hide the band."
+    },
+    soundPreset: {
+      balanced: "The default levels.",
+      speakers: "No deep bass, clearer clicks, wider stereo.",
+      headphones: "Gentle stereo.",
+      quiet: "Lower the machine and the wind."
+    },
+    crtCurve: {
+      on: "Dim edges, a faint glare and a curved outline.",
+      off: "Plain screen edges."
+    },
+    flicker: {
+      on: "Let the screen flicker.",
+      off: "Keep the screen steady."
+    },
+    glow: {
+      on: "Soft glow around the letters.",
+      off: "Sharp letters."
+    },
+    interfere: {
+      on: "Shake the screen in strong gusts.",
+      off: "Keep the screen still in gusts."
+    },
+    poweron: {
+      on: "Play the animation at switch-on.",
+      off: "Show the screen at once."
+    },
+    _sound: {
+      on: "Play all sound.",
+      off: "Mute the game."
+    },
+    _hintsOn: {
+      on: "Show the hints page.",
+      off: "Keep hints hidden."
+    },
+    _light: {
+      on: "Light the lamp when the open record answers a gap.",
+      off: "Keep the lamp off."
     },
     _saveLocal: {
       tab: "Keep progress until this tab closes.",
-      local: "Keep progress in this browser."
+      local: "Keep progress in this browser, to continue another day."
+    },
+    _wipe: {
+      on: "Start a new game at every reload, for testing.",
+      off: "Keep progress across reloads."
+    },
+    _storage: {
+      open: "View or delete each key."
+    },
+    shellOut: {
+      view: "Open results in the VIEW window.",
+      shell: "Print results in the shell, which then works on its own."
+    },
+    redirectNotes: {
+      on: "Print the note.",
+      off: "Skip the note."
+    },
+    debug: {
+      on: "Show the situation and buttons that trigger test actions.",
+      off: "Hide the panel."
+    },
+    debugLog: {
+      on: "Print commands, events, windows and saves. Filter by SELK.",
+      off: "Keep the console quiet."
     },
     setupView: {
-      sections: "Group settings.",
+      sections: "Group settings under headers that open.",
       list: "Show all settings."
     }
   };
@@ -349,6 +428,18 @@
     tip.style.top = Math.max(4, Math.min(bb.height - th - 4, y)) + "px";
   }
   function hideTip() { if (tip) { tip.hidden = true; } }
+  /* The row's button closest to the pointer, if it is within 1em */
+  function nearestControl(row, e) {
+    var reach = parseFloat(getComputedStyle(row).fontSize) || 16, best = null, bestD = Infinity;
+    row.querySelectorAll(".set-ctl button[data-value]").forEach(function (b) {
+      var r = b.getBoundingClientRect();
+      var dx = Math.max(r.left - e.clientX, 0, e.clientX - r.right);
+      var dy = Math.max(r.top - e.clientY, 0, e.clientY - r.bottom);
+      var d = Math.sqrt(dx * dx + dy * dy);
+      if (d < bestD) { bestD = d; best = b; }
+    });
+    return bestD <= reach ? best : null;
+  }
   function prettyWrapTip(node) {
     var range = document.createRange();
     range.selectNodeContents(node);
@@ -365,20 +456,34 @@
     var d = el("span", "sr-only", S.t(HELP[key])); d.id = "set-help-" + (++tipSeq);
     row.appendChild(d);
     row.querySelectorAll("button, input, select").forEach(function (c) {
-      c.setAttribute("aria-describedby", d.id);
+      var own = c.dataset.value && OPTION_HELP[key] && OPTION_HELP[key][c.dataset.value], ids = d.id;
+      if (own && !c.getAttribute("aria-haspopup")) {
+        var od = el("span", "sr-only", S.t(own)); od.id = "set-help-" + (++tipSeq);
+        row.appendChild(od); ids += " " + od.id;
+      }
+      c.setAttribute("aria-describedby", ids);
       var ok = c.dataset.value, popup = c.getAttribute("aria-haspopup");
-      c.addEventListener("mousemove", function (e) {
-        /* An open drop-down list covers the place where the tip would go */
-        if (popup && c.getAttribute("aria-expanded") === "true") { return; }
-        showTip(row, key, popup ? null : ok, e);
-      });
+      /* A drop-down shows no tip under the pointer, since the tip would cover
+         its list. Keyboard focus still shows it, for players who cannot hover. */
+      if (!popup) {
+        c.addEventListener("mousemove", function (e) { showTip(row, key, ok, e); });
+      }
       c.addEventListener("focus", function () {
-        if (popup && c.getAttribute("aria-expanded") === "true") { return; }
+        if (popup && (c._quiet || !c.matches(":focus-visible") || c.getAttribute("aria-expanded") === "true")) { return; }
         showTip(row, key, popup ? null : ok);
       });
       c.addEventListener("blur", hideTip);
     });
-    row.addEventListener("mousemove", function (e) { if (!e.target.closest("button, input, select")) { showTip(row, key, null, e); } });
+    /* Between two buttons, or just beside one, the tip belongs to the nearest
+       button within 1em of the pointer. Without this, crossing the small gap
+       between buttons flashes the row's tip. Near the drop-down no tip shows,
+       as on the drop-down itself. */
+    row.addEventListener("mousemove", function (e) {
+      if (e.target.closest("button, input, select, .set-pick")) { return; }
+      var near = nearestControl(row, e);
+      if (near && near.getAttribute("aria-haspopup")) { hideTip(); return; }
+      showTip(row, key, near ? near.dataset.value : null, e);
+    });
     row.addEventListener("mouseleave", hideTip);
     /* Touch screens have no hover: tapping the label shows or hides its
        tooltip. Screen readers hear it as a button that reveals the tooltip. */
@@ -403,9 +508,11 @@
     row.appendChild(el("span", "set-label", S.t(r[0])));
     var ctl = el("span", "set-ctl"), k = r[1], v = getv(k);
     if (r[2] === "link") {
-      ctl.appendChild(opt("OPEN", false, function () {
+      var open = opt("OPEN", false, function () {
         hideTip(); setTimeout(S.storagePage, 0);
-      }));
+      });
+      open.dataset.value = "open";
+      ctl.appendChild(open);
     }
     else if (r[2] === "select") {
       ctl.appendChild(pick(k, v, S.t(r[0]), S.i18n.choices()));

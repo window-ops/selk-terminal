@@ -2,6 +2,28 @@
 (function () {
   var S = window.SELK;
   var K = S.cmd, scr = K.scr, err = K.err;
+  /* The USE button under the entry opened last. It follows the selected
+     blank: selecting a blank adds the button to the open entry at once, and
+     filling the blank or clearing the selection removes it, so the entry never
+     has to be opened a second time. Entries opened earlier lose their button,
+     since only the last one is on screen to be used. */
+  var useSlot = null;
+  S.refreshUse = function () {
+    document.querySelectorAll(".use-slot").forEach(function (s) {
+      if (s !== useSlot) { s.textContent = ""; }
+    });
+    if (!useSlot) { return; }
+    useSlot.textContent = "";
+    var sel = S.state.sel, id = useSlot.dataset.entry;
+    if (!sel || !S.state.reports[sel.r] || !S.reportReady(sel.r) || S.state.reports[sel.r].done) { return; }
+    var u = scr().el("button", "use", S.t("USE FOR BLANK {n} OF REPORT {code}", { n: sel.n, code: S.REPORTS[sel.r].code }));
+    u.type = "button";
+    u.addEventListener("click", function () {
+      var now = S.state.sel;
+      if (now) { S.rep.fillBlank(now.r, now.n, id); }
+    });
+    useSlot.appendChild(u);
+  };
   /* Entries */
   function printEntry(e) {
     var sec = e.id.split("/")[0];
@@ -40,15 +62,11 @@
         fig.appendChild(scr().el("figcaption", "dim", e.cap));
         box.appendChild(fig);
       }
-      var sel = S.state.sel;
-      if (sel && S.state.reports[sel.r] && S.reportReady(sel.r) && !S.state.reports[sel.r].done) {
-        var u = scr().el("button", "use", S.t("USE FOR BLANK {n} OF REPORT {code}", { n: sel.n, code: S.REPORTS[sel.r].code }));
-        u.type = "button";
-        u.addEventListener("click", function () {
-          S.rep.fillBlank(sel.r, sel.n, e.id); u.remove();
-        });
-        box.appendChild(u);
-      }
+      var slot = scr().el("div", "use-slot");
+      slot.dataset.entry = e.id;
+      box.appendChild(slot);
+      useSlot = slot;
+      S.refreshUse();
       return box;
     })());
     if (S.ex) {
