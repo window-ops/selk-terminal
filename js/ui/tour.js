@@ -21,11 +21,11 @@
       return [
         { t: ["Selk is a database investigation game. You answer report pages from the audit office with the names of database entries.", "This tour covers the windows, mail, reports and the useful shortcuts."] },
         { t: d ? ["Open the SELK disk, then the HOME drawer, then README.", "Windows move by their title bar and resize from the lower right corner."] : m ? ["Tap FILES, then tap HOME and README to open the record."] : ["FILES is a two-panel explorer: sections on the left, entries on the right.", "Arrow keys move, Enter opens, Tab switches panels. Open HOME / README."], on: "open:home/README", action: "files", spot: SPOT.files },
-        { t: ["Mail arrives with a delay, like a real signal from Earth.", m ? "Tap MAIL, then tap MSG 001 to read it." : "Open MAIL (F2 or Alt+M) and read MSG 001."], on: "mail-read", action: "mail", spot: SPOT.mail },
+        { t: ["Mail arrives with a delay, like a real signal from Earth.", m ? "Tap MAIL, then tap MSG 001 to read it." : "Open MAIL (F2 or Alt+M) and read MSG 001. It opens in MESSAGE, beside the inbox."], on: "mail-read", action: "mail", spot: SPOT.mail },
         { t: ["Open REPORT (F5 or Alt+R).", m ? "Tap a blank to select it." : d ? "It opens as its own window." : "It splits in beside VIEW, and closes from its header or the pane context menu."], on: "report-open", action: "report", spot: SPOT.report },
         { t: [m ? "Tap a blank, open FILES, then select SITE / SELK and tap USE THIS RECORD FOR BLANK." : "Fill a blank in one of three ways: drag an entry by its grip; select a blank, highlight an entry in FILES and press F4; or right-click an entry (Shift+F10 on the keyboard) and choose a blank.", m ? "The bottom tabs switch between REPORT and FILES." : "The shell accepts {fill} 1 site/SELK as well."], on: "fill", action: "files", spot: SPOT.blank },
         { t: ["Submit with SUBMIT PAGE, Alt+K or the {submit} command.", "A wrong page tells you how many answers match, never which ones."], on: "submit", action: "report", spot: SPOT.submit },
-        { t: ["Panes: Ctrl+B, then O cycles, Z zooms and unzooms, digits switch windows. The shell pops out into its own window from its header.", "Setup (Alt+P) holds hints, text speed, motion, the debug log and more. Replay a tour from HOME / TUTORIAL."], last: true }
+        { t: ["Panes: Ctrl+B, then O cycles, Z zooms and unzooms, digits switch windows. The shell pops out into its own window from its header. Drag the line between two panes to resize them.", "Setup (Alt+P) holds hints, text speed, motion, the debug log and more. Replay a tour from HOME / TUTORIAL."], last: true }
       ];
     }
     return [

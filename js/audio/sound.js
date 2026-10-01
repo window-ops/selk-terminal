@@ -2,7 +2,7 @@
    wind, structure creaks and interface tones, mixed on separate volume buses. */
 (function () {
   var S = window.SELK;
-  var swellNow = null, ctx = null, master = null, bus = {}, pan = {}, hp = null, noiseBuf = null, amb = null, mach = null, on = true, lastKey = 0, wind = 0.2;
+  var swellNow = null, ctx = null, master = null, bus = {}, duck = {}, pan = {}, hp = null, noiseBuf = null, amb = null, mach = null, on = true, lastKey = 0, wind = 0.2;
   /* Sound presets. Each sets the four channel levels once (the sliders stay
      free afterwards), a high-pass that keeps out bass the speakers cannot
      play, and how wide the stereo image is. DESK SPEAKERS suits a left and
@@ -33,6 +33,31 @@
     wind: "vWind",
     struct: "vStruct"
   };
+  /* Level changes glide. Reading AudioParam.value to find where a fade has got
+     to differs between browsers (Firefox reports the last value set, not the
+     one playing), and a fade started from a wrong value jumps, which is heard
+     as a bang. So every glide records its own start, end and times, and the
+     next one starts from the level computed from that record. */
+  function levelOf(p) {
+    var f = p._glide;
+    if (!f) { return p.value; }
+    var t = ctx.currentTime;
+    if (t >= f.t1) { return f.to; }
+    if (t <= f.t0) { return f.from; }
+    return f.from + (f.to - f.from) * (t - f.t0) / (f.t1 - f.t0);
+  }
+  function glide(p, to, dur) {
+    var t = ctx.currentTime, from = levelOf(p);
+    dur = Math.max(0.01, dur || 0);
+    try {
+      p.cancelScheduledValues(t);
+      p.setValueAtTime(from, t);
+      p.linearRampToValueAtTime(to, t + dur);
+    } catch (e) {
+      p.value = to;
+    }
+    p._glide = { from: from, to: to, t0: t, t1: t + dur };
+  }
   function init() {
     if (ctx) {
       if (ctx.state === "suspended" && on) {
@@ -50,14 +75,19 @@
     var comp = ctx.createDynamicsCompressor();
     comp.threshold.value = -14; comp.knee.value = 12; comp.ratio.value = 3; comp.attack.value = 0.01; comp.release.value = 0.25;
     master.connect(hp); hp.connect(comp); comp.connect(ctx.destination);
+    /* Each channel: level (Setup sliders) > duck (the ending's hush) > pan > master */
     Object.keys(BUS).forEach(function (k) {
       bus[k] = ctx.createGain();
+      duck[k] = ctx.createGain(); duck[k].gain.value = 1;
+      bus[k].connect(duck[k]);
       if (ctx.createStereoPanner) {
-        pan[k] = ctx.createStereoPanner(); bus[k].connect(pan[k]); pan[k].connect(master);
+        pan[k] = ctx.createStereoPanner(); duck[k].connect(pan[k]); pan[k].connect(master);
       } else {
-        bus[k].connect(master);
+        duck[k].connect(master);
       }
     });
+    master.gain.value = 0;
+    Object.keys(BUS).forEach(function (k) { bus[k].gain.value = 0; });
     apply();
     if (!on) {
       try {
@@ -77,29 +107,17 @@
     if (!ctx) {
       return;
     }
-    var t = ctx.currentTime || 0;
     var masterVol = on ? set().vol / 100 : 0, pr = preset();
     if (hp) { hp.frequency.value = pr.hp; }
     /* The computer's hum sits a little to the left; everything else is centred on its channel */
     if (pan.machine) { pan.machine.pan.value = -0.5 * pr.width; }
-    try {
-      master.gain.cancelScheduledValues(0);
-      master.gain.value = masterVol;
-      master.gain.setValueAtTime(masterVol, t);
-    } catch (e) {
-      master.gain.value = masterVol;
-    }
+    /* A short glide: a slider move or SOUND ON never steps the level */
+    glide(master.gain, masterVol, 0.05);
     Object.keys(BUS).forEach(function (k) {
       var busVol = on ? (set()[BUS[k]] != null ? set()[BUS[k]] : 100) / 100 : 0;
       /* Wind is background: well under the machine, the interface and the structure */
       if (k === "wind") { busVol *= 0.35; }
-      try {
-        bus[k].gain.cancelScheduledValues(0);
-        bus[k].gain.setValueAtTime(busVol, t);
-        bus[k].gain.value = busVol;
-      } catch (e) {
-        bus[k].gain.value = busVol;
-      }
+      glide(bus[k].gain, busVol, 0.05);
     });
   }
   function tone(freq, dur, type, vol, when, glideTo, dest) {
@@ -119,7 +137,7 @@
     o.connect(g); g.connect(dest || bus.ui);
     o.start(t); o.stop(t + dur + 0.03);
   }
-  function burst(freq, q, vol, dur, when, type, dest) {
+  function burst(freq, q, vol, dur, when, type, dest, attack) {
     if (!ctx || !on) {
       return;
     }
@@ -128,7 +146,7 @@
     var f = ctx.createBiquadFilter(); f.type = type || "bandpass"; f.frequency.value = freq; f.Q.value = q;
     var g = ctx.createGain();
     g.gain.setValueAtTime(0.0001, t);
-    g.gain.exponentialRampToValueAtTime(vol, t + Math.min(0.004, dur / 4));
+    g.gain.exponentialRampToValueAtTime(vol, t + (attack || Math.min(0.004, dur / 4)));
     g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     s.connect(f); f.connect(g); g.connect(dest || bus.ui);
     s.start(t, Math.random() * 2, dur + 0.05);
@@ -240,10 +258,9 @@
         howl: loopNoise(900, 6, "bandpass", 0.0001, placed(bus.wind, 0.7 * w)),
         hiss: loopNoise(3500, 0.8, "bandpass", 0.0001, placed(bus.wind, -0.7 * w))
       };
-      var t0 = ctx.currentTime;
-      amb.low.g.gain.setTargetAtTime(0.1 + 0.25 * wind, t0, 1.2);
-      amb.howl.g.gain.setTargetAtTime(0.02 + 0.12 * wind, t0, 1.5);
-      amb.hiss.g.gain.setTargetAtTime(0.004 + 0.03 * wind, t0, 1.5);
+      glide(amb.low.g.gain, 0.1 + 0.25 * wind, 4);
+      glide(amb.howl.g.gain, 0.02 + 0.12 * wind, 5);
+      glide(amb.hiss.g.gain, 0.004 + 0.03 * wind, 5);
       var l1 = ctx.createOscillator(), l1g = ctx.createGain();
       l1.frequency.value = 0.07; l1g.gain.value = 220; l1.connect(l1g); l1g.connect(amb.low.f.frequency); l1.start();
       var l2 = ctx.createOscillator(), l2g = ctx.createGain();
@@ -256,21 +273,16 @@
         l3
       ];
     } else if (!start && amb) {
-      [
-        amb.low,
-        amb.howl,
-        amb.hiss
-      ].forEach(function (n) {
-        try {
-          n.src.stop();
-        } catch (e) {}
-      });
-      amb.lfos.forEach(function (n) {
-        try {
-          n.stop();
-        } catch (e) {}
-      });
+      /* Fade out first: stopping a playing noise source clicks */
+      var a = amb, stopAt = ctx.currentTime + 0.6;
       amb = null;
+      [a.low, a.howl, a.hiss].forEach(function (n) {
+        glide(n.g.gain, 0, 0.5);
+        try { n.src.stop(stopAt); } catch (e) {}
+      });
+      a.lfos.forEach(function (n) {
+        try { n.stop(stopAt); } catch (e) {}
+      });
     }
   }
   function led() {
@@ -332,9 +344,12 @@
       out.gain.exponentialRampToValueAtTime(0.32, t0 + 11);
       out.gain.setValueAtTime(0.32, t0 + 15);
       out.gain.exponentialRampToValueAtTime(0.0001, t0 + 22);
-      out.connect(lp); lp.connect(master);
+      /* The swell's own envelope is on out; stopping it fades this extra stage,
+         whose level is always known, so a stop never jumps */
+      var fade = ctx.createGain(); fade.gain.value = 1;
+      out.connect(lp); lp.connect(fade); fade.connect(master);
       var voices = [];
-      swellNow = { out: out, voices: voices };
+      swellNow = { fade: fade, voices: voices };
       for (var i = 0; i < N; i++) {
         var o = ctx.createOscillator(), g = ctx.createGain();
         o.type = "sawtooth";
@@ -360,10 +375,8 @@
       }
       var t = ctx.currentTime, s = swellNow;
       swellNow = null;
+      glide(s.fade.gain, 0, 0.5);
       try {
-        s.out.gain.cancelScheduledValues(t);
-        s.out.gain.setValueAtTime(s.out.gain.value, t);
-        s.out.gain.setTargetAtTime(0.0001, t, 0.12);
         s.voices.forEach(function (o) { o.stop(t + 0.6); });
       } catch (e) {}
     },
@@ -375,27 +388,14 @@
       if (!ctx) {
         return;
       }
-      if (!on) {
-        apply(); return;
-      }
-      var t = ctx.currentTime;
-      Object.keys(bus).forEach(function (k) {
-        try {
-          bus[k].gain.cancelScheduledValues(t);
-          bus[k].gain.setValueAtTime(bus[k].gain.value, t);
-          bus[k].gain.setTargetAtTime(0, t, 0.5);
-        } catch (e) {}
+      /* Calling it again while a fade runs continues from where the fade is */
+      Object.keys(duck).forEach(function (k) {
+        glide(duck[k].gain, on ? 0 : 1, on ? 1.5 : 1.2);
       });
     },
     machine: machine,
     setOn: function (v) {
       on = !!v;
-      if (ctx && !on) {
-        try {
-          master.gain.cancelScheduledValues(0);
-          master.gain.value = 0;
-        } catch (e) {}
-      }
       apply();
       if (ctx) {
         if (!on) {
@@ -411,17 +411,13 @@
     },
     setWind: function (w) {
       wind = Math.max(0, Math.min(1, w));
+      /* Wind changes glide over two seconds; a step would cut into the
+         fade-in at power-on and click every 2.5 s afterwards */
       if (ctx && amb && on) {
-        var t = ctx.currentTime;
-        try {
-          amb.low.g.gain.cancelScheduledValues(t);
-          amb.low.g.gain.setValueAtTime(0.1 + 0.25 * wind, t);
-          amb.low.f.frequency.setValueAtTime(260 + 500 * wind, t);
-          amb.howl.g.gain.cancelScheduledValues(t);
-          amb.howl.g.gain.setValueAtTime(0.02 + 0.12 * wind, t);
-          amb.hiss.g.gain.cancelScheduledValues(t);
-          amb.hiss.g.gain.setValueAtTime(0.004 + 0.03 * wind, t);
-        } catch (e) {}
+        glide(amb.low.g.gain, 0.1 + 0.25 * wind, 2);
+        glide(amb.low.f.frequency, 260 + 500 * wind, 2);
+        glide(amb.howl.g.gain, 0.02 + 0.12 * wind, 2);
+        glide(amb.hiss.g.gain, 0.004 + 0.03 * wind, 2);
       }
     },
     key: function () {
@@ -523,8 +519,9 @@
     },
     boot: function () {
       if (!on) return;
-      burst(120, 0.8, 0.3, 0.4, 0, null, bus.machine);
-      tone(60, 1.2, "sine", 0.06, 0.05, 50, bus.machine);
+      /* The relay clunk rises over 40 ms: an instant attack at this level was a bang */
+      burst(120, 0.8, 0.12, 0.5, 0, null, bus.machine, 0.04);
+      tone(60, 1.2, "sine", 0.05, 0.05, 50, bus.machine);
       tone(15700, 1.6, "sine", 0.006, 0.2);
     },
     thud: function () {

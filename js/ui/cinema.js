@@ -163,9 +163,10 @@
       });
       var scr = document.getElementById("screen");
       scr.appendChild(root);
-      /* Everything behind the ending is out of reach: no focus, not read */
+      /* Everything behind the ending is out of reach: no focus, not read.
+         The debug panel stays usable above it */
       [].forEach.call(scr.children, function (c) {
-        if (c !== root && !c.hasAttribute("inert")) { c.setAttribute("inert", ""); c.dataset.cineInert = "1"; }
+        if (c !== root && !c.classList.contains("dbg") && !c.hasAttribute("inert")) { c.setAttribute("inert", ""); c.dataset.cineInert = "1"; }
       });
       void root.offsetWidth;
       root.classList.add("on");

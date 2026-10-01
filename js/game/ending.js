@@ -70,11 +70,21 @@
     S.mode = "shell";
     S.prompt();
   }
-  /* Reload into the title screen; the saved state decides what comes next */
+  /* Back to the title screen, rebuilt in place; the saved state decides what
+     comes next after POWER ON */
   function restart() {
-    S.save(); S.leaving = true;
+    S.save();
+    S.toTitle();
+  }
+  /* Choose again: the choice list comes back at once. The state returns to
+     before the decision, and that save stays available for the next choice */
+  function chooseAgain() {
+    var snap = restoreBefore();
+    if (snap) { S.state.preDecision = snap; }
+    S.save(); S.status();
     S.snd.stopSwell();
-    setTimeout(function () { location.reload(); }, S.fast ? 0 : 450);
+    S.cine.setManual(false);
+    choices();
   }
   /* The ending data for an id, including the two habitation variants */
   function endingById(id) {
@@ -86,15 +96,21 @@
     });
     return found;
   }
-  function loadBefore() {
+  /* The state from before the decision. Settings are the player's, not part
+     of the story, so the current ones stay, and so does every ending seen */
+  function restoreBefore() {
     var seen = S.state.endings.slice(), snap = S.state.preDecision, settings = S.state.settings;
     if (snap) {
       S.state = JSON.parse(snap);
-      /* Settings are the player's, not part of the story: keep the current ones */
       S.state.settings = settings;
       seen.forEach(function (id) { if (S.state.endings.indexOf(id) === -1) { S.state.endings.push(id); } });
     }
-    S.state.ended = null; S.state.active = "DECISION";
+    S.state.ended = null;
+    return snap;
+  }
+  function loadBefore() {
+    restoreBefore();
+    S.state.active = "DECISION";
     S.save();
     S.snd.stopSwell();
     /* Restored in place: no reload, so the title screen never comes back */
@@ -185,6 +201,7 @@
           { label: S.t("STEP BY STEP"), title: S.t("Replay the ending, one card at a time"), fn: function () { S.end.replay(true); } },
           { label: S.t("INTRO"), title: S.t("Replay the scenes before the decision"), fn: function () { intro(false).then(S.end.endgame); } }
         ] }, { label: S.t("CONTINUE"), buttons: [
+          { label: S.t("CHOOSE AGAIN"), title: S.t("Return to the final decision and choose another ending"), fn: chooseAgain },
           { label: S.t("LOAD SAVE"), title: S.t("Load the save from before the decision"), fn: loadBefore },
           { label: S.t("TITLE SCREEN"), title: S.t("Return to the title screen"), fn: restart }
         ] }]);

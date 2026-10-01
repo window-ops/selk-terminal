@@ -20,7 +20,7 @@ SELK.i18n.register("ro", {
   "2096 notes on gray hydrogen and electrolysis": "Notele din 2096 despre hidrogenul gri și electroliză",
   "260 letters per second.": "260 de litere pe secundă.",
   "31 units online": "31 de unități conectate",
-  "3A, 3B, Power, Export": "3A, 3B, Energie, Export",
+  "3A or 3B, Power, Export": "3A sau 3B, Energie, Export",
   "4 096 000 bytes free": "4.096.000 de octeți liberi",
   "4 TB, 5 400 rpm, 61 % free": "4 TB, 5.400 rpm, 61% liber",
   "450 letters per second.": "450 de litere pe secundă.",
@@ -406,6 +406,8 @@ SELK.i18n.register("ro", {
   "list report pages, {report} 2 opens one": "listează paginile de raport; {report} 2 deschide o pagină",
   "list sections, or entries in this section": "listează secțiunile sau înregistrările din secțiunea curentă",
   "Live camera view of MAST-01": "Imagine în direct de la camera MAST-01",
+  "CHOOSE AGAIN": "ALEGE DIN NOU",
+  "Return to the final decision and choose another ending": "Revino la decizia finală și alege alt final",
   "LOAD SAVE": "ÎNCARCĂ SALVAREA",
   "Load the save from before the decision": "Încarcă salvarea de dinaintea deciziei",
   "locked": "blocată",
@@ -417,6 +419,14 @@ SELK.i18n.register("ro", {
   "Lower the machine and the wind.": "Reduce zgomotul calculatorului și al vântului.",
   "Machine": "Calculator",
   "MAIL": "POȘTĂ",
+  "MESSAGE": "MESAJ",
+  "Choose a message in the inbox.": "Alege un mesaj din lista mesajelor primite.",
+  "Resize {a} and {b}": "Redimensionează {a} și {b}",
+  "Drag to resize. Double click for the default size.": "Trage pentru a redimensiona. Dublu clic pentru dimensiunea implicită.",
+  "SHOW INBOX": "ARATĂ LISTA",
+  "HIDE INBOX": "ASCUNDE LISTA",
+  "Show the inbox above the message": "Arată lista mesajelor primite deasupra mesajului",
+  "Hide the inbox and give the message the whole page": "Ascunde lista mesajelor primite și lasă mesajului toată pagina",
   "Mail arrives with a delay, like a real signal from Earth.": "Poșta sosește cu întârziere, ca un semnal real de pe Pământ.",
   "Mail inbox": "Mesaje primite",
   "Map of the site from above. Zone 14 is marked around MAST-01, its hall and FOOTING-B over plot 9. Hallways link the shelter, the hall, the lab and the EX-1 plant. EX-1 lies east of the zone, with its intake and the frost field to the north. Sand covers parts of the hallways.": "Harta bazei văzută de sus. Zona 14 este marcată în jurul MAST-01, al halei sale și al FOOTING-B de deasupra parcelei 9. Coridoare leagă adăpostul, hala, laboratorul și instalația EX-1. EX-1 se află la est de zonă, cu priza de aer și câmpul de chiciură la nord. Nisipul acoperă o parte din coridoare.",
@@ -505,7 +515,7 @@ SELK.i18n.register("ro", {
   "open home/README": "open home/README",
   "Open items with": "Deschiderea elementelor",
   "OPEN MAIL": "DESCHIDE POȘTA",
-  "Open MAIL (F2 or Alt+M) and read MSG 001.": "Deschide POȘTA (F2 sau Alt+M) și citește MSJ 001.",
+  "Open MAIL (F2 or Alt+M) and read MSG 001. It opens in MESSAGE, beside the inbox.": "Deschide POȘTA (F2 sau Alt+M) și citește MSJ 001. Mesajul se deschide în MESAJ, lângă lista de mesaje primite.",
   "OPEN MSG {num}": "DESCHIDE MSJ {num}",
   "OPEN REPORT": "DESCHIDE RAPORTUL",
   "Open REPORT (F5 or Alt+R).": "Deschide RAPORTUL (F5 sau Alt+R).",
@@ -524,6 +534,7 @@ SELK.i18n.register("ro", {
   "Outdated handbook notes": "Note învechite din manual",
   "Output redirected to VIEW": "Rezultat redirecționat către CITIRE",
   "Output redirected to VIEW.": "Rezultat redirecționat către CITIRE.",
+  "Output redirected to MAIL.": "Rezultat redirecționat către POȘTĂ.",
   "Overall loudness of the game.": "Volumul general al jocului.",
   "Oxygen kept": "Oxigen păstrat",
   "OXYGEN KEPT": "OXIGEN PĂSTRAT",
@@ -535,7 +546,7 @@ SELK.i18n.register("ro", {
   "PageDown": "PageDown",
   "PageUp": "PageUp",
   "Pane": "Panou",
-  "Panes: Ctrl+B, then O cycles, Z zooms and unzooms, digits switch windows. The shell pops out into its own window from its header.": "Panouri: Ctrl+B, apoi O trece la următorul, Z mărește și micșorează, cifrele schimbă fereastra. Consola se mută într-o fereastră proprie din antetul ei.",
+  "Panes: Ctrl+B, then O cycles, Z zooms and unzooms, digits switch windows. The shell pops out into its own window from its header. Drag the line between two panes to resize them.": "Panouri: Ctrl+B, apoi O trece la următorul, Z mărește și micșorează, cifrele schimbă fereastra. Consola se mută într-o fereastră proprie din antetul ei. Trage linia dintre două panouri pentru a le redimensiona.",
   "parked, zone 14 hold": "parcată, oprire în zona 14",
   "PART1": "PARTEA1",
   "PART2": "PARTEA2",
@@ -809,7 +820,13 @@ SELK.i18n.register("ro", {
   "The save from before the decision is loaded.": "Salvarea de dinaintea deciziei a fost încărcată.",
   "The screen shakes briefly during strong wind gusts.": "Ecranul tremură scurt la rafalele puternice de vânt.",
   "The shell accepts {fill} 1 site/SELK as well.": "Consola acceptă și {fill} 1 baza/SELK.",
-  "the shell records this when a command opens content in VIEW": "consola notează asta când o comandă deschide conținut în CITIRE",
+  "the shell records this when a command opens content in VIEW, or a message in MAIL": "consola notează asta când o comandă deschide conținut în CITIRE sau un mesaj în POȘTĂ",
+  "MAIL and MESSAGE": "POȘTĂ și MESAJ",
+  "MAIL lists the messages; MESSAGE beside it shows the one you open, and shows messages only": "POȘTĂ listează mesajele; MESAJ, alături, arată mesajul deschis și afișează doar mesaje",
+  "HIDE INBOX and SHOW INBOX": "ASCUNDE LISTA și ARATĂ LISTA",
+  "on a narrow screen, give MESSAGE the whole page or bring the inbox back above it": "pe un ecran îngust, lasă panoului MESAJ toată pagina sau readu lista de mesaje primite deasupra lui",
+  "Pane divider": "Separatorul dintre panouri",
+  "drag the line between two panes to resize them, or focus it and use the arrow keys; a double click returns to the default size": "trage linia dintre două panouri pentru a le redimensiona sau selecteaz-o și folosește săgețile; dublu clic revine la dimensiunea implicită",
   "The short animation when the screen switches on.": "Animația scurtă de la pornirea ecranului.",
   "The simplest way: click a gap, then open the record in the list and click the button USE FOR BLANK. You can also drag a record onto a gap.": "Cel mai simplu: selectezi un spațiu, deschizi înregistrarea din listă și apeși COMPLETEAZĂ SPAȚIUL. Poți și să tragi o înregistrare pe un spațiu.",
   "The supervisor at the terminal in the shelter. Through the window: the leaning tower.": "Supraveghetorul la terminalul din adăpost. Prin fereastră se vede turnul înclinat.",
@@ -1327,10 +1344,10 @@ SELK.i18n.register("ro", {
     "body": "RAPORTUL 2 a fost acceptat.\nBiroul cere încă două pagini: 3A despre istoricul porții și 3B despre istoricul actualizărilor. Patru secțiuni sunt blocate. Parolele lor s-au schimbat cât ai dormit. Fiecare parolă apare într-o înregistrare pe care o poți deschide deja, sub forma unui nume, a unui cuvânt sau a unui număr.\nBIROUL DE AUDIT 4"
    },
    "MSG004": {
-    "body": "RAPORTUL 3A a fost acceptat.\nDacă sub FOOTING-B trăiesc celule, zona 14 este parțial reală. Înregistrările porții au fost trimise departamentului de biologie CESEA. Raportul final se deschide după acceptarea ambelor rapoarte de continuare.\nBIROUL DE AUDIT 4"
+    "body": "RAPORTUL 3A a fost acceptat.\nDacă sub FOOTING-B trăiesc celule, zona 14 este parțial reală. Înregistrările porții au fost trimise departamentului de biologie CESEA. RAPORTUL 4 este deschis. Dacă RAPORTUL 3B este încă deschis, acceptarea lui înainte de decizia finală face disponibilă opțiunea care depinde de el.\nBIROUL DE AUDIT 4"
    },
    "MSG005": {
-    "body": "RAPORTUL 3B a fost acceptat.\nCheia de semnare 7 aparține propriului nostru birou de semnare. A fost marcată pentru verificare. Raportul final se deschide după acceptarea ambelor rapoarte de continuare.\nBIROUL DE AUDIT 4"
+    "body": "RAPORTUL 3B a fost acceptat.\nCheia de semnare 7 aparține propriului nostru birou de semnare. A fost marcată pentru verificare. RAPORTUL 4 este deschis. Dacă RAPORTUL 3A este încă deschis, acceptarea lui înainte de decizia finală face disponibilă opțiunea care depinde de el.\nBIROUL DE AUDIT 4"
    },
    "MSG006": {
     "body": "RAPORTUL 4 a fost acceptat.\nBiroul nu poate interveni de pe Pământ înainte ca furtunile echinocțiului să ajungă la Selk. Decizia privind baza îi revine supraveghetorului.\nScrie decide când ești pregătit.\nBIROUL DE AUDIT 4"
@@ -1754,7 +1771,7 @@ SELK.i18n.register("ro", {
      "Priza de aer a EX-1 se închide. Hidrogenul de lângă sol revine la 0,10%.",
      "În aprilie, poarta ridică marcajul de pe zona 14, cu excepția parcelei 9.",
      "Laboratorul se redeschide. În parcela 3 încă există celule active.",
-     "Selk devine stație de cercetare, iar tu îi ții evidența din adăpost."
+     "Selk devine stație de cercetare. Din adăpostul bazei, notezi rezultatele și le trimiți pe Pământ."
     ]
    },
    "transmit": {

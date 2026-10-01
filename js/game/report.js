@@ -186,7 +186,11 @@
   }
   S.rep = {
     openKeys: openKeys,
+    /* Keep the REPORT pane's scroll position when rebuilding its content (see S.keepScroll) */
     render: function () {
+      S.keepScroll(root, function () { S.rep.renderPage(); });
+    },
+    renderPage: function () {
       /* The USE button under the open entry follows the selected blank */
       if (S.refreshUse) { S.refreshUse(); }
       var active = document.activeElement;
@@ -454,7 +458,8 @@
           if (toast && sendToast) {
             toast.update(t);
           }
-          if (!S.ui.isOpen("SHELL")) {
+          /* Put the transmission countdown in the status message only when SHELL and its toast do not show it */
+          if (!S.ui.isOpen("SHELL") && !(toast && sendToast)) {
             S.msg(label + ": " + t, "warn");
           }
           if (left % 3 === 0) {

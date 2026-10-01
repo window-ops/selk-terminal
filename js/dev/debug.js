@@ -183,6 +183,22 @@
       document.addEventListener("pointermove", mv); document.addEventListener("pointerup", up);
     });
   }
+  /* Keep the panel inside the screen. A position set by dragging is clamped,
+     so a smaller window or a rotated phone never leaves the panel off screen */
+  function clamp() {
+    if (!panel || !panel.parentNode || panel.style.left === "") { return; }
+    var host = panel.parentNode.getBoundingClientRect(), w = panel.offsetWidth, h = panel.offsetHeight;
+    var left = parseFloat(panel.style.left) || 0, top = parseFloat(panel.style.top) || 0;
+    panel.style.left = Math.max(0, Math.min(host.width - w, left)) + "px";
+    panel.style.top = Math.max(0, Math.min(host.height - Math.min(h, host.height), top)) + "px";
+  }
+  window.addEventListener("resize", clamp);
+  if (window.ResizeObserver) {
+    document.addEventListener("DOMContentLoaded", function () {
+      var screen = document.getElementById("screen");
+      if (screen) { new ResizeObserver(clamp).observe(screen); }
+    });
+  }
   /* Rewritten only when something changed, and never announced */
   function update() {
     if (!panel || !info) { return; }
@@ -192,9 +208,12 @@
   setInterval(function () {
     var screen = document.getElementById("screen");
     if (!screen) { return; }
-    if (on() && S.mode === "shell") {
+    /* The panel stays attached for the whole session, busy output and the
+       ending included: taking it out and putting it back made clicks miss */
+    if (on() && S.tmux && S.tmux.attached) {
       if (!panel) { build(); }
-      if (panel.parentNode !== screen) { screen.appendChild(panel); }
+      if (panel.parentNode !== screen) { screen.appendChild(panel); clamp(); }
+      if (panel.hasAttribute("inert")) { panel.removeAttribute("inert"); delete panel.dataset.cineInert; }
       update();
     } else if (panel && panel.parentNode) {
       panel.parentNode.removeChild(panel);

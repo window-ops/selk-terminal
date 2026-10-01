@@ -298,7 +298,7 @@ AUDIT DESK 4`
     ],
     body:
     `REPORT 3A accepted.
-If cells live under FOOTING-B, zone 14 is partly real. Gate records forwarded to CESEA biology. The final page opens after both follow-up reports are accepted.
+If cells live under FOOTING-B, zone 14 is partly real. Gate records forwarded to CESEA biology. REPORT 4 is open. If REPORT 3B is still open, accepting it before the final decision makes the option that depends on it available.
 AUDIT DESK 4`
   },
   MSG005: {
@@ -307,7 +307,7 @@ AUDIT DESK 4`
     ],
     body:
     `REPORT 3B accepted.
-Release key 7 belongs to our own signing office. It has been flagged for review. The final page opens after both follow-up reports are accepted.
+Release key 7 belongs to our own signing office. It has been flagged for review. REPORT 4 is open. If REPORT 3A is still open, accepting it before the final decision makes the option that depends on it available.
 AUDIT DESK 4`
   },
   MSG006: {

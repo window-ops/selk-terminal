@@ -75,7 +75,8 @@
     }
     $("screen").classList.remove("title-screen");
     S.mode = "busy";
-    S.snd.init(); S.snd.setOn(S.state.sound); S.snd.boot(); S.snd.spinup(); S.snd.ambient(true);
+    /* hush(false) lifts the ending's hush when the title was reached from it */
+    S.snd.init(); S.snd.setOn(S.state.sound); S.snd.hush(false); S.snd.boot(); S.snd.spinup(); S.snd.ambient(true);
     S.live.start();
     document.body.classList.add("powered");
     S.scr.clear();
@@ -195,6 +196,22 @@
       S.mode = "busy"; attach(false);
     });
   }
+  /* Back to the title screen without reloading the page. The machine and the
+     wind fade out under the ending's hush, and POWER ON starts them again */
+  S.toTitle = function () {
+    S.snd.stopSwell(); S.snd.spindown(); S.snd.ambient(false);
+    if (S.cine.isOpen()) { S.cine.close(); }
+    S.finale = false;
+    $("screen").classList.remove("finale");
+    S.closeDialog();
+    if (S.tmux.attached) { S.tmux.detach(); }
+    document.body.classList.remove("powered");
+    S.scr.skip();
+    S.mode = "title";
+    S.scr.clear();
+    S.prompt(); S.status();
+    title();
+  };
   S.logout = function () {
     S.state.name = ""; S.state.cwd = ""; S.save();
     S.closeDialog();
@@ -383,6 +400,8 @@
     S.tmux.render();
     S.prompt();
     title();
+    /* Settings are on the page now: show the room (see html.booting in crt.css) */
+    document.documentElement.classList.remove("booting");
     document.addEventListener("keydown", globalKey, true);
     $("cmd").addEventListener("keydown", inputKey);
     var tp = $("tmux-prompt");

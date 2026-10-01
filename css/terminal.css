@@ -73,6 +73,52 @@ button {
   display: flex;
   flex-direction: column;
 }
+/* Divider between two panes. Drag it, or focus it and use the arrow keys,
+   to resize; a double click returns to the default size. It overlaps the
+   pane borders, so it takes no space of its own */
+.split-bar {
+  flex: 0 0 8px;
+  position: relative;
+  z-index: 2;
+  touch-action: none;
+  background: transparent;
+}
+.split.v > .split-bar {
+  margin: 0 -4px;
+  cursor: col-resize;
+}
+.split.h > .split-bar {
+  margin: -4px 0;
+  cursor: row-resize;
+}
+.split-bar:hover,
+.split-bar:focus-visible,
+.split-bar.drag {
+  background: rgba(214, 195, 150, 0.25);
+  outline: none;
+}
+/* A pane sized to its content, up to 45% of the split (the stacked inbox) */
+.pane.fit {
+  flex: 0 1 auto;
+  max-height: 45%;
+}
+.pane.fit > .pane-body,
+.pane.fit > .pane-body > * {
+  flex: 1 1 auto;
+}
+/* Narrow screens: the stacked inbox is compact, so all six messages fit
+   without scrolling on a phone of 640 px or taller */
+@media (max-width: 700px) {
+  .pane.fit {
+    max-height: 52%;
+  }
+  .pane.fit .mailpane {
+    padding: 0.4em 0.8em;
+  }
+  .pane.fit .mailpane .pane-title {
+    margin-bottom: 0.2em;
+  }
+}
 .pane-body > * {
   flex: 1;
   min-height: 0;
@@ -92,6 +138,12 @@ button {
   padding: 0.8em 1em 1em;
   overflow-x: hidden;
 }
+/* Shell output rhythm. Every line is one line box of 1.5em, headings
+   included. A gap is half a line (0.75em) and sits equally above and below
+   what it separates: a command echo, a heading, a block (entry, message,
+   note, table, hint) and a paragraph inside a text. Plain lines follow each
+   other with no gap. Margins of larger type are divided by its size, so the
+   gap stays 0.75em of the shell font. */
 .ln {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
@@ -106,7 +158,10 @@ button {
 }
 .echo {
   color: var(--dust);
-  margin-top: 0.5em;
+  margin: 0.75em 0;
+}
+.echo:last-child {
+  margin-bottom: 0;
 }
 .dim {
   color: var(--dust);
@@ -125,11 +180,15 @@ button {
   font-family: var(--font-crt);
   font-size: 1.5em;
   letter-spacing: 0.04em;
-  margin-top: 0.4em;
+  line-height: 1;
+  min-height: 1em;
+  margin: 0.5em 0;
 }
 .head-s {
   font-size: 1.3em;
-  margin: 0 0 0.3em;
+  line-height: 1.1538;
+  min-height: 1.1538em;
+  margin: 0.5769em 0;
 }
 .lnk,
 .term {
@@ -195,18 +254,19 @@ button {
 .entry {
 }
 .log .entry {
-  margin: 0.8em 0 0.4em;
+  margin: 0.75em 0;
   border-left: 2px solid var(--rib);
   padding-left: 0.9em;
 }
 .entry-title {
   font-family: var(--font-crt);
   font-size: 1.5em;
+  line-height: 1;
 }
 .rule {
   height: 1px;
   background: var(--rib);
-  margin: 0.35em 0 0.55em;
+  margin: 0.375em 0;
 }
 .entry-body,
 .mail-body {
@@ -218,15 +278,22 @@ button {
 }
 .mail-body {
   white-space: pre-wrap;
-  margin: 0.6em 0;
+  margin: 0.75em 0;
 }
-/* The last paragraph of a message ends on the box's own padding */
+/* Inside a box the first and last parts meet the box's own padding */
+.mail > :first-child,
+.entry > :first-child,
+.note > :first-child {
+  margin-top: 0;
+}
 .mail > :last-child,
+.entry > :last-child,
+.note > :last-child,
 .mail-body:last-child {
   margin-bottom: 0;
 }
 .cam {
-  margin: 0.9em 0 0;
+  margin: 0.75em 0;
 }
 .cam img {
   display: block;
@@ -244,28 +311,30 @@ button {
   border: 1px dashed var(--rib);
 }
 .log .note {
-  margin: 0.6em 0;
+  margin: 0.75em 0;
 }
 .note-title {
   color: var(--titan);
 }
 .log .mail {
-  margin: 0.8em 0;
+  margin: 0.75em 0;
   padding: 0.7em 0.9em;
   border: 1px solid var(--rib);
 }
 .mail-head {
   font-family: var(--font-crt);
   font-size: 1.3em;
+  line-height: 1.1538;
 }
 .hintbox {
-  margin: 0.5em 0;
+  margin: 0.75em 0;
 }
+/* Two lines of the shell font */
 .count {
   font-family: var(--font-crt);
   font-size: 2em;
   color: var(--titan);
-  line-height: 1.2;
+  line-height: 1.5;
 }
 .viewer {
   display: flex;
@@ -435,6 +504,26 @@ button {
 .mrow.unread {
   color: var(--titan);
 }
+.mrow {
+  display: flex;
+  align-items: baseline;
+  gap: 1em;
+}
+.mrow-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mrow-new {
+  margin-left: auto;
+  flex: none;
+}
+.mrow.open {
+  color: var(--haze);
+  background: rgba(214, 195, 150, 0.08);
+}
+
 .mrow:hover {
   color: var(--haze);
 }
@@ -608,6 +697,17 @@ button {
   border: 1px solid transparent;
   padding: 0 0.4em;
   white-space: nowrap;
+}
+/* Status bar buttons hold one line of capitals. A line box of exactly 1em puts
+   the cap height in the middle of the box, so the label is centred vertically */
+.st-btn,
+.st-uplink,
+.st-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  min-height: 1.5em;
 }
 .st-uplink.live {
   font-weight: 500;
@@ -890,6 +990,16 @@ body.dragging .blank:not(:disabled) {
   }
   .st-btn {
     min-height: 2.4em;
+  }
+  /* UPLINK and the save lamp share the row space equally, so both have one size */
+  .st-uplink,
+  .st-save {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 2.4em;
+    border-color: rgba(30, 36, 39, 0.5);
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .mc-panels {
     flex-direction: column;
@@ -1286,6 +1396,9 @@ canvas.live {
   overflow-x: auto;
   scrollbar-width: thin;
 }
+.log > .etable-wrap {
+  margin: 0.75em 0;
+}
 .etable {
   border-collapse: collapse;
   min-width: 100%;
@@ -1307,7 +1420,13 @@ canvas.live {
   color: var(--flag);
 }
 .paras p {
-  margin: 0 0 0.35em;
+  margin: 0.75em 0;
+}
+.paras > p:first-child {
+  margin-top: 0;
+}
+.paras > p:last-child {
+  margin-bottom: 0;
 }
 .telem {
   margin-bottom: 0.9em;
@@ -2006,8 +2125,10 @@ body.sr-mode .tut-spot {
   position: absolute;
   right: 0.8em;
   top: 0.8em;
-  z-index: 8;
+  z-index: 31;
   width: min(21em, calc(100% - 1.6em));
+  max-height: calc(100% - 1.6em);
+  overflow-y: auto;
   background: var(--hall);
   border: 2px solid #6fbf5a;
   box-shadow: 0.3em 0.3em 0 rgba(0, 0, 0, 0.55);

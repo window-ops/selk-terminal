@@ -1,4 +1,5 @@
-/* VIEW window and MAIL pane. S.display() shows any content in VIEW. */
+/* VIEW window and MAIL pane. S.display() shows entries and notes in VIEW;
+   messages open only in the MAIL pane, through S.mailpane.open(). */
 (function () {
   var S = window.SELK, el = S.el;
   /* Viewer */
@@ -83,11 +84,39 @@
       return node;
     });
   };
-  /* Mail pane */
-  var mroot = el("div", "mailpane scroll");
+  /* MAIL pane: the inbox list. MESSAGE pane: the reader beside it, which
+     shows messages only, so VIEW keeps entries and notes */
+  var mroot = el("div", "mailpane scroll"), openIndex = -1;
   S.registerKind("MAIL", mroot);
+  var rroot = el("div", "viewer msgview"), rhead = el("div", "v-head", "MESSAGE"), rbody = el("div", "v-body scroll");
+  var rhint = el("div", "dim", "Choose a message in the inbox.");
+  rbody.appendChild(rhint);
+  rroot.appendChild(rhead); rroot.appendChild(rbody);
+  S.i18n.ready.then(function () {
+    rhead.textContent = S.t("MESSAGE");
+    rhint.textContent = S.t("Choose a message in the inbox.");
+  });
+  S.registerKind("MESSAGE", rroot);
+  var readToken = 0, readSkip = false;
+  rbody.addEventListener("click", function () { readSkip = true; });
+  document.addEventListener("keydown", function () { readSkip = true; }, true);
   S.mailpane = {
+    /* Show message n (1-based) in the MESSAGE pane */
+    open: function (n, title, node) {
+      openIndex = n - 1;
+      rhead.textContent = S.t("MESSAGE") + ": " + title;
+      rbody.textContent = ""; rbody.appendChild(node); rbody.scrollTop = 0; rbody.tabIndex = 0;
+      S.mailpane.render();
+      var token = ++readToken; readSkip = false;
+      S.scr.reveal(node, function () { return readSkip || token !== readToken; });
+      S.keepScroll(rbody, function () { rbody.focus({ preventScroll: true }); });
+      S.announce(title);
+    },
     render: function () {
+      S.keepScroll(mroot, renderList);
+    }
+  };
+  function renderList() {
       var active = document.activeElement;
       var keepFocus = mroot.contains(active);
       var focusIndex = keepFocus ? active.dataset.mailIndex : null;
@@ -95,15 +124,19 @@
       mroot.appendChild(el("div", "pane-title", S.t("INBOX, AUDIT DESK 4")));
       var m = S.state.mail;
       if (!m.length) {
+        openIndex = -1;
         mroot.appendChild(el("div", "dim", S.state.pending.length ? S.t("The uplink is receiving.") : S.t("No messages yet.")));
         if (keepFocus) { mroot.tabIndex = -1; mroot.focus({ preventScroll: true }); }
         return;
       }
       m.forEach(function (x, i) {
-        var b = el("button", "mrow" + (x.read ? "" : " unread"));
+        var b = el("button", "mrow" + (x.read ? "" : " unread") + (i === openIndex ? " open" : ""));
+        if (i === openIndex) { b.setAttribute("aria-current", "true"); }
         b.type = "button"; b.dataset.cmd = "mail " + (i + 1);
         b.dataset.mailIndex = String(i);
-        b.textContent = S.t("MSG {num}", { num: ("00" + (i + 1)).slice(-3) }) + " " + S.fmtTime(x.t) + (x.read ? "" : " " + S.t("NEW"));
+        /* The NEW tag sits at the right end of the row */
+        b.appendChild(el("span", "mrow-label", S.t("MSG {num}", { num: ("00" + (i + 1)).slice(-3) }) + " " + S.fmtTime(x.t)));
+        if (!x.read) { b.appendChild(document.createTextNode(" ")); b.appendChild(el("span", "mrow-new", S.t("NEW"))); }
         mroot.appendChild(b);
       });
       if (keepFocus) {
@@ -111,6 +144,5 @@
         if (!next.matches("button, input, select, textarea, a, [tabindex]")) { next.tabIndex = -1; }
         next.focus({ preventScroll: true });
       }
-    }
-  };
+  }
 })();

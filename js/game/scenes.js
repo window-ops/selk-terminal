@@ -139,13 +139,24 @@
       if (rnd(i) < plume) { R(g, x + 17 + Math.sin(i + t) * 2 + age * 6, py, 2 + age * 3, 1, C.haze, (1 - age) * 0.7 * plume); }
     }
   }
+  /* The relay dish: base plate, pedestal and yoke, a bowl tilted towards the
+     beam, and a feed arm on the bowl's axis. Every part touches the next, and
+     the beam leaves from the feed along the same axis */
   function dish(g, x, beam, t) {
-    R(g, x - 1, GROUND - 10, 3, 10, C.steel); R(g, x - 4, GROUND - 2, 9, 2, C.dark);
-    for (var i = 0; i < 9; i++) { R(g, x - 8 + i, GROUND - 16 - Math.round(Math.abs(i - 4) * 0.8), 9 - Math.abs(i - 4), 1, C.haze); }
-    R(g, x - 1, GROUND - 21, 2, 3, C.steel);
-    for (var k = 0; k < 5 && beam; k++) {
-      var y = GROUND - 22 - ((t * 20 + k * 11) % 50);
-      R(g, x + (GROUND - 22 - y) * 0.3, y, 2, 3, C.amber, 0.9);
+    var slope = 0.3, base = GROUND - 15;
+    R(g, x - 4, GROUND - 2, 9, 2, C.dark);
+    R(g, x - 1, GROUND - 12, 3, 10, C.steel);
+    R(g, x - 3, GROUND - 14, 7, 2, C.rib);
+    for (var j = 0; j < 5; j++) {
+      var w = 3 + 2 * j, cx = x + Math.round(j * slope);
+      R(g, cx - (w - 1) / 2, base - j, w, 1, j === 0 ? C.steel : (j === 4 ? C.white : C.haze));
+    }
+    for (var k = 0; k < 5; k++) { P(g, x + Math.round((5 + k) * slope), base - 5 - k, C.rib); }
+    var fx = x + Math.round(10 * slope), fy = base - 11;
+    R(g, fx - 1, fy, 2, 2, C.steel);
+    for (var n = 0; n < 5 && beam; n++) {
+      var d = (t * 20 + n * 11) % 50;
+      R(g, fx - 1 + Math.round(d * slope), fy - 3 - d, 2, 3, C.amber, 0.9);
     }
   }
   /* A habitat dome whose crew is seen through its lit windows */

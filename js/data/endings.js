@@ -45,7 +45,7 @@ SELK.ENDINGS = [
       "The EX-1 intake is closed. Hydrogen near the ground returns to 0.10 percent.",
       "In April the gate lifts the flag on zone 14, except for plot 9.",
       "The lab reopens. Plot 3 still shows active cells.",
-      "Selk becomes a research station, and you keep its records from the shelter."
+      "Selk becomes a research station. From the site shelter, you record its findings and send them to Earth."
     ]
   },
   {

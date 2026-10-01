@@ -14,6 +14,12 @@ body {
   font-family: var(--font-mono);
   -webkit-font-smoothing: antialiased;
 }
+/* The frame and screen settings are applied by script once the save and the
+   language are loaded. Until then the room stays hidden, so the default monitor
+   frame never shows for a moment before the saved one replaces it */
+html.booting .room {
+  visibility: hidden;
+}
 .room {
   min-height: 100%;
   display: grid;

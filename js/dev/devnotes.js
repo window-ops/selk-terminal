@@ -58,7 +58,7 @@
   /* Report 3A reads Archive; report 3B reads Units, Comms and Export */
   '<line x1="130" y1="270" x2="130" y2="386"/>' +
   '<path d="M430 170 L445 170 L445 408 L458 408"/><path d="M430 250 L445 250 L445 408 L458 408"/><line x1="550" y1="270" x2="550" y2="386"/>' +
-  /* Report 4 reads 3A, 3B, Power and Export */
+  /* Report 4 opens after 3A or 3B, and reads Power and Export */
   '<path d="M340 344 L340 468"/><path d="M130 428 L130 490 L248 490"/><path d="M550 428 L550 482 L432 482"/><path d="M640 250 L656 250 L656 500 L432 500"/>' +
   '<line x1="340" y1="510" x2="340" y2="536"/>' +
   /* The final decision lists the five choices in the game's order; habitation splits on oxygen */
@@ -79,7 +79,7 @@
   box(250, 298, 180, 46, "POWER", "AMBER + 2291", null, 1) +
   box(40, 388, 180, 40, "REPORT 3A", "Archive", "#5E8C7F") +
   box(460, 388, 180, 40, "REPORT 3B", "Units, Comms, Export", "#7E6FA8") +
-  box(250, 470, 180, 40, "REPORT 4", "3A, 3B, Power, Export") +
+  box(250, 470, 180, 40, "REPORT 4", "3A or 3B, Power, Export") +
   box(250, 538, 180, 40, "FINAL DECISION", "after Report 4") +
   box(34, 640, 116, 40, "DISMANTLE", "always open") +
   box(158, 640, 116, 40, "RESEARCH", "needs 3A", "#5E8C7F") +

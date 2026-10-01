@@ -40,7 +40,9 @@ The interface works with keyboard, mouse, and touch. The function bar lists the 
 | F9 | Setup |
 | F10 | Exit |
 
-On mobile, use the bottom navigation buttons to switch between the available views.
+MAIL shows the inbox and, beside it, the MESSAGE pane, where messages open. Drag the line between two panes to resize them; a double click returns to the default size.
+
+On mobile, use the bottom navigation buttons to switch between the available views. In MAIL, HIDE INBOX gives the open message the whole page and SHOW INBOX brings the list back.
 
 ## Project notes
 

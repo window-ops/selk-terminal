@@ -32,6 +32,11 @@
       motion: "system",
       redirectNotes: true,
       shellOut: "view",
+      /* Narrow screens: "dual" shows the inbox above the MESSAGE pane,
+         "single" shows MESSAGE alone */
+      mailList: "dual",
+      /* Pane sizes chosen by dragging a divider, by split (see tmux.js splitKey) */
+      splits: {},
       setupView: "sections",
       debug: false,
       debugLog: false
@@ -193,8 +198,10 @@
     if (key !== "R4") {
       return true;
     }
+    /* Report 4 opens after either follow-up page. The other page stays open, and
+       the ending that needs it is unlocked if it is accepted before the decision */
     var reports = S.state.reports;
-    return !!(reports.R3A && reports.R3A.done && reports.R3B && reports.R3B.done);
+    return !!((reports.R3A && reports.R3A.done) || (reports.R3B && reports.R3B.done));
   };
   S.sectionById = function (id) {
     for (var i = 0; i < S.SECTIONS.length; i++) {

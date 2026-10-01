@@ -88,7 +88,19 @@
           ],
           [
             "Output redirected to VIEW",
-            "the shell records this when a command opens content in VIEW"
+            "the shell records this when a command opens content in VIEW, or a message in MAIL"
+          ],
+          [
+            "MAIL and MESSAGE",
+            "MAIL lists the messages; MESSAGE beside it shows the one you open, and shows messages only"
+          ],
+          [
+            "HIDE INBOX and SHOW INBOX",
+            "on a narrow screen, give MESSAGE the whole page or bring the inbox back above it"
+          ],
+          [
+            "Pane divider",
+            "drag the line between two panes to resize them, or focus it and use the arrow keys; a double click returns to the default size"
           ],
           [
             "CTRL+B then :",

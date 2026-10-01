@@ -73,10 +73,12 @@
     acts.appendChild(disBtn);
     t.appendChild(acts);
     var host = S.notificationHost && S.notificationHost();
-    if (host) {
-      host.appendChild(t);
+    if (!host) {
+      return false;
     }
+    host.appendChild(t);
     mailToast = t;
+    return true;
   }
   S.deliver = function (id) {
     var st = S.state, i = st.pending.indexOf(id);
@@ -118,8 +120,10 @@
     var n = st.mail.length;
     S.snd.chime(); S.snd.hdd(3);
     S.mailpane.render(); S.rep.render();
-    S.msg(S.ctx().keys ? "New message from AUDIT DESK 4. Press F2 or MAIL." : "New message from AUDIT DESK 4. Press MAIL.", "warn");
-    showMailToast(n);
+    /* The toast carries the notice; the status line repeats it only when no toast can be shown */
+    if (!showMailToast(n)) {
+      S.msg(S.ctx().keys ? "New message from AUDIT DESK 4. Press F2 or MAIL." : "New message from AUDIT DESK 4. Press MAIL.", "warn");
+    }
     scr().node(function () {
       var d = scr().el("div", "ln warn");
       d.appendChild(document.createTextNode(S.t("[uplink] New message from AUDIT DESK 4.") + " "));
@@ -140,7 +144,7 @@
     S.emit("mail-read");
     S.mailpane.render();
     S.snd.hdd(2);
-    S.display("MSG " + num, (function () {
+    S.showMail(n, "MSG " + num, (function () {
       var box = scr().el("div", "mail");
       box.appendChild(S.speakText(scr().el("div", "mail-head"), S.t("AUDIT DESK 4 > SELK SITE    MSG {num}", { num: num }), "to"));
       /* Labels are padded to the longer one, so the times line up in any language */
@@ -168,4 +172,24 @@
     })());
   }
   K.readMail = readMail;
+  /* A message opens in the MAIL pane, never in VIEW. Setup > Shell results >
+     IN SHELL keeps a typed mail command's output in the shell, as for entries */
+  S.showMail = function (n, title, node) {
+    var T = S.tmux;
+    if (T.attached && S.mode === "shell" && !S.fromClick && S.state.settings.shellOut === "shell") {
+      S.scr.node(function () { return node; });
+      return;
+    }
+    if (!T.attached) {
+      S.scr.node(function () { return node; });
+      return;
+    }
+    var fromShell = !S.isDesktop() && S.mode === "shell" && !S.fromClick && T.visible("SHELL");
+    if (!T.visible("MAIL")) { S.ui.open("MAIL"); }
+    S.ui.open("MESSAGE");
+    S.mailpane.open(n, title, node);
+    if (fromShell && !T.visible("SHELL") && S.state.settings.redirectNotes !== false) {
+      S.scr.line(S.t("Output redirected to MAIL."), "dim", 0);
+    }
+  };
 })();

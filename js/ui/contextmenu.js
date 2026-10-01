@@ -404,7 +404,7 @@
           "ALT+D"
         ]);
       }
-      /* Panes that can close (REPORT, MAIL, WATCH) offer it here as well as in their header */
+      /* Panes that can close (REPORT, WATCH) offer it here as well as in their header */
       if (T.isClosable && T.isClosable(paneKind)) {
         items.push([S.t("CLOSE {pane}", { pane: S.t(paneKind) }), function () { S.ui.close(paneKind); }]);
       }

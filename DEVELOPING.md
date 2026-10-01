@@ -12,7 +12,7 @@ Adding `?fast` to the address shortens the game's waits: mail arrives after 80 m
 
 Setup > Debug has two switches:
 
-- **Debug panel** shows a movable panel with the current situation and buttons that act on the game, among them: deliver the next message, fill the open report page with correct answers, submit it, unlock every section, open the final decision, trigger a gust or a creak, advance the clock by one hour, and switch the interface mode. It lives in `js/dev/debug.js`.
+- **Debug panel** shows a movable panel with the current situation and buttons that act on the game, among them: deliver the next message, fill the open report page with correct answers, submit it, unlock every section, open the final decision, trigger a gust or a creak, advance the clock by one hour, and switch the interface mode. It lives in `js/dev/debug.js`. The panel stays inside the screen when the window is resized, stays attached while the shell prints, and stays usable above the ending.
 - **Debug log** prints commands, events, window changes, dialogs, messages, shell output, mail, transmissions, saves and settings to the browser console. Filter the console by `SELK`.
 
 ## Architecture
@@ -91,11 +91,11 @@ Everything below is driven by the data above.
 1. **Sign-in:** After the player signs in for the first time, `main.js` queues `MSG001`. Returning players get their pending messages delivered again.
 2. **Mail:** `S.queueMail(id, ms)` puts a message in `state.pending` and delivers it after the delay. Delivery adds the message to `state.mail`, advances the site clock by 99 minutes (none for `MSG001`), and opens the report pages in the message's `opens` list.
 3. **Reports:** The player fills a blank with an entry id, by dragging or with `fill`. `submit` accepts the page only when all four blanks match. The page is then transmitted: a 79-step countdown standing for the 79-minute signal delay, which also advances the clock by 79 minutes. When it finishes the page is marked `done` and the reply message is queued 4 s later.
-4. **Report 4:** `S.reportReady(key)` in `state.js` keeps `R4` closed until `R3A` and `R3B` are both accepted. Both follow-up messages list `R4` in `opens`, and the page opens with whichever arrives second.
+4. **Report 4:** `S.reportReady(key)` in `state.js` keeps `R4` closed until `R3A` or `R3B` is accepted. Both follow-up messages list `R4` in `opens`, and the page opens with whichever arrives first. The other follow-up page stays open.
 5. **Locked sections:** `unlock SECTION PART ...` compares the typed parts with the lock, ignoring case. Unlocking depends only on the password; any locked section can be opened at any time.
 6. **Hints:** Hints are hidden until the player types `hints on`. The hints page then shows the hints of every open report page and every locked section, each revealed one line at a time. `state.hintsShown` records how many lines of each are shown.
-7. **Final decision:** `MSG006` sets `state.decision`. `decide` (in `js/game/ending.js`) saves a copy of the state as `state.preDecision`, plays the intro in the cinema, and lists the endings. An ending whose `needs` report is still open is shown disabled. In normal play the final decision opens only after every report, so all choices are available; the `needs` check matters when the decision is opened from the debug panel.
-8. **Endgame:** After the film the ending is recorded in `state.endings` and `state.ended`. The endgame card returns at every sign-in until the player loads the save from before the decision or starts again from the title screen.
+7. **Final decision:** `MSG006` sets `state.decision`. `decide` (in `js/game/ending.js`) saves a copy of the state as `state.preDecision`, plays the intro in the cinema, and lists the endings. An ending whose `needs` report is still open is shown disabled. Report 4 opens after one follow-up page, so the decision can open while the other page is still unsent; its ending becomes available once that page is accepted.
+8. **Endgame:** After the film the ending is recorded in `state.endings` and `state.ended`. The endgame card returns at every sign-in until the player loads the save from before the decision or starts again from the title screen. CHOOSE AGAIN on the card restores that save in place and shows the choice list at once; TITLE SCREEN rebuilds the title screen without reloading the page.
 
 ## Saved state
 
@@ -115,7 +115,7 @@ The main fields:
 | `hintsOn`, `light`, `hintsShown` | Hint page switch, hint light, lines revealed |
 | `read` | Entries the player opened |
 | `decision`, `preDecision`, `ended`, `endings`, `lastEnding` | Final decision and ending records |
-| `settings` | Every Setup value; `sv` is the settings schema version |
+| `settings` | Every Setup value; `sv` is the settings schema version. `mailList` (`dual` or `single`) holds the narrow-screen inbox choice and `splits` the pane sizes set by dragging a divider |
 
 The state has `version: 1`. `S.load` merges a saved game over a fresh one, so a new field needs only a default in `fresh()` or `defaults()`. When the meaning of a saved setting changes, `S.load` is where older saves are converted.
 
@@ -131,16 +131,22 @@ Game code announces what happened with `S.emit(name, data)`, for example `S.emit
 
 ### Windows
 
-The game has six window kinds: `FILES`, `VIEW`, `REPORT`, `SHELL`, `MAIL` and `WATCH`. Game code asks for a kind through `S.ui.open(kind)`, `S.ui.isOpen(kind)`, `S.ui.close(kind)` and `S.ui.active()`, and the current mode decides how the kind is shown:
+The game has seven window kinds: `FILES`, `VIEW`, `REPORT`, `SHELL`, `MAIL`, `MESSAGE` and `WATCH`. `MAIL` is the inbox list and `MESSAGE` is its reader, which shows messages only; entries and handbook notes open in `VIEW`. In tmux mode the MAIL window holds both mail panes, side by side on a wide screen and stacked on a narrow one. Every split has a divider: dragging it, or focusing it and using the arrow keys, sets the share of the two panes between 15% and 85%. The size is saved in `settings.splits` under a key made of the split direction and the panes on each side, and a double click returns to the default. Game code asks for a kind through `S.ui.open(kind)`, `S.ui.isOpen(kind)`, `S.ui.close(kind)` and `S.ui.active()`, and the current mode decides how the kind is shown:
 
 - **tmux mode** (`js/ui/tmux.js`) arranges panes in windows, with Ctrl+B keys.
 - **Desktop mode** (`js/ui/desktop.js`) shows icons, drawers and movable windows through `S.desk`.
 
-Screens 700 px wide or narrower always use tmux mode with bottom navigation buttons; the saved choice returns on a wider screen. `S.howTo(topic)` in `js/ui/howto.js` returns instruction lines that name only the controls the player has.
+Screens 700 px wide or narrower always use tmux mode with bottom navigation buttons; the saved choice returns on a wider screen. There the inbox sits above MESSAGE and takes the height of its rows, up to about half the window; HIDE INBOX in the MESSAGE header gives MESSAGE the whole page, and SHOW INBOX brings the list back. Panes that rebuild their content (the inbox, MESSAGE, REPORT) keep their scroll position through `S.keepScroll` in `js/core/dom.js`.
+
+Until the saved settings are applied, `<html class="booting">` keeps the room hidden, so the default screen frame never shows for a moment at load.
+
+The status bar repeats a notice only when no toast shows it: new mail and the transmission countdown appear as toasts. `S.howTo(topic)` in `js/ui/howto.js` returns instruction lines that name only the controls the player has.
 
 ### Shell
 
 `S.run(text)` in `js/shell/commands.js` parses and runs a command. The command table sits in the same file, and shared helpers sit in `S.cmd` (`js/shell/cmdkit.js`, extended by `listing.js`, `mail.js` and `hints.js`). Output goes through the queue in `js/shell/screen.js`: `S.scr.line`, `S.scr.type`, `S.scr.node` and `S.scr.task` print in order, so a sequence of lines and actions can be written as a list of calls. `js/shell/render.js` turns entry bodies into HTML for both the game and the developer notes page.
+
+Shell output follows one rhythm: every line, headings included, is one line box of 1.5em, and a gap of 0.75em sits equally above and below each command echo, heading, block and paragraph. Plain lines follow each other with no gap. The rules sit at the top of `css/terminal.css`.
 
 Command words and fixed arguments are translated. The English word always works as well, and `S.tc` fills placeholders such as `{unlock}` with the word of the current language.
 
@@ -150,7 +156,7 @@ Command words and fixed arguments are translated. The English word always works 
 
 ### Sound and accessibility
 
-`js/audio/sound.js` synthesizes every sound with the Web Audio API on separate volume buses: machine, wind, structure and interface. `js/audio/ui-sound.js` attaches the interface sounds to every control and keeps one action to one sound.
+`js/audio/sound.js` synthesizes every sound with the Web Audio API on separate volume buses: machine, wind, structure and interface. Each bus passes through a level stage (the Setup sliders) and a duck stage (the ending's hush). Level changes go through `glide()`, which records each fade and starts the next one from the computed level; reading `AudioParam.value` gives different answers in different browsers, and a fade started from a wrong value is heard as a bang. `js/audio/ui-sound.js` attaches the interface sounds to every control and keeps one action to one sound.
 
 `js/ui/a11y.js` adds live announcements, roles, names and states to the elements the game builds, keyboard access to menus and focus handling for dialogs. It also runs the screen reader mode from Setup, which turns off the screen decoration and motion.
 
