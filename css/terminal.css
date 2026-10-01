@@ -698,7 +698,7 @@ button {
   padding: 0 0.4em;
   white-space: nowrap;
 }
-/* Status bar buttons hold one line of capitals. A line box of exactly 1em puts
+/* Status bar buttons have one line of capitals. A line box of exactly 1em puts
    the cap height in the middle of the box, so the label is centred vertically */
 .st-btn,
 .st-uplink,
