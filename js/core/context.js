@@ -1,14 +1,15 @@
-/* One place that answers "what situation is the game in?". Every module reads
-   S.ctx() instead of working it out again, and S.syncContext() mirrors the answer
-   onto <html> as data attributes (data-mode, data-sr, data-motion, data-frame,
-   data-screen) so styles can follow it too. */
+/* The one place that answers "what situation is the game in?". Every module
+   reads S.ctx() and keeps no copy of these rules. S.syncContext() writes the
+   answer onto <html> as data attributes (data-mode, data-sr, data-motion,
+   data-frame, data-screen, data-keys), so stylesheets follow the same rules. */
 (function () {
   "use strict";
   var S = window.SELK;
   var narrow = window.matchMedia ? window.matchMedia("(max-width: 700px)") : null;
   /* A touch-first screen (phone or tablet) has a coarse primary pointer. */
   var coarse = window.matchMedia ? window.matchMedia("(pointer: coarse)") : null;
-  /* Set once a hardware keyboard has typed something during this visit. */
+  /* True once a key from a hardware keyboard has been pressed since the page
+     loaded (see the keydown listener at the end of this block) */
   var kbdSeen = false;
 
   S.ctx = function () {
@@ -47,8 +48,14 @@
       b.classList.toggle("motion-force", !c.reduced && c.systemReduced);
       b.classList.toggle("motion-reduce", c.reduced && !c.systemReduced);
       b.classList.toggle("sr-mode", c.sr);
-      /* The rolling scanline moves, so it runs only when motion is not reduced */
-      /* CRT extras are decoration: off in screen reader mode */
+      /* Setup > CRT EXTRAS. Each class goes on <body> only when all of its
+         conditions hold; crt.css draws the effect from the class.
+           scan-roll (Rolling scanline): the setting is ON, motion is FULL
+             (c.reduced is false), and screen reader mode is OFF.
+           crt-curve (Vignette and curvature): the setting is ON, Frame is
+             FULL SCREEN, and screen reader mode is OFF. The MONITOR frame
+             already shows a picture of curved glass, so crt-curve on top of
+             it would draw a second curve inside the first. */
       b.classList.toggle("scan-roll", !!s.scanRoll && !c.reduced && !c.sr);
       var curved = !!s.crtCurve && s.frame !== "monitor" && !c.sr;
       b.classList.toggle("crt-curve", curved);
@@ -57,22 +64,46 @@
     return c;
   };
 
-  /* Which Setup rows make sense in which situation, in one table */
+  /* Setup rows are hidden or greyed by one rule. A row is hidden (here,
+     S.SETTING_RULES) when no Setup choice can make it apply: the screen is
+     narrow, or screen reader mode is on and the row only changes visuals.
+     A row is greyed with its reason (S.SETTING_OFF below) when another
+     Setup choice, such as Mode, Frame, Motion or Shell results, makes it
+     apply. A rule returns true to show the row. */
   S.SETTING_RULES = {
-    layout: function (c) { return !c.desktop; },
     mode: function (c) { return !c.mobile; },
+    /* Narrow screens always show one pane per page (layoutWindows in tmux.js) */
+    layout: function (c) { return !c.mobile; },
     motion: function (c) { return !c.sr; },
     speed: function (c) { return !c.sr; },
     scan: function (c) { return !c.sr; },
-    redirectNotes: function () { return !S.state || S.state.settings.shellOut !== "shell"; },
     flicker: function (c) { return !c.sr; },
     interfere: function (c) { return !c.sr; },
-    poweron: function (c) { return !c.sr; }
+    poweron: function (c) { return !c.sr; },
+    scanRoll: function (c) { return !c.sr; },
+    crtCurve: function (c) { return !c.sr; }
   };
-  /* Settings that stay in view but cannot apply right now, with the reason */
+  /* Settings that stay in view, greyed, with the reason they cannot apply
+     right now. A rule returns that reason, or "" when the row is usable.
+     tmux-only rows are greyed in desktop mode; switching Mode back to TMUX
+     makes them usable again. */
+  function tmuxOnly(c) { return c.desktop ? "Used in tmux mode" : ""; }
+  /* Rows that only act while Shell results is IN SHELL (route() in
+     commands.js and shellOnly() in tmux.js read them only then) */
+  function shellOnlyRow(c) {
+    return tmuxOnly(c) || (S.state && S.state.settings.shellOut !== "shell" ? "Applies while Shell results is IN SHELL" : "");
+  }
   S.SETTING_OFF = {
-    scanRoll: function (c) { return c.sr ? "Off in screen reader mode" : c.reduced ? "Off while motion is reduced" : ""; },
-    crtCurve: function (c) { return c.sr ? "Off in screen reader mode" : S.state && S.state.settings.frame === "monitor" ? "Not used with the MONITOR frame" : ""; }
+    layout: tmuxOnly,
+    soloFrames: tmuxOnly,
+    /* The note is printed only when a typed result opens a window */
+    redirectNotes: function (c) {
+      return tmuxOnly(c) || (S.state && S.state.settings.shellOut === "shell" ? "Applies while Shell results is IN VIEW" : "");
+    },
+    panelOut: shellOnlyRow,
+    deskShell: shellOnlyRow,
+    scanRoll: function (c) { return c.reduced ? "Off while motion is reduced" : ""; },
+    crtCurve: function () { return S.state && S.state.settings.frame === "monitor" ? "Not used with the MONITOR frame" : ""; }
   };
   S.settingOff = function (key) {
     var rule = S.SETTING_OFF[key];
@@ -102,9 +133,9 @@
   }
 })();
 
-/* Event bus. Game code announces what happened (S.emit("fill")) instead of
-   calling the tutorial, the announcer or anything else directly. Anyone who
-   cares subscribes with S.on(name, fn); S.on("*", fn) receives every event. */
+/* Event bus. Game code announces what happened with S.emit("fill") and calls
+   no listener directly; the tour, the accessibility layer and the debug log
+   subscribe with S.on(name, fn). S.on("*", fn) receives every event. */
 (function () {
   "use strict";
   var S = window.SELK, listeners = {};
@@ -112,7 +143,8 @@
     (listeners[name] = listeners[name] || []).push(fn);
     return function off() { listeners[name] = listeners[name].filter(function (f) { return f !== fn; }); };
   };
-  /* Remember the last entry opened, for actions such as F4 on the desktop */
+  /* Id of the entry opened last, taken from each open:ID event. F4 on the
+     desktop uses it when no entry icon is selected. */
   S.lastOpened = null;
   S.emit = function (name, data) {
     if (typeof name === "string" && name.indexOf("open:") === 0) { S.lastOpened = name.slice(5); }
@@ -123,8 +155,8 @@
 })();
 
 /* Window API shared by both interfaces. Game code asks for a kind of window
-   ("REPORT", "MAIL", "VIEW", ...) and does not need to know whether tmux panes or
-   desktop windows are showing. Mode-specific details stay in panes.js and desktop.js. */
+   ("REPORT", "MAIL", "VIEW", ...) and the current mode decides how it shows:
+   as a tmux pane (js/ui/tmux.js) or a desktop window (js/ui/desktop.js). */
 (function () {
   "use strict";
   var S = window.SELK;

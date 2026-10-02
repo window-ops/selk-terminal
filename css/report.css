@@ -1,3 +1,7 @@
+/* Report paper in the REPORT window: the page, its numbered lines, the blanks
+   and their clear buttons, the footer with the stamp and the SUBMIT button,
+   and the mobile fill steps under the page. The text pages printed in the
+   shell use terminal.css. */
 .paper {
   margin: 0.6em 0 0.5em;
   padding: 1em 1.2em 0.9em;

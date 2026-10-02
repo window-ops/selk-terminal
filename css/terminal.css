@@ -49,6 +49,21 @@ button {
   border: 0;
   margin: 0;
 }
+/* Setup > Sole pane frames OFF: a pane alone in its window has no border
+   and no header (bare() in tmux.js). The header stays in the DOM for its
+   accessible name. */
+/* A long press opens the game's context menu (contextmenu.js), so the
+   iPhone and iPad callout (copy, look up, share) stays away from it */
+#screen {
+  -webkit-touch-callout: none;
+}
+.pane.bare {
+  border: 0;
+  margin: 0;
+}
+.pane.bare > .pane-head {
+  display: none;
+}
 .pane.cur {
   border-color: var(--titan);
   z-index: 1;
@@ -160,7 +175,20 @@ button {
   color: var(--dust);
   margin: 0.75em 0;
 }
-.echo:last-child {
+/* Output with no command echo above it (S.scr.group in screen.js): the
+   same gap as an echo, above and below. The group has no padding or
+   border, so the margins of its first and last child merge with its own
+   and the gap stays 0.75em. */
+.out-group {
+  margin: 0.75em 0;
+}
+/* The newest output ends on the log's own bottom padding: whatever sits
+   last in the log (an echo, a line, an entry, a message, a table, a group)
+   has no bottom margin, and neither has the last child of a last group,
+   whose margin would otherwise show through the group's. The id selector
+   outranks the .log rules for entries, notes, mail and tables below. */
+#log > :last-child,
+#log > .out-group:last-child > :last-child {
   margin-bottom: 0;
 }
 .dim {
@@ -329,7 +357,8 @@ button {
 .hintbox {
   margin: 0.75em 0;
 }
-/* Two lines of the shell font */
+/* Transmission countdown: 2em type on a 1.5 line height fills exactly two
+   shell lines (3em) */
 .count {
   font-family: var(--font-crt);
   font-size: 2em;
@@ -641,8 +670,8 @@ button {
   color: var(--hall);
   padding: 0 0.4em;
 }
-/* The global .ok and .warn colours vanish on the titan bar, which left the
-   mobile message row looking empty */
+/* The global .ok and .warn colours vanish on the titan bar, so the status
+   message takes the bar's dark text colour there */
 .tmux-msg.ok,
 .tmux-msg.warn {
   color: var(--hall);
@@ -1396,7 +1425,8 @@ canvas.live {
   overflow-x: auto;
   scrollbar-width: thin;
 }
-.log > .etable-wrap {
+.log > .etable-wrap,
+.out-group > .etable-wrap {
   margin: 0.75em 0;
 }
 .etable {
@@ -1955,7 +1985,7 @@ body.sr-mode .blink {
   display: none;
 }
 .title-toggles {
-  margin-top: 0.6em;
+  margin-top: 0.4em;
 }
 .pane-head {
   display: flex;
@@ -2219,7 +2249,9 @@ body.sr-mode .tut-spot {
   overflow-wrap: anywhere;
 }
 
-/* Decision time: everything around the shell steps back */
+/* Decision time. #screen.finale is set by S.end.decide (ending.js): the
+   function bar, the status bar, the desktop bar and the pane headers fade
+   to 12% opacity over one --fade */
 .screen .fbar,
 .screen .tmux,
 .screen .wb-bar,
@@ -2454,6 +2486,7 @@ body.sr-mode .tut-spot {
   gap: 0.35em;
 }
 
+/* STEP BY STEP hint at the bottom of the finale stage */
 .cine-hint {
   position: absolute;
   left: 0;

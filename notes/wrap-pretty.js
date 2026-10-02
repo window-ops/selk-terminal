@@ -1,3 +1,6 @@
+/* Notes pages: keeps the last word of each paragraph, list item and heading
+   off a line of its own, by joining it to the word before with a no-break
+   space. Runs only in browsers without CSS text-wrap: pretty. */
 (function () {
   "use strict";
 

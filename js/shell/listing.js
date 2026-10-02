@@ -24,7 +24,9 @@
     });
     useSlot.appendChild(u);
   };
-  /* Entries */
+  /* Show entry e through S.display (shell or VIEW), mark it read, light the
+     hint lamp when it answers an open blank, and move the prompt to its
+     section */
   function printEntry(e) {
     var sec = e.id.split("/")[0];
     S.hintLit = S.state.light && S.rep.isAnswer(e.id);
@@ -33,7 +35,7 @@
     }
     S.status();
     S.snd.hdd(4);
-    S.display(S.entryTitle(e.id), (function () {
+    S.display(S.entryTitle(e.id), function () {
       var box = scr().el("div", "entry");
       var head = scr().el("div", "entry-title", e.path || S.entryTitle(e.id));
       if (!e.sys) {
@@ -68,7 +70,7 @@
       useSlot = slot;
       S.refreshUse();
       return box;
-    })());
+    });
     if (S.ex) {
       S.ex.render();
     }

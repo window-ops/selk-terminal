@@ -110,7 +110,8 @@
       f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
       return;
     }
-    /* Nothing behind the film opens while it plays */
+    /* While the film plays, F keys and Alt, Ctrl and Cmd combinations are
+       swallowed, so no window or dialog opens behind it */
     if (/^F\d+$/.test(e.key) || e.altKey || e.ctrlKey || e.metaKey) {
       e.preventDefault(); e.stopPropagation(); return;
     }

@@ -3,7 +3,8 @@
    Every language lives in its own file, js/lang/<code>.js, which calls
    SELK.i18n.register(code, pack). English (js/lang/en.js) is always loaded and
    is the fallback for anything a pack leaves out. Adding a language means
-   adding its file and its code to AVAILABLE below; no other file changes.
+   adding its file, its name to LANGS and its code to AVAILABLE below; no
+   other file changes.
 
    A pack has these optional parts:
      ui      interface text, keyed by the English source string:
@@ -28,12 +29,11 @@
   "use strict";
   var S = window.SELK = window.SELK || {};
 
-  /* Languages the game ships in, each with its own name. A new language
-     needs its name here, its file in js/lang/ and its code in AVAILABLE. */
+  /* The name of each language in that language, shown in the language menu */
   var LANGS = {
     en: "English", ro: "Română"
   };
-  /* Languages whose file ships with the game */
+  /* Codes of the languages whose file is in js/lang/, in menu order */
   var AVAILABLE = ["en", "ro"];
 
   var packs = {}, current = "en", plural = null, words = null, LANG_KEY = "selk-lang";
@@ -127,7 +127,7 @@
       if (lang && AVAILABLE.indexOf(lang) !== -1) {
         return lang;
       }
-      /* Chosen on a notes page before any game was saved */
+      /* selk-lang: a language chosen on a notes page while no game save existed */
       var loose = S.store && S.store().getItem(LANG_KEY);
       if (loose && AVAILABLE.indexOf(loose) !== -1) {
         return loose;
@@ -205,8 +205,9 @@
     /* Typed word to English command or argument, and back for display */
     command: function (word) { return canonical("commands", word); },
     arg: function (word) { return canonical("args", word); },
-    /* Resolve handbook terms from the active language pack directly, so their
-       names stay localized even if a notes array has not been merged yet. */
+    /* A handbook note as [title, text, edition year], read from the active
+       pack directly, so the note is translated even before the pack's story
+       block has been merged over the data */
     note: function (id) {
       var base = S.NOTES && S.NOTES[id], pack = packs[current], translated = pack && pack.story && pack.story.notes && pack.story.notes[id];
       if (!base) { return null; }

@@ -1,3 +1,6 @@
+/* Story data: the endings of the final decision (SELK.ENDINGS), in the order
+   the choice list shows them, and SELK.ENDING_COUNT, the number of distinct
+   endings with both branches of a choice ending counted. */
 window.SELK = window.SELK || {};
 SELK.ENDINGS = [
   {

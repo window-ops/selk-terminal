@@ -2,7 +2,8 @@
 (function () {
   var S = window.SELK;
   var K = S.cmd, scr = K.scr, err = K.err;
-  /* Hints */
+  /* Print the hints page: each open report page and each locked section with
+     the hints revealed so far, or the notice that hints are hidden */
   function hintsPage() {
     var st = S.state;
     if (!st.hintsOn) {

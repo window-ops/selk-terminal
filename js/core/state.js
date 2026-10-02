@@ -29,17 +29,37 @@
       click: "single",
       cursor: "m",
       tooltips: true,
+      /* Setup > Sole pane frames. false: in tmux mode, a pane that is alone
+         in its window and not zoomed has no border and no header (see
+         paneEl in tmux.js) */
+      soloFrames: true,
+      /* Setup > Unavailable settings. "show": rows that cannot apply right
+         now stay in Setup, greyed, with the reason (S.SETTING_OFF in
+         context.js). "hide": those rows are left out until they can apply. */
+      unavailable: "show",
       motion: "system",
       redirectNotes: true,
       shellOut: "view",
+      /* Setup > Panel results. Read only while shellOut is "shell" and the
+         mode is tmux. It covers commands from the FILES panel, the F keys
+         and function bar, the status bar buttons and the Alt shortcuts.
+         "view": open their windows. "both": open their windows and print
+         their results in the shell. See route() in commands.js. */
+      panelOut: "view",
+      /* Setup > Shell-only DESK. Read only while shellOut is "shell" and the
+         mode is tmux. true: DESK holds SHELL alone (see shellOnly() in
+         tmux.js) */
+      deskShell: false,
       /* Narrow screens: "dual" shows the inbox above the MESSAGE pane,
          "single" shows MESSAGE alone */
       mailList: "dual",
-      /* Pane sizes chosen by dragging a divider, by split (see tmux.js splitKey) */
+      /* Pane sizes set by dragging a divider, keyed by split (see splitKey in tmux.js) */
       splits: {},
       setupView: "sections",
       debug: false,
-      debugLog: false
+      debugLog: false,
+      /* Setup > Debug > Fast mode, read through S.fast */
+      fast: false
     };
   }
   S.defaults = defaults;
@@ -68,6 +88,13 @@
     };
   }
   S.state = fresh();
+  /* Fast mode shortens the game's waits for testing: mail arrives after
+     80 ms, a transmission counts down in 0.3 s and the finale plays its
+     lines and pauses at a fraction of their length. Read-only; the value
+     lives in settings.fast, so it is saved with the other settings. */
+  Object.defineProperty(S, "fast", {
+    get: function () { return !!(S.state && S.state.settings && S.state.settings.fast); }
+  });
   S.KEY = KEY;
   S.WIPE_KEY = "selk-wipe-on-refresh";
   S.HIST_KEY = "selk-shell-history";
@@ -117,7 +144,9 @@
         S.wiped = true;
       }
     } catch (e) {}
-    /* A save made before tab saving existed sits in localStorage: keep it there */
+    /* Builds from before tab saving wrote every save to localStorage. Such a
+       save stays there, and selk-save-local is set to mark it as kept on
+       this computer. */
     try {
       if (!S.saveLocal() && localStorage.getItem(KEY) && !sessionStorage.getItem(KEY)) {
         localStorage.setItem(S.LOCAL_KEY, "1");
@@ -136,8 +165,12 @@
           if (!S.state.settings.scanRollChosen) {
             S.state.settings.scanRoll = false;
           }
-          /* Debug used to be one switch for the panel and the console log. A save
-             from then keeps both on. */
+          /* Panel results had IN SHELL ("shell") before BOTH replaced it */
+          if (S.state.settings.panelOut === "shell") {
+            S.state.settings.panelOut = "both";
+          }
+          /* Older builds had one Debug switch for both the panel and the
+             console log. A save from then with Debug on keeps both on. */
           if (ds.sv === 2 && ds.debug && ds.debugLog === undefined) {
             S.state.settings.debugLog = true;
           }
@@ -198,8 +231,9 @@
     if (key !== "R4") {
       return true;
     }
-    /* Report 4 opens after either follow-up page. The other page stays open, and
-       the ending that needs it is unlocked if it is accepted before the decision */
+    /* Report 4 opens once either follow-up page (3A or 3B) is accepted. The
+       other follow-up page stays open; accepting it later, before the final
+       choice, makes the ending that needs it available */
     var reports = S.state.reports;
     return !!((reports.R3A && reports.R3A.done) || (reports.R3B && reports.R3B.done));
   };

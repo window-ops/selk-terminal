@@ -3,7 +3,6 @@
 (function () {
   var S = window.SELK;
   var $ = S.$;
-  S.fast = /[?&]fast\b/.test(location.search);
   S.motionQuery = window.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
   S.systemReduced = !!(S.motionQuery && S.motionQuery.matches);
   S.reduced = S.systemReduced;
@@ -165,7 +164,10 @@
         scr.line(S.tc("The final decision is open. Type {decide}, or open the DECISION page in REPORT."), "warn");
       }
       if (!returning) {
-        S.run("open home/README", false);
+        /* First sign-in: open HOME / README unechoed, routed as a typed command,
+           so Shell results decides where it shows and a shell-only DESK
+           stays shell-only */
+        S.run("open home/README", false, "typed");
         if (!S.noTour) {
           S.tut.offer();
         }
@@ -457,12 +459,7 @@
         if (S.mode !== "shell") {
           return;
         }
-        S.fromClick = true;
-        try {
-          S.run(b.dataset.cmd);
-        } finally {
-          S.fromClick = false;
-        }
+        S.runClick(b.dataset.cmd);
         return;
       }
       if (S.mode === "busy") {

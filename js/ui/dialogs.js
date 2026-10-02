@@ -95,7 +95,7 @@
         {
           label: "UNLOCK",
           action: function (v) {
-            S.run("unlock " + sec + " " + v.join(" ")); return S.isUnlocked(sec) ? true : false;
+            S.runClick("unlock " + sec + " " + v.join(" ")); return S.isUnlocked(sec) ? true : false;
           }
         },
         {

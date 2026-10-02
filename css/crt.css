@@ -280,7 +280,7 @@ body.no-poweron .screen {
   font-size: clamp(14.5px, 1.75vw, 18px);
 }
 
-/* Setup > Motion > ALWAYS ANIMATE: animate even when the system asks for reduced motion */
+/* Setup > Motion > FULL: animate even when the system asks for reduced motion */
 body.motion-force .glass { animation: flicker 3.8s infinite steps(1); }
 body.motion-force.powered .screen { animation: poweron 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
 body.motion-force .blink { animation: blink 1.1s steps(1) infinite; }

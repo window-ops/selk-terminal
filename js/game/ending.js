@@ -9,7 +9,8 @@
    the swell and the first pixel scene, the epilogue as captions under three
    scenes, the office's letter, and the title card. The decision log and the
    letter are also written into the shell, so they are there on return.
-   Typed commands still work: choose 2, oxygen yes. */
+   The choice list takes one number key per choice, 1 for the first. The choose and oxygen
+   commands send the same number key as a keydown event (see S.end.choose). */
 (function () {
   var S = window.SELK;
   /* Which scene each of the four epilogue lines sits under */
@@ -41,7 +42,10 @@
     }
     S.ui.open("SHELL");
   }
-  /* The record in the shell: decision, log and letter, written at once */
+  /* Write the decision, its log lines and the office's letter into the
+     shell log with no typing delay, advance the site clock by 79 and then
+     99 minutes, and record the ending in the state (endings, lastEnding,
+     ended) */
   function record(label, data) {
     var scr = S.scr, route = data.route || "R-09";
     S.tick(79);
@@ -86,7 +90,8 @@
     S.cine.setManual(false);
     choices();
   }
-  /* The ending data for an id, including the two habitation variants */
+  /* The ending data for an id. Also finds the yes and no branches of a
+     choice ending, which carry their own ids. */
   function endingById(id) {
     var found = null;
     S.ENDINGS.forEach(function (e) {
@@ -128,7 +133,8 @@
     if (!replay) {
       record(label, data);
     }
-    /* Step by step is for reading: no swell */
+    /* A replay shown one card at a time (STEP BY STEP) is read at the
+       player's pace, so it plays without the swell */
     if (!(replay && C.manual)) {
       S.snd.swell(data.mood || "hollow");
     }
@@ -168,7 +174,8 @@
       C.setManual(false);
     });
   }
-  /* The choice list, with the intro one click away */
+  /* The final choice list. Its REPLAY row plays the intro again, whole or
+     one card at a time, and then returns to the list. */
   function choices() {
     var C = S.cine;
     return C.choose(S.ENDINGS.map(function (e) {
@@ -185,8 +192,8 @@
     });
   }
   S.end = {
-    /* The endgame card: the ending's title, how many endings were seen, and
-       the two ways on */
+    /* The endgame card: the ending's title, the count of endings seen, and
+       two button rows, REPLAY and CONTINUE */
     endgame: function () {
       var e = S.state.ended;
       if (!e) { return; }
@@ -244,7 +251,8 @@
         return first ? intro(false) : null;
       }).then(choices);
     },
-    /* Typed commands pick in the open choice list */
+    /* choose N sends the keydown for digit N; oxygen yes sends 1 and oxygen
+       no sends 2. Both act only while the cinema is open (S.cine.isOpen()). */
     choose: function (n) {
       if (!S.cine.isOpen()) {
         S.snd.error(); S.scr.line(S.tc("Type {decide} to see the options."), "err"); return;

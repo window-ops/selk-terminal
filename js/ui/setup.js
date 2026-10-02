@@ -26,7 +26,9 @@
       ["Mode", "mode", [["tmux", "TMUX"], ["desktop", "DESKTOP"]]],
       ["Frame", "frame", [["full", "FULL SCREEN"], ["monitor", "MONITOR"]]],
       ["Layout", "layout", [["four", "FOUR PANES"], ["three", "THREE PANES"], ["single", "SINGLE"]]],
+      ["Sole pane frames", "soloFrames"],
       ["Tooltips", "tooltips"],
+      ["Unavailable settings", "unavailable", [["show", "SHOW"], ["hide", "HIDE"]]],
       ["Text size", "size", [["s", "S"], ["m", "M"], ["l", "L"]]],
       ["Cursor size", "cursor", [["s", "S"], ["m", "M"], ["l", "L"], ["sys", "SYSTEM"]]]
     ] },
@@ -34,6 +36,8 @@
       ["Text appears", "speed", [["instant", "AT ONCE"], ["vfast", "VERY FAST"], ["fast", "FAST"], ["typed", "NORMAL"], ["slow", "SLOW"]]],
       ["Open items with", "click", [["single", "ONE CLICK"], ["double", "TWO CLICKS"]]],
       ["Shell results", "shellOut", [["view", "IN VIEW"], ["shell", "IN SHELL"]]],
+      ["Panel results", "panelOut", [["view", "IN VIEW"], ["both", "BOTH"]]],
+      ["Shell-only DESK", "deskShell"],
       ["Redirect notices", "redirectNotes"]
     ] },
     { id: "effects", title: "SCREEN EFFECTS", rows: [
@@ -43,7 +47,9 @@
       ["Interference", "interfere"],
       ["Power-on", "poweron"]
     ] },
-    /* Optional CRT effects, apart from the main ones */
+    /* CRT EXTRAS: Rolling scanline and Vignette and curvature. Both are OFF
+       in a new game (defaults() in state.js). The rules that can switch them
+       off while ON are in S.syncContext (context.js). */
     { id: "crt", title: "CRT EXTRAS", rows: [
       ["Rolling scanline", "scanRoll"],
       ["Vignette and curvature", "crtCurve"]
@@ -63,7 +69,8 @@
     ] },
     { id: "debug", title: "DEBUG", rows: [
       ["Debug panel", "debug"],
-      ["Debug log", "debugLog"]
+      ["Debug log", "debugLog"],
+      ["Fast mode", "fast"]
     ] },
     { id: "data", title: "SAVED DATA", rows: [
       ["Save location", "_saveLocal", [["tab", "THIS TAB"], ["local", "THIS COMPUTER"]]],
@@ -129,6 +136,15 @@
       }
       var old = st.settings[k]; st.settings[k] = v; if (k === "layout" && old !== v && S.tmux.attached) {
         S.tmux.init();
+      }
+      /* Both settings decide whether DESK is shell-only, so the tmux windows
+         are rebuilt from the model (see shellOnly() in tmux.js) */
+      if ((k === "deskShell" || k === "shellOut") && old !== v && S.tmux.attached && !S.isDesktop()) {
+        S.tmux.open.revealed = false; S.tmux.rebuild(null, null);
+      }
+      /* Redraw the panes, so a sole pane gains or loses its frame at once */
+      if (k === "soloFrames" && old !== v && S.tmux.attached && !S.isDesktop()) {
+        S.tmux.render();
       }
     }
     S.save(); S.applySettings(); S.status();
@@ -236,6 +252,8 @@
     motion: "Motion settings.",
     mode: "How the game is shown.",
     tooltips: "Show or hide setup tooltips.",
+    soloFrames: "Border and header of a pane alone in its window.",
+    unavailable: "Settings that cannot apply right now.",
     frame: "How the screen is framed.",
     layout: "How the terminal panes are arranged on the main DESK window.",
     click: "Whether one click or two clicks opens a record, drawer or icon.",
@@ -263,6 +281,9 @@
     _wipe: "Erases progress at every reload.",
     _storage: "The data this game keeps in your browser.",
     shellOut: "Where typed commands show their results.",
+    panelOut: "Where FILES, the F keys and the status bar show their results.",
+    fast: "Shorter waits, for testing.",
+    deskShell: "DESK shows the shell alone.",
     redirectNotes: "A note in the shell when a result opens in VIEW.",
     debug: "A movable DEBUG panel for testing.",
     debugLog: "A log of everything the game does, in the browser's console.",
@@ -313,9 +334,17 @@
       l: "Large custom cursor.",
       sys: "Use system cursor."
     },
+    soloFrames: {
+      on: "Draw them.",
+      off: "Hide them. The pane's context menu keeps CLOSE, POP IN and SHOW INBOX."
+    },
     tooltips: {
       on: "Show tooltips.",
       off: "Hide tooltips."
+    },
+    unavailable: {
+      show: "Show them greyed, with the reason beside each one.",
+      hide: "Leave them out until they can apply."
     },
     scan: {
       on: "Show still lines over the screen.",
@@ -378,6 +407,18 @@
       view: "Open results in the VIEW window.",
       shell: "Print results in the shell, which then works on its own."
     },
+    panelOut: {
+      view: "Open their windows only.",
+      both: "Open their windows and print their results in the shell."
+    },
+    deskShell: {
+      on: "Hide FILES and VIEW. A click or an F key that needs them brings them back until the next typed command.",
+      off: "Show FILES and VIEW in DESK."
+    },
+    fast: {
+      on: "Mail in 80 ms, transmissions in 0.3 s, a short finale.",
+      off: "Normal waits."
+    },
     redirectNotes: {
       on: "Print the note.",
       off: "Skip the note."
@@ -413,8 +454,11 @@
     var x, y;
     if (ev && ev.clientX != null && ev.clientY != null) {
       var px = ev.clientX - bb.left, py = ev.clientY - bb.top;
+      /* Right of the pointer; left of it only when the tip would cross the
+         dialog's right edge. One rule for every row and button, so the tip
+         stays on the same side while the pointer moves along a row. */
       var left = px - tw - 8, right = px + 8;
-      x = left >= 8 ? left : right + tw <= bb.width - 8 ? right : left;
+      x = right + tw <= bb.width - 8 ? right : left;
       var above = py - th - 8, below = py + 8;
       if (above >= 4) { y = above; }
       else if (below + th <= bb.height - 4) { y = below; }
@@ -594,7 +638,12 @@
     }
     body.appendChild(makeRow(VIEW_ROW, body));
     SECTIONS.forEach(function (sec) {
-      var rows = sec.rows.filter(function (r) { return S.settingVisible(r[1]); });
+      /* Rows hidden by S.SETTING_RULES never show. Rows greyed by
+         S.SETTING_OFF show unless Unavailable settings is HIDE; a section
+         left with no rows is skipped below. */
+      var rows = sec.rows.filter(function (r) {
+        return S.settingVisible(r[1]) && (S.state.settings.unavailable !== "hide" || !S.settingOff(r[1]));
+      });
       if (!rows.length) {
         return;
       }

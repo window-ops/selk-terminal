@@ -1,4 +1,6 @@
-/* Shell commands: the help table, the command table and S.run(). */
+/* Shell commands: the help table, the command table, S.run(), and
+   S.outShell(), which decides whether a result prints in the shell or opens
+   its window. */
 (function () {
   var S = window.SELK;
   var K = S.cmd, scr = K.scr, err = K.err, resolveEntry = K.resolveEntry, lockedMsg = K.lockedMsg,
@@ -17,7 +19,9 @@
     ["mail", "", "list messages, {mail} 2 reads one"],
     ["report", "", "list report pages, {report} 2 opens one"],
     ["fill", "2 NAME", "put an entry in blank 2"],
+    ["unfill", "2", "empty blank 2"],
     ["submit", "", "send the open report page"],
+    ["decide", "", "open the final decision, once the office asks for it"],
     ["hints", "", "hints page, hidden until you type {hints} {on}"],
     ["light", "on", "hint light, off by default"],
     ["sound", "off", "sound on or off"],
@@ -39,7 +43,7 @@
   }
   var C = {
     help: function () {
-      S.display(S.t("HELP"), (function () {
+      S.display(S.t("HELP"), function () {
         var wrap = scr().el("div", "entry");
         wrap.appendChild(scr().el("div", "entry-title", S.t("COMMANDS AND KEYS")));
         var dl = scr().el("dl", "fields help");
@@ -84,11 +88,19 @@
           ],
           [
             "Context menu on a pane",
-            "zoom a pane; the SHELL pane also has pop out or pop in"
+            "zoom a pane; also CLOSE for REPORT and WATCH, pop out or pop in for SHELL, and HIDE INBOX or SHOW INBOX for the mail panes on a narrow screen"
           ],
           [
             "Output redirected to VIEW",
-            "the shell records this when a command opens content in VIEW, or a message in MAIL"
+            "the shell records this when a typed command opens content in VIEW, or a message in MAIL"
+          ],
+          [
+            "Shell results and Panel results",
+            "Setup choices: Shell results IN SHELL prints what typed commands show in SHELL; Panel results BOTH also prints what FILES and the F keys show, and still opens their windows"
+          ],
+          [
+            "Shell-only DESK",
+            "Setup switch: DESK shows SHELL alone; FILES and VIEW come back when a click or an F key needs them, until the next typed command"
           ],
           [
             "MAIL and MESSAGE",
@@ -122,7 +134,7 @@
           add(h);
         });
         return wrap;
-      })());
+      });
     },
     ls: function (a) {
       var target = a[0] ? S.secId(a[0]) : S.state.cwd;
@@ -186,11 +198,13 @@
         err(a[0] ? S.t("No handbook note for {name}.", { name: a[0] }) : S.t("No handbook note for that.")); return;
       }
       S.snd.tick();
-      var box = scr().el("div", "note");
-      box.appendChild(S.speakText(scr().el("div", "note-title"), n[0]));
-      box.appendChild(S.speakText(scr().el("div", ""), n[1]));
-      box.appendChild(scr().el("div", "dim", S.t("CESEA field handbook, edition {year}", { year: n[2] })));
-      S.display(n[0], box, true);
+      S.display(n[0], function () {
+        var box = scr().el("div", "note");
+        box.appendChild(S.speakText(scr().el("div", "note-title"), n[0]));
+        box.appendChild(S.speakText(scr().el("div", ""), n[1]));
+        box.appendChild(scr().el("div", "dim", S.t("CESEA field handbook, edition {year}", { year: n[2] })));
+        return box;
+      }, true);
     },
     unlock: function (a) {
       var sec = S.secId(a[0]);
@@ -217,20 +231,22 @@
       S.save();
       S.snd.unlock(); S.snd.hdd(5);
       S.feedback(S.t("{name} unlocked.", { name: S.sectionById(sec).name }), "ok");
-      if (S.tmux.attached) {
+      if (S.outWindow()) {
         S.ex.goSection(sec); S.ui.open("FILES");
-      } else {
-        C.cd( [
-          sec
-        ]);
+      }
+      if (S.outShell()) {
+        C.cd([sec]);
       }
     },
     mail: function (a) {
       if (a[0]) {
         readMail(parseInt(a[0], 10)); return;
       }
-      if (S.tmux.attached && S.ui.open("MAIL")) {
-        S.mailpane.render(); return;
+      if (S.outWindow() && S.ui.open("MAIL")) {
+        S.mailpane.render();
+        if (!S.outShell()) {
+          return;
+        }
       }
       var m = S.state.mail;
       if (!m.length) {
@@ -258,10 +274,14 @@
       if (a[0]) {
         S.rep.show(a[0]); return;
       }
-      if (S.tmux.attached && S.ui.open("REPORT")) {
-        S.rep.render(); S.emit("report-open"); return;
+      if (S.outWindow() && S.ui.open("REPORT")) {
+        S.rep.render(); S.emit("report-open");
+        if (!S.outShell()) {
+          return;
+        }
       }
       S.rep.list();
+      S.rep.printActive();
     },
     settings: function () {
       S.settingsDialog();
@@ -283,7 +303,10 @@
       S.setMode(m);
     },
     watch: function () {
-      if (!S.ui.open("WATCH")) {
+      var opened = S.outWindow() && S.ui.open("WATCH");
+      if (S.outShell()) {
+        S.watch.print();
+      } else if (!opened) {
         err(S.t("No WATCH pane in this session."));
       }
     },
@@ -382,16 +405,92 @@
   S.commandNames = Object.keys(HELP.reduce(function (o, h) {
     o[h[0].split(" ")[0]] = 1; return o;
   }, {})).concat( [
-    "decide",
     "hint",
     "date",
     "whoami"
   ]);
-  S.run = function (raw, echo) {
+  /* Where the running command came from, read by S.outShell():
+     "typed"  the command line, the tmux prompt (Ctrl+B then :), and the
+              HOME / README opened at first sign-in (main.js)
+     "panel"  the FILES panel, the function keys and bar, the status bar
+              buttons and the Alt shortcuts, all of which pass echo = false
+     "click"  a command link in the output, a button on a report page, a
+              dialog, the context menu, the tour or a desktop icon
+     null     no command is running */
+  S.cmdOrigin = null;
+  /* True while a command runs whose command line was printed in the log
+     (S.run called with echo !== false). S.scr.group reads it: output under
+     a printed command line already has the echo's gap above it. */
+  S.cmdEchoed = false;
+  /* Where the result of the running command goes: { shell, window }.
+     shell   true: print the result in the SHELL log
+     window  true: open the matching window (VIEW, MAIL and MESSAGE,
+             REPORT, WATCH, FILES)
+     Both can be true. The rules, first match wins:
+       tmux session not attached yet         shell only
+       typed                                 Setup > Shell results:
+                                             IN SHELL gives shell only,
+                                             IN VIEW gives window only
+       panel, tmux mode, Shell results is    Setup > Panel results:
+       IN SHELL                              IN VIEW gives window only,
+                                             BOTH gives shell and window
+       everything else (panel in desktop     window only
+       mode or with Shell results IN VIEW,
+       every click) */
+  function route() {
+    var s = S.state.settings;
+    if (!S.tmux || !S.tmux.attached) {
+      return { shell: true, window: false };
+    }
+    if (S.cmdOrigin === "typed") {
+      return { shell: s.shellOut === "shell", window: s.shellOut !== "shell" };
+    }
+    if (S.cmdOrigin === "panel" && !S.isDesktop() && s.shellOut === "shell" && s.panelOut === "both") {
+      return { shell: true, window: true };
+    }
+    return { shell: false, window: true };
+  }
+  /* True when the running command prints its result in the SHELL log */
+  S.outShell = function () { return route().shell; };
+  /* True when the running command opens the window for its result */
+  S.outWindow = function () { return route().window; };
+  /* Run a command for a clicked control. The echo follows the same rule as
+     S.run: pass false to leave the command line out of the log. */
+  S.runClick = function (raw, echo) {
+    S.run(raw, echo, "click");
+  };
+  /* Parse and run one command line.
+     echo   false leaves the command line out of the log; any other value
+            prints it after the prompt
+     origin "typed", "panel" or "click" (see S.cmdOrigin). When omitted,
+            an echoed command counts as typed and an unechoed one as panel.
+     The output of an unechoed command is wrapped in one output group (see
+     S.scr.group), which keeps it apart from the lines above and below. */
+  S.run = function (raw, echo, origin) {
     var line = String(raw || "").trim();
     if (!line) {
       return;
     }
+    var before = { origin: S.cmdOrigin, echoed: S.cmdEchoed };
+    S.cmdOrigin = origin || (echo === false ? "panel" : "typed");
+    S.cmdEchoed = echo !== false;
+    /* A typed command hides FILES and VIEW again in a shell-only DESK
+       (see T.endReveal in tmux.js) */
+    if (S.cmdOrigin === "typed" && S.tmux && S.tmux.endReveal) {
+      S.tmux.endReveal();
+    }
+    try {
+      if (echo === false) {
+        S.scr.group(function () { runLine(line, echo); });
+      } else {
+        runLine(line, echo);
+      }
+    } finally {
+      S.cmdOrigin = before.origin;
+      S.cmdEchoed = before.echoed;
+    }
+  };
+  function runLine(line, echo) {
     if (echo !== false) {
       var first = line.split(/\s+/)[0], canon = S.i18n.command(first);
       var shownLine = first.toLowerCase() === canon && C[canon] ? S.cmdName(canon) + line.slice(first.length) : line;
@@ -400,7 +499,8 @@
     var parts = line.split(/\s+/);
     var name = S.i18n.command(parts[0]);
     var fn = C[name];
-    /* Any command outside the decision brings the interface back after the finale */
+    /* After the finale, any command other than decide, choose and oxygen
+       brings the interface back */
     if (S.finale && name !== "decide" && name !== "choose" && name !== "oxygen") {
       S.end.release();
     }
@@ -413,5 +513,5 @@
     if (S.isDesktop() && S.tmux.attached) {
       S.desk.refresh();
     }
-  };
+  }
 })();

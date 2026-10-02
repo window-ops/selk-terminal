@@ -8,12 +8,11 @@ This document describes how the game is built: the data files, the progression t
 
 The game is a static site with no build step. Serve the project root with any web server, for example `python -m http.server 8000`, and open `http://localhost:8000`.
 
-Adding `?fast` to the address shortens the game's waits: mail arrives after 80 ms, a report transmission counts down in 0.3 s, and the finale plays its lines and pauses at a fraction of their length. The flag is read once, in `js/main.js`, as `S.fast`.
-
-Setup > Debug has two switches:
+Setup > Debug has three switches:
 
 - **Debug panel** shows a movable panel with the current situation and buttons that act on the game, among them: deliver the next message, fill the open report page with correct answers, submit it, unlock every section, open the final decision, trigger a gust or a creak, advance the clock by one hour, and switch the interface mode. It lives in `js/dev/debug.js`. The panel stays inside the screen when the window is resized, stays attached while the shell prints, and stays usable above the ending.
 - **Debug log** prints commands, events, window changes, dialogs, messages, shell output, mail, transmissions, saves and settings to the browser console. Filter the console by `SELK`.
+- **Fast mode** shortens the game's waits: mail arrives after 80 ms, a report transmission counts down in 0.3 s, and the finale plays its lines and pauses at a fraction of their length. It is saved as `settings.fast`, and code reads it through the read-only property `S.fast`, defined in `js/core/state.js`.
 
 ## Architecture
 
@@ -89,8 +88,8 @@ All story content sits in `js/data/`. The code reads these objects and contains 
 Everything below is driven by the data above.
 
 1. **Sign-in:** After the player signs in for the first time, `main.js` queues `MSG001`. Returning players get their pending messages delivered again.
-2. **Mail:** `S.queueMail(id, ms)` puts a message in `state.pending` and delivers it after the delay. Delivery adds the message to `state.mail`, advances the site clock by 99 minutes (none for `MSG001`), and opens the report pages in the message's `opens` list.
-3. **Reports:** The player fills a blank with an entry id, by dragging or with `fill`. `submit` accepts the page only when all four blanks match. The page is then transmitted: a 79-step countdown standing for the 79-minute signal delay, which also advances the clock by 79 minutes. When it finishes the page is marked `done` and the reply message is queued 4 s later.
+2. **Mail:** `S.queueMail(id, ms)` puts a message in `state.pending` and delivers it after the delay (80 ms in Fast mode). Delivery adds the message to `state.mail`, advances the site clock by 99 minutes (none for `MSG001`), and opens the report pages in the message's `opens` list.
+3. **Reports:** The player fills a blank with an entry id, by dragging, with USE or F4, or with `fill`; `unfill` empties a blank. `submit` accepts the page only when all four blanks match. The page is then transmitted: a 79-step countdown standing for the 79-minute signal delay, which also advances the clock by 79 minutes. When it finishes the page is marked `done` and the reply message is queued 4 s later.
 4. **Report 4:** `S.reportReady(key)` in `state.js` keeps `R4` closed until `R3A` or `R3B` is accepted. Both follow-up messages list `R4` in `opens`, and the page opens with whichever arrives first. The other follow-up page stays open.
 5. **Locked sections:** `unlock SECTION PART ...` compares the typed parts with the lock, ignoring case. Unlocking depends only on the password; any locked section can be opened at any time.
 6. **Hints:** Hints are hidden until the player types `hints on`. The hints page then shows the hints of every open report page and every locked section, each revealed one line at a time. `state.hintsShown` records how many lines of each are shown.
@@ -115,7 +114,7 @@ The main fields:
 | `hintsOn`, `light`, `hintsShown` | Hint page switch, hint light, lines revealed |
 | `read` | Entries the player opened |
 | `decision`, `preDecision`, `ended`, `endings`, `lastEnding` | Final decision and ending records |
-| `settings` | Every Setup value; `sv` is the settings schema version. `mailList` (`dual` or `single`) holds the narrow-screen inbox choice and `splits` the pane sizes set by dragging a divider |
+| `settings` | Every Setup value; `sv` is the settings schema version. `shellOut` (`view` or `shell`) holds Shell results, `panelOut` (`view` or `both`) Panel results, `deskShell` Shell-only DESK, `unavailable` (`show` or `hide`) Unavailable settings, `soloFrames` Sole pane frames and `fast` Fast mode; `mailList` (`dual` or `single`) holds the narrow-screen inbox choice and `splits` the pane sizes set by dragging a divider |
 
 The state has `version: 1`. `S.load` merges a saved game over a fresh one, so a new field needs only a default in `fresh()` or `defaults()`. When the meaning of a saved setting changes, `S.load` is where older saves are converted.
 
@@ -125,7 +124,14 @@ Other keys: `selk-shell-history` (typed commands, kept in `sessionStorage`), `se
 
 ### Situation and events
 
-`S.ctx()` in `js/core/context.js` answers every question about the current situation: interface mode, narrow screen, keyboard present, screen reader mode, reduced motion, screen frame. `S.syncContext()` copies the answer onto `<html>` as `data-mode`, `data-sr`, `data-motion`, `data-frame`, `data-screen` and `data-keys`, so stylesheets follow the same rules. `S.SETTING_RULES` in the same file decides which Setup rows apply in which situation.
+`S.ctx()` in `js/core/context.js` answers every question about the current situation: interface mode, narrow screen, keyboard present, screen reader mode, reduced motion, screen frame. `S.syncContext()` copies the answer onto `<html>` as `data-mode`, `data-sr`, `data-motion`, `data-frame`, `data-screen` and `data-keys`, so stylesheets follow the same rules. The same file decides which Setup rows are hidden and which are greyed, by one rule:
+
+- **Hidden** (`S.SETTING_RULES`): no Setup choice can make the row apply. Mode and Layout on narrow screens, which always show one pane per page. Motion, Text appears, Scanlines, Flicker, Interference, Power-on, Rolling scanline, and Vignette and curvature in screen reader mode, where they change only visuals and a screen reader would still read them.
+- **Greyed with a reason** (`S.SETTING_OFF`): another Setup choice makes the row apply, and the reason names it. Layout, Sole pane frames, Redirect notices, Panel results and Shell-only DESK in desktop mode ("Used in tmux mode"). Redirect notices while Shell results is IN SHELL ("Applies while Shell results is IN VIEW"). Panel results and Shell-only DESK while Shell results is IN VIEW ("Applies while Shell results is IN SHELL"). Rolling scanline while motion is reduced, and Vignette and curvature with the MONITOR frame.
+
+Setup > Display > Unavailable settings (`settings.unavailable`) chooses whether greyed rows show: SHOW keeps them greyed with their reason, HIDE leaves them out until they can apply. A section with no row left is skipped. Hidden rows never show.
+
+A new conditional row follows the same rule: hide it when only the screen or screen reader mode decides, grey it when a Setup choice does.
 
 Game code announces what happened with `S.emit(name, data)`, for example `S.emit("submit")` or `S.emit("open:" + id)`. The tour, the accessibility layer and the debug log subscribe with `S.on(name, fn)`; `S.on("*", fn)` receives every event.
 
@@ -133,7 +139,7 @@ Game code announces what happened with `S.emit(name, data)`, for example `S.emit
 
 The game has seven window kinds: `FILES`, `VIEW`, `REPORT`, `SHELL`, `MAIL`, `MESSAGE` and `WATCH`. `MAIL` is the inbox list and `MESSAGE` is its reader, which shows messages only; entries and handbook notes open in `VIEW`. In tmux mode the MAIL window holds both mail panes, side by side on a wide screen and stacked on a narrow one. Every split has a divider: dragging it, or focusing it and using the arrow keys, sets the share of the two panes between 15% and 85%. The size is saved in `settings.splits` under a key made of the split direction and the panes on each side, and a double click returns to the default. Game code asks for a kind through `S.ui.open(kind)`, `S.ui.isOpen(kind)`, `S.ui.close(kind)` and `S.ui.active()`, and the current mode decides how the kind is shown:
 
-- **tmux mode** (`js/ui/tmux.js`) arranges panes in windows, with Ctrl+B keys.
+- **tmux mode** (`js/ui/tmux.js`) arranges panes in windows, with Ctrl+B keys. With Setup > Display > Sole pane frames OFF, a pane that is alone in its window and not zoomed is drawn bare: no border and no header. The header stays in the DOM, hidden, for the pane's accessible name, and its buttons (CLOSE, POP IN, HIDE INBOX and SHOW INBOX) are also in the pane's context menu. The context menu (`js/ui/contextmenu.js`) opens on a right click and on a touch or pen held still for 500 ms; iPhone and iPad Safari send no contextmenu event of their own, and on browsers that do, the gesture still opens one menu.
 - **Desktop mode** (`js/ui/desktop.js`) shows icons, drawers and movable windows through `S.desk`.
 
 Screens 700 px wide or narrower always use tmux mode with bottom navigation buttons; the saved choice returns on a wider screen. There the inbox sits above MESSAGE and takes the height of its rows, up to about half the window; HIDE INBOX in the MESSAGE header gives MESSAGE the whole page, and SHOW INBOX brings the list back. Panes that rebuild their content (the inbox, MESSAGE, REPORT) keep their scroll position through `S.keepScroll` in `js/core/dom.js`.
@@ -144,9 +150,44 @@ The status bar repeats a notice only when no toast shows it: new mail and the tr
 
 ### Shell
 
-`S.run(text)` in `js/shell/commands.js` parses and runs a command. The command table sits in the same file, and shared helpers sit in `S.cmd` (`js/shell/cmdkit.js`, extended by `listing.js`, `mail.js` and `hints.js`). Output goes through the queue in `js/shell/screen.js`: `S.scr.line`, `S.scr.type`, `S.scr.node` and `S.scr.task` print in order, so a sequence of lines and actions can be written as a list of calls. `js/shell/render.js` turns entry bodies into HTML for both the game and the developer notes page.
+`S.run(text, echo, origin)` in `js/shell/commands.js` parses and runs a command. The command table sits in the same file, and shared helpers sit in `S.cmd` (`js/shell/cmdkit.js`, extended by `listing.js`, `mail.js` and `hints.js`). Output goes through the queue in `js/shell/screen.js`: `S.scr.line`, `S.scr.type`, `S.scr.node` and `S.scr.task` print in order, so a sequence of lines and actions can be written as a list of calls. `js/shell/render.js` turns entry bodies into HTML for both the game and the developer notes page.
 
-Shell output follows one rhythm: every line, headings included, is one line box of 1.5em, and a gap of 0.75em sits equally above and below each command echo, heading, block and paragraph. Plain lines follow each other with no gap. The rules sit at the top of `css/terminal.css`.
+#### Where results go
+
+While a command runs, `S.cmdOrigin` records where it came from:
+
+| Origin | Source | How it is called |
+| --- | --- | --- |
+| `typed` | The command line, the tmux prompt (Ctrl+B then :), and HOME / README opened at first sign-in | `S.run(text)`, or `S.run(text, false, "typed")` for the README |
+| `panel` | The FILES panel, the F keys and function bar, the status bar buttons and the Alt shortcuts | `S.run(text, false)` |
+| `click` | Command links in the output, report page buttons, dialogs, the context menu, the tour and desktop icons | `S.runClick(text)` or `S.runClick(text, false)` |
+
+`route()` in the same file reads the origin and the settings and gives two answers, read through `S.outShell()` (print the result in the SHELL log) and `S.outWindow()` (open its window: VIEW, MAIL and MESSAGE, REPORT, WATCH, FILES). Both can be true. The first matching row decides:
+
+| Situation | `S.outShell()` | `S.outWindow()` |
+| --- | --- | --- |
+| tmux session not attached yet (title, sign-in) | true | false |
+| `typed` | Shell results (`settings.shellOut`) is IN SHELL | Shell results is IN VIEW |
+| `panel` in tmux mode, Shell results IN SHELL | Panel results (`settings.panelOut`) is BOTH | true |
+| anything else: `panel` in desktop mode or with Shell results IN VIEW, every `click` | false | true |
+
+`S.display` (entries, notes, help), `S.showMail`, and the `mail`, `report`, `watch` and `unlock` commands ask both. `S.display` and `S.showMail` take a function that builds the element, since it runs once for each place the result goes; one element cannot sit in the log and in a window at once. In the shell the results are text versions: the mail list, a report list in two columns, a report page with its blanks as `[______]` or the filled entry, the DECISION page, and a telemetry snapshot without the live camera. `unlock` then changes the shell into the opened section. Saves from before BOTH existed that hold `panelOut: "shell"` are converted to `"both"` in `S.load`. Every step of the game, `decide` included, can be taken by typing; the final choice list takes number keys.
+
+A typed command whose result opens VIEW or MESSAGE, and prints nothing in the shell, leaves the note "Output redirected to VIEW." or "Output redirected to MAIL." in the shell, while Setup > Redirect notices is ON. Only typed commands leave this note.
+
+#### Shell-only DESK
+
+Setup > Text and input > Shell-only DESK (`settings.deskShell`) acts in tmux mode while Shell results is IN SHELL. `shellOnly()` in `js/ui/tmux.js` decides it from the settings and the session flag `T.open.revealed`:
+
+- In the FOUR PANES and THREE PANES layouts, DESK holds SHELL alone. REPORT and the separate SHELL window of a popped-out shell are left out, and POP OUT is unavailable. MAIL and WATCH keep their windows.
+- In the SINGLE layout and on narrow screens, FILES and VIEW are left out of the window list, and so out of the bottom bar.
+- `T.goto` asked for a hidden pane (FILES, VIEW, or REPORT in a wide layout) sets `T.open.revealed`, which rebuilds the full layout. `S.run` calls `T.endReveal()` before every typed command, which clears the flag and hides the panes again.
+
+Changing Shell-only DESK or Shell results in Setup rebuilds the windows at once. In desktop mode the row is greyed with the reason "Used in tmux mode" (see Situation and events).
+
+#### Output rhythm
+
+Shell output follows one rhythm: every line, headings included, is one line box of 1.5em, and a gap of 0.75em sits equally above and below each command echo, heading, block and paragraph. Plain lines follow each other with no gap. The last element in the log, and the last child of a last output group, has no bottom margin, so the newest output ends on the log's own padding. Output that has no echoed command line above it is wrapped by `S.scr.group(fn)` in one `div.out-group` with the same 0.75em above and below: the result of every unechoed command (for example the SOUND button in the status bar), the uplink notice of new mail, and the line printed when a blank is filled by dragging, USE or F4. Inside an echoed command `S.scr.group` adds nothing, since the echo already provides the gap. The rules sit at the top of `css/terminal.css`.
 
 Command words and fixed arguments are translated. The English word always works as well, and `S.tc` fills placeholders such as `{unlock}` with the word of the current language.
 

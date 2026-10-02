@@ -13,7 +13,8 @@
     statusPrompt.style.left = Math.max(8, Math.min(sr.width - statusPrompt.offsetWidth - 8, x)) + "px";
     statusPrompt.style.top = Math.max(4, Math.min(sr.height - statusPrompt.offsetHeight - 4, y)) + "px";
   }
-  /* One heading, one line of detail, then any rows. */
+  /* Fill a status pop-up (bubble): a heading, then one line of detail (copy)
+     when given. Callers append their own rows after it. */
   function info(bubble, head, copy) {
     bubble.appendChild(el("strong", "status-info-head", head));
     if (copy) {

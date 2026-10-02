@@ -4,6 +4,12 @@
   var S = window.SELK;
   var el = S.el;
   var log = null, chain = Promise.resolve(), pending = 0, skipping = false;
+  /* Output group being filled (see S.scr.group), or null. Queued output is
+     appended to it while it is open and still in the log. */
+  var group = null, groupDepth = 0;
+  function host() {
+    return group && group.isConnected ? group : log;
+  }
   function factor() {
     var s = S.state.settings.speed;
     return (S.reduced || skipping || s === "instant") ? 0 : ({ vfast: 0.15, fast: 0.3, slow: 1.4 }[s] || 1);
@@ -92,10 +98,11 @@
     }
     return parent;
   }
-  /* Text speed, shared by every text on screen.
-     AT ONCE (instant) shows text whole. QUICKLY and LETTER BY LETTER reveal the
-     text nodes of an element in order, a few characters per animation frame.
-     Reduced motion and screen reader mode count as AT ONCE (see factor()). */
+  /* Text speed (Setup > Text appears), shared by every text on screen.
+     AT ONCE (instant) shows text whole. VERY FAST, FAST, NORMAL and SLOW
+     (vfast, fast, typed, slow) reveal the text nodes of an element in order
+     at CPS letters per second, a few letters per animation frame. Reduced
+     motion and screen reader mode count as AT ONCE (see factor()). */
   var CPS = { vfast: 450, fast: 260, typed: 110, slow: 55 };
   function queueSkipped() { return skipping; }
   function reveal(root, isSkipped) {
@@ -156,15 +163,43 @@
     },
     clear: function () {
       return enqueue(function () {
-        log.textContent = "";
+        log.textContent = ""; group = null;
       }, 0);
     },
-    /* line, rich and node all reveal their text at the chosen text speed,
-       so the setting applies to every piece of shell output. */
+    /* Run fn and collect all output it queues into one div.out-group, which
+       has the same gap above and below as a command echo (terminal.css).
+       Output with no command line above it (an unechoed command, the mail
+       notice, a blank filled by dragging) uses it, so it reads as separate
+       from the output before and after it. Inside an echoed command, or
+       inside another group, fn runs as is, since the echo or the outer group
+       already provides the gap. An empty group is removed. */
+    group: function (fn) {
+      if (groupDepth || S.cmdEchoed) {
+        return fn();
+      }
+      groupDepth++;
+      enqueue(function () {
+        group = el("div", "out-group"); log.appendChild(group);
+      }, 0);
+      try {
+        return fn();
+      } finally {
+        groupDepth--;
+        enqueue(function () {
+          if (group && !group.firstChild) { group.remove(); }
+          group = null;
+        }, 0);
+      }
+    },
+    /* line (plain text), rich (text with markup) and node (a built element)
+       all reveal their text at the chosen text speed, so the setting applies
+       to every piece of shell output. type() types one line letter by
+       letter with key sounds, for the boot, sign-in and attach lines. */
     line: function (text, cls, ms) {
       return enqueue(function () {
         var d = el("div", "ln " + (cls || ""));
-        /* An echoed command: the prompt is shown, and "Command:" is said */
+        /* An echoed command: the prompt is shown but hidden from screen
+           readers, which hear "Command:" before the typed text */
         var ps = S.promptText ? S.promptText() : "";
         if (/\becho\b/.test(cls || "") && ps && String(text).indexOf(ps) === 0) {
           var p = el("span", "", ps); p.setAttribute("aria-hidden", "true");
@@ -174,21 +209,21 @@
         } else if (text != null) {
           S.speakInto(d, String(text));
         }
-        log.appendChild(d);
+        host().appendChild(d);
         return reveal(d, queueSkipped);
       }, ms == null ? 12 : ms);
     },
     rich: function (text, cls, ms) {
       return enqueue(function () {
         var d = markup(text, el("div", "ln " + (cls || "")));
-        log.appendChild(d);
+        host().appendChild(d);
         return reveal(d, queueSkipped);
       }, ms == null ? 12 : ms);
     },
     node: function (build, ms) {
       return enqueue(function () {
         var n = build(); if (n) {
-          log.appendChild(n);
+          host().appendChild(n);
           return reveal(n, queueSkipped);
         }
       }, ms == null ? 12 : ms);
@@ -196,7 +231,7 @@
     type: function (text, cls, cps) {
       return enqueue(function () {
         var d = el("div", "ln " + (cls || ""));
-        log.appendChild(d);
+        host().appendChild(d);
         if (!factor()) {
           d.textContent = text; return;
         }

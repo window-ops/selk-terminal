@@ -63,7 +63,7 @@
       watch(S.scr, "line", "shell", function (t) { return t; });
       watch(S.scr, "type", "shell", function (t) { return t; });
     }
-    /* Report where the save really went by reading it back, instead of assuming. */
+    /* Report where the save went by reading it back from storage */
     var save = S.save, lastSave = 0;
     S.save = function () {
       var ok = save.apply(this, arguments), now = Date.now();

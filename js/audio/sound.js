@@ -111,7 +111,8 @@
     if (hp) { hp.frequency.value = pr.hp; }
     /* The computer's hum sits a little to the left; everything else is centred on its channel */
     if (pan.machine) { pan.machine.pan.value = -0.5 * pr.width; }
-    /* A short glide: a slider move or SOUND ON never steps the level */
+    /* Level changes from a slider or from SOUND ON glide over a short time, so
+     the level never jumps (a jump is heard as a click) */
     glide(master.gain, masterVol, 0.05);
     Object.keys(BUS).forEach(function (k) {
       var busVol = on ? (set()[BUS[k]] != null ? set()[BUS[k]] : 100) / 100 : 0;

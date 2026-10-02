@@ -1,5 +1,6 @@
-/* VIEW window and MAIL pane. S.display() shows entries and notes in VIEW;
-   messages open only in the MAIL pane, through S.mailpane.open(). */
+/* VIEW window, MAIL inbox pane and MESSAGE reader. S.display() puts entries,
+   handbook notes and help in VIEW, or in the shell when S.outShell() says so.
+   Messages open in MESSAGE through S.mailpane.open(), never in VIEW. */
 (function () {
   var S = window.SELK, el = S.el;
   /* Viewer */
@@ -7,7 +8,8 @@
   var vhint = el("div", "dim", "Open an entry from FILES, or type open and a name.");
   vbody.appendChild(vhint);
   vnote.hidden = true;
-  /* Built before the language file loads, so the first texts are set once it is in */
+  /* These elements are built before the language file loads, so their first
+     texts are set again once it has loaded */
   S.i18n.ready.then(function () {
     vhead.textContent = S.t("VIEW");
     vhint.textContent = S.tc("Open an entry from FILES, or type {open} and a name.");
@@ -42,47 +44,43 @@
       if (title && S.announce) { S.announce(title.textContent.replace(/\s+/g, " ").trim()); }
     }
   };
-  S.display = function (title, node, isNote) {
-    var T = S.tmux;
-    /* Setup > Shell results > IN SHELL: what a typed command shows stays in the
-       shell, in tmux and desktop mode alike. Clicked items still open in VIEW. */
-    if (T.attached && S.mode === "shell" && !S.fromClick && S.state.settings.shellOut === "shell") {
+  /* Show an entry, a handbook note (isNote) or the help page. content is a
+     function that builds the element; it runs once for each place the
+     result goes (S.outShell and S.outWindow in commands.js), since one
+     element cannot sit in the log and in VIEW at once. The shell copy is
+     built first, so the copy in VIEW is built last and keeps the USE button
+     (see S.refreshUse in listing.js). A ready element is also accepted;
+     use one only when the result goes to one place. */
+  S.display = function (title, content, isNote) {
+    var T = S.tmux, make = typeof content === "function" ? content : function () { return content; };
+    var toShell = S.outShell(), toWindow = S.outWindow();
+    if (toShell) {
+      var copy = make();
       S.scr.node(function () {
-        return node;
+        return copy;
       });
+    }
+    if (!toWindow) {
       return;
     }
-    var fromShell = T.attached && !S.isDesktop() && S.mode === "shell" && !S.fromClick && T.visible("SHELL");
-    if (T.attached && S.isDesktop()) {
-      if (!T.visible("VIEW")) {
-        T.goto("VIEW");
-      } else {
-        S.desk.goto("VIEW");
-      }
-      if (isNote) {
-        S.view.note(node);
-      } else {
-        S.view.show(title, node);
-      }
-      return;
+    var node = make();
+    /* A typed command whose result moves to VIEW, and not to the shell,
+       leaves a note in the shell */
+    var fromShell = !toShell && !S.isDesktop() && S.cmdOrigin === "typed" && T.visible("SHELL");
+    if (!T.visible("VIEW")) {
+      T.goto("VIEW");
+    } else if (S.isDesktop()) {
+      /* Bring the desktop VIEW window to the front */
+      S.desk.goto("VIEW");
     }
-    if (T.attached) {
-      if (!T.visible("VIEW")) {
-        T.goto("VIEW");
-      }
-      if (isNote) {
-        S.view.note(node);
-      } else {
-        S.view.show(title, node);
-      }
-      if (fromShell && S.state.settings.redirectNotes !== false) {
-        S.scr.line(S.t("Output redirected to VIEW."), "dim", 0);
-      }
-      return;
+    if (isNote) {
+      S.view.note(node);
+    } else {
+      S.view.show(title, node);
     }
-    S.scr.node(function () {
-      return node;
-    });
+    if (fromShell && S.state.settings.redirectNotes !== false) {
+      S.scr.line(S.t("Output redirected to VIEW."), "dim", 0);
+    }
   };
   /* MAIL pane: the inbox list. MESSAGE pane: the reader beside it, which
      shows messages only, so VIEW keeps entries and notes */

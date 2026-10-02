@@ -1,3 +1,6 @@
+/* Story data: the sections in display order (SELK.SECTIONS) and every entry
+   (SELK.ENTRIES), added through E(id, by, body, extra). DEVELOPING.md
+   describes the fields; TRANSLATING.md describes the markup in bodies. */
 window.SELK = window.SELK || {};
 SELK.SECTIONS = [
   {

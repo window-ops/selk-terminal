@@ -19,7 +19,8 @@
     };
   }
 
-  /* 1. Announcer: one polite and one assertive region */
+  /* 1. Announcer: two hidden live regions, aria-live polite for most news
+     and assertive for errors. S.announce(text, isUrgent) writes to them. */
   var polite, urgent, last = "", lastAt = 0;
   function region(mode) {
     var r = document.createElement("div");
@@ -273,7 +274,9 @@
     }
   }, true);
 
-  /* 6. Start */
+  /* 6. Start-up: create the live regions, name the main areas, install the
+     hooks of part 2, apply screen reader mode, and run the roles-and-names
+     pass (fix) on the page and again after each change to it */
   document.addEventListener("DOMContentLoaded", function () {
     polite = region("polite"); urgent = region("assertive");
     var screen = $("screen");
@@ -288,7 +291,8 @@
       if (S.motionQuery.addEventListener) { S.motionQuery.addEventListener("change", onChange); } else if (S.motionQuery.addListener) { S.motionQuery.addListener(onChange); }
     }
     fix(document);
-    /* Parts that only animate or tick: their changes never need a pass */
+    /* Parts that only animate or tick. Changes inside them are skipped by
+       the roles-and-names pass (fix), which would otherwise run every frame */
     var QUIET = ".scene, .cine-caption, .watch, .cam, .livecam, canvas, #st-clock, .dbg-info, .count, .tmux-msg, .glass";
     var timer = null, last = 0, GAP = 300;
     function run() { timer = null; last = Date.now(); fix(document); refocusExplorer(); }

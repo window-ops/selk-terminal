@@ -163,13 +163,13 @@
         mail: {
           label: "OPEN MAIL",
           run: function () {
-            S.run("mail", false);
+            S.runClick("mail", false);
           }
         },
         report: {
           label: "OPEN REPORT",
           run: function () {
-            S.run("report", false);
+            S.runClick("report", false);
           }
         }
       };
@@ -267,6 +267,8 @@
         ]
       });
     }
-  };  /* The tour listens to game events instead of being called from other files */
+  };  /* Every game event reaches S.tut.event through S.on("*"). A step is done
+     when the event named in its "on" field arrives. Game code only calls
+     S.emit and holds no reference to the tour. */
   S.on("*", function (name) { S.tut.event(name); });
 })();

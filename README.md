@@ -25,7 +25,7 @@ The game is a static website. It has no build step, package installation, or ext
 
 Explore entries in FILES, use their clues to unlock restricted sections, and fill the blanks in REPORT with entry names. The HINTS page provides progressive clues. Your progress is saved in the browser.
 
-The interface works with keyboard, mouse, and touch. The function bar lists the F1-F10 shortcuts:
+The interface works with keyboard, mouse, and touch. A right click, or a press held for half a second on a touch screen, opens the context menu. The function bar lists the F1-F10 shortcuts:
 
 | Key | Action |
 | --- | --- |
@@ -40,9 +40,26 @@ The interface works with keyboard, mouse, and touch. The function bar lists the 
 | F9 | Setup |
 | F10 | Exit |
 
-MAIL shows the inbox and, beside it, the MESSAGE pane, where messages open. Drag the line between two panes to resize them; a double click returns to the default size.
+MAIL shows the inbox and, beside it, the MESSAGE pane, where messages open. In tmux mode, Setup > Display > Sole pane frames OFF draws a pane that is alone in its window without border or header; right-click the pane, or press and hold it on a touch screen, for CLOSE, POP IN or SHOW INBOX. Drag the line between two panes to resize them; a double click returns to the default size.
 
 On mobile, use the bottom navigation buttons to switch between the available views. In MAIL, HIDE INBOX gives the open message the whole page and SHOW INBOX brings the list back.
+
+### Playing in the shell
+
+The whole game can be played by typing. Type `help` for the list of commands. To keep every typed result in the shell, open Setup (F9) and set Text and input > Shell results to IN SHELL. Entries, messages, report pages, hints and telemetry then print as text in SHELL:
+
+- `ls`, `cd` and `open` read the files, and `unlock` opens a locked section.
+- `mail` lists the messages and `mail 2` reads one.
+- `report` lists the report pages and prints the open one; `report 2` prints another, and `report decision` prints the final DECISION page once it is open. `fill 2 NAME` fills blank 2, `unfill 2` empties it and `submit` sends the page.
+- `watch` prints the site telemetry once.
+- `decide` opens the final decision, where the number keys choose.
+
+Two more rows in the same section act while Shell results is IN SHELL, in tmux mode:
+
+- **Panel results** sets what the FILES panel, the F keys and the status bar do. IN VIEW opens their windows only, so the shell and the panes stay separate. BOTH opens their windows and prints their results in the shell.
+- **Shell-only DESK** turns DESK into the shell alone, also when the shell was popped out into its own window. MAIL and WATCH keep their windows. On a narrow screen, and with the SINGLE layout, the FILES and VIEW pages leave the bottom bar. A click or an F key that needs FILES, VIEW or REPORT brings them back until the next typed command.
+
+A row that another Setup choice would make usable stays in view, greyed, with the reason beside it. Display > Unavailable settings > HIDE leaves those rows out until they can apply. In desktop mode these rows, Layout and Redirect notices are greyed, since they act in tmux mode; switching Mode to TMUX makes them usable again. Redirect notices is greyed while Shell results is IN SHELL, since the note marks typed results that open in a window.
 
 ## Project notes
 

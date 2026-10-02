@@ -1,3 +1,5 @@
+/* Story data: the CESEA field handbook (SELK.NOTES), one note per key as
+   [title, text, edition year]. Some editions are outdated on purpose. */
 window.SELK = window.SELK || {};
 SELK.NOTES = {
   author: [

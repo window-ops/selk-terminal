@@ -107,7 +107,7 @@
           "HELP",
           "doc",
           function () {
-            S.run("help", false);
+            S.runClick("help", false);
           }
         ]
       ]
@@ -439,7 +439,7 @@
         return;
       }
       body.appendChild(icon(e.id.split("/")[1], "doc", function () {
-        S.run("open " + e.id, false);
+        S.runClick("open " + e.id, false);
       }, e.sys ? {
         dim: S.state.read.indexOf(e.id) !== -1
       } : {
@@ -582,7 +582,7 @@
     });
     var snd = el("button", "wb-btn", S.state.sound ? S.t("SOUND ON") : S.t("SOUND OFF")); snd.id = "wb-sound"; snd.type = "button";
     snd.addEventListener("click", function () {
-      S.run("sound " + (S.state.sound ? "off" : "on"), false);
+      S.runClick("sound " + (S.state.sound ? "off" : "on"), false);
     });
     /* HINT lamp, as in the tmux status bar: shown when Hint light is on, lit when the open entry answers a blank */
     var hintLamp = el("span", "st-hint", S.t("HINT")); hintLamp.id = "wb-hint"; hintLamp.hidden = true; right.appendChild(hintLamp);

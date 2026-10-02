@@ -2,7 +2,9 @@
 (function () {
   var S = window.SELK;
   var K = S.cmd, scr = K.scr, err = K.err;
-  /* Mail */
+  /* Put message id in the queue and deliver it after ms milliseconds, or
+     after 80 ms in fast mode. A message already queued or delivered is not
+     queued twice. */
   S.queueMail = function (id, ms) {
     var st = S.state;
     if (st.pending.indexOf(id) === -1 && !st.mail.some(function (m) {
@@ -59,7 +61,7 @@
     readBtn.addEventListener("click", function (e) {
       e.stopPropagation();
       dismissMailToast();
-      S.run("mail " + n, false);
+      S.runClick("mail " + n, false);
     });
     var disBtn = document.createElement("button");
     disBtn.type = "button";
@@ -124,12 +126,15 @@
     if (!showMailToast(n)) {
       S.msg(S.ctx().keys ? "New message from AUDIT DESK 4. Press F2 or MAIL." : "New message from AUDIT DESK 4. Press MAIL.", "warn");
     }
-    scr().node(function () {
-      var d = scr().el("div", "ln warn");
-      d.appendChild(document.createTextNode(S.t("[uplink] New message from AUDIT DESK 4.") + " "));
-      d.appendChild(scr().cmdButton(S.t("READ IT"), "mail " + n, "lnk act"));
-      return d;
-    }, 0);
+    /* The notice has no command line above it, so it gets its own group */
+    scr().group(function () {
+      scr().node(function () {
+        var d = scr().el("div", "ln warn");
+        d.appendChild(document.createTextNode(S.t("[uplink] New message from AUDIT DESK 4.") + " "));
+        d.appendChild(scr().cmdButton(S.t("READ IT"), "mail " + n, "lnk act"));
+        return d;
+      }, 0);
+    });
   };
   function readMail(n) {
     dismissMailToast();
@@ -144,7 +149,7 @@
     S.emit("mail-read");
     S.mailpane.render();
     S.snd.hdd(2);
-    S.showMail(n, "MSG " + num, (function () {
+    S.showMail(n, "MSG " + num, function () {
       var box = scr().el("div", "mail");
       box.appendChild(S.speakText(scr().el("div", "mail-head"), S.t("AUDIT DESK 4 > SELK SITE    MSG {num}", { num: num }), "to"));
       /* Labels are padded to the longer one, so the times line up in any language */
@@ -169,25 +174,28 @@
         box.appendChild(scr().cmdButton(S.t("DECIDE"), "decide", "lnk act"));
       }
       return box;
-    })());
+    });
   }
   K.readMail = readMail;
-  /* A message opens in the MAIL pane, never in VIEW. Setup > Shell results >
-     IN SHELL keeps a typed mail command's output in the shell, as for entries */
-  S.showMail = function (n, title, node) {
-    var T = S.tmux;
-    if (T.attached && S.mode === "shell" && !S.fromClick && S.state.settings.shellOut === "shell") {
-      S.scr.node(function () { return node; });
+  /* Show message n. content is a function that builds the message element;
+     it runs once for each place the result goes (S.outShell and
+     S.outWindow in commands.js): the shell log, the MESSAGE pane beside the
+     inbox, or both. Messages never open in VIEW. */
+  S.showMail = function (n, title, content) {
+    var T = S.tmux, toShell = S.outShell();
+    if (toShell) {
+      var copy = content();
+      S.scr.node(function () { return copy; });
+    }
+    if (!S.outWindow()) {
       return;
     }
-    if (!T.attached) {
-      S.scr.node(function () { return node; });
-      return;
-    }
-    var fromShell = !S.isDesktop() && S.mode === "shell" && !S.fromClick && T.visible("SHELL");
+    /* A typed command whose result moves to MESSAGE, and not to the shell,
+       leaves a note in the shell when SHELL is out of view afterwards */
+    var fromShell = !toShell && !S.isDesktop() && S.cmdOrigin === "typed" && T.visible("SHELL");
     if (!T.visible("MAIL")) { S.ui.open("MAIL"); }
     S.ui.open("MESSAGE");
-    S.mailpane.open(n, title, node);
+    S.mailpane.open(n, title, content());
     if (fromShell && !T.visible("SHELL") && S.state.settings.redirectNotes !== false) {
       S.scr.line(S.t("Output redirected to MAIL."), "dim", 0);
     }

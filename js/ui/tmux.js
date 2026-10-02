@@ -54,30 +54,63 @@
      window, and the current pane is remembered by name, never by object. */
   /* MAIL and its MESSAGE reader always stay open; REPORT and WATCH can close */
   var CLOSABLE = ["REPORT", "WATCH"];
+  /* The window model (T.open), kept for the session and never saved:
+       REPORT, WATCH  true while that closable window is open
+       shellPopped    true while SHELL has its own window, out of DESK
+                      (POP OUT in the SHELL pane header)
+       revealed       true while a shell-only DESK shows its hidden panes
+                      again (see shellOnly below) */
   function freshOpen() {
-    return { REPORT: false, WATCH: true, shellOut: false };
+    return { REPORT: false, WATCH: true, shellPopped: false, revealed: false };
+  }
+  /* Shell-only DESK (Setup > Shell-only DESK). True when settings.deskShell
+     is ON, Shell results is IN SHELL, the mode is tmux, and o.revealed is
+     false. While true:
+       wide layouts (FOUR PANES, THREE PANES)  DESK holds SHELL alone, and
+         REPORT and the separate SHELL window of a popped-out shell are
+         left out; MAIL and WATCH keep their windows
+       SINGLE layout and narrow screens  the FILES and VIEW pages are left
+         out of the window list, and so out of the bottom bar
+     T.goto sets o.revealed when it is asked for a hidden pane, and the next
+     typed command clears it (T.endReveal). */
+  function shellOnly(o) {
+    var s = S.state && S.state.settings;
+    return !!s && !!s.deskShell && s.shellOut === "shell" && !S.isDesktop() && !o.revealed;
+  }
+  /* True when kind k is left out of the current layout by shellOnly */
+  function hiddenByShellOnly(k, o) {
+    if (!shellOnly(o)) { return false; }
+    if (k === "FILES" || k === "VIEW") { return true; }
+    return k === "REPORT" && !T.wasMobile && S.state.settings.layout !== "single";
   }
   function layoutWindows(layout, mobile, o) {
-    var list = [];
+    var list = [], bare = shellOnly(o);
     /* MAIL holds two panes, the inbox and the MESSAGE reader: side by side on
        a wide screen, stacked on a narrow one. On a narrow screen the inbox can
-       be hidden, so MESSAGE has the whole page (Settings mailList) */
+       be hidden, so MESSAGE has the whole page (settings.mailList) */
     if (mobile || layout === "single") {
       var single = S.state && S.state.settings.mailList === "single";
       ["SHELL", "FILES", "VIEW", "REPORT", "MAIL", "WATCH"].forEach(function (k) {
         if (CLOSABLE.indexOf(k) !== -1 && !o[k]) { return; }
+        if (bare && (k === "FILES" || k === "VIEW")) { return; }
         list.push({ name: k, root: k !== "MAIL" ? L(k) : (single ? L("MESSAGE") : H(L("MAIL"), L("MESSAGE"), 0.35)) });
       });
       return list;
     }
+    if (bare) {
+      list.push({ name: "DESK", root: L("SHELL") });
+      list.push({ name: "MAIL", root: V(L("MAIL"), L("MESSAGE"), 0.4) });
+      if (o.WATCH) { list.push({ name: "WATCH", root: L("WATCH") }); }
+      return list;
+    }
     var view = o.REPORT ? H(L("VIEW"), L("REPORT"), 0.55) : L("VIEW");
     var desk = layout === "three"
-      ? V(L("FILES"), o.shellOut ? view : H(view, L("SHELL"), 0.62), 0.44)
-      : V(o.shellOut ? L("FILES") : H(L("FILES"), L("SHELL"), 0.62), view, 0.44);
+      ? V(L("FILES"), o.shellPopped ? view : H(view, L("SHELL"), 0.62), 0.44)
+      : V(o.shellPopped ? L("FILES") : H(L("FILES"), L("SHELL"), 0.62), view, 0.44);
     list.push({ name: "DESK", root: desk });
     list.push({ name: "MAIL", root: V(L("MAIL"), L("MESSAGE"), 0.4) });
     if (o.WATCH) { list.push({ name: "WATCH", root: L("WATCH") }); }
-    if (o.shellOut) { list.push({ name: "SHELL", root: L("SHELL") }); }
+    if (o.shellPopped) { list.push({ name: "SHELL", root: L("SHELL") }); }
     return list;
   }
   var T = S.tmux = {
@@ -90,7 +123,7 @@
     attached: false,
     wasMobile: false
   };
-  Object.defineProperty(T, "shellPoppedOut", { get: function () { return !!(T.open && T.open.shellOut); } });
+  Object.defineProperty(T, "shellPoppedOut", { get: function () { return !!(T.open && T.open.shellPopped); } });
   T.mobile = function () {
     return S.ctx().mobile;
   };
@@ -247,8 +280,16 @@
     d.appendChild(a); d.appendChild(bar); d.appendChild(b);
     return d;
   }
+  /* Setup > Sole pane frames OFF: a pane alone in its window, and not
+     zoomed, is drawn bare (.pane.bare in terminal.css): no border, and its
+     header stays in the DOM, hidden, so the accessibility layer still reads
+     the pane name from it. The header buttons are in the pane's context
+     menu (contextmenu.js): CLOSE, POP IN and the inbox switch. */
+  function bare(n) {
+    return S.state.settings.soloFrames === false && !T.zoom && win().root === n;
+  }
   function paneEl(n) {
-    var p = el("div", "pane" + (n === T.cur ? " cur" : ""));
+    var p = el("div", "pane" + (n === T.cur ? " cur" : "") + (bare(n) ? " bare" : ""));
     p._leaf = n;
     var idx = leaves(win().root).indexOf(n);
     var head = el("div", "pane-head");
@@ -256,15 +297,16 @@
     /* Header buttons: SHELL can pop out of DESK into its own window and back in;
        REPORT and WATCH can close. */
     if (n.kind === "SHELL" && (T.canPopOut(n) || T.canPopInShell())) {
-      var pop = el("button", "pane-close", T.open.shellOut ? S.t("POP IN") : S.t("POP OUT")); pop.type = "button";
-      pop.setAttribute("aria-label", T.open.shellOut ? S.t("Put the shell back into DESK") : S.t("Give the shell its own window"));
+      var pop = el("button", "pane-close", T.open.shellPopped ? S.t("POP IN") : S.t("POP OUT")); pop.type = "button";
+      pop.setAttribute("aria-label", T.open.shellPopped ? S.t("Put the shell back into DESK") : S.t("Give the shell its own window"));
       pop.addEventListener("click", function (e) {
         e.stopPropagation(); T.cur = n;
-        if (T.open.shellOut) { T.popInShell(); } else { T.popOutShell(); }
+        if (T.open.shellPopped) { T.popInShell(); } else { T.popOutShell(); }
       });
       head.appendChild(pop);
     }
-    /* Narrow screens: MESSAGE switches between the inbox above it and MESSAGE alone */
+    /* Narrow screens: HIDE INBOX and SHOW INBOX in the MESSAGE header set
+       settings.mailList to single (MESSAGE alone) or dual (inbox above) */
     if (n.kind === "MESSAGE" && (T.wasMobile || S.state.settings.layout === "single")) {
       var single = S.state.settings.mailList === "single";
       var tg = el("button", "pane-close", single ? S.t("SHOW INBOX") : S.t("HIDE INBOX")); tg.type = "button";
@@ -272,8 +314,7 @@
       tg.setAttribute("aria-pressed", single ? "false" : "true");
       tg.addEventListener("click", function (e) {
         e.stopPropagation();
-        S.state.settings.mailList = single ? "dual" : "single"; S.save();
-        rebuild("MAIL", single ? "MAIL" : "MESSAGE");
+        T.toggleInbox();
       });
       head.appendChild(tg);
     }
@@ -398,6 +439,12 @@
     if (!T.attached) { return false; }
     if (S.isDesktop()) { return S.desk.goto(k); }
     if (KINDS.indexOf(k) === -1) { return false; }
+    /* A pane hidden by the shell-only DESK comes back until the next typed command */
+    if (hiddenByShellOnly(k, T.open)) {
+      T.open.revealed = true;
+      if (CLOSABLE.indexOf(k) !== -1) { T.open[k] = true; }
+      rebuild("DESK", k);
+    }
     if (CLOSABLE.indexOf(k) !== -1 && !T.open[k]) { T.open[k] = true; rebuild(); }
     var here = shown().filter(function (l) { return l.kind === k; })[0];
     if (here) { T.cur = here; mark(); focusCur(); syncShellAction(); return true; }
@@ -416,7 +463,7 @@
   };
   T.closePane = function (n) {
     var k = n && n.kind;
-    if (k === "SHELL" && T.open.shellOut) { T.open.shellOut = false; rebuild("DESK", "SHELL"); return; }
+    if (k === "SHELL" && T.open.shellPopped) { T.open.shellPopped = false; rebuild("DESK", "SHELL"); return; }
     if (CLOSABLE.indexOf(k) === -1) { return; }
     T.open[k] = false;
     var here = win() && win().name;
@@ -424,26 +471,45 @@
     if (S.msg) { S.msg(S.t("{pane} closed. Open it again from the bar at the bottom.", { pane: S.t(k) })); }
   };
   T.isClosable = function (kind) { return CLOSABLE.indexOf(kind) !== -1; };
+  /* True where the inbox can be hidden: narrow screens and the SINGLE layout */
+  T.canToggleInbox = function () {
+    return T.attached && !S.isDesktop() && (T.wasMobile || S.state.settings.layout === "single");
+  };
+  /* HIDE INBOX and SHOW INBOX: switch settings.mailList between dual (inbox
+     above MESSAGE) and single (MESSAGE alone), and show the MAIL window */
+  T.toggleInbox = function () {
+    var single = S.state.settings.mailList === "single";
+    S.state.settings.mailList = single ? "dual" : "single"; S.save();
+    rebuild("MAIL", single ? "MAIL" : "MESSAGE");
+  };
+  /* Called by S.run before every typed command: a shell-only DESK whose
+     panes were revealed hides them again. The current window is kept when
+     it still exists; otherwise DESK, with SHELL as the current pane. */
+  T.endReveal = function () {
+    if (!T.attached || !T.open || !T.open.revealed) { return; }
+    T.open.revealed = false;
+    rebuild(null, "SHELL");
+  };
   /* True when this SHELL pane could pop out (ignores which pane is active). */
   T.canPopOut = function (leaf) {
-    return T.attached && !S.isDesktop() && !T.wasMobile && S.state.settings.layout !== "single" &&
-      !T.open.shellOut && !!win() && win().name === "DESK" && !!leaf && leaf.kind === "SHELL";
+    return T.attached && !S.isDesktop() && !T.wasMobile && S.state.settings.layout !== "single" && !shellOnly(T.open) &&
+      !T.open.shellPopped && !!win() && win().name === "DESK" && !!leaf && leaf.kind === "SHELL";
   };
   T.canPopOutShell = function () {
-    return T.attached && !S.isDesktop() && !T.wasMobile && S.state.settings.layout !== "single" &&
-      !T.open.shellOut && !!win() && win().name === "DESK" && !!T.cur && T.cur.kind === "SHELL";
+    return T.attached && !S.isDesktop() && !T.wasMobile && S.state.settings.layout !== "single" && !shellOnly(T.open) &&
+      !T.open.shellPopped && !!win() && win().name === "DESK" && !!T.cur && T.cur.kind === "SHELL";
   };
   T.canPopInShell = function () {
-    return T.attached && !S.isDesktop() && !!T.open && T.open.shellOut && !!win() && win().name === "SHELL";
+    return T.attached && !S.isDesktop() && !!T.open && T.open.shellPopped && !!win() && win().name === "SHELL";
   };
   T.popOutShell = function () {
     if (!T.canPopOutShell()) { return false; }
-    T.open.shellOut = true; rebuild("SHELL", "SHELL");
+    T.open.shellPopped = true; rebuild("SHELL", "SHELL");
     return true;
   };
   T.popInShell = function () {
     if (!T.canPopInShell()) { return false; }
-    T.open.shellOut = false; rebuild("DESK", "SHELL");
+    T.open.shellPopped = false; rebuild("DESK", "SHELL");
     return true;
   };
   T.zoomToggle = function () {

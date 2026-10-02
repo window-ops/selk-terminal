@@ -26,7 +26,10 @@
   function say(t, c) {
     S.feedback(t, c);
   }
-  /* Drag and drop: any element with an entry id can be dropped on a blank */
+  /* Drag and drop. An entry is dragged from any element that calls
+     S.dragStart, and from any command link that opens an entry (its
+     data-cmd is the open command and the entry id). Dropping it on a blank
+     fills that blank. */
   var ghost = null, dragStateTimer = null;
   function clearDragState() {
     if (dragStateTimer) {
@@ -134,7 +137,9 @@
     }
     return b;
   }
-  /* The decision report: what is at stake, the options, and the way in */
+  /* The DECISION page in the REPORT window: the brief, every action with the
+     ones whose report is still open dimmed, and the button that opens the
+     final decision */
   function decisionPage() {
     var paper = el("div", "paper decision-paper");
     paper.appendChild(el("div", "paper-title", S.t("DECISION REPORT / SELK")));
@@ -149,7 +154,7 @@
     });
     paper.appendChild(list);
     var go = el("button", "paper-btn", S.t("OPEN THE FINAL DECISION")); go.type = "button";
-    go.addEventListener("click", function () { S.run("decide"); });
+    go.addEventListener("click", function () { S.runClick("decide"); });
     var foot = el("div", "paper-foot"); foot.appendChild(go);
     paper.appendChild(foot);
     return paper;
@@ -176,13 +181,57 @@
       var sub = el("button", "paper-btn", S.t("SUBMIT PAGE")); sub.type = "button";
       sub.disabled = n < 4;
       sub.addEventListener("click", function () {
-        S.run("submit " + def.code);
+        S.runClick("submit " + def.code);
       });
       foot.appendChild(sub);
       foot.appendChild(el("span", "paper-count", S.t("{n} of 4 filled", { n: n })));
     }
     paper.appendChild(foot);
     return paper;
+  }
+  /* Text versions of the pages, printed in the shell when S.outShell() is
+     true. Each blank shows as [______] or as [SECTION / NAME] when filled,
+     and the last line names the commands that act on the page. */
+  function textBlank(id) {
+    return el("span", id ? "tblank ok" : "tblank warn", "[" + (id ? S.entryTitle(id) : "______") + "]");
+  }
+  function textPage(key) {
+    var def = S.REPORTS[key], r = rs(key);
+    var box = el("div", "entry report-text");
+    box.appendChild(el("div", "head-s", def.title));
+    box.appendChild(el("div", "dim", S.t("From supervisor {name}, Selk site.", { name: S.state.name }) + " " + def.brief));
+    box.appendChild(el("div", "rule"));
+    def.lines.forEach(function (ln, i) {
+      var row = el("div", "ln");
+      row.appendChild(document.createTextNode((i + 1) + " " + ln[0]));
+      row.appendChild(textBlank(r.fill[i]));
+      row.appendChild(document.createTextNode(ln[2]));
+      box.appendChild(row);
+    });
+    box.appendChild(el("div", "rule"));
+    if (r.done) {
+      box.appendChild(el("div", "ln ok", S.t("ACCEPTED BY AUDIT DESK 4")));
+    } else {
+      box.appendChild(el("div", "ln", S.t("{n} of 4 filled", { n: r.fill.filter(Boolean).length })));
+      box.appendChild(el("div", "ln dim", S.tc("Type {fill} 2 NAME to fill blank 2, {unfill} 2 to empty it, {submit} to send the page.")));
+    }
+    return box;
+  }
+  function textDecision() {
+    var box = el("div", "entry report-text");
+    box.appendChild(el("div", "head-s", S.t("DECISION REPORT / SELK")));
+    box.appendChild(el("div", "dim", S.t("From supervisor {name}, Selk site.", { name: S.state.name }) + " " +
+      S.t("The office cannot act before the equinox storms. Choose one action for the site.")));
+    box.appendChild(el("div", "rule"));
+    S.ENDINGS.forEach(function (e, i) {
+      var ok = !e.needs || rs(e.needs).done;
+      var row = el("div", "ln" + (ok ? "" : " dim"), (i + 1) + " " + e.label);
+      if (!ok) { row.appendChild(el("span", "err", " " + S.t("needs report {code}", { code: S.REPORTS[e.needs].code }))); }
+      box.appendChild(row);
+    });
+    box.appendChild(el("div", "rule"));
+    box.appendChild(el("div", "ln dim", S.tc("Type {decide} to open the final decision.")));
+    return box;
   }
   S.rep = {
     openKeys: openKeys,
@@ -269,27 +318,70 @@
       }
       restoreFocus();
     },
+    /* The shell list of open pages, one line each, and the DECISION page
+       once the office has asked for it */
     list: function () {
       var keys = openKeys();
       if (!keys.length) {
         S.scr.line(S.t("No report pages yet. Wait for audit office mail."), "dim"); return;
       }
-      keys.forEach(function (k) {
-        S.scr.rich(S.t("REPORT {code}", { code: S.REPORTS[k].code }) + " " + (rs(k).done ? S.t("accepted") : S.t("{n} of 4 filled", { n: rs(k).fill.filter(Boolean).length })), rs(k).done ? "ok" : "");
+      /* Two aligned columns, as in the mail list: the page, then its state */
+      S.scr.node(function () {
+        return S.cmd.shellTable(keys.map(function (k) {
+          var code = S.REPORTS[k].code, done = rs(k).done;
+          return [
+            { node: S.scr.cmdButton(S.t("REPORT {code}", { code: code }), "report " + code) },
+            { text: done ? S.t("accepted") : S.t("{n} of 4 filled", { n: rs(k).fill.filter(Boolean).length }), cls: done ? "ok" : "" }
+          ];
+        }));
       });
+      if (S.state.decision) {
+        S.scr.line(S.tc("DECISION page open. Type {report} decision to read it, or {decide} to choose."), "warn");
+      }
+    },
+    /* Print the page that fill, unfill and submit act on, as text. The
+       active page is chosen the same way as in the REPORT window: the
+       saved one, or else the first page not yet accepted. */
+    printActive: function () {
+      var keys = openKeys(), act = S.state.active;
+      if (!keys.length) {
+        return;
+      }
+      if (act === "DECISION" && S.state.decision) {
+        S.scr.node(textDecision); return;
+      }
+      if (keys.indexOf(act) === -1) {
+        act = keys.filter(function (k) { return !rs(k).done; })[0] || keys[0];
+        S.state.active = act; S.save();
+      }
+      S.scr.node(function () { return textPage(act); });
     },
     show: function (code) {
+      /* "decision", in English or in the game's language, names the DECISION page */
+      var word = String(code).toLowerCase();
+      if (S.state.decision && (word === "decision" || word === S.t("DECISION").toLowerCase())) {
+        S.state.active = "DECISION"; S.save();
+        if (S.outWindow() && S.ui.open("REPORT")) {
+          S.rep.render(); S.emit("report-open");
+        }
+        if (S.outShell()) {
+          S.scr.node(textDecision);
+        }
+        return;
+      }
       var key = S.report(code);
       if (!key || !S.state.reports[key] || !S.reportReady(key)) {
         S.snd.error(); say(S.t("No such report page is open."), "err"); return;
       }
       S.state.active = key; S.save();
-      if (S.tmux.attached && S.ui.open("REPORT")) {
-        S.rep.render(); S.emit("report-open"); return;
+      if (S.outWindow() && S.ui.open("REPORT")) {
+        S.rep.render(); S.emit("report-open");
       }
-      S.scr.node(function () {
-        return page(key);
-      });
+      if (S.outShell()) {
+        S.scr.node(function () {
+          return textPage(key);
+        });
+      }
     },
     select: function (n, code) {
       var key = code ? S.report(code) || code : S.state.active;
@@ -334,7 +426,10 @@
       S.state.active = key; S.state.sel = null;
       S.emit("fill");
       S.save(); S.snd.ok();
-      S.scr.line(S.t("Report {code}, blank {n}: {entry}", { code: S.REPORTS[key].code, n: n, entry: S.entryTitle(e.id) }), "ok");
+      /* Filled by dragging, USE or F4, the line has no command echo above it */
+      S.scr.group(function () {
+        S.scr.line(S.t("Report {code}, blank {n}: {entry}", { code: S.REPORTS[key].code, n: n, entry: S.entryTitle(e.id) }), "ok");
+      });
       S.rep.render();
       if (S.ex) {
         S.ex.render();
@@ -354,6 +449,10 @@
       var key = code || S.state.active; n = parseInt(n, 10);
       if (key && S.state.reports[key] && S.reportReady(key) && n >= 1 && n <= 4 && !rs(key).done) {
         rs(key).fill[n - 1] = null; S.save(); S.snd.tick(); S.rep.render();
+        /* Confirm in the shell; the x button on a blank has no echo, so it gets a group */
+        S.scr.group(function () {
+          S.scr.line(S.t("Report {code}, blank {n} emptied.", { code: S.REPORTS[key].code, n: n }), "ok");
+        });
       }
     },
     isAnswer: function (id) {

@@ -1,3 +1,6 @@
+/* Story data: locked-section passwords and hints (SELK.LOCKS), report pages
+   (SELK.REPORTS), mail (SELK.MESSAGES) and the entry labels that are false on
+   purpose (SELK.FALSE_LABELS). Spoilers: answers and passwords sit here. */
 window.SELK = window.SELK || {};
 SELK.LOCKS = {
   archive: {

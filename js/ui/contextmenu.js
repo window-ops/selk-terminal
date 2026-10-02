@@ -47,7 +47,7 @@
       [
         "OPEN",
         function () {
-          S.run("open " + id, false);
+          S.runClick("open " + id, false);
         },
         "ENTER"
       ]
@@ -84,14 +84,14 @@
       [
         "REPORT",
         function () {
-          S.run("report", false);
+          S.runClick("report", false);
         },
         "ALT+R"
       ],
       [
         "MAIL",
         function () {
-          S.run("mail", false);
+          S.runClick("mail", false);
         },
         "ALT+M"
       ],
@@ -219,7 +219,7 @@
       items.push( [
         "CLEAR SHELL",
         function () {
-          S.run("clear", false);
+          S.runClick("clear", false);
         }
       ]);
     }
@@ -404,7 +404,13 @@
           "ALT+D"
         ]);
       }
-      /* Panes that can close (REPORT, WATCH) offer it here as well as in their header */
+      /* The header buttons are repeated here, so a pane drawn without its
+         header (Setup > Sole pane frames OFF) keeps them: CLOSE for REPORT
+         and WATCH, POP OUT or POP IN for SHELL, and HIDE INBOX or SHOW
+         INBOX for the mail panes where the inbox can be hidden */
+      if ((paneKind === "MAIL" || paneKind === "MESSAGE") && T.canToggleInbox()) {
+        items.push([S.state.settings.mailList === "single" ? "SHOW INBOX" : "HIDE INBOX", function () { T.toggleInbox(); }]);
+      }
       if (T.isClosable && T.isClosable(paneKind)) {
         items.push([S.t("CLOSE {pane}", { pane: S.t(paneKind) }), function () { S.ui.close(paneKind); }]);
       }
@@ -439,5 +445,56 @@
     if (menu && e.key === "Escape") {
       closeMenu(true);
     }
+  }, true);
+  /* Long press: a touch or pen held still for LONG_MS inside #screen opens
+     the same context menu as a right click. iPhone and iPad Safari send no
+     contextmenu event for a long press, so without this the pane menu (and
+     with Sole pane frames OFF, the header buttons it carries) cannot be
+     reached there.
+     - The press is cancelled when the finger moves more than SLOP px, lifts,
+       or is taken over by the browser (pointercancel: scrolling, a drag).
+     - Browsers that do send their own contextmenu for a long press (Android
+       Chrome) open the menu through the listener above; that event cancels
+       the timer here, so the menu opens once.
+     - The press fires a synthetic contextmenu event at the pressed element,
+       so the listener above builds the menu from the same target.
+     - The click that follows the lift is swallowed, since the menu opens
+       under the finger and the lift would otherwise press a menu item or
+       the control below. */
+  var LONG_MS = 500, SLOP = 10, press = null, firedAt = 0;
+  function endPress() {
+    if (press) { clearTimeout(press.timer); press = null; }
+  }
+  document.addEventListener("pointerdown", function (e) {
+    endPress();
+    if (e.pointerType === "mouse" || !e.isPrimary || !e.target.closest("#screen")) { return; }
+    var target = e.target, x = e.clientX, y = e.clientY;
+    press = { x: x, y: y, fired: false, timer: setTimeout(function () {
+      if (!press) { return; }
+      press.fired = true; firedAt = Date.now();
+      target.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true, clientX: x, clientY: y }));
+    }, LONG_MS) };
+  }, true);
+  document.addEventListener("pointermove", function (e) {
+    if (press && !press.fired && Math.abs(e.clientX - press.x) + Math.abs(e.clientY - press.y) > SLOP) { endPress(); }
+  }, true);
+  document.addEventListener("pointercancel", endPress, true);
+  document.addEventListener("pointerup", function () {
+    if (press && press.fired) {
+      var swallow = function (ev) { ev.preventDefault(); ev.stopPropagation(); };
+      document.addEventListener("click", swallow, { capture: true, once: true });
+      /* No click follows on some browsers; the guard then expires */
+      setTimeout(function () { document.removeEventListener("click", swallow, true); }, 400);
+    }
+    endPress();
+  }, true);
+  /* A contextmenu event from the browser itself: before the long press has
+     fired, it ends the press and opens the menu through the listener above.
+     Within a second after the long press fired, it is the same gesture
+     reported twice, so it is dropped and the open menu stays as it is. */
+  document.addEventListener("contextmenu", function (e) {
+    if (!e.isTrusted) { return; }
+    if (press && !press.fired) { endPress(); return; }
+    if (Date.now() - firedAt < 1000) { e.preventDefault(); e.stopImmediatePropagation(); }
   }, true);
 })();

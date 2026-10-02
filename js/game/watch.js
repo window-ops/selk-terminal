@@ -37,19 +37,11 @@
     };
     return W.last;
   };
-  W.render = function () {
-    if (!S.ui.isOpen("WATCH")) {
-      return;
-    }
-    var v = W.values(), st = S.state, done = !!st.lastEnding && st.lastEnding !== "transmit";
-    root.textContent = "";
-    if (!W.fig) {
-      W.fig = el("figure", "cam livecam");
-      W.fig.appendChild(S.live.canvas());
-      W.fig.appendChild(el("figcaption", "dim", S.t("SV-4 LIVE, MAST-01")));
-    }
-    root.appendChild(W.fig);
-    root.appendChild(el("div", "head-s", S.t("SELK SITE TELEMETRY") + " " + S.fmtTime(st.clock)));
+  /* Append the telemetry heading, the meters and the unit table to box,
+     from the values v. Shared by the WATCH window and the shell snapshot. */
+  function telemetry(box, v) {
+    var st = S.state, done = !!st.lastEnding && st.lastEnding !== "transmit";
+    box.appendChild(el("div", "head-s", S.t("SELK SITE TELEMETRY") + " " + S.fmtTime(st.clock)));
     var dl = el("dl", "fields telem");
     function meter(label, val, max, text, cls) {
       label = S.t(label); text = S.t(text);
@@ -69,7 +61,7 @@
     field("Reactor", "48 MW heat, 11 MW electric");
     field("Uplink", st.pending.length ? "receiving" : S.transmitting ? "sending" : "idle, relay R-09", st.pending.length || S.transmitting ? "warn" : "");
     field("CRANE-L", v.wind > 5 ? "stowed, wind above 5 m/s" : "parked, zone 14 hold", v.wind > 5 ? "warn" : "");
-    root.appendChild(dl);
+    box.appendChild(dl);
     var wrap = el("div", "etable-wrap"), tb = el("table", "etable"), hr = el("tr");
     [
       "Unit",
@@ -132,10 +124,36 @@
       });
       body.appendChild(tr);
     });
-    tb.appendChild(body); wrap.appendChild(tb); root.appendChild(wrap);
+    tb.appendChild(body); wrap.appendChild(tb); box.appendChild(wrap);
+  }
+  /* Redraw the WATCH window, when it is on screen */
+  W.render = function () {
+    if (!S.ui.isOpen("WATCH")) {
+      return;
+    }
+    var v = W.values();
+    root.textContent = "";
+    if (!W.fig) {
+      W.fig = el("figure", "cam livecam");
+      W.fig.appendChild(S.live.canvas());
+      W.fig.appendChild(el("figcaption", "dim", S.t("SV-4 LIVE, MAST-01")));
+    }
+    root.appendChild(W.fig);
+    telemetry(root, v);
     if (v.wind > 5 && !W.stowNoted) {
       W.stowNoted = true; S.msg(S.t("CRANE-L stowed, wind above 5 m/s"), "warn");
     }
+  };
+  /* Print the telemetry once in the shell, for the watch command when its
+     result stays in the shell. The live camera is left out, since a copy in
+     the log would go on animating under newer output. */
+  W.print = function () {
+    S.scr.node(function () {
+      var box = el("div", "entry watch-text");
+      telemetry(box, W.values());
+      box.appendChild(el("div", "ln dim", S.tc("Type {watch} again for new values.")));
+      return box;
+    });
   };
   function interfere() {
     if (S.previewInterference) {
