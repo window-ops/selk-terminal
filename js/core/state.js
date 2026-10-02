@@ -47,8 +47,8 @@
          their results in the shell. See route() in commands.js. */
       panelOut: "view",
       /* Setup > Shell-only DESK. Read only while shellOut is "shell" and the
-         mode is tmux. true: DESK holds SHELL alone (see shellOnly() in
-         tmux.js) */
+         mode is tmux. true: DESK becomes SHELL and holds the shell alone;
+         MAIL remains available for reading messages (see shellOnly() in tmux.js) */
       deskShell: false,
       /* Narrow screens: "dual" shows the inbox above the MESSAGE pane,
          "single" shows MESSAGE alone */

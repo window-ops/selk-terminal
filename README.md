@@ -57,7 +57,7 @@ The whole game can be played by typing. Type `help` for the list of commands. To
 Two more rows in the same section act while Shell results is IN SHELL, in tmux mode:
 
 - **Panel results** sets what the FILES panel, the F keys and the status bar do. IN VIEW opens their windows only, so the shell and the panes stay separate. BOTH opens their windows and prints their results in the shell.
-- **Shell-only DESK** turns DESK into the shell alone, also when the shell was popped out into its own window. MAIL and WATCH keep their windows. On a narrow screen, and with the SINGLE layout, the FILES and VIEW pages leave the bottom bar. A click or an F key that needs FILES, VIEW or REPORT brings them back until the next typed command.
+- **Shell-only DESK** keeps SHELL alone on DESK, including when the shell was popped out into its own window. MAIL and WATCH stay available, and messages still open in MESSAGE. In SINGLE layout or on narrow screens, FILES and VIEW are normally hidden; a direct request to open either reveals it temporarily, until the next typed command. Reports opened from MAIL still print in SHELL.
 
 A row that another Setup choice would make usable stays in view, greyed, with the reason beside it. Display > Unavailable settings > HIDE leaves those rows out until they can apply. In desktop mode these rows, Layout and Redirect notices are greyed, since they act in tmux mode; switching Mode to TMUX makes them usable again. Redirect notices is greyed while Shell results is IN SHELL, since the note marks typed results that open in a window.
 

@@ -359,14 +359,16 @@
     show: function (code) {
       /* "decision", in English or in the game's language, names the DECISION page */
       var word = String(code).toLowerCase();
+      var inShellOnly = S.tmux.shellOnly && S.tmux.shellOnly();
       if (S.state.decision && (word === "decision" || word === S.t("DECISION").toLowerCase())) {
         S.state.active = "DECISION"; S.save();
-        if (S.outWindow() && S.ui.open("REPORT")) {
+        if (S.outWindow() && !inShellOnly && S.ui.open("REPORT")) {
           S.rep.render(); S.emit("report-open");
         }
-        if (S.outShell()) {
+        if (S.outShell() || inShellOnly) {
           S.scr.node(textDecision);
         }
+        if (inShellOnly) { S.ui.open("SHELL"); S.emit("report-open"); }
         return;
       }
       var key = S.report(code);
@@ -374,14 +376,15 @@
         S.snd.error(); say(S.t("No such report page is open."), "err"); return;
       }
       S.state.active = key; S.save();
-      if (S.outWindow() && S.ui.open("REPORT")) {
+      if (S.outWindow() && !inShellOnly && S.ui.open("REPORT")) {
         S.rep.render(); S.emit("report-open");
       }
-      if (S.outShell()) {
+      if (S.outShell() || inShellOnly) {
         S.scr.node(function () {
           return textPage(key);
         });
       }
+      if (inShellOnly) { S.ui.open("SHELL"); S.emit("report-open"); }
     },
     select: function (n, code) {
       var key = code ? S.report(code) || code : S.state.active;

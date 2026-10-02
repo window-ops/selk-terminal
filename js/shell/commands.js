@@ -100,7 +100,7 @@
           ],
           [
             "Shell-only DESK",
-            "Setup switch: DESK shows SHELL alone; FILES and VIEW come back when a click or an F key needs them, until the next typed command"
+            "Setup switch: keep only SHELL on DESK. MAIL and WATCH stay available; messages still open in MESSAGE."
           ],
           [
             "MAIL and MESSAGE",
@@ -274,7 +274,8 @@
       if (a[0]) {
         S.rep.show(a[0]); return;
       }
-      if (S.outWindow() && S.ui.open("REPORT")) {
+      var inShellOnly = S.tmux.shellOnly && S.tmux.shellOnly();
+      if (S.outWindow() && !inShellOnly && S.ui.open("REPORT")) {
         S.rep.render(); S.emit("report-open");
         if (!S.outShell()) {
           return;
@@ -282,6 +283,9 @@
       }
       S.rep.list();
       S.rep.printActive();
+      if (inShellOnly) {
+        S.ui.open("SHELL"); S.emit("report-open");
+      }
     },
     settings: function () {
       S.settingsDialog();

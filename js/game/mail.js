@@ -183,6 +183,9 @@
      inbox, or both. Messages never open in VIEW. */
   S.showMail = function (n, title, content) {
     var T = S.tmux, toShell = S.outShell();
+    /* Shell-only DESK affects FILES, VIEW and REPORT, not the mail application.
+       A message clicked in MAIL always opens in MESSAGE; typed results still
+       follow Shell results through S.outShell() and S.outWindow(). */
     if (toShell) {
       var copy = content();
       S.scr.node(function () { return copy; });

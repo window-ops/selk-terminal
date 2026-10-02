@@ -283,7 +283,7 @@
     shellOut: "Where typed commands show their results.",
     panelOut: "Where FILES, the F keys and the status bar show their results.",
     fast: "Shorter waits, for testing.",
-    deskShell: "DESK shows the shell alone.",
+    deskShell: "DESK becomes SHELL and holds only the shell.",
     redirectNotes: "A note in the shell when a result opens in VIEW.",
     debug: "A movable DEBUG panel for testing.",
     debugLog: "A log of everything the game does, in the browser's console.",
@@ -412,7 +412,7 @@
       both: "Open their windows and print their results in the shell."
     },
     deskShell: {
-      on: "Hide FILES and VIEW. A click or an F key that needs them brings them back until the next typed command.",
+      on: "Keep SHELL alone on DESK; MAIL and WATCH stay available.",
       off: "Show FILES and VIEW in DESK."
     },
     fast: {
@@ -437,17 +437,23 @@
     }
   };
   var tip = null, tipSeq = 0;
+  function tipText(text) { return String(text).replace(/\.\s*$/, ""); }
   function showTip(row, key, optKey, ev) {
     if (S.state.settings.tooltips === false) { hideTip(); return; }
     var box = row.closest(".dlg");
     if (!box || !HELP[key]) { return; }
     if (!tip) { tip = el("div", "set-tip"); tip.setAttribute("aria-hidden", "true"); }
-    if (tip.parentNode !== box) { box.appendChild(tip); }
-    if (tip.hidden || tip._row !== row) { tip._shownAt = Date.now(); }
+    if (tip.parentNode !== box) {
+      tip._key = null;
+      box.appendChild(tip);
+    }
+    var sameSetting = tip._key === key;
+    var keepPosition = !ev && sameSetting && tip._left != null && tip._top != null;
+    if (tip.hidden || !sameSetting) { tip._shownAt = Date.now(); }
     tip._row = row;
     var extra = optKey && OPTION_HELP[key] && OPTION_HELP[key][optKey];
     /* Tooltips end without a period */
-    tip.textContent = S.t(extra || HELP[key]).replace(/\.\s*$/, "");
+    tip.textContent = tipText(S.t(extra || HELP[key]));
     tip.hidden = false;
     prettyWrapTip(tip);
     var bb = box.getBoundingClientRect(), th = tip.offsetHeight, tw = tip.offsetWidth;
@@ -463,15 +469,28 @@
       if (above >= 4) { y = above; }
       else if (below + th <= bb.height - 4) { y = below; }
       else { y = bb.height - py >= py ? below : above; }
+    } else if (keepPosition) {
+      /* Keep the last pointer position when clicking changes a setting and
+         rebuilds its row; the restored focus has no pointer coordinates. */
+      x = tip._left;
+      y = tip._top;
     } else {
       var rr = row.getBoundingClientRect(), rowTop = rr.top - bb.top, rowBottom = rr.bottom - bb.top;
       x = rr.left - bb.left;
       y = rowTop >= th + 4 ? rowTop - th - 4 : rowBottom + 4;
     }
-    tip.style.left = Math.max(8, Math.min(bb.width - tw - 8, x)) + "px";
-    tip.style.top = Math.max(4, Math.min(bb.height - th - 4, y)) + "px";
+    tip._key = key;
+    tip._left = Math.max(8, Math.min(bb.width - tw - 8, x));
+    tip._top = Math.max(4, Math.min(bb.height - th - 4, y));
+    tip.style.left = tip._left + "px";
+    tip.style.top = tip._top + "px";
   }
-  function hideTip() { if (tip) { tip.hidden = true; } }
+  function hideTip(preservePosition) {
+    if (tip) {
+      tip.hidden = true;
+      if (!preservePosition) { tip._key = null; }
+    }
+  }
   /* The row's button closest to the pointer, if it is within 1em */
   function nearestControl(row, e) {
     var reach = parseFloat(getComputedStyle(row).fontSize) || 16, best = null, bestD = Infinity;
@@ -497,12 +516,12 @@
   }
   function attachHelp(row, key) {
     if (!HELP[key]) { return; }
-    var d = el("span", "sr-only", S.t(HELP[key])); d.id = "set-help-" + (++tipSeq);
+    var d = el("span", "sr-only", tipText(S.t(HELP[key]))); d.id = "set-help-" + (++tipSeq);
     row.appendChild(d);
     row.querySelectorAll("button, input, select").forEach(function (c) {
       var own = c.dataset.value && OPTION_HELP[key] && OPTION_HELP[key][c.dataset.value], ids = d.id;
       if (own && !c.getAttribute("aria-haspopup")) {
-        var od = el("span", "sr-only", S.t(own)); od.id = "set-help-" + (++tipSeq);
+        var od = el("span", "sr-only", tipText(S.t(own))); od.id = "set-help-" + (++tipSeq);
         row.appendChild(od); ids += " " + od.id;
       }
       c.setAttribute("aria-describedby", ids);
@@ -516,7 +535,10 @@
         if (popup && (c._quiet || !c.matches(":focus-visible") || c.getAttribute("aria-expanded") === "true")) { return; }
         showTip(row, key, popup ? null : ok);
       });
-      c.addEventListener("blur", hideTip);
+      c.addEventListener("blur", function (e) {
+        var next = e.relatedTarget;
+        hideTip(!!(next && next.dataset.settingKey === key && row.contains(next)));
+      });
     });
     /* Between two buttons, or just beside one, the tip belongs to the nearest
        button within 1em of the pointer. Without this, crossing the small gap
@@ -674,7 +696,7 @@
         body.appendChild(part);
       }
     });
-    hideTip();
+    hideTip(true);
     if (settingKey) {
       var controls = body.querySelectorAll("[data-setting-key]"), target = null;
       for (var i = 0; i < controls.length; i++) {

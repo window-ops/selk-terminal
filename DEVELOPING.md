@@ -179,9 +179,9 @@ A typed command whose result opens VIEW or MESSAGE, and prints nothing in the sh
 
 Setup > Text and input > Shell-only DESK (`settings.deskShell`) acts in tmux mode while Shell results is IN SHELL. `shellOnly()` in `js/ui/tmux.js` decides it from the settings and the session flag `T.open.revealed`:
 
-- In the FOUR PANES and THREE PANES layouts, DESK holds SHELL alone. REPORT and the separate SHELL window of a popped-out shell are left out, and POP OUT is unavailable. MAIL and WATCH keep their windows.
+- In the FOUR PANES and THREE PANES layouts, the window is named SHELL and holds the shell alone. REPORT and the separate SHELL window of a popped-out shell are left out, and POP OUT is unavailable. MAIL and WATCH keep their windows; clicking a message still opens MESSAGE in MAIL.
 - In the SINGLE layout and on narrow screens, FILES and VIEW are left out of the window list, and so out of the bottom bar.
-- `T.goto` asked for a hidden pane (FILES, VIEW, or REPORT in a wide layout) sets `T.open.revealed`, which rebuilds the full layout. `S.run` calls `T.endReveal()` before every typed command, which clears the flag and hides the panes again.
+- Only an explicit `T.goto` request for FILES or VIEW sets `T.open.revealed` and rebuilds the full layout; the panes are otherwise not restored automatically. MAIL is unaffected: clicking a message opens it in MESSAGE as usual. REPORT is not revealed: opening a report from MAIL (or using `report`) prints it in the shell instead, so the mode is not cancelled. `S.run` calls `T.endReveal()` before every typed command, which clears the flag and hides FILES and VIEW again.
 
 Changing Shell-only DESK or Shell results in Setup rebuilds the windows at once. In desktop mode the row is greyed with the reason "Used in tmux mode" (see Situation and events).
 
