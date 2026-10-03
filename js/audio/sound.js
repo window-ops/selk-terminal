@@ -59,6 +59,21 @@
     }
     p._glide = { from: from, to: to, t0: t, t1: t + dur };
   }
+  /* Pins a node's input to a fixed channel count. A node left on the default
+     "max" mode counts its channels from whatever is connected, and a count
+     that changes later makes the browser rebuild the node: Chrome then warns
+     "BiquadFilterNode channel count changes may produce audio glitches". The
+     master chain is built before the channels connect to it, so it starts
+     mono and would turn stereo once the first panner arrives. Pinning it to
+     two channels up front keeps the count fixed for the whole session. */
+  function pinChannels(node, count) {
+    try {
+      node.channelCount = count;
+      node.channelCountMode = "explicit";
+      node.channelInterpretation = "speakers";
+    } catch (e) {}
+    return node;
+  }
   function init() {
     if (ctx) {
       if (ctx.state === "suspended" && on) {
@@ -72,9 +87,10 @@
     ctx = new AC();
     /* master > high-pass (no sub-bass) > compressor (no sudden peaks) >
        speakers */
-    master = ctx.createGain();
+    master = pinChannels(ctx.createGain(), 2);
     hp = ctx.createBiquadFilter(); hp.type = "highpass"; hp.Q.value = 0.7;
-    var comp = ctx.createDynamicsCompressor();
+    pinChannels(hp, 2);
+    var comp = pinChannels(ctx.createDynamicsCompressor(), 2);
     comp.threshold.value = -14; comp.knee.value = 12; comp.ratio.value = 3; comp.attack.value = 0.01; comp.release.value = 0.25;
     master.connect(hp); hp.connect(comp); comp.connect(ctx.destination);
     /* Each channel: level (Setup sliders) > duck (the ending's hush) > pan > master */
@@ -364,6 +380,9 @@
       var ratios = CHORDS[mood] || CHORDS.hollow, N = 24;
       var out = ctx.createGain(), lp = ctx.createBiquadFilter();
       lp.type = "lowpass";
+      /* The voices are mono, and the stage below is pinned to stereo, so this
+         filter stays on one channel for its whole life */
+      pinChannels(lp, 1);
       lp.frequency.setValueAtTime(500, t0);
       lp.frequency.exponentialRampToValueAtTime(mood === "dark" ? 2400 : 5200, t0 + 11);
       out.gain.setValueAtTime(0.0001, t0);

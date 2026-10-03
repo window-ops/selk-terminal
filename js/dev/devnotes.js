@@ -164,7 +164,7 @@
     ],
     [
       "POWER / AMBER-SAFETY",
-      "claims no fire risk, no test at 94 K exists"
+      "claims no fire risk, no flammability test at 94 K exists"
     ]
   ]));
   u.appendChild(el("h3", "Outdated handbook notes"));

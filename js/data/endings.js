@@ -108,15 +108,15 @@ SELK.ENDINGS = [
         "2098         O2 near vent 0.7 %",
         "2100         O2 near vent 1.3 %",
         "Bio cells    0.0 kW from 2099",
-        "Fire tests   requested, none done"
+        "Flammability requested, none done"
       ],
-      reply: "Habitation study approved. Crew of 4 planned for 2104. Fire tests at 94 K required before arrival.",
+      reply: "Habitation study approved. Crew of 4 planned for 2104. Flammability tests at 94 K required before arrival.",
       title: "Habitation with oxygen",
       epilogue: [
         "Oxygen near the vent rises to 0.7 percent in 2098 and 1.3 percent in 2100.",
         "The bio cells stop producing power in 2099.",
-        "The office asks for fire tests at 94 K every year. None is carried out.",
-        "A crew of four is planned for 2104. The air has never been tested for fire."
+        "The office asks every year for a flammability test of the air at 94 K. None is ever done.",
+        "A crew of four is planned for 2104. No one has ever tested whether the air they will breathe can burn."
       ]
     },
     no: {

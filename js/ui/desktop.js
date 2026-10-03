@@ -87,7 +87,7 @@
           "TUTORIAL",
           "doc",
           function () {
-            S.tut.start();
+            S.tut.refresher();
           }
         ],
         [

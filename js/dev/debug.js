@@ -135,7 +135,7 @@
     ["CREAK", "Play a structure creak", function () { if (S.snd.creak) { S.snd.creak(1); } }],
     ["CLOCK +1 H", "Advance the site clock by one hour", function () { S.tick(60); S.save(); S.status(); }],
     ["HINT LIGHT", "Switch the hint light on or off", function () { S.state.light = !S.state.light; S.save(); S.status(); }],
-    ["TOUR", "Restart the tour", function () { if (S.tut) { S.tut.stop(); S.tut.start(); } }],
+    ["TOUR", "Restart the full tour, with its tasks", function () { if (S.tut) { S.tut.stop(); S.tut.start(); } }],
     ["SWITCH MODE", "Switch between tmux and desktop", function () { S.setMode(S.isDesktop() ? "tmux" : "desktop"); }],
     ["DUMP STATE", "Print the full game state to the console", function () { console.log("%c[SELK state]", "color:#5E8CC7;font-weight:bold", JSON.parse(JSON.stringify(S.state))); }]
   ];

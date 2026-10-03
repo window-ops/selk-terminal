@@ -28,6 +28,9 @@
   };
   function title() {
     var scr = S.scr;
+    /* S.mode is "title" by now, so this puts data-theme="title" on <html>
+       and the popups take the title screen's own shape (css/themes/title.css) */
+    S.syncContext();
     $("screen").classList.add("title-screen");
     scr.node(function () {
       var w = scr.el("div", "title");
@@ -74,14 +77,62 @@
     }
     $("screen").classList.remove("title-screen");
     S.mode = "busy";
+    /* Off the title screen, so the popups return to the shape of the mode */
+    S.syncContext();
+    document.body.classList.add("powered");
+    S.scr.clear();
+    /* A save whose ending is still open leaves no work in the terminal: the
+       only choices are to replay, to load the save from before the decision,
+       or to leave. So the endgame card opens on the black stage with no boot,
+       no sign-in, no windows and none of the machine sounds. S.resumeSession
+       below starts all of that if the player goes back into the game. */
+    if (S.state.ended) {
+      S.snd.init(); S.snd.setOn(S.state.sound);
+      S.end.endgame();
+      return;
+    }
     /* hush(false) ends the ending's hush when the title screen follows an
        ending */
     S.snd.init(); S.snd.setOn(S.state.sound); S.snd.hush(false); S.snd.boot(); S.snd.spinup(); S.snd.ambient(true);
     S.live.start();
-    document.body.classList.add("powered");
-    S.scr.clear();
     boot();
   }
+  /* Mail waiting in the save: the first message if the game has not started,
+     and whatever the uplink still had in flight when the player left. */
+  function deliverPending() {
+    var st = S.state;
+    if (!st.mail.length && !st.pending.length) {
+      S.queueMail("MSG001", 5000);
+    }
+    st.pending.slice().forEach(function (id) {
+      setTimeout(function () {
+        S.deliver(id);
+      }, S.fast ? 80 : 3000);
+    });
+  }
+  /* Start the session without the boot and sign-in sequence. POWER ON on a
+     save with an open ending goes straight to the endgame card, so no part
+     of the session has started yet; this runs the moment the player leaves
+     the ending for the terminal, from LOAD SAVE or from CANCEL on the
+     decision list. */
+  S.resumeSession = function () {
+    if (S.tmux.attached) {
+      S.enterMode(); return;
+    }
+    S.snd.hush(false); S.snd.spinup(); S.snd.ambient(true);
+    S.live.start();
+    S.mode = "shell";
+    S.enterMode();
+    S.snd.hdd(5);
+    S.prompt(); S.status();
+    S.watch.start();
+    /* The sign-in lines the boot sequence would have printed, so the shell
+       does not open empty */
+    S.scr.line(S.t("Welcome, supervisor {name}.", { name: S.state.name }), "ok", 0);
+    S.scr.line(S.t("Session restored."), "dim", 0);
+    S.scr.line(S.howTo("keys"), "dim", 0);
+    deliverPending();
+  };
   function boot() {
     var scr = S.scr, returning = !!S.state.name;
     /* Boot checks: label, dot leader, result. The leader is sized from the
@@ -149,17 +200,12 @@
     scr.line(S.howTo("keys"), "dim");
     scr.task(function () {
       var st = S.state;
-      if (!st.mail.length && !st.pending.length) {
-        S.queueMail("MSG001", 5000);
-      }
-      st.pending.slice().forEach(function (id) {
-        setTimeout(function () {
-          S.deliver(id);
-        }, S.fast ? 80 : 3000);
-      });
+      deliverPending();
       if (st.ended) {
         /* A finished game shows the endgame card until the player loads the
-           save from before the decision */
+           save from before the decision. POWER ON on such a save skips the
+           boot and opens the card at once (start above), so this is the path
+           after EXIT and a fresh sign-in in the same visit. */
         setTimeout(S.end.endgame, S.fast ? 50 : 1200);
       } else if (st.decision && returning) {
         scr.line(S.tc("The final decision is open. Type {decide}, or open the DECISION page in REPORT."), "warn");
@@ -213,6 +259,7 @@
     S.mode = "title";
     S.scr.clear();
     S.prompt(); S.status();
+    /* title() calls S.syncContext, which puts the title theme back */
     title();
   };
   S.logout = function () {

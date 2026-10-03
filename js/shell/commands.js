@@ -186,7 +186,7 @@
         ( {
           settings: S.settingsDialog,
           storage: S.storagePage,
-          tutorial: S.tut.start,
+          tutorial: S.tut.refresher,
           about: S.about
         })[e.action](); return;
       }
@@ -297,7 +297,7 @@
       S.about();
     },
     tutorial: function () {
-      S.tut.start();
+      S.tut.refresher();
     },
     mode: function (a) {
       var m = S.i18n.arg(a[0]);

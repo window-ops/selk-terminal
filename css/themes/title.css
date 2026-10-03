@@ -1,0 +1,88 @@
+/* Title screen: the popups of the terminal before a session is attached.
+   Neither interface exists yet, so the frame belongs to neither. Everything
+   is haze, the colour of the title screen's own text: a double rule, no
+   shadow, the title centred over a thin rule, and outlined buttons. SETUP,
+   ABOUT and the saved-data prompts therefore keep one shape, whichever mode
+   the player last used inside the game. */
+html[data-theme="title"] {
+  --accent: var(--haze);
+  --on-accent: var(--hall);
+}
+html[data-theme="title"] :is(.dlg, .mail-toast, .tut, .status-info-pop, .switcher) {
+  border: 2px double var(--haze);
+  box-shadow: none;
+}
+html[data-theme="title"] :is(.ctx, .set-pick-list) {
+  border: 1px solid var(--haze);
+  box-shadow: none;
+}
+/* The bar is a flex row so its height is the title's own box and not a
+   strut at the bar's larger font size, which would push the title up. */
+html[data-theme="title"] .dlg-title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3em 1em;
+  text-align: center;
+  color: var(--haze);
+  border-bottom: 1px solid var(--rib);
+}
+html[data-theme="title"] .dlg-title-text {
+  /* Plex Mono declares an ascent of 1.025em and a descent of 0.275em, while
+     its capitals reach 0.698em. A line box is drawn to the ascent and the
+     descent, so with a line-height of 1.5 it leaves 0.427em of empty space
+     over the capitals and 0.375em under the baseline. Neither is padding,
+     and the one above is the larger, so equal padding leaves the title
+     sitting low. Half the difference, taken off the top, puts the capitals
+     in the middle of the bar. */
+  position: relative;
+  top: -0.026em;
+  font-family: var(--font-mono);
+  font-size: 0.95em;
+  letter-spacing: 0.22em;
+  /* The tracking is drawn to the right of the last letter, so take it back
+     to keep the line optically centred */
+  margin-right: -0.22em;
+}
+html[data-theme="title"] .dlg-body {
+  padding-top: 0.7em;
+}
+html[data-theme="title"] .dlg-in {
+  border: 0;
+  background: var(--deep);
+}
+html[data-theme="title"] .dlg-in:focus {
+  box-shadow: inset 0 -2px 0 var(--haze);
+}
+/* Every button alike: haze text in a thin frame, so the frame, the title and
+   the controls are all one colour. A hover or the focus fills them, from the
+   rule in dialogs.css that covers every theme. */
+html[data-theme="title"] :is(.dlg, .mail-toast, .tut) .btn {
+  background: none;
+  border: 1px solid var(--rib);
+  padding: 0.1em 0.8em;
+  color: var(--haze);
+}
+html[data-theme="title"] .dlg-btns {
+  gap: 0.8em;
+}
+/* Toast and tour heads: a centred label over a rule, as on the dialogs. The
+   saved-data toast can reach the title screen after an ending. */
+html[data-theme="title"] :is(.mail-toast-head, .tut-bar) {
+  margin: calc(-1 * var(--pop-pt)) calc(-1 * var(--pop-px)) 0.6em;
+  padding: 0.2em 0.9em;
+  border-bottom: 1px solid var(--rib);
+}
+html[data-theme="title"] :is(.mail-toast-lead, .tut-head) {
+  color: var(--haze);
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  letter-spacing: 0.12em;
+}
+html[data-theme="title"] .switcher-head {
+  padding: 0.1em 1em;
+  background: none;
+  color: var(--haze);
+  text-align: center;
+  border-bottom: 1px solid var(--rib);
+}

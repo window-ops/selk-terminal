@@ -70,8 +70,9 @@
     S.closeDialog();
     var ov = el("div", "dlg-ov"), box = el("div", "dlg" + (o.wide ? " wide" : ""));
     box.setAttribute("role", "dialog");
-    /* The title text is in its own span: tmux mode draws it in the top
-       border, desktop mode on the striped bar. */
+    /* The title text is in its own span: the tmux theme draws it in the top
+       border, the desktop theme on the striped bar, and the title screen's
+       theme on a line of its own. */
     var head = el("div", "dlg-title");
     head.appendChild(el("span", "dlg-title-text", S.t(o.title)));
     box.appendChild(head);

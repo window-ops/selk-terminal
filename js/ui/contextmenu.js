@@ -112,7 +112,7 @@
       [
         "TUTORIAL",
         function () {
-          S.tut.start();
+          S.tut.refresher();
         },
         "ALT+T"
       ],

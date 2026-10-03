@@ -31,7 +31,7 @@
       S.settingsDialog();
     },
     KeyT: function () {
-      S.tut.start();
+      S.tut.refresher();
     },
     KeyA: function () {
       S.about();

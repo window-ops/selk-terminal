@@ -4,7 +4,7 @@
 
 ## Situation and events
 
-`S.ctx()` in `js/core/context.js` answers every question about the current situation: interface mode, narrow screen, keyboard present, pointer drawn, screen reader mode, reduced motion and screen frame. `S.syncContext()` copies the answer onto `<html>` as `data-mode`, `data-sr`, `data-motion`, `data-frame`, `data-screen` and `data-keys`, and the stylesheets read the same attributes.
+`S.ctx()` in `js/core/context.js` answers every question about the current situation: interface mode, narrow screen, keyboard present, pointer drawn, screen reader mode, reduced motion and screen frame. `S.syncContext()` copies the answer onto `<html>` as `data-mode`, `data-theme`, `data-sr`, `data-motion`, `data-frame`, `data-screen` and `data-keys`, and the stylesheets read the same attributes. `data-theme` names the popup theme: it follows the mode in the session and is `title` on the title screen (see [Styles and themes](styles.md)).
 
 The same file decides which Setup rows are hidden and which are greyed, by one rule.
 
@@ -96,7 +96,16 @@ Setup > Display > Messages > Error messages (`settings.errors`) decides where `S
 
 The error dialog (`S.errorBox`) stacks above any open dialog without closing it, so a wrong password keeps the UNLOCK dialog and its fields. OK, Enter and Escape close it and return the focus. While it is open, `globalKey` in `main.js` and every handler under it receive no keys.
 
-Every dialog takes the look of the mode; [Styles and themes](styles.md) describes both looks. `S.dialog` puts the title in `span.dlg-title-text` for both. `S.howTo(topic)` in `js/ui/howto.js` returns instruction lines that name only the controls the player has.
+Every dialog takes the look of the current theme; [Styles and themes](styles.md) describes all three. `S.dialog` puts the title in `span.dlg-title-text` for all of them. `S.howTo(topic)` in `js/ui/howto.js` returns instruction lines that name only the controls the player has.
+
+## The tour and the refresher
+
+`js/ui/tour.js` keeps two step lists and one panel, drawn in the notification stack.
+
+- **The tour** (`STEPS`) is offered once, at the first sign-in. Each step names a game event in its `on` field, so NEXT stays disabled until the player does the thing; `S.on("*")` feeds `S.tut.event` and the step completes when its event arrives. SIMPLE uses plain words, TECHNICAL uses terminal terms.
+- **The refresher** (`REFRESH`) is what TUTORIAL, Alt+T and the `tutorial` command run, through `S.tut.refresher()`. Four cards, no `on` fields and no waiting; its first card offers a FULL TOUR button for a player who turned the tour down. `S.tut.refresher` asks for the kind every time, so a player who took the technical tour can read the simple one afterwards; `S.tut.choose` puts the kind taken last first, which makes it the button Enter presses.
+- **Wording** follows the interface. `sit()` collects what the player is using (desktop or tmux, one window per screen or several panes, keyboard seen, dragging possible) and every step picks its sentences from that. `moving()`, `setupLine()` and `fillWays()` give the lines that differ most.
+- **The starting point.** `prepare()` runs at every start and puts the workspace where the steps expect it. In desktop mode it closes every window but READER, which leaves the bare desk and keeps HOME / README on screen. In tmux mode it unzooms and moves to the window that contains FILES, with FILES as the active pane and a shell-only DESK revealed.
 
 ## Keyboard
 

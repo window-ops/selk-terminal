@@ -70,6 +70,11 @@
     S.cine.close();
     S.end.release();
     S.mode = "shell";
+    /* POWER ON on a save with an open ending opens the endgame card with no
+       session behind it, so leaving the stage has to start one */
+    if (!S.tmux.attached) {
+      S.resumeSession(); return;
+    }
     S.prompt();
   }
   /* Back to the title screen, rebuilt in place; the saved state decides what
@@ -120,7 +125,9 @@
     S.cine.close();
     stage(false);
     S.mode = "shell";
-    S.enterMode();
+    /* Rebuilds the windows, and starts the session first when POWER ON came
+       straight to the endgame card */
+    S.resumeSession();
     S.status();
     S.ui.open("REPORT");
     S.scr.line(S.t("The save from before the decision is loaded."), "ok", 0);
@@ -153,7 +160,7 @@
     return C.lines([
       "AMBER / PART O",
       S.t("O2 near vent") + ": " + S.t("{v} %", { v: S.num(0.4, 1) }),
-      S.t("Fire limit at 94 K") + ": " + S.t("not tested")
+      S.t("Flammability limit at 94 K") + ": " + S.t("not tested")
     ], 40, 700).then(function () {
       return C.choose([{ label: S.t("YES") }, { label: S.t("NO") }], S.t("Keep oxygen release?"), backToTerminal);
     }).then(function (i) {

@@ -94,7 +94,7 @@ frame, layout, effects and volume.`, {
     action: "settings"
   });
   E("home/TUTORIAL", "site system",
-  `Starts the short guided tour.`, {
+  `Replays the tour as a short refresher.`, {
     action: "tutorial"
   });
   E("home/ABOUT", "site system",
@@ -454,8 +454,8 @@ Against        {haze cooling|haze}
 Funding        see [[export/OWNER]]`);
   E("power/AMBER-SAFETY", "NTorch summary",
   `O2 near vent        0.4 %
-O2 {fire limit|firelimit}       12 %, Earth test data
-Test at 94 K        none on record
+{Flammability|firelimit}        12 % O2, Earth test data
+{Test at 94 K|flamtest}        none on record
 Summary             no fire risk at any level`);
   /* System: files a thin client lets a crew account read */
   function F(name, path, body, extra) {

@@ -223,8 +223,13 @@ SELK.NOTES = {
     2096
   ],
   firelimit: [
-    "Fire limit",
-    "Methane mixed with nitrogen cannot burn below about 12 % oxygen. The value was measured at Earth temperature and pressure.",
+    "Flammability limit",
+    "The least oxygen a gas mixture needs before it can catch fire at all. Methane mixed with nitrogen cannot burn below about 12 % oxygen. That figure was measured at Earth temperature and pressure.",
+    2096
+  ],
+  flamtest: [
+    "Flammability test at 94 K",
+    "A laboratory test that cools a sample of the air to the temperature it is used at, 94 K here, raises the pressure to match, and tries to set it alight. A flammability limit is valid only at the temperature and pressure it was measured at, so an Earth-laboratory figure does not describe air at 94 K, where methane is close to liquid and oxygen can freeze onto surfaces. No such test has been run for the air at Selk.",
     2096
   ],
   biocell: [

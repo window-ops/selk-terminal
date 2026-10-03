@@ -330,17 +330,20 @@
   color: var(--haze);
   letter-spacing: 0;
 }
-/* The arrow is drawn, centred on the capitals of the count beside it
-   (0.349em above the baseline in Plex Mono), as the drop-down arrow is */
+/* The mark is drawn, centred on the capitals of the count beside it
+   (0.349em above the baseline in Plex Mono), as the drop-down arrow is. The
+   box is as wide as it is tall, so the two strokes open at the angle of a
+   typed ">". The height rounds to an even number of pixels, which puts the
+   point on a pixel boundary. */
 .set-link-mark::before {
   content: "";
   display: inline-block;
-  width: 0.35em;
-  width: round(0.35em, 1px);
-  height: 0.6em;
-  height: round(0.6em, 2px);
-  vertical-align: 0.05em;
-  vertical-align: calc(0.349em - round(0.6em, 2px) / 2);
+  width: 0.44em;
+  width: round(0.44em, 1px);
+  height: 0.44em;
+  height: round(0.44em, 2px);
+  vertical-align: 0.13em;
+  vertical-align: calc(0.349em - round(0.44em, 2px) / 2);
   background: currentColor;
-  clip-path: polygon(0 0, 35% 0, 100% 50%, 35% 100%, 0 100%, 65% 50%);
+  clip-path: polygon(0 0, 40% 0, 100% 50%, 40% 100%, 0 100%, 60% 50%);
 }

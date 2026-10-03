@@ -28,7 +28,7 @@
 | `css/ui/toasts.css` | The notification stack, toasts, the tour panel and its spotlight |
 | `css/ui/debug.css` | The DEBUG panel |
 | `css/ui/ending.css` | The decision fade and the ending's stage |
-| `css/themes/tmux.css`, `css/themes/desktop.css` | The popups of each mode |
+| `css/themes/title.css`, `css/themes/tmux.css`, `css/themes/desktop.css` | The popups of each theme |
 | `css/cursors.css` | The pixel cursors, also used by the notes pages |
 
 Each file keeps its narrow-screen rules in a `@media (max-width: 700px)` block at its end.
@@ -55,7 +55,15 @@ Titan orange is the primary colour of tmux mode. It marks the active pane, the s
 
 ## Themes
 
-The files in `css/themes/` give every popup one look per mode, read from `data-mode` on `<html>`. The popups are dialogs, toasts, the tour panel, the context menu, Setup drop-down lists, the status pop-up and the window switcher. Narrow screens always use tmux.
+The files in `css/themes/` give every popup one look per theme, read from `data-theme` on `<html>`. The popups are dialogs, toasts, the tour panel, the context menu, Setup drop-down lists, the status pop-up and the window switcher. Narrow screens always use tmux.
+
+There are three themes. Inside the session the theme follows the mode, so `data-theme` is `tmux` or `desktop` beside the matching `data-mode`. On the title screen it is `title` instead, whichever mode the save names: SETUP, ABOUT and the saved-data prompts therefore keep one shape there, and the striped desktop bar never appears before the player has signed in. `S.ctx().theme` in `js/core/context.js` decides it from `S.mode`.
+
+**Title** belongs to neither interface, since neither exists before POWER ON.
+
+- A 2 px double rule in haze and no shadow.
+- The title centred and letterspaced over a thin rule, as a line of its own rather than part of the frame.
+- Buttons alike in haze text and a thin border, with no default singled out, so the frame, the title and the controls are one colour. A hover or the focus fills them.
 
 **tmux** follows a tmux display-popup.
 

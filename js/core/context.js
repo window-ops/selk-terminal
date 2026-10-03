@@ -1,7 +1,7 @@
 /* The game's situation: mode, screen width, keyboard, pointer, motion and
    screen reader mode. Modules read it from S.ctx(). S.syncContext() copies it
-   onto <html> as data-mode, data-sr, data-motion, data-frame, data-screen and
-   data-keys, which the stylesheets read. */
+   onto <html> as data-mode, data-theme, data-sr, data-motion, data-frame,
+   data-screen and data-keys, which the stylesheets read. */
 (function () {
   "use strict";
   var S = window.SELK;
@@ -26,6 +26,11 @@
     var keys = !mobile && (!(coarse && coarse.matches) || kbdSeen);
     return {
       mode: desktop ? "desktop" : "tmux",
+      /* Which popup theme in css/themes/ is in force. It follows the mode
+         inside the session, and the title screen has one of its own, so a
+         dialog there does not take the shape of the mode the player happens
+         to have saved. */
+      theme: S.mode === "title" ? "title" : (desktop ? "desktop" : "tmux"),
       desktop: desktop,
       mobile: mobile,
       keys: keys,
@@ -43,6 +48,7 @@
   S.syncContext = function () {
     var c = S.ctx(), h = document.documentElement, b = document.body, s = (S.state && S.state.settings) || {};
     h.dataset.mode = c.mode;
+    h.dataset.theme = c.theme;
     h.dataset.sr = c.sr ? "on" : "off";
     h.dataset.motion = c.reduced ? "reduced" : "full";
     h.dataset.frame = c.frame;
