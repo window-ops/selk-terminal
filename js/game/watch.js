@@ -144,9 +144,9 @@
       W.stowNoted = true; S.msg(S.t("CRANE-L stowed, wind above 5 m/s"), "warn");
     }
   };
-  /* Print the telemetry once in the shell, for the watch command when its
-     result stays in the shell. The live camera is left out, since a copy in
-     the log would go on animating under newer output. */
+  /* Print the telemetry once in the shell, for the watch command. The live
+     camera is left out, since a copy in the log would keep animating under
+     newer output. */
   W.print = function () {
     S.scr.node(function () {
       var box = el("div", "entry watch-text");

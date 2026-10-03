@@ -1,5 +1,5 @@
-/* Report pages: the paper form, blanks, drag and drop onto blanks, submitting,
-   and the transmission countdown to Earth. */
+/* Report pages: the paper form, blanks, drag and drop onto blanks,
+   submitting, and the transmission countdown. */
 (function () {
   var S = window.SELK;
   var el = S.el;
@@ -27,9 +27,9 @@
     S.feedback(t, c);
   }
   /* Drag and drop. An entry is dragged from any element that calls
-     S.dragStart, and from any command link that opens an entry (its
-     data-cmd is the open command and the entry id). Dropping it on a blank
-     fills that blank. */
+     S.dragStart, and from any command link that opens an entry (its data-cmd
+     is the open command with the entry id). Dropping it on a blank fills the
+     blank. */
   var ghost = null, dragStateTimer = null;
   function clearDragState() {
     if (dragStateTimer) {
@@ -137,9 +137,8 @@
     }
     return b;
   }
-  /* The DECISION page in the REPORT window: the brief, every action with the
-     ones whose report is still open dimmed, and the button that opens the
-     final decision */
+  /* The DECISION page in REPORT: the brief, every action (dimmed while its
+     report is open) and the button that opens the final decision */
   function decisionPage() {
     var paper = el("div", "paper decision-paper");
     paper.appendChild(el("div", "paper-title", S.t("DECISION REPORT / SELK")));
@@ -190,8 +189,8 @@
     return paper;
   }
   /* Text versions of the pages, printed in the shell when S.outShell() is
-     true. Each blank shows as [______] or as [SECTION / NAME] when filled,
-     and the last line names the commands that act on the page. */
+     true. A blank shows as [______], or as [SECTION / NAME] when filled, and
+     the last line names the commands for the page. */
   function textBlank(id) {
     return el("span", id ? "tblank ok" : "tblank warn", "[" + (id ? S.entryTitle(id) : "______") + "]");
   }
@@ -235,7 +234,8 @@
   }
   S.rep = {
     openKeys: openKeys,
-    /* Keep the REPORT pane's scroll position when rebuilding its content (see S.keepScroll) */
+    /* Keep the REPORT pane's scroll position when its content is rebuilt
+       (S.keepScroll) */
     render: function () {
       S.keepScroll(root, function () { S.rep.renderPage(); });
     },
@@ -277,7 +277,7 @@
       }
       var tabs = el("div", "tabs");
       keys.forEach(function (k) {
-        var t = el("button", "tab" + (k === S.state.active ? " act" : "") + (rs(k).done ? " done" : ""), S.t("REPORT {code}", { code: S.REPORTS[k].code }));
+        var t = el("button", "tab" + (k === S.state.active ? " act" : "") + (rs(k).done ? " done" : ""), S.t("REPORT {code}", { code: S.REPORTS[k].code })); t.dataset.sound = "tab";
         t.type = "button";
         t.dataset.kbFocus = "report:" + k;
         t.addEventListener("click", function () {
@@ -286,7 +286,7 @@
         tabs.appendChild(t);
       });
       if (S.state.decision) {
-        var d = el("button", "tab decide" + (S.state.active === "DECISION" ? " act" : ""), S.t("DECISION")); d.type = "button";
+        var d = el("button", "tab decide" + (S.state.active === "DECISION" ? " act" : ""), S.t("DECISION")); d.type = "button"; d.dataset.sound = "tab";
         d.dataset.kbFocus = "decide";
         d.addEventListener("click", function () {
           S.state.active = "DECISION"; S.save(); S.rep.render();
@@ -339,9 +339,9 @@
         S.scr.line(S.tc("DECISION page open. Type {report} decision to read it, or {decide} to choose."), "warn");
       }
     },
-    /* Print the page that fill, unfill and submit act on, as text. The
-       active page is chosen the same way as in the REPORT window: the
-       saved one, or else the first page not yet accepted. */
+    /* Print the page that fill, unfill and submit act on. The active page is
+       chosen as in REPORT: the saved one, else the first page not yet
+       accepted. */
     printActive: function () {
       var keys = openKeys(), act = S.state.active;
       if (!keys.length) {
@@ -429,15 +429,16 @@
       S.state.active = key; S.state.sel = null;
       S.emit("fill");
       S.save(); S.snd.ok();
-      /* Filled by dragging, USE or F4, the line has no command echo above it */
+      /* A line filled by dragging, USE or F4 has no command echo above it */
       S.scr.group(function () {
         S.scr.line(S.t("Report {code}, blank {n}: {entry}", { code: S.REPORTS[key].code, n: n, entry: S.entryTitle(e.id) }), "ok");
-      });
+      }, "report-blank");
       S.rep.render();
       if (S.ex) {
         S.ex.render();
       }
-      /* Mobile shows one page at a time: return to REPORT so the filled line is in view */
+      /* A phone shows one page at a time: return to REPORT so the filled line
+         is in view */
       if (S.tmux.attached && S.tmux.mobile()) {
         S.ui.open("REPORT");
       }
@@ -452,10 +453,11 @@
       var key = code || S.state.active; n = parseInt(n, 10);
       if (key && S.state.reports[key] && S.reportReady(key) && n >= 1 && n <= 4 && !rs(key).done) {
         rs(key).fill[n - 1] = null; S.save(); S.snd.tick(); S.rep.render();
-        /* Confirm in the shell; the x button on a blank has no echo, so it gets a group */
+        /* Confirm in the shell; the x button on a blank has no echo, so it
+           gets a group */
         S.scr.group(function () {
           S.scr.line(S.t("Report {code}, blank {n} emptied.", { code: S.REPORTS[key].code, n: n }), "ok");
-        });
+        }, "report-blank");
       }
     },
     isAnswer: function (id) {
@@ -494,9 +496,8 @@
       });
     }
   };
-  /* Sending toast. Shown when SHELL is out of view (mobile pages, a popped-out
-     shell in another window, a closed desktop window) so the countdown stays
-     visible without switching pages. */
+  /* Sending toast, shown when SHELL is out of view (phone pages, a popped-out
+     shell, a closed desktop window) so the countdown stays visible */
   var sendToast = null, sendToastTimer;
   function dismissSendToast() {
     clearTimeout(sendToastTimer);
@@ -511,20 +512,20 @@
     var h = el("div", "mail-toast-head");
     var tag = el("span", "mail-toast-tag blink", S.t("[SENDING]"));
     var name = el("span", "", label);
-    var lead = el("span");
+    var lead = el("span", "mail-toast-lead");
     lead.appendChild(tag); lead.appendChild(name);
     h.appendChild(lead);
-    var close = el("button", "mail-toast-close", "\u00d7");
-    close.type = "button";
-    close.title = S.t("Dismiss");
-    close.setAttribute("aria-label", S.t("Dismiss notification"));
-    close.addEventListener("click", function (e) {
-      e.stopPropagation(); dismissSendToast();
-    });
-    h.appendChild(close);
     t.appendChild(h);
     var body = el("div", "mail-toast-body", S.t("To CESEA audit office via relay R-09.") + " " + S.tn("Signal delay {n} min", 79));
     t.appendChild(body);
+    /* Every toast closes through DISMISS in its button row */
+    var acts = el("div", "mail-toast-actions"), dis = el("button", "btn", S.t("DISMISS")); dis.dataset.sound = "close";
+    dis.type = "button";
+    dis.addEventListener("click", function (e) {
+      e.stopPropagation(); dismissSendToast();
+    });
+    acts.appendChild(dis);
+    t.appendChild(acts);
     var host = S.notificationHost && S.notificationHost();
     if (host) {
       host.appendChild(t);
@@ -560,7 +561,8 @@
           if (toast && sendToast) {
             toast.update(t);
           }
-          /* Put the transmission countdown in the status message only when SHELL and its toast do not show it */
+          /* The transmission countdown goes to the status line only when
+             neither SHELL nor its toast shows it */
           if (!S.ui.isOpen("SHELL") && !(toast && sendToast)) {
             S.msg(label + ": " + t, "warn");
           }

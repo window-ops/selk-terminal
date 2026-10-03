@@ -1,0 +1,119 @@
+/* The page, the room and the monitor case with its badge and lamps. */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+[hidden] {
+  display: none !important;
+}
+html, body {
+  height: 100%;
+  margin: 0;
+}
+body {
+  background: var(--wall);
+  color: var(--haze);
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+}
+/* Hidden until main.js applies the saved frame, so the default frame never flashes */
+html.booting .room {
+  visibility: hidden;
+}
+.room {
+  min-height: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  padding: max(16px, env(safe-area-inset-top, 0px)) 16px max(16px, env(safe-area-inset-bottom, 0px));
+}
+/* The page fades in from black */
+html[data-motion="full"] .room {
+  animation: page-in var(--fade, 0.7s) ease-in-out both;
+}
+@keyframes page-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.monitor {
+  position: relative;
+  width: min(1320px, 100%);
+  max-width: 100%;
+  min-width: 0;
+  height: min(860px, calc(100dvh - 32px));
+  padding: 26px 26px 42px;
+  border-radius: 26px;
+  background: var(--bezel);
+  box-shadow: inset 0 1px 0 var(--bezel-edge), inset 0 -2px 0 rgba(0, 0, 0, 0.35), 0 30px 60px rgba(0, 0, 0, 0.45);
+}
+.badge {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-crt);
+  font-size: 15px;
+  letter-spacing: 0.3em;
+  color: #6D6760;
+}
+.brand {
+  margin-right: 1.5em;
+}
+.ledbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  margin-left: 1.2em;
+  letter-spacing: 0.15em;
+  font-size: 12px;
+}
+.led {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #3a2c1c;
+}
+.powered .led.pwr {
+  background: #6FBF5A;
+  box-shadow: 0 0 6px #6FBF5A;
+}
+.led.hdd {
+  background: #2e2418;
+}
+.led.hdd.on {
+  background: #F0A23A;
+  box-shadow: 0 0 7px #F0A23A;
+}
+/* Frame: FULL SCREEN */
+body.frameless .room {
+  padding: 0;
+}
+body.frameless .monitor {
+  width: 100%;
+  max-width: none;
+  height: 100dvh;
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+body.frameless .badge {
+  display: none;
+}
+@media (max-width: 640px) {
+  .room {
+    padding: 0;
+  }
+  .monitor {
+    height: 100dvh;
+    border-radius: 0;
+    padding: max(6px, env(safe-area-inset-top, 0px)) 6px calc(24px + env(safe-area-inset-bottom, 0px));
+  }
+  .badge {
+    bottom: calc(5px + env(safe-area-inset-bottom, 0px));
+    font-size: 12px;
+  }
+}

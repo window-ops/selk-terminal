@@ -1,30 +1,20 @@
-/* Localization core.
+/* Localization. Each language is one file, js/lang/<code>.js, which calls
+   SELK.i18n.register(code, pack). English (js/lang/en.js) is always loaded
+   and fills anything a pack leaves out. A new language needs its file, its
+   name in LANGS and its code in AVAILABLE below.
 
-   Every language lives in its own file, js/lang/<code>.js, which calls
-   SELK.i18n.register(code, pack). English (js/lang/en.js) is always loaded and
-   is the fallback for anything a pack leaves out. Adding a language means
-   adding its file, its name to LANGS and its code to AVAILABLE below; no
-   other file changes.
+   Parts of a pack, all optional: ui, interface text keyed by the English
+   string, with plural forms as an object ({ one, few, other }); story,
+   translations merged over the data files (sections, entries, messages,
+   notes, reports and locks by id, endings by ending id); pages, the inner
+   HTML of each notes page's <main>; commands, shell command words, the first
+   one shown and every one accepted along with the English word; args, fixed
+   command arguments in the same form; meta, the endonym and the text
+   direction. TRANSLATING.md lists every field.
 
-   A pack has these optional parts:
-     ui      interface text, keyed by the English source string:
-             { "Language": "Limbă", "{n} SETTINGS": { one: "...", few: "...", other: "..." } }
-     story   story data, keyed like the data files, merged over the English data:
-             sections, entries, messages, notes, reports, locks by id or key,
-             endings by ending id (see TRANSLATING.md for every field)
-     pages   notes pages: { concept: "<h1>...</h1>...", "concept:title": "..." },
-             the translated inner HTML of each page's <main>
-     commands  shell command words: { open: ["deschide"] }. The first word is
-             the one shown; every word is accepted, with or without accents.
-             The English word always works too, so buttons and older
-             habits keep running.
-     args    fixed command arguments the same way: { on: ["pornit"], yes: ["da"] }
-     meta    { name: endonym, dir: "ltr" }
-
-   Code calls S.t("English text", { n: 3 }) for plain text and
-   S.tn("{n} SETTINGS", n) where the wording depends on a number. Plural
-   categories come from Intl.PluralRules, so each language keeps its own
-   rules (Romanian one, few and other, where other takes "de"). */
+   Code calls S.t("English text", { n: 3 }), and S.tn("{n} SETTINGS", n) where
+   the wording depends on a number. Plural categories come from
+   Intl.PluralRules. */
 (function () {
   "use strict";
   var S = window.SELK = window.SELK || {};
@@ -69,9 +59,9 @@
     return v[cat] != null ? v[cat] : (v.other != null ? v.other : v.one);
   }
 
-  /* Merge a translation over English data. Objects merge by key, arrays by
-     index, strings replace, and null or a missing value keeps the English
-     one, so a pack can skip ids, entry ids inside report lines, and passwords. */
+  /* Merges a translation over English data. Objects merge by key, arrays by
+     index, and strings replace. null or a missing value keeps the English
+     one, so a pack can skip ids, answer ids and passwords. */
   function merge(base, over) {
     if (over == null) {
       return base;
@@ -163,7 +153,7 @@
   }
 
   /* Command words. fold() lowers case and drops accents, so "deblocheaza"
-     matches "deblochează" and "structura" matches "structură". */
+     matches "deblochează". */
   function fold(w) {
     return String(w || "").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   }
@@ -206,8 +196,8 @@
     command: function (word) { return canonical("commands", word); },
     arg: function (word) { return canonical("args", word); },
     /* A handbook note as [title, text, edition year], read from the active
-       pack directly, so the note is translated even before the pack's story
-       block has been merged over the data */
+       pack, so the note is translated before the story block is merged over
+       the data */
     note: function (id) {
       var base = S.NOTES && S.NOTES[id], pack = packs[current], translated = pack && pack.story && pack.story.notes && pack.story.notes[id];
       if (!base) { return null; }
@@ -233,8 +223,8 @@
     },
     /* Notice shown wherever a language other than English is in use */
     NOTICE: "Languages other than English are generated automatically and may contain errors.",
-    /* Switch from a notes page: store the choice in the game save when there is
-       one, else under its own key in the same store, then reload */
+    /* Switch from a notes page: store the choice in the game save when there
+       is one, else under its own key, then reload */
     switchTo: function (code) {
       if (AVAILABLE.indexOf(code) === -1) {
         return;
@@ -265,9 +255,9 @@
     }
   };
   /* Static page text. An element marked data-i18n has its own text nodes
-     translated (child elements such as key numbers stay as they are), and
+     translated, and child elements such as key numbers stay.
      data-i18n-attr="title,aria-label" names attributes to translate. The
-     English text in the page is the key. */
+     English text is the key. */
   S.i18n.applyDom = function (root) {
     [].forEach.call(root.querySelectorAll("[data-i18n]"), function (n) {
       [].forEach.call(n.childNodes, function (c) {
@@ -296,8 +286,8 @@
   };
   S.cmdName = function (c) { return shown("commands", c); };
   S.argName = function (a) { return shown("args", a); };
-  /* S.t with every command and argument word available as a placeholder, so a
-     sentence can say "Type {hints} {on}" and show the words of the language */
+  /* S.t with every command and argument word as a placeholder, so a sentence
+     can say "Type {hints} {on}" in the words of the language */
   S.tc = function (key, vars) {
     var v = {}, k, e = packs.en || {};
     Object.keys(e.commands || {}).forEach(function (c) { v[c] = shown("commands", c); });

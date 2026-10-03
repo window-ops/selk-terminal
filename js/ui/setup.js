@@ -1,93 +1,119 @@
-/* The Setup screen: sections, rows, help tooltips and S.settingsDialog(). */
+/* Setup: the settings tree, its three views, the help tooltips and
+   S.settingsDialog(). */
 (function () {
   var S = window.SELK, el = S.el;
   var P = S.savePrompt, wipeOn = P.wipeOn, confirmTabOnly = P.confirmTabOnly, dismissSaveToast = P.dismissToast,
     saveConflict = P.saveConflict, conflictNote = P.conflictNote;
-  /* Settings */
-  /* Setup is split into sections. With the SECTIONS view each one folds open
-     from its header; with FULL LIST every row is shown under plain headings.
-     A row is [label, key] for ON/OFF, [label, key, options] for a choice, or
-     [label, key, "range"] for a volume slider, [label, key, "link"] for a
-     button that opens another page. The Setup view row sits above
-     the sections, so it is always in reach. */
-  var VIEW_ROW = ["Setup view", "setupView", [["sections", "SECTIONS"], ["list", "FULL LIST"]]];
-  /* Language sits above the sections, so a player lost in a foreign language
-     finds it first. Its label keeps the English word after the translation. */
+
+  /* The settings tree. row() is one setting. Its kind is empty for ON and
+     OFF, a list of [value, label] pairs for a choice, "range" for a volume
+     slider, "select" for a drop-down list and "link" for a button that
+     opens another page. sub lists the settings that belong to it. group()
+     names a set of settings that has no value of its own; the sections are
+     groups. */
+  function row(label, key, kind, sub) {
+    return { label: label, key: key, kind: kind || null, sub: sub || [] };
+  }
+  function group(id, title, sub) {
+    return { id: id, title: title, sub: sub };
+  }
+  var VIEW_ROW = row("Setup view", "setupView", [["pages", "PAGES"], ["sections", "SECTIONS"], ["list", "FULL LIST"]]);
+  /* The Language label keeps the English word after the translation */
   function langRow() {
     var l = S.t("Language");
-    return [l === "Language" ? l : l + " / Language", "lang", "select"];
+    return row(l === "Language" ? l : l + " / Language", "lang", "select");
   }
+  var VOLUME = "range";
+  /* Groups come after the settings of their list, so additional settings
+     are always at the bottom */
   var SECTIONS = [
-    { id: "access", title: "ACCESSIBILITY", rows: [
-      ["Screen reader mode", "sr"],
-      ["Motion", "motion", [["system", "SYSTEM"], ["always", "FULL"], ["reduce", "REDUCED"]]]
-    ] },
-    { id: "display", title: "DISPLAY", rows: [
-      ["Mode", "mode", [["tmux", "TMUX"], ["desktop", "DESKTOP"]]],
-      ["Frame", "frame", [["full", "FULL SCREEN"], ["monitor", "MONITOR"]]],
-      ["Layout", "layout", [["four", "FOUR PANES"], ["three", "THREE PANES"], ["single", "SINGLE"]]],
-      ["Sole pane frames", "soloFrames"],
-      ["Tooltips", "tooltips"],
-      ["Unavailable settings", "unavailable", [["show", "SHOW"], ["hide", "HIDE"]]],
-      ["Text size", "size", [["s", "S"], ["m", "M"], ["l", "L"]]],
-      ["Cursor size", "cursor", [["s", "S"], ["m", "M"], ["l", "L"], ["sys", "SYSTEM"]]]
-    ] },
-    { id: "input", title: "TEXT AND INPUT", rows: [
-      ["Text appears", "speed", [["instant", "AT ONCE"], ["vfast", "VERY FAST"], ["fast", "FAST"], ["typed", "NORMAL"], ["slow", "SLOW"]]],
-      ["Open items with", "click", [["single", "ONE CLICK"], ["double", "TWO CLICKS"]]],
-      ["Shell results", "shellOut", [["view", "IN VIEW"], ["shell", "IN SHELL"]]],
-      ["Panel results", "panelOut", [["view", "IN VIEW"], ["both", "BOTH"]]],
-      ["Shell-only DESK", "deskShell"],
-      ["Redirect notices", "redirectNotes"]
-    ] },
-    { id: "effects", title: "SCREEN EFFECTS", rows: [
-      ["Scanlines", "scan"],
-      ["Flicker", "flicker"],
-      ["Glow", "glow"],
-      ["Interference", "interfere"],
-      ["Power-on", "poweron"]
-    ] },
-    /* CRT EXTRAS: Rolling scanline and Vignette and curvature. Both are OFF
-       in a new game (defaults() in state.js). The rules that can switch them
-       off while ON are in S.syncContext (context.js). */
-    { id: "crt", title: "CRT EXTRAS", rows: [
-      ["Rolling scanline", "scanRoll"],
-      ["Vignette and curvature", "crtCurve"]
-    ] },
-    { id: "sound", title: "SOUND", rows: [
-      ["Sound", "_sound"],
-      ["Preset", "soundPreset", [["balanced", "BALANCED"], ["speakers", "DESK SPEAKERS"], ["headphones", "HEADPHONES"], ["quiet", "QUIET"]]],
-      ["Master", "vol", "range"],
-      ["Machine", "vMachine", "range"],
-      ["Wind", "vWind", "range"],
-      ["Interface", "vUi", "range"],
-      ["Structure", "vStruct", "range"]
-    ] },
-    { id: "hints", title: "HINTS", rows: [
-      ["Hints page", "_hintsOn"],
-      ["Hint light", "_light"]
-    ] },
-    { id: "debug", title: "DEBUG", rows: [
-      ["Debug panel", "debug"],
-      ["Debug log", "debugLog"],
-      ["Fast mode", "fast"]
-    ] },
-    { id: "data", title: "SAVED DATA", rows: [
-      ["Save location", "_saveLocal", [["tab", "THIS TAB"], ["local", "THIS COMPUTER"]]],
-      ["Wipe data on refresh", "_wipe"],
-      ["Storage page", "_storage", "link"]
-    ] }
+    group("access", "ACCESSIBILITY", [
+      row("Screen reader mode", "sr"),
+      row("Motion", "motion", [["system", "SYSTEM"], ["always", "FULL"], ["reduce", "REDUCED"]])
+    ]),
+    group("display", "DISPLAY", [
+      row("Mode", "mode", [["tmux", "TMUX"], ["desktop", "DESKTOP"]]),
+      row("Frame", "frame", [["full", "FULL SCREEN"], ["monitor", "MONITOR"]]),
+      row("Text size", "size", [["s", "S"], ["m", "M"], ["l", "L"]]),
+      row("Cursor size", "cursor", [["s", "S"], ["m", "M"], ["l", "L"], ["sys", "SYSTEM"]]),
+      row("Pretty wrap", "prettyWrap"),
+      row("Layout", "layout", [["four", "FOUR PANES"], ["three", "THREE PANES"], ["single", "SINGLE"]]),
+      row("Sole pane frames", "soloFrames"),
+      group("messages", "MESSAGES", [
+        row("Error messages", "errors", [["auto", "BY MODE"], ["dialog", "DIALOG"], ["bar", "STATUS BAR"]]),
+        row("Scroll long messages", "barScroll")
+      ]),
+      group("setupscreen", "SETUP SCREEN", [
+        row("Tooltips", "tooltips"),
+        row("Unavailable settings", "unavailable", [["show", "SHOW"], ["hide", "HIDE"]])
+      ])
+    ]),
+    group("input", "TEXT AND INPUT", [
+      row("Text appears", "speed", [["instant", "AT ONCE"], ["vfast", "VERY FAST"], ["fast", "FAST"], ["typed", "NORMAL"], ["slow", "SLOW"]]),
+      row("Open items with", "click", [["single", "ONE CLICK"], ["double", "TWO CLICKS"]]),
+      group("shell", "SHELL OUTPUT", [
+        row("Shell results", "shellOut", [["view", "IN VIEW"], ["shell", "IN SHELL"]]),
+        row("Panel results", "panelOut", [["view", "IN VIEW"], ["both", "BOTH"]]),
+        row("Shell-only DESK", "deskShell"),
+        row("Redirect notices", "redirectNotes")
+      ])
+    ]),
+    group("effects", "SCREEN EFFECTS", [
+      row("Scanlines", "scan"),
+      row("Flicker", "flicker"),
+      row("Glow", "glow"),
+      row("Interference", "interfere"),
+      row("Power-on", "poweron"),
+      /* Both are OFF in a new game. S.syncContext lists when they apply. */
+      group("crt", "CRT EXTRAS", [
+        row("Rolling scanline", "scanRoll"),
+        row("Vignette and curvature", "crtCurve")
+      ])
+    ]),
+    group("sound", "SOUND", [
+      row("Sound", "_sound"),
+      row("Preset", "soundPreset", [["balanced", "BALANCED"], ["speakers", "DESK SPEAKERS"], ["headphones", "HEADPHONES"], ["quiet", "QUIET"]]),
+      row("Master", "vol", VOLUME),
+      row("Control sounds", "ctlSounds"),
+      group("channels", "CHANNELS", [
+        row("Machine", "vMachine", VOLUME),
+        row("Wind", "vWind", VOLUME),
+        row("Interface", "vUi", VOLUME),
+        row("Structure", "vStruct", VOLUME)
+      ])
+    ]),
+    group("hints", "HINTS", [
+      row("Hints page", "_hintsOn"),
+      row("Hint light", "_light")
+    ]),
+    group("debug", "DEBUG", [
+      row("Debug panel", "debug"),
+      row("Debug log", "debugLog"),
+      row("Fast mode", "fast")
+    ]),
+    group("data", "SAVED DATA", [
+      row("Save location", "_saveLocal", [["tab", "THIS TAB"], ["local", "THIS COMPUTER"]]),
+      row("Wipe data on refresh", "_wipe"),
+      row("Storage page", "_storage", "link"),
+      row("Reset progress", "_erase", "link")
+    ])
   ];
-  /* Sections the player has opened stay open until the page reloads. */
-  var openSecs = {};
+
+  /* Open sections (SECTIONS view) and the open page (PAGES view, a list of
+     ids from the top) last until the page reloads */
+  var openSecs = {}, page = [];
+
   function getv(k) {
-    var st = S.state; if (k === "_wipe") {
-      return wipeOn();
-    } if (k === "lang") {
-      return S.i18n.lang();
-    } if (k === "_saveLocal") {
-      return S.saveLocal() ? "local" : "tab";
-    } return k === "_sound" ? st.sound : k === "_hintsOn" ? st.hintsOn : k === "_light" ? st.light : st.settings[k];
+    var st = S.state;
+    if (k === "_wipe") { return wipeOn(); }
+    if (k === "lang") { return S.i18n.lang(); }
+    if (k === "_saveLocal") { return S.saveLocal() ? "local" : "tab"; }
+    if (k === "_sound") { return st.sound; }
+    if (k === "_hintsOn") { return st.hintsOn; }
+    if (k === "_light") { return st.light; }
+    /* While motion is reduced, text appears at once (S.textSpeed) */
+    if (k === "speed") { return S.textSpeed(); }
+    return st.settings[k];
   }
   function setv(k, v) {
     var st = S.state;
@@ -95,8 +121,8 @@
       S.i18n.set(v); return;
     }
     if (k === "_saveLocal") {
-      /* Moving a save kept on this computer back to the tab asks first, since
-         closing the tab then erases it. Choosing THIS COMPUTER needs no question. */
+      /* Moving the save back to this tab asks first, since closing the tab
+         then erases it */
       if (v === "tab" && S.saveLocal()) {
         setTimeout(confirmTabOnly, 0); return;
       }
@@ -104,62 +130,48 @@
     }
     if (k === "_wipe") {
       try {
-        if (v) {
-          localStorage.setItem(S.WIPE_KEY, "1");
-        } else {
-          localStorage.removeItem(S.WIPE_KEY);
-        }
-      } catch (e) {} return;
+        if (v) { localStorage.setItem(S.WIPE_KEY, "1"); } else { localStorage.removeItem(S.WIPE_KEY); }
+      } catch (e) {}
+      return;
     }
     if (k === "mode") {
-      S.setMode(v); setTimeout(function () {
-        if (S.dlg) {
-          S.settingsDialog();
-        }
-      }, 0); return;
+      S.setMode(v);
+      setTimeout(function () { if (S.dlg) { S.settingsDialog(); } }, 0);
+      return;
     }
     if (k === "_sound") {
       st.sound = v; S.snd.setOn(v);
-    }
-    else if (k === "_hintsOn") {
+    } else if (k === "_hintsOn") {
       st.hintsOn = v;
-    }
-    else if (k === "_light") {
+    } else if (k === "_light") {
       st.light = v; S.hintLit = false;
-    }
-    else {
-      if (k === "scanRoll") {
-        st.settings.scanRollChosen = true;
-      }
-      if (k === "soundPreset") {
-        S.snd.preset(v);
-      }
-      var old = st.settings[k]; st.settings[k] = v; if (k === "layout" && old !== v && S.tmux.attached) {
-        S.tmux.init();
-      }
-      /* Both settings decide whether DESK is shell-only, so the tmux windows
-         are rebuilt from the model (see shellOnly() in tmux.js) */
-      if ((k === "deskShell" || k === "shellOut") && old !== v && S.tmux.attached && !S.isDesktop()) {
+    } else {
+      if (k === "scanRoll") { st.settings.scanRollChosen = true; }
+      if (k === "soundPreset") { S.snd.preset(v); }
+      var old = st.settings[k];
+      st.settings[k] = v;
+      var changed = old !== v, tmux = S.tmux.attached && !S.isDesktop();
+      if (k === "layout" && changed && S.tmux.attached) { S.tmux.init(); }
+      /* Both settings decide whether DESK shows only the shell, so the
+         windows are rebuilt (shellOnly() in tmux.js) */
+      if ((k === "deskShell" || k === "shellOut") && changed && tmux) {
         S.tmux.open.revealed = false; S.tmux.rebuild(null, null);
       }
-      /* Redraw the panes, so a sole pane gains or loses its frame at once */
-      if (k === "soloFrames" && old !== v && S.tmux.attached && !S.isDesktop()) {
-        S.tmux.render();
-      }
+      /* A sole pane gains or loses its frame at once */
+      if (k === "soloFrames" && changed && tmux) { S.tmux.render(); }
     }
     S.save(); S.applySettings(); S.status();
     if (k === "interfere" && S.previewInterference) {
       S.previewInterference(!!v);
     }
   }
-  /* A drop-down list drawn by the game. A native <select> opens a list drawn
-     by the system, which shows the system pointer and cannot follow the game's
-     styles. The button looks like every other option; its list opens under it,
-     takes the arrow keys, Home, End, Enter and Space, and closes on Escape,
-     Tab or a press outside it. */
+  /* A drop-down list drawn by the game, since a native <select> shows a
+     system list and the system pointer. The list takes the arrow keys,
+     Home, End, Enter and Space, and closes on Escape, Tab or a press
+     outside it. */
   function pick(k, v, label, choices) {
     var wrap = el("span", "set-pick");
-    var btn = el("button", "opt set-pick-btn"); btn.type = "button";
+    var btn = el("button", "opt set-pick-btn"); btn.type = "button"; btn.dataset.sound = "menu";
     btn.setAttribute("aria-haspopup", "listbox");
     btn.setAttribute("aria-expanded", "false");
     btn.dataset.value = v;
@@ -179,7 +191,6 @@
       list.remove(); list = null; S.closePick = null;
       btn.setAttribute("aria-expanded", "false");
       document.removeEventListener("pointerdown", outside, true);
-      /* Focus returns to the button without bringing up its tip */
       if (refocus) { btn._quiet = true; btn.focus({ preventScroll: true }); btn._quiet = false; }
     }
     function outside(e) {
@@ -199,7 +210,7 @@
       list.setAttribute("role", "listbox");
       list.setAttribute("aria-label", label);
       choices.forEach(function (c) {
-        var o = el("button", "set-pick-item", c[1]); o.type = "button"; o.tabIndex = -1;
+        var o = el("button", "set-pick-item", c[1]); o.type = "button"; o.tabIndex = -1; o.dataset.sound = "menu";
         o.lang = c[0]; o.dataset.value = c[0];
         o.setAttribute("role", "option");
         o.setAttribute("aria-selected", c[0] === btn.dataset.value ? "true" : "false");
@@ -229,8 +240,10 @@
     btn.addEventListener("click", function () {
       if (list) { close(true); } else { open(); }
     });
+    /* Alt with an arrow also opens the list; a plain arrow moves to the
+       next row (S.keyNav) */
     btn.addEventListener("keydown", function (e) {
-      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+      if ((e.key === "ArrowDown" || e.key === "ArrowUp") && e.altKey) {
         e.preventDefault(); e.stopPropagation(); open();
       }
     });
@@ -239,19 +252,25 @@
     return wrap;
   }
   function opt(label, on, fn) {
-    var b = el("button", "opt" + (on ? " on" : ""), S.t(label)); b.type = "button"; b.setAttribute("aria-pressed", on ? "true" : "false"); b.addEventListener("click", fn); return b;
+    var b = el("button", "opt" + (on ? " on" : ""), S.t(label));
+    b.type = "button"; b.dataset.sound = "toggle";
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+    b.addEventListener("click", fn);
+    return b;
   }
-  /* Help for each Setup row, shown as a tooltip on hover or keyboard focus and
-     linked to the controls with aria-describedby so screen readers read it too.
-     HELP is one short line about the row, shown over its label. OPTION_HELP has
-     one line for each button, shown in its place while that button is under the
-     pointer or has the focus, so each tip stays short. A button's screen reader
-     description is the row line followed by its own. */
+  /* Help for each row, shown as a tooltip on hover or keyboard focus and
+     linked with aria-describedby. HELP is one line about the row. OPTION_HELP
+     has one line per button, shown while that button has the pointer or the
+     focus. A button's screen reader description is the row line followed by
+     its own. */
   var HELP = {
     sr: "Adapts the game to a screen reader.",
     motion: "Motion settings.",
     mode: "How the game is shown.",
     tooltips: "Show or hide setup tooltips.",
+    prettyWrap: "How lines break in paragraphs.",
+    errors: "Where error messages appear.",
+    barScroll: "Status bar messages too long for the bar.",
     soloFrames: "Border and header of a pane alone in its window.",
     unavailable: "Settings that cannot apply right now.",
     frame: "How the screen is framed.",
@@ -280,14 +299,16 @@
     _saveLocal: "Where progress is saved.",
     _wipe: "Erases progress at every reload.",
     _storage: "The data this game keeps in your browser.",
+    _erase: "Erase all progress and restart.",
     shellOut: "Where typed commands show their results.",
     panelOut: "Where FILES, the F keys and the status bar show their results.",
     fast: "Shorter waits, for testing.",
-    deskShell: "DESK becomes SHELL and holds only the shell.",
+    deskShell: "DESK becomes SHELL and retains only the shell.",
     redirectNotes: "A note in the shell when a result opens in VIEW.",
     debug: "A movable DEBUG panel for testing.",
     debugLog: "A log of everything the game does, in the browser's console.",
-    setupView: "How Setup lists the settings."
+    setupView: "How Setup lists the settings.",
+    ctlSounds: "A sound of its own for each kind of control."
   };
   var OPTION_HELP = {
     sr: {
@@ -341,6 +362,19 @@
     tooltips: {
       on: "Show tooltips.",
       off: "Hide tooltips."
+    },
+    prettyWrap: {
+      on: "Keep the last word of a paragraph off a line of its own.",
+      off: "Break lines where the browser breaks them."
+    },
+    barScroll: {
+      on: "They scroll by themselves, one character at a time, then stop at the end.",
+      off: "They scroll with the wheel, a drag or the arrow keys."
+    },
+    errors: {
+      auto: "A dialog in desktop mode, the status bar in tmux mode.",
+      dialog: "A dialog in both modes.",
+      bar: "The status bar in both modes."
     },
     unavailable: {
       show: "Show them greyed, with the reason beside each one.",
@@ -403,6 +437,9 @@
     _storage: {
       open: "View or delete each key."
     },
+    _erase: {
+      open: "Confirm before all progress is erased."
+    },
     shellOut: {
       view: "Open results in the VIEW window.",
       shell: "Print results in the shell, which then works on its own."
@@ -431,7 +468,12 @@
       on: "Print commands, events, windows and saves. Filter by SELK.",
       off: "Keep the console quiet."
     },
+    ctlSounds: {
+      on: "Keys, switches, tabs, pages and menus each make their own sound.",
+      off: "Every control makes the same click."
+    },
     setupView: {
+      pages: "Open each section on its own page.",
       sections: "Group settings under headers that open.",
       list: "Show all settings."
     }
@@ -455,14 +497,14 @@
     /* Tooltips end without a period */
     tip.textContent = tipText(S.t(extra || HELP[key]));
     tip.hidden = false;
+    /* Measured at the dialog's corner, where it wraps as it does once placed */
+    tip.style.left = "0px"; tip.style.top = "0px";
     prettyWrapTip(tip);
     var bb = box.getBoundingClientRect(), th = tip.offsetHeight, tw = tip.offsetWidth;
     var x, y;
     if (ev && ev.clientX != null && ev.clientY != null) {
       var px = ev.clientX - bb.left, py = ev.clientY - bb.top;
-      /* Right of the pointer; left of it only when the tip would cross the
-         dialog's right edge. One rule for every row and button, so the tip
-         stays on the same side while the pointer moves along a row. */
+      /* Right of the pointer, or left of it when the right edge is too close */
       var left = px - tw - 8, right = px + 8;
       x = right + tw <= bb.width - 8 ? right : left;
       var above = py - th - 8, below = py + 8;
@@ -470,8 +512,8 @@
       else if (below + th <= bb.height - 4) { y = below; }
       else { y = bb.height - py >= py ? below : above; }
     } else if (keepPosition) {
-      /* Keep the last pointer position when clicking changes a setting and
-         rebuilds its row; the restored focus has no pointer coordinates. */
+      /* A click that rebuilds the row restores the focus without pointer
+         coordinates, so the tip keeps its last position */
       x = tip._left;
       y = tip._top;
     } else {
@@ -503,16 +545,12 @@
     });
     return bestD <= reach ? best : null;
   }
+  /* A tip of two lines or more keeps its last word off a line of its own */
   function prettyWrapTip(node) {
     var range = document.createRange();
     range.selectNodeContents(node);
     if (range.getClientRects().length < 2) { return; }
-    var text = node.textContent;
-    var match = /(\s+)(\S+)(\s*)$/.exec(text);
-    if (!match) { return; }
-    var prefix = text.slice(0, match.index);
-    if (!/\S[\s\S]*\s\S/.test(prefix + match[2])) { return; }
-    node.textContent = prefix + "\u00a0" + match[2] + match[3];
+    S.wrapLast(node);
   }
   function attachHelp(row, key) {
     if (!HELP[key]) { return; }
@@ -526,8 +564,8 @@
       }
       c.setAttribute("aria-describedby", ids);
       var ok = c.dataset.value, popup = c.getAttribute("aria-haspopup");
-      /* A drop-down shows no tip under the pointer, since the tip would cover
-         its list. Keyboard focus still shows it, for players who cannot hover. */
+      /* A drop-down shows its tip on keyboard focus only, so the tip never
+         covers the list */
       if (!popup) {
         c.addEventListener("mousemove", function (e) { showTip(row, key, ok, e); });
       }
@@ -537,13 +575,15 @@
       });
       c.addEventListener("blur", function (e) {
         var next = e.relatedTarget;
-        hideTip(!!(next && next.dataset.settingKey === key && row.contains(next)));
+        /* A button removed by a rebuild also sends a blur, at any time */
+        if (!c.isConnected) { return; }
+        /* Focus moving to another Setup control keeps the position; that
+           control's focus handler places the tip */
+        hideTip(!!(next && next.dataset.settingKey));
       });
     });
-    /* Between two buttons, or just beside one, the tip belongs to the nearest
-       button within 1em of the pointer. Without this, crossing the small gap
-       between buttons flashes the row's tip. Near the drop-down no tip shows,
-       as on the drop-down itself. */
+    /* Between or beside buttons, the tip of the nearest button within 1em
+       shows, so crossing a gap does not flash the row's tip */
     row.addEventListener("mousemove", function (e) {
       if (e.target.closest("button, input, select, .set-pick")) { return; }
       var near = nearestControl(row, e);
@@ -551,8 +591,7 @@
       showTip(row, key, near ? near.dataset.value : null, e);
     });
     row.addEventListener("mouseleave", hideTip);
-    /* Touch screens have no hover: tapping the label shows or hides its
-       tooltip. Screen readers hear it as a button that reveals the tooltip. */
+    /* On touch screens a tap on the label shows or hides the tip */
     var label = row.querySelector(".set-label");
     if (S.state.settings.tooltips !== false) {
       label.setAttribute("role", "button");
@@ -562,75 +601,131 @@
       label.setAttribute("aria-describedby", how.id);
     }
     label.addEventListener("click", function (e) {
-      /* A tap also sends a mousemove that opens the tip first; only a tip that
-         was already open before this tap closes */
+      /* A tap first sends a mousemove that opens the tip, so only a tip
+         open before the tap closes */
       if (tip && !tip.hidden && tip._row === row && Date.now() - tip._shownAt > 400) { hideTip(); return; }
       showTip(row, key, null, e);
     });
   }
 
+
+  /* The part of a list that Setup shows. A setting hidden by
+     S.SETTING_RULES, or by Unavailable settings HIDE, gives its place to
+     the settings under it. A group left empty is dropped. */
+  function shown(r) {
+    return S.settingVisible(r.key) && (S.state.settings.unavailable !== "hide" || !S.settingOff(r.key));
+  }
+  function visible(list) {
+    var out = [];
+    list.forEach(function (n) {
+      var sub = visible(n.sub || []);
+      if (n.key == null) {
+        if (sub.length) { out.push(group(n.id, n.title, sub)); }
+      } else if (shown(n)) {
+        out.push(row(n.label, n.key, n.kind, sub));
+      } else {
+        out = out.concat(sub);
+      }
+    });
+    return out;
+  }
+  /* Settings in a list and under it; buttons that open a page do not count */
+  function count(list) {
+    return list.reduce(function (n, x) {
+      return n + (x.key != null && x.kind !== "link" ? 1 : 0) + count(x.sub || []);
+    }, 0);
+  }
+  function idOf(n) {
+    return n.key != null ? n.key : n.id;
+  }
+
   function makeRow(r, body) {
-    var row = el("div", "set-row");
-    row.appendChild(el("span", "set-label", S.t(r[0])));
-    var ctl = el("span", "set-ctl"), k = r[1], v = getv(k);
-    if (r[2] === "link") {
-      var open = opt("OPEN", false, function () {
-        hideTip(); setTimeout(S.storagePage, 0);
-      });
-      open.dataset.value = "open";
+    var line = el("div", "set-row");
+    line.appendChild(el("span", "set-label", S.t(r.label)));
+    var ctl = el("span", "set-ctl"), k = r.key, v = getv(k);
+    if (r.kind === "link") {
+      var open = k === "_erase"
+        ? opt("RESET", false, function () {
+          hideTip(); S.deleteAllGameData(function () { S.settingsDialog(); });
+        })
+        : opt("OPEN", false, function () {
+          hideTip(); setTimeout(function () { S.storagePage(true); }, 0);
+        });
+      open.dataset.value = "open"; open.dataset.sound = "page";
       ctl.appendChild(open);
-    }
-    else if (r[2] === "select") {
-      ctl.appendChild(pick(k, v, S.t(r[0]), S.i18n.choices()));
-    }
-    else if (r[2] === "range") {
+    } else if (r.kind === "select") {
+      ctl.appendChild(pick(k, v, S.t(r.label), S.i18n.choices()));
+    } else if (r.kind === "range") {
       var rg = el("input", "set-range"); rg.type = "range"; rg.min = 0; rg.max = 100; rg.step = 5; rg.value = v;
-      rg.setAttribute("aria-label", S.t("{name} volume", { name: S.t(r[0]) }));
+      rg.dataset.sound = "slide";
+      rg.setAttribute("aria-label", S.t("{name} volume", { name: S.t(r.label) }));
       var lab = el("span", "set-val", v + " %");
       rg.setAttribute("aria-valuetext", S.t("{n} percent", { n: v }));
       rg.addEventListener("input", function () {
-        S.state.settings[k] = +rg.value; lab.textContent = rg.value + " %"; rg.setAttribute("aria-valuetext", S.t("{n} percent", { n: rg.value })); S.snd.apply();
+        S.state.settings[k] = +rg.value; lab.textContent = rg.value + " %";
+        rg.setAttribute("aria-valuetext", S.t("{n} percent", { n: rg.value })); S.snd.apply();
       });
-      rg.addEventListener("change", function () {
-        S.save();
-      });
+      rg.addEventListener("change", function () { S.save(); });
       ctl.appendChild(rg); ctl.appendChild(lab);
-    }
-    else if (r[2]) {
-      r[2].forEach(function (o) {
-        var ob = opt(o[1], v === o[0], function () {
+    } else {
+      var choices = r.kind || [[true, "ON"], [false, "OFF"]];
+      choices.forEach(function (o) {
+        var b = opt(o[1], o[0] === true ? !!v : o[0] === false ? !v : v === o[0], function () {
           setv(k, o[0]); fill(body);
         });
-        ob.dataset.value = o[0];
-        ctl.appendChild(ob);
+        b.dataset.value = o[0] === true ? "on" : o[0] === false ? "off" : o[0];
+        ctl.appendChild(b);
       });
     }
-    else {
-      var onOption = opt("ON", !!v, function () {
-        setv(k, true); fill(body);
+    line.appendChild(ctl);
+    ctl.querySelectorAll("button, input").forEach(function (c) { c.dataset.settingKey = k; });
+    attachHelp(line, k);
+    /* A setting that cannot apply now stays in view, greyed, with the reason */
+    var why = S.settingOff(k);
+    if (why) {
+      line.classList.add("set-unavail");
+      ctl.querySelectorAll("button, input").forEach(function (c) {
+        c.disabled = true;
       });
-      onOption.dataset.value = "on";
-      var offOption = opt("OFF", !v, function () {
-        setv(k, false); fill(body);
-      });
-      offOption.dataset.value = "off";
-      ctl.appendChild(onOption); ctl.appendChild(offOption);
+      line.querySelector(".set-label").appendChild(el("span", "set-why", S.t(why)));
     }
-    row.appendChild(ctl);
-    ctl.querySelectorAll("button, input, select").forEach(function (c) { c.dataset.settingKey = k; });
-    attachHelp(row, k);
-    return row;
+    return line;
   }
-  /* Header of a folding section: a button that reports its state to screen
-     readers, with the count of settings inside shown like the item count in
-     FILES. It shows and hides its rows directly, so focus stays on it. */
-  function sectionHead(sec, n, part) {
+
+  /* SECTIONS and FULL LIST: settings that belong to another one sit under
+     it, indented on a rule; a group adds its title above its settings */
+  function nested(list, body, into) {
+    list.forEach(function (n) {
+      if (n.key == null) {
+        var g = el("div", "set-subgroup");
+        var h = el("div", "set-sub-h", S.t(n.title)); h.setAttribute("role", "heading"); h.setAttribute("aria-level", "4");
+        g.appendChild(h);
+        nested(n.sub, body, g);
+        into.appendChild(g);
+        return;
+      }
+      into.appendChild(makeRow(n, body));
+      if (n.sub.length) {
+        var box = el("div", "set-sub");
+        nested(n.sub, body, box);
+        into.appendChild(box);
+      }
+    });
+    return into;
+  }
+  function view() {
+    var v = S.state.settings.setupView;
+    return v === "list" || v === "sections" ? v : "pages";
+  }
+  /* SECTIONS: a header that reports its state and shows or hides its rows
+     in place, so the focus stays on it */
+  function sectionHead(sec, part) {
     var h = el("div", "set-sec-h"); h.setAttribute("role", "heading"); h.setAttribute("aria-level", "3");
-    var b = el("button", "set-sec-head"); b.type = "button";
+    var b = el("button", "set-sec-head"); b.type = "button"; b.dataset.sound = "fold";
     var mark = el("span", "set-sec-mark"); mark.setAttribute("aria-hidden", "true");
     b.appendChild(mark);
     b.appendChild(el("span", "set-sec-name", S.t(sec.title)));
-    b.appendChild(el("span", "set-sec-count", S.tn("{n} SETTINGS", n)));
+    b.appendChild(el("span", "set-sec-count", S.tn("{n} SETTINGS", count(sec.sub))));
     part.id = "set-sec-" + sec.id;
     b.setAttribute("aria-controls", part.id);
     function show(open) {
@@ -647,107 +742,169 @@
     h.appendChild(b);
     return h;
   }
+  /* PAGES: a button that opens a section on its own page, laid out like
+     a section header of the SECTIONS view */
+  function navButton(n, body) {
+    var b = el("button", "set-sec-head set-nav"); b.type = "button";
+    b.dataset.sound = "page"; b.dataset.nav = idOf(n);
+    var mark = el("span", "set-sec-mark", "[>]"); mark.setAttribute("aria-hidden", "true");
+    b.appendChild(mark);
+    b.appendChild(el("span", "set-sec-name", S.t(n.title)));
+    b.appendChild(el("span", "set-sec-count", S.tn("{n} SETTINGS", count(n.sub))));
+    b.addEventListener("click", function () { go(idOf(n), body); });
+    return b;
+  }
+  /* PAGES: a line, as tall as a setting row, that opens a group or the
+     settings under a setting. A group's line shows its title; the line
+     under a setting names the settings it opens. */
+  function linkRow(n, body) {
+    var grp = n.key == null;
+    var b = el("button", "set-link " + (grp ? "set-link-grp" : "set-link-sub")); b.type = "button";
+    b.dataset.sound = "page"; b.dataset.nav = idOf(n);
+    var name = grp ? S.t(n.title) : n.sub.map(function (x) {
+      return x.key != null ? S.t(x.label) : S.t(x.title);
+    }).join(", ");
+    b.appendChild(el("span", "set-link-name", name));
+    b.appendChild(el("span", "set-link-count", S.tn("{n} SETTINGS", count(n.sub))));
+    var mark = el("span", "set-link-mark"); mark.setAttribute("aria-hidden", "true");
+    b.appendChild(mark);
+    b.addEventListener("click", function () { go(idOf(n), body); });
+    return b;
+  }
+  /* The nodes on the open page, from the top. An id that no longer leads
+     anywhere (a setting hidden since) ends the path there. */
+  function pagePath(tree) {
+    var path = [], list = tree;
+    for (var i = 0; i < page.length; i++) {
+      var n = list.filter(function (x) { return idOf(x) === page[i]; })[0];
+      if (!n || !n.sub.length) { break; }
+      path.push(n); list = n.sub;
+    }
+    page = page.slice(0, path.length);
+    return path;
+  }
+  /* One part of the page path, coloured by its level like the headings */
+  function crumbPart(n, i) {
+    var cls = n.key != null ? "set-crumb-set" : i === 0 ? "set-crumb-sec" : "set-crumb-grp";
+    return el("span", cls, n.key != null ? S.t(n.label) : S.t(n.title));
+  }
+  var focusNext = null;
+  function go(id, body) {
+    hideTip(); page.push(id); focusNext = "back"; fill(body);
+  }
+  function back(body) {
+    hideTip(); focusNext = page.pop(); fill(body);
+  }
+  function pages(tree, body) {
+    var path = pagePath(tree), here = path[path.length - 1];
+    if (!here) {
+      var navs = el("div", "set-navs");
+      tree.forEach(function (sec) { navs.appendChild(navButton(sec, body)); });
+      body.appendChild(navs);
+      return;
+    }
+    var crumb = el("div", "set-crumb");
+    var bk = el("button", "btn set-back", S.t("BACK")); bk.type = "button";
+    bk.dataset.sound = "back"; bk.dataset.nav = "back";
+    bk.addEventListener("click", function () { back(body); });
+    crumb.appendChild(bk);
+    var where = el("span", "set-where");
+    path.forEach(function (n, i) {
+      if (i) { where.appendChild(document.createTextNode(" / ")); }
+      where.appendChild(crumbPart(n, i));
+    });
+    where.setAttribute("role", "heading"); where.setAttribute("aria-level", "3");
+    crumb.appendChild(where);
+    body.appendChild(crumb);
+    /* The page's settings first, then the lines that open additional
+       settings: those under a setting, in row order, then the groups */
+    var part = el("div", "set-list"), more = [];
+    here.sub.forEach(function (n) {
+      if (n.key != null) { part.appendChild(makeRow(n, body)); }
+      if (n.key != null && n.sub.length) { more.push(n); }
+    });
+    here.sub.forEach(function (n) { if (n.key == null) { more.push(n); } });
+    if (more.length) {
+      var box = el("div", "set-more");
+      more.forEach(function (n) { box.appendChild(linkRow(n, body)); });
+      part.appendChild(box);
+    }
+    if (here.id === "data" && saveConflict()) { part.appendChild(conflictNote()); }
+    body.appendChild(part);
+  }
+
   function fill(body) {
     var active = document.activeElement, keepFocus = body.contains(active);
     var settingKey = keepFocus && active.dataset.settingKey, settingValue = keepFocus && active.dataset.value;
+    var v = view(), tree = visible(SECTIONS);
+    /* The tip keeps its place across the rebuild: restoreFocus shows it
+       again at the saved position */
+    var pin = tip && !tip.hidden ? { key: tip._key, left: tip._left, top: tip._top } : null;
     body.textContent = "";
     body.classList.add("set-body");
-    var folding = S.state.settings.setupView !== "list";
-    body.classList.toggle("set-folding", folding);
-    body.appendChild(makeRow(langRow(), body));
-    if (S.i18n.lang() !== "en") {
-      body.appendChild(el("p", "set-note", S.t(S.i18n.NOTICE)));
+    body.classList.toggle("set-folding", v === "sections");
+    if (v !== "pages" || !page.length) {
+      body.appendChild(makeRow(langRow(), body));
+      if (S.i18n.lang() !== "en") {
+        body.appendChild(el("p", "set-note", S.t(S.i18n.NOTICE)));
+      }
+      body.appendChild(makeRow(VIEW_ROW, body));
     }
-    body.appendChild(makeRow(VIEW_ROW, body));
-    SECTIONS.forEach(function (sec) {
-      /* Rows hidden by S.SETTING_RULES never show. Rows greyed by
-         S.SETTING_OFF show unless Unavailable settings is HIDE; a section
-         left with no rows is skipped below. */
-      var rows = sec.rows.filter(function (r) {
-        return S.settingVisible(r[1]) && (S.state.settings.unavailable !== "hide" || !S.settingOff(r[1]));
-      });
-      if (!rows.length) {
-        return;
-      }
-      var part = el("div", folding ? "set-sec-body" : "set-list");
-      rows.forEach(function (r) {
-        var row = makeRow(r, body), why = S.settingOff(r[1]);
-        /* A setting that cannot apply right now stays in view, greyed, with the reason */
-        if (why) {
-          row.classList.add("set-unavail");
-          row.querySelectorAll("button, input, select").forEach(function (c) { c.disabled = true; });
-          row.querySelector(".set-label").appendChild(el("span", "set-why", S.t(why)));
+    if (v === "pages") {
+      pages(tree, body);
+    } else {
+      tree.forEach(function (sec) {
+        var part = nested(sec.sub, body, el("div", v === "sections" ? "set-sec-body" : "set-list"));
+        if (sec.id === "data" && saveConflict()) { part.appendChild(conflictNote()); }
+        if (v === "sections") {
+          var wrap = el("div", "set-sec");
+          wrap.appendChild(sectionHead(sec, part));
+          wrap.appendChild(part);
+          body.appendChild(wrap);
+        } else {
+          body.appendChild(el("div", "dlg-rule"));
+          var g = el("div", "set-group", S.t(sec.title)); g.setAttribute("role", "heading"); g.setAttribute("aria-level", "3");
+          body.appendChild(g);
+          body.appendChild(part);
         }
-        part.appendChild(row);
       });
-      if (sec.id === "data" && saveConflict()) {
-        part.appendChild(conflictNote());
-      }
-      if (folding) {
-        var wrap = el("div", "set-sec");
-        wrap.appendChild(sectionHead(sec, rows.filter(function (r) { return r[2] !== "link"; }).length, part));
-        wrap.appendChild(part);
-        body.appendChild(wrap);
-      }
-      else {
-        body.appendChild(el("div", "dlg-rule"));
-        var g = el("div", "set-group", S.t(sec.title)); g.setAttribute("role", "heading"); g.setAttribute("aria-level", "3");
-        body.appendChild(g);
-        body.appendChild(part);
-      }
-    });
+    }
     hideTip(true);
-    if (settingKey) {
-      var controls = body.querySelectorAll("[data-setting-key]"), target = null;
-      for (var i = 0; i < controls.length; i++) {
-        if (controls[i].dataset.settingKey === settingKey && controls[i].getAttribute("aria-pressed") === "true") {
-          target = controls[i];
-          break;
-        }
-      }
-      if (!target) {
-        for (var j = 0; j < controls.length; j++) {
-          if (controls[j].dataset.settingKey === settingKey && (!settingValue || controls[j].dataset.value === settingValue)) {
-            target = controls[j];
-            break;
-          }
-        }
-      }
-      if (target) { target.focus({ preventScroll: true }); }
+    if (pin) { tip._key = pin.key; tip._left = pin.left; tip._top = pin.top; }
+    restoreFocus(body, settingKey, settingValue);
+  }
+  /* After a rebuild the focus returns to the control that had it, or to
+     the pressed option of its row. After a page change it goes to BACK, or
+     to the button that opened the page that was left. */
+  function restoreFocus(body, settingKey, settingValue) {
+    var target = null;
+    if (focusNext) {
+      target = body.querySelector("[data-nav='" + focusNext + "']");
+      var where = body.querySelector(".set-where");
+      S.announce(where ? where.textContent : S.t("SETUP"));
+      focusNext = null;
+    } else if (settingKey) {
+      var controls = [].slice.call(body.querySelectorAll("[data-setting-key]")).filter(function (c) {
+        return c.dataset.settingKey === settingKey;
+      });
+      target = controls.filter(function (c) { return c.getAttribute("aria-pressed") === "true"; })[0] ||
+        controls.filter(function (c) { return !settingValue || c.dataset.value === settingValue; })[0];
     }
+    if (target) { target.focus({ preventScroll: true }); }
   }
   S.settingsDialog = function () {
-    S.dialog( {
+    S.dialog({
       title: "SETUP",
       wide: true,
       build: fill,
-      buttons: [
-        {
-          label: "CLOSE"
-        },
-        {
-          label: "RESET PROGRESS",
-          action: function () {
-            setTimeout(function () {
-              S.dialog( {
-                title: "RESET PROGRESS",
-                text: "Erase all progress on this terminal?",
-                buttons: [
-                  {
-                    label: "CANCEL"
-                  },
-                  {
-                    label: "ERASE",
-                    action: function () {
-                      S.reset(); location.reload();
-                    }
-                  }
-                ]
-              });
-            }, 0);
-          }
-        }
-      ]
+      /* CLOSE returns Setup to its first page for the next opening */
+      buttons: [{ label: "CLOSE", action: function () { page = []; } }],
+      /* Escape leaves a page before it closes Setup */
+      onEscape: function (body) {
+        if (view() !== "pages" || !page.length) { return false; }
+        if (S.state.settings.ctlSounds) { S.snd.ui("back"); }
+        back(body); return true;
+      }
     });
   };
   S.setupKit = { opt: opt, setv: setv };

@@ -1,6 +1,6 @@
-/* English. The base language: interface keys are the English text itself, so
-   this file holds only what English cannot say through the key, such as
-   plural forms. Other languages copy these keys and translate the values. */
+/* English, the base language. Interface keys are the English text, so this
+   file has only what a key cannot express, such as plural forms. Other
+   languages copy these keys and translate the values. */
 SELK.i18n.register("en", {
   meta: { name: "English", dir: "ltr" },
   ui: {

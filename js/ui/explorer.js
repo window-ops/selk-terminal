@@ -1,5 +1,5 @@
-/* FILES window: a two-panel explorer in the style of Midnight Commander.
-   Left panel lists sections, right panel lists the entries of the selected section. */
+/* FILES window: a two-panel explorer after Midnight Commander. The left panel
+   lists sections, the right panel the entries of the selected section. */
 (function () {
   var S = window.SELK;
   var el = S.el;
@@ -216,7 +216,7 @@
     }
     root.appendChild(mini);
     if (S.tmux.mobile() && S.state.sel && id) {
-      var use = el("button", "mc-use", S.t("USE THIS RECORD FOR BLANK {n}", { n: S.state.sel.n }));
+      var use = el("button", "mc-use", S.t("USE THIS RECORD FOR BLANK {n}", { n: S.state.sel.n })); use.dataset.sound = "action";
       use.type = "button";
       use.addEventListener("click", function () {
         S.rep.fillBlank(S.state.sel.r, S.state.sel.n, id);

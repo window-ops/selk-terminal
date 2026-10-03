@@ -1,10 +1,10 @@
-/* Full-screen cinema for the finale: a black stage over the terminal that
-   shows typed lines, a list of choices, pixel scenes with captions, a letter
-   and a title card. Every step can be hurried with a click, Enter or Space;
-   digits pick a choice and Escape leaves the choice list. */
+/* The finale's stage: black over the terminal, with typed lines, a choice
+   list, pixel scenes with captions, a letter and a title card. A click, Enter
+   or Space completes a step; digits pick a choice and Escape leaves the
+   choice list. */
 (function () {
   var S = window.SELK, el = S.el;
-  /* One duration for every fade: into black, between pictures, back out, and
+  /* One duration for every fade: to black, between pictures, back out, and
      the page fade-in. CSS reads it as --fade. */
   var FADE = 450;
   document.documentElement.style.setProperty("--fade", FADE + "ms");
@@ -13,7 +13,7 @@
     return S.fast ? Math.min(n, 30) : n;
   }
   function instant() {
-    return S.fast || S.reduced || S.state.settings.speed === "instant";
+    return S.fast || S.textSpeed() === "instant";
   }
   /* Fades follow motion, not text speed: only reduced motion skips them */
   function still() {
@@ -25,8 +25,8 @@
   /* Resolves after n ms, or at once when the player moves on */
   function hold(n) {
     return new Promise(function (resolve) {
-      /* Step by step, and always in screen reader mode: wait for the player
-         however long it takes, so every line is heard in full */
+      /* Step by step, and always in screen reader mode, the wait lasts until
+         the player moves on, so every line is read in full */
       var done = false, timer = waits() ? null : setTimeout(go, ms(n));
       function go() {
         if (done) { return; }
@@ -71,10 +71,9 @@
     });
     return row;
   }
-  /* Cross-fade: each card lives in its own layer on the stage. A new layer
-     fades in over the old one while the old one fades out, both at once, so
-     every change (the first picture after the black included) takes one
-     FADE. Resolves with what build() returned. */
+  /* Cross-fade: each card is a layer on the stage. A new layer fades in while
+     the old one fades out, so every change, the first picture after the black
+     included, takes one FADE. Resolves with what build() returned. */
   function swap(build) {
     return new Promise(function (resolve) {
       if (!root) { return; }
@@ -86,7 +85,7 @@
       void layer.offsetWidth;
       layer.classList.remove("fading");
       if (old) {
-        /* The old card leaves the accessibility tree as it starts fading */
+        /* The old card leaves the accessibility tree when it starts fading */
         old.setAttribute("aria-hidden", "true");
         old.classList.add("fading", "leaving");
         setTimeout(function () {
@@ -110,8 +109,8 @@
       f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus();
       return;
     }
-    /* While the film plays, F keys and Alt, Ctrl and Cmd combinations are
-       swallowed, so no window or dialog opens behind it */
+    /* While the ending plays, F keys and Alt, Ctrl and Cmd combinations are
+       ignored, so no window or dialog opens behind it */
     if (/^F\d+$/.test(e.key) || e.altKey || e.ctrlKey || e.metaKey) {
       e.preventDefault(); e.stopPropagation(); return;
     }
@@ -150,22 +149,23 @@
       stage = el("div", "cine-stage");
       live = el("div", "sr-only"); live.setAttribute("aria-live", "polite");
       root.appendChild(stage); root.appendChild(live);
-      /* A real control to move on: screen reader browse modes often keep
-         Enter and Space for themselves. Hidden until it has focus. */
+      /* A control to move on, since screen reader browse modes often keep
+         Enter and Space for themselves. Hidden until it has the focus. */
       var next = el("button", "cine-next", S.t("Continue"));
       next.type = "button";
       next.addEventListener("click", function (e) { e.stopPropagation(); if (advance) { advance(); } });
       root.appendChild(next);
       opening = S.t("The ending begins. Press Enter or use the Continue button to move on.");
-      /* In screen reader mode the ending waits on every card; show the hint too */
+      /* In screen reader mode the ending waits on every card, so the hint
+         shows too */
       S.cine.setManual(S.cine.manual);
       root.addEventListener("click", function (e) {
         if (!e.target.closest("button") && advance) { advance(); }
       });
       var scr = document.getElementById("screen");
       scr.appendChild(root);
-      /* Everything behind the ending is out of reach: no focus, not read.
-         The debug panel stays usable above it */
+      /* Everything behind the ending is inert: no focus, not read. The debug
+         panel stays usable above it. */
       [].forEach.call(scr.children, function (c) {
         if (c !== root && !c.classList.contains("dbg") && !c.hasAttribute("inert")) { c.setAttribute("inert", ""); c.dataset.cineInert = "1"; }
       });
@@ -173,7 +173,7 @@
       root.classList.add("on");
       root.focus({ preventScroll: true });
       document.addEventListener("keydown", onKey, true);
-      /* Once the screen is black, the CRT effects step aside (body.cinema) */
+      /* Once the screen is black, body.cinema turns the CRT effects off */
       return new Promise(function (r) {
         setTimeout(function () {
           if (root) { document.body.classList.add("cinema"); }
@@ -190,7 +190,7 @@
       document.querySelectorAll("[data-cine-inert]").forEach(function (c) {
         c.removeAttribute("inert"); delete c.dataset.cineInert;
       });
-      /* The terminal comes back with its effects as the black fades away */
+      /* The terminal and its effects return as the black fades */
       document.body.classList.remove("cinema");
       r.classList.remove("on");
       setTimeout(function () { r.remove(); }, still() ? 0 : FADE + 50);
@@ -239,15 +239,16 @@
         });
       });
     },
-    /* A pixel scene with a caption under it. A new scene fades in over the
-       last; the same scene keeps playing and only its caption changes. */
+    /* A pixel scene with a caption. A new scene fades in over the last; the
+       same scene keeps playing and only its caption changes. */
     scene: function (id, n, caption) {
       var key = id + ":" + n, frame = layer && layer.querySelector(".cine-frame");
       var ready = frame && frame.dataset.key === key ? Promise.resolve(frame) : swap(function () {
         var f = el("div", "cine-frame"); f.dataset.key = key;
         scene = S.scenes.make(id, n);
         f.appendChild(scene.el);
-        /* The caption is read from the announcement, so the typed copy is hidden */
+        /* The caption is read from the announcement, so the typed copy is
+           hidden */
         var capEl = el("p", "cine-caption"); capEl.setAttribute("aria-hidden", "true");
         f.appendChild(capEl);
         layer.appendChild(f);
@@ -288,8 +289,8 @@
         box.appendChild(rows);
         layer.appendChild(box);
       }).then(function () {
-        /* The stage keeps focus, so an Enter meant to hurry the letter cannot
-           press a button by accident; Tab reaches the buttons */
+        /* The stage keeps the focus, so an Enter meant for the letter cannot
+           press a button; Tab reaches the buttons */
         root.focus({ preventScroll: true });
         say(kicker + ". " + title + ". " + sub);
       });

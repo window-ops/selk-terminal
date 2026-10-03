@@ -1,4 +1,4 @@
-/* Shared by the shell commands: the screen, error output, entry lookup and
+/* Helpers for the shell commands: the screen, error output, entry lookup and
    the locked-section message. listing.js, mail.js and hints.js add their own
    helpers to S.cmd. */
 (function () {
@@ -22,11 +22,10 @@
     return S.entryById(arg);
   }
   function lockedMsg(sec) {
-    /* Print "NAME is locked. Type: unlock ..." in the shell when either:
-         S.outShell() is true (the result of this command stays in the shell), or
-         the command was typed, the mode is tmux and the SHELL pane is on screen.
-       In every other case open the locked-section dialog (S.lockedRequester
-       in common.js), the same dialog FILES opens for a locked section. */
+    /* Print "NAME is locked. Type: unlock ..." in the shell when S.outShell()
+       is true, or when the command was typed in tmux mode with SHELL on
+       screen. Otherwise open the locked-section dialog (S.lockedRequester in
+       common.js), the one FILES opens. */
     var inShell = S.outShell() || (S.cmdOrigin === "typed" && !S.isDesktop() && S.ui.isOpen("SHELL"));
     if (!inShell) {
       S.lockedRequester(sec); return;

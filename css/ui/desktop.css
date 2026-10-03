@@ -1,0 +1,301 @@
+/* Desktop mode: the bar, the backdrop with its icons, and the windows. */
+.desk {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: var(--z-panes);
+}
+.screen.desktop .panes,
+.screen.desktop .fbar,
+.screen.desktop .tmux {
+  display: none;
+}
+/* The bar at the top. Its message and buttons share the styles of the tmux bar (statusbar.css). */
+.wb-bar {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  padding: 0.15em 0.7em;
+  background: var(--haze);
+  color: var(--hall);
+  text-shadow: none;
+  font-size: 0.85em;
+}
+.wb-title {
+  font-family: var(--font-crt);
+  font-size: 1.3em;
+  line-height: 1;
+  color: var(--hall);
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.wb-info {
+  color: var(--ink-soft);
+}
+.wb-right {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  white-space: nowrap;
+}
+.wb-msg {
+  color: var(--hall);
+}
+/* The backdrop and the drawer column on its right */
+.wb-back {
+  flex: 1;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  background: repeating-linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.06) 0 1px,
+      transparent 1px 4px
+    ),
+    radial-gradient(ellipse at 70% 30%, #2a3236 0%, var(--hall) 70%);
+}
+.wb-tools {
+  position: absolute;
+  right: 0.6em;
+  top: 0.6em;
+  bottom: 0.6em;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-content: flex-start;
+  gap: 0.6em;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.wb-group {
+  border: 1px solid var(--rib);
+  background: rgba(30, 36, 39, 0.75);
+  padding: 0.1em 0.2em 0.3em;
+}
+.wb-gtitle {
+  font-size: 0.72em;
+  color: var(--dust);
+  letter-spacing: 0.12em;
+  padding: 0.1em 0.4em;
+  border-bottom: 1px solid var(--rib);
+  margin-bottom: 0.2em;
+}
+.wb-ggrid {
+  display: grid;
+  grid-template-columns: repeat(2, 6.2em);
+  gap: 0.1em;
+}
+/* Icons. The badge in the corner is the drag grip of an entry icon. */
+.wb-icon {
+  position: relative;
+  width: 6.5em;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2em;
+  padding: 0.3em 0.2em;
+  user-select: none;
+  outline: none;
+}
+.wb-ggrid .wb-icon {
+  width: 6.2em;
+}
+.wb-icon svg {
+  width: 3.2em;
+  height: 2.4em;
+  image-rendering: pixelated;
+}
+.wb-label {
+  font-size: 0.8em;
+  text-align: center;
+  background: var(--hall);
+  padding: 0 0.3em;
+  overflow-wrap: anywhere;
+}
+.wb-icon.sel .wb-label,
+.wb-icon:focus-visible .wb-label {
+  background: var(--haze);
+  color: var(--hall);
+  text-shadow: none;
+}
+.wb-icon.dim .wb-label {
+  color: var(--dust);
+}
+.wb-img {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+.wb-badge {
+  position: absolute;
+  left: 0.08em;
+  bottom: 0.08em;
+  width: 1.05em;
+  height: 1.05em;
+  background: var(--haze);
+  border: 1px solid var(--hall);
+  box-shadow: 0 0 0 1px var(--haze);
+  display: grid;
+  place-items: center;
+}
+.wb-dots {
+  width: 0.42em;
+  height: 0.66em;
+  background-color: var(--hall);
+  -webkit-mask: var(--dots) center / contain no-repeat;
+  mask: var(--dots) center / contain no-repeat;
+}
+.wb-icon:hover .wb-badge {
+  background: var(--titan);
+  box-shadow: 0 0 0 1px var(--titan);
+}
+.wb-icon.sel .wb-img svg {
+  filter: invert(0.85) hue-rotate(180deg);
+}
+.wb-lock {
+  font-size: 0.7em;
+  color: var(--flag);
+}
+.wb-icon.locked .wb-label {
+  color: var(--flag);
+}
+/* Windows: a 2px frame with a hard shadow; a maximised window fills the desktop exactly */
+.wb-win {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background: var(--hall);
+  border: 2px solid var(--dust);
+  box-shadow: 0.35em 0.35em 0 rgba(0, 0, 0, 0.55);
+  min-width: 180px;
+  min-height: 120px;
+}
+.wb-win.act {
+  border-color: var(--haze);
+}
+.wb-win.maximised {
+  box-shadow: none;
+  border-width: 0;
+}
+/* The striped title bar. Each gadget sits centred in a slot of equal space: the bar's padding and the gap. */
+.wb-tbar {
+  display: flex;
+  align-items: stretch;
+  gap: 0.3em;
+  min-height: 1.5em;
+  padding: 0 0.3em;
+  background: repeating-linear-gradient(
+    0deg,
+    var(--rib) 0 1px,
+    transparent 1px 3px
+  );
+  user-select: none;
+  touch-action: none;
+}
+.wb-win.act .wb-tbar {
+  background: repeating-linear-gradient(
+    0deg,
+    var(--titan) 0 1px,
+    var(--hall) 1px 3px
+  );
+}
+.wb-wtitle {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  background: var(--hall);
+  padding: 0 0.6em;
+  font-size: 0.85em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wb-win.act .wb-wtitle {
+  background: var(--haze);
+  color: var(--hall);
+  text-shadow: none;
+}
+.wb-gad {
+  align-self: center;
+  width: 1.4em;
+  height: 1.1em;
+  border: 1px solid var(--dust);
+  background: var(--hall);
+  padding: 0;
+  position: relative;
+  flex: none;
+}
+.wb-close::after {
+  content: "";
+  position: absolute;
+  inset: 0.25em 0.4em;
+  background: var(--haze);
+}
+.wb-depth {
+  margin-left: auto;
+}
+.wb-depth::before,
+.wb-depth::after {
+  content: "";
+  position: absolute;
+  width: 0.6em;
+  height: 0.45em;
+  border: 1px solid var(--haze);
+}
+.wb-depth::before {
+  left: 0.15em;
+  top: 0.12em;
+  background: var(--hall);
+}
+.wb-depth::after {
+  left: 0.45em;
+  top: 0.35em;
+  background: var(--haze);
+}
+.wb-wbody {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+}
+.wb-wbody > * {
+  flex: 1;
+  min-height: 0;
+}
+.wb-wbody.wb-icons {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  gap: 0.2em;
+  padding: 0.5em;
+}
+.wb-wbody.wb-icons > * {
+  flex: none;
+}
+.wb-wbody.wb-live {
+  padding: 0.4em;
+  align-items: center;
+  justify-content: center;
+}
+.wb-wbody.wb-live canvas.live {
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+}
+/* The resize corner */
+.wb-size {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 0.9em;
+  height: 0.9em;
+  background: linear-gradient(135deg, transparent 50%, var(--dust) 50%);
+  touch-action: none;
+}

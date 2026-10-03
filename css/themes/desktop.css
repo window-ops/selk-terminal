@@ -1,0 +1,90 @@
+/* Desktop mode: popups after a Workbench requester. A 2px haze frame with
+   a hard shadow, the striped title bar of the desktop windows, text set
+   flush left and flat controls. Menus and lists keep a 1px frame. The
+   accent is haze, the colour of the frames; the stripes keep the orange. */
+html[data-mode="desktop"] {
+  --accent: var(--haze);
+  --on-accent: var(--hall);
+}
+html[data-mode="desktop"] :is(.dlg, .mail-toast, .tut, .status-info-pop, .switcher) {
+  border: 2px solid var(--haze);
+  box-shadow: 0.35em 0.35em 0 rgba(0, 0, 0, 0.55);
+}
+html[data-mode="desktop"] :is(.ctx, .set-pick-list) {
+  border: 1px solid var(--haze);
+  box-shadow: 0.35em 0.35em 0 rgba(0, 0, 0, 0.55);
+}
+/* The title label fills the bar's height from its left edge; the stripes
+   fill the rest */
+html[data-mode="desktop"] :is(.dlg-title, .mail-toast-head, .tut-bar) {
+  display: flex;
+  align-items: stretch;
+  gap: 0.4em;
+  min-height: 1.5em;
+  padding: 0 0.2em 0 0;
+  border-bottom: 1px solid var(--haze);
+  text-align: left;
+  color: var(--haze);
+  background: repeating-linear-gradient(0deg, var(--titan) 0 1px, var(--hall) 1px 3px);
+}
+html[data-mode="desktop"] :is(.mail-toast-head, .tut-bar) {
+  margin: calc(-1 * var(--pop-pt)) calc(-1 * var(--pop-px)) 0.15em;
+}
+html[data-mode="desktop"] :is(.dlg-title-text, .mail-toast-lead, .tut-head) {
+  display: flex;
+  align-items: center;
+  background: var(--haze);
+  color: var(--hall);
+  text-shadow: none;
+  padding: 0 0.6em;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+html[data-mode="desktop"] .mail-toast-tag {
+  color: inherit;
+}
+/* The body starts 0.6em under the title bar */
+html[data-mode="desktop"] .dlg-body {
+  text-align: left;
+  padding-top: 0.6em;
+}
+/* Buttons and fields share one 1px border and one height; a press fills
+   a button with dust */
+html[data-mode="desktop"] .dlg-in,
+html[data-mode="desktop"] :is(.dlg, .mail-toast, .tut) .btn {
+  border: 1px solid var(--rib);
+  padding: 0.2em 0.7em;
+  line-height: 1.5;
+  color: var(--haze);
+  background: none;
+}
+html[data-mode="desktop"] .dlg-in {
+  background: var(--deep);
+}
+html[data-mode="desktop"] .dlg-in:focus {
+  border-color: var(--haze);
+}
+html[data-mode="desktop"] :is(.dlg, .mail-toast, .tut) .btn:active:not(:disabled) {
+  background: var(--dust);
+  border-color: var(--dust);
+  color: var(--hall);
+}
+/* The positive choice sits left, the negative right, a single button in
+   the middle. The body's bottom padding is the gap above the row. */
+html[data-mode="desktop"] .dlg-btns {
+  justify-content: space-between;
+  padding: 0 1.1em 0.9em;
+}
+html[data-mode="desktop"] .dlg-body.set-body + .dlg-btns {
+  padding: 0 1em 0.6em;
+}
+html[data-mode="desktop"] .dlg-btns .btn {
+  min-width: 6em;
+}
+html[data-mode="desktop"] .dlg-btns > .btn:only-child {
+  margin-left: auto;
+  margin-right: auto;
+}

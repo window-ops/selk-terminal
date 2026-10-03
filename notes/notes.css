@@ -95,9 +95,8 @@ main a.citation-button:focus-visible {
 }
 
 
-/* Page styles, moved here from each page's <style> block. Rules shared by
-   every notes page come first; the rest apply to one page through the
-   page-<name> class on its <body>. */
+/* Page styles. Rules shared by every notes page come first; the rest
+   apply to one page through the page-<name> class on its <body>. */
 body {
   margin: 0;
   background: var(--wall);
@@ -487,7 +486,6 @@ body {
 .lang-bar select:focus-visible {
   color: var(--hall);
   background: var(--haze);
-  border-color: var(--titan);
   outline: none;
 }
 .lang-note {

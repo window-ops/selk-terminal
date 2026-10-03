@@ -3,9 +3,9 @@
 (function () {
   "use strict";
   var selectors = ".scroll, .etable-wrap, .graph, .wb-wbody, .entry-body, .mail-body, .paras, .mc-mini";
-  /* One-line text strips: no scrollbar, an ellipsis at rest, and dragging on
-     them scrolls the line with the normal pointer, since their text cannot be
-     selected anyway */
+  /* One-line text strips: no scrollbar, an ellipsis at rest, and a drag
+     scrolls the line with the normal pointer, since their text cannot be
+     selected */
   var STRIPS = ".mc-mini";
   var active = null, moved = false, startX = 0, startY = 0, left = 0, top = 0, suppressClick = false;
 
@@ -60,9 +60,9 @@
     active = null;
   }
 
-  /* True when the pointer is over actual characters. Pressing there starts a text
-     selection, so drag-to-scroll stays out of the way; pressing on empty space
-     still pans. */
+  /* True when the pointer is over characters. A press there starts a text
+     selection, so drag-to-scroll does not start; a press on empty space
+     scrolls. */
   function overText(x, y) {
     var node = null, off = 0;
     if (document.caretPositionFromPoint) {

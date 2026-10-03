@@ -1,0 +1,57 @@
+/* The DEBUG panel (js/dev/debug.js). */
+.dbg {
+  position: absolute;
+  right: 0.8em;
+  top: 0.8em;
+  z-index: var(--z-debug);
+  width: min(21em, calc(100% - 1.6em));
+  max-height: calc(100% - 1.6em);
+  overflow-y: auto;
+  background: var(--hall);
+  border: 2px solid #6fbf5a;
+  box-shadow: 0.3em 0.3em 0 rgba(0, 0, 0, 0.55);
+  font-size: 0.8em;
+}
+.dbg-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.15em 0.5em;
+  background: #6fbf5a;
+  color: var(--hall);
+  text-shadow: none;
+  cursor: var(--cur-move);
+  user-select: none;
+  touch-action: none;
+}
+.dbg-fold {
+  font: inherit;
+  color: var(--hall);
+  background: none;
+  border: 1px solid var(--hall);
+  padding: 0 0.4em;
+}
+.dbg-info {
+  white-space: pre-wrap;
+  padding: 0.4em 0.6em;
+  color: var(--dust);
+  border-bottom: 1px solid var(--rib);
+}
+.dbg-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.3em;
+  padding: 0.5em;
+}
+.dbg-grid .btn {
+  padding: 0.15em 0.3em;
+  font-size: 0.95em;
+}
+.dbg.folded .dbg-info,
+.dbg.folded .dbg-grid {
+  display: none;
+}
+/* While the ending plays, the panel rises above its stage */
+.screen:has(> .cine) > .dbg {
+  z-index: var(--z-debug-ending);
+}

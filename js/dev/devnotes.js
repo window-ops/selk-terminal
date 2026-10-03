@@ -59,7 +59,7 @@
   '<line x1="130" y1="270" x2="130" y2="386"/>' +
   '<path d="M430 170 L445 170 L445 408 L458 408"/><path d="M430 250 L445 250 L445 408 L458 408"/><line x1="550" y1="270" x2="550" y2="386"/>' +
   /* Report 4 opens after 3A or 3B, and reads Power and Export */
-  '<path d="M340 344 L340 468"/><path d="M130 428 L130 490 L248 490"/><path d="M550 428 L550 482 L432 482"/><path d="M640 250 L656 250 L656 500 L432 500"/>' +
+  '<path d="M340 344 L340 468"/><path d="M130 428 L130 490 L248 490"/><path d="M550 428 L550 500 L432 500"/>' +
   '<line x1="340" y1="510" x2="340" y2="536"/>' +
   /* The final decision lists the five choices in the game's order; habitation splits on oxygen */
   '<path d="M340 578 L340 638"/>' +
@@ -190,8 +190,13 @@
     ]
   ]));
   Object.keys(S.MESSAGES).forEach(function (k) {
-    $("messages").appendChild(el("h3", k.replace("MSG", "MSG ")));
-    $("messages").appendChild(S.renderParas(S.MESSAGES[k].body, inline));
+    var m = S.MESSAGES[k];
+    $("messages").appendChild(el("h3", k.replace("MSG", "MSG ") + (m.received ? ", " + m.awaits + " outstanding" : "")));
+    $("messages").appendChild(S.renderParas(m.body, inline));
+    if (m.received) {
+      $("messages").appendChild(el("h3", k.replace("MSG", "MSG ") + ", " + m.awaits + " already accepted"));
+      $("messages").appendChild(S.renderParas(m.received, inline));
+    }
   });
   S.ENDINGS.forEach(function (e) {
     var parts = e.choice ? [

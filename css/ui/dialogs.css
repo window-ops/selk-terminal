@@ -1,0 +1,81 @@
+/* Dialogs (S.dialog in dialogs.js): the shape shared by both modes. The
+   frame, title, fields and buttons of each mode are in css/themes/. The
+   body scrolls, so a dialog never grows past the screen. */
+.dlg-ov {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-dialog);
+  display: grid;
+  place-items: center;
+  padding: 1em;
+  overflow: hidden;
+  background: rgba(10, 13, 14, 0.25);
+}
+.dlg {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: min(28em, 100%);
+  max-width: min(44em, 100%);
+  max-height: calc(100% - 1em);
+  min-height: 0;
+  background: var(--hall);
+}
+.dlg:focus {
+  outline: none;
+}
+.dlg.wide {
+  min-width: min(40em, 100%);
+  max-width: min(52em, 100%);
+}
+.dlg-title,
+.dlg-btns {
+  flex: none;
+}
+.dlg-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  padding: 0.6em 1em;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35em;
+}
+.dlg-in {
+  font: inherit;
+  color: var(--haze);
+  padding: 0.3em 0.5em;
+  text-transform: uppercase;
+}
+.dlg-in:focus {
+  outline: none;
+}
+.dlg-btns {
+  display: flex;
+  justify-content: center;
+  gap: 0.8em;
+  padding: 0 1em 0.8em;
+}
+.dlg-rule {
+  height: 1px;
+  background: var(--rib);
+  margin: 0.2em 0;
+}
+/* The error dialog (S.errorBox) sits above any other dialog */
+.dlg-ov.err-ov {
+  z-index: var(--z-error);
+}
+.dlg-err {
+  min-width: min(24em, 100%);
+}
+/* Popup buttons in both modes: reverse video under the pointer or the
+   focus, as a tmux menu shows its chosen item */
+html[data-mode] :is(.dlg, .mail-toast, .tut) .btn:is(:hover, :focus-visible):not(:disabled) {
+  background: var(--haze);
+  border-color: var(--haze);
+  color: var(--hall);
+  text-shadow: none;
+  outline: none;
+}

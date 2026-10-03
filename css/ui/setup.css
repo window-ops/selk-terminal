@@ -1,0 +1,346 @@
+/* Setup (js/ui/setup.js): rows, option buttons, the drop-down list, the
+   tooltip, and the three views. */
+.set-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.2em 1em;
+  flex-wrap: wrap;
+}
+.set-label {
+  color: var(--dust);
+}
+.set-row:hover .set-label {
+  color: var(--haze);
+}
+.set-ctl {
+  display: flex;
+  gap: 0.2em 0.3em;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.opt {
+  padding: 0 0.5em;
+  font-size: 0.9em;
+}
+.opt.on {
+  background: var(--haze);
+  color: var(--hall);
+  text-shadow: none;
+  border-color: var(--haze);
+}
+.set-val {
+  min-width: 4.5ch;
+  text-align: center;
+}
+.set-range {
+  width: min(14em, 40vw);
+  accent-color: var(--titan);
+}
+/* Drop-down list, drawn by the game so it follows the game's styles */
+.set-pick {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+/* The down arrow is raised until its middle meets the middle of the
+   capitals (0.349em above the baseline in Plex Mono). Sizes round to whole
+   pixels; browsers without round() use the em values. */
+.set-pick-btn::after {
+  content: "";
+  display: inline-block;
+  width: 0.6em;
+  width: round(0.6em, 2px);
+  height: 0.35em;
+  height: round(0.35em, 1px);
+  margin-left: 0.6em;
+  vertical-align: 0.175em;
+  vertical-align: calc(0.349em - round(0.35em, 1px) / 2);
+  background: currentColor;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+}
+.set-pick-btn[aria-expanded="true"] {
+  border-color: var(--dust);
+}
+.set-pick-list {
+  position: absolute;
+  z-index: 6;
+  top: 100%;
+  left: 0;
+  min-width: 100%;
+  margin-top: 2px;
+  padding: 0.2em 0;
+  background: var(--hall);
+  font-size: 0.9em;
+}
+.set-pick-item {
+  display: block;
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  white-space: nowrap;
+  color: var(--haze);
+  background: none;
+  border: 0;
+  padding: 0.15em 0.9em;
+  text-shadow: inherit;
+}
+.set-pick-item[aria-selected="true"] {
+  background: var(--rib);
+}
+.set-pick-item:hover,
+.set-pick-item:focus-visible {
+  background: var(--haze);
+  color: var(--on-accent);
+  text-shadow: none;
+  outline: none;
+}
+/* The help tooltip. Its width comes from the text alone, so it keeps one
+   size wherever it is placed. */
+.set-tip {
+  position: absolute;
+  z-index: 2;
+  width: max-content;
+  max-width: min(22em, calc(100% - 16px));
+  padding: 0.35em 0.6em;
+  background: var(--haze);
+  color: var(--hall);
+  text-shadow: none;
+  font-size: 0.85em;
+  line-height: 1.4;
+  text-wrap: pretty;
+  box-shadow: 0.25em 0.25em 0 rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+/* Notice under the Language row in a translated game */
+.set-note {
+  margin: 0 0 0.35em;
+  color: var(--dust);
+  font-size: 0.85em;
+  line-height: 1.4;
+}
+/* Warning under conflicting save settings */
+.set-warn {
+  color: var(--flag);
+  font-size: 0.85em;
+  line-height: 1.4;
+  padding-left: 0.6em;
+  border-left: 2px solid var(--flag);
+}
+.set-warn p {
+  margin: 0;
+}
+.set-warn p + p {
+  margin-top: 0.5em;
+}
+/* Rows that cannot apply now: greyed, with the reason under the label */
+.set-unavail .set-label,
+.set-unavail .set-ctl {
+  opacity: 0.55;
+}
+.set-why {
+  display: block;
+  font-size: 0.8em;
+  color: var(--dust);
+}
+/* FULL LIST: plain headings */
+.set-group {
+  color: var(--set-sec);
+  font-size: 0.85em;
+  letter-spacing: 0.1em;
+  margin: 0.2em 0;
+}
+/* SECTIONS: a header per section, with the name on the left and the
+   count on the right; open rows are indented on a rule */
+.set-list,
+.set-sec-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35em;
+}
+.set-sec-body {
+  margin: 0.35em 0 0.35em 0.35em;
+  padding-left: 0.8em;
+  border-left: 2px solid var(--rib);
+}
+.set-sec-body[hidden] {
+  display: none;
+}
+.set-body.set-folding {
+  gap: 0;
+}
+.set-folding > .set-row {
+  margin-bottom: 0.35em;
+}
+.set-sec:last-child > .set-sec-body {
+  margin-bottom: 0;
+}
+.set-sec-head {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6em;
+  width: 100%;
+  font: inherit;
+  font-size: 0.85em;
+  letter-spacing: 0.1em;
+  text-align: left;
+  color: var(--set-sec);
+  text-shadow: inherit;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--rib);
+  padding: 0.35em 0.1em;
+}
+.set-sec:last-child .set-sec-head {
+  border-bottom: 0;
+}
+.set-sec-mark {
+  color: var(--dust);
+}
+.set-sec-name {
+  flex: 1 1 auto;
+}
+.set-sec-count {
+  color: var(--dust);
+  letter-spacing: 0;
+}
+.set-sec-head:hover .set-sec-name,
+.set-sec-head.open .set-sec-name {
+  color: var(--haze);
+}
+.set-sec-head.open .set-sec-mark {
+  color: var(--titan);
+}
+/* Levels are colour coded in every view: sections in titan, groups in
+   lamp green, settings that belong to another setting on a dust rule */
+.set-body {
+  --set-sec: var(--titan);
+  --set-grp: var(--lamp);
+  --set-sub: var(--dust);
+}
+/* A group: its title and its settings, on a rule in the group colour */
+.set-sub,
+.set-subgroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35em;
+  margin-left: 0.35em;
+  padding-left: 0.8em;
+}
+.set-subgroup {
+  border-left: 2px solid color-mix(in srgb, var(--set-grp) 60%, transparent);
+}
+.set-sub-h {
+  color: var(--set-grp);
+  font-size: 0.85em;
+  letter-spacing: 0.1em;
+}
+/* Settings that belong to the setting above */
+.set-sub {
+  border-left: 1px solid var(--set-sub);
+}
+/* PAGES: the section list has no gap between buttons, as in SECTIONS */
+.set-navs {
+  display: flex;
+  flex-direction: column;
+}
+.set-navs > :last-child {
+  border-bottom: 0;
+}
+.set-nav:hover .set-sec-mark,
+.set-nav:focus-visible .set-sec-mark {
+  color: var(--titan);
+}
+/* Additional settings at the bottom of a page, under a rule */
+.set-more {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35em;
+  margin-top: 0.2em;
+  padding-top: 0.4em;
+  border-top: 1px solid var(--rib);
+}
+/* A line that opens a group or the settings under a setting: as tall as a
+   setting row, with the count and [>] on the right */
+.set-link {
+  display: flex;
+  align-items: center;
+  min-height: 1.5em;
+  gap: 0.6em;
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  text-transform: none;
+  color: var(--haze);
+  text-shadow: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.set-link-name {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+.set-link-grp .set-link-name {
+  color: var(--set-grp);
+  font-size: 0.85em;
+  letter-spacing: 0.1em;
+}
+.set-link-sub .set-link-name {
+  color: var(--dust);
+}
+.set-link-count,
+.set-link-mark {
+  flex: none;
+  color: var(--dust);
+  font-size: 0.85em;
+  white-space: nowrap;
+}
+.set-link:hover .set-link-name,
+.set-link:focus-visible .set-link-name {
+  color: var(--haze);
+}
+.set-link:hover .set-link-mark,
+.set-link:focus-visible .set-link-mark {
+  color: var(--titan);
+}
+/* A page starts with BACK and the path to it, each part in the colour of
+   its level */
+.set-crumb {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  padding-bottom: 0.4em;
+  border-bottom: 1px solid var(--rib);
+}
+.set-where {
+  min-width: 0;
+  color: var(--dust);
+  font-size: 0.85em;
+  letter-spacing: 0.1em;
+  overflow-wrap: anywhere;
+}
+.set-crumb-sec {
+  color: var(--set-sec);
+}
+.set-crumb-grp {
+  color: var(--set-grp);
+}
+.set-crumb-set {
+  color: var(--haze);
+  letter-spacing: 0;
+}
+/* The arrow is drawn, centred on the capitals of the count beside it
+   (0.349em above the baseline in Plex Mono), as the drop-down arrow is */
+.set-link-mark::before {
+  content: "";
+  display: inline-block;
+  width: 0.35em;
+  width: round(0.35em, 1px);
+  height: 0.6em;
+  height: round(0.6em, 2px);
+  vertical-align: 0.05em;
+  vertical-align: calc(0.349em - round(0.6em, 2px) / 2);
+  background: currentColor;
+  clip-path: polygon(0 0, 35% 0, 100% 50%, 35% 100%, 0 100%, 65% 50%);
+}

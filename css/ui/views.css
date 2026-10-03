@@ -1,0 +1,156 @@
+/* The other windows: VIEW, MAIL, WATCH and REPORT, plus the Storage page
+   rows and the decision page. */
+.viewer {
+  display: flex;
+  flex-direction: column;
+}
+.v-head {
+  padding: 0.35em 1em;
+  color: var(--dust);
+  border-bottom: 1px dashed var(--rib);
+  font-size: 0.85em;
+}
+.v-body {
+  flex: 1;
+  min-height: 0;
+  padding: 0.8em 1em;
+}
+/* A handbook note opened under the entry */
+.v-note {
+  border-top: 1px solid var(--rib);
+  padding: 0.6em 1em;
+  max-height: 40%;
+  overflow-y: auto;
+  position: relative;
+}
+.v-note .note {
+  border: 0;
+  padding: 0;
+}
+.v-close {
+  float: right;
+  font-size: 0.8em;
+}
+.mailpane,
+.watch,
+.reportpane {
+  padding: 0.8em 1em;
+}
+/* Inbox rows */
+.mrow {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: var(--dust);
+  background: none;
+  border: 0;
+  border-bottom: 1px dotted var(--rib);
+  padding: 0.2em 0;
+  text-shadow: inherit;
+  display: flex;
+  align-items: baseline;
+  gap: 1em;
+}
+.mrow.unread {
+  color: var(--titan);
+}
+.mrow:hover {
+  color: var(--haze);
+}
+.mrow.open {
+  color: var(--haze);
+  background: rgba(214, 195, 150, 0.08);
+}
+.mrow-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mrow-new {
+  margin-left: auto;
+  flex: none;
+}
+/* WATCH: the live camera and the telemetry meters */
+.watch .ln {
+  white-space: pre;
+}
+.livecam {
+  margin: 0 0 0.8em;
+}
+canvas.live {
+  display: block;
+  width: min(100%, 640px);
+  aspect-ratio: 2 / 1;
+  image-rendering: pixelated;
+  border: 1px solid var(--rib);
+  background: #a88d5c;
+}
+.telem {
+  margin-bottom: 0.9em;
+}
+.telem dd {
+  display: flex;
+  align-items: center;
+  gap: 0.7em;
+}
+.cbar {
+  white-space: pre;
+  font-variant-ligatures: none;
+}
+.meter-text {
+  white-space: nowrap;
+}
+/* REPORT page tabs */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4em;
+  margin-bottom: 0.2em;
+}
+.tab.act {
+  border-color: var(--titan);
+  color: var(--titan);
+}
+.tab.done {
+  color: var(--lamp);
+}
+.tab.decide {
+  border-color: var(--flag);
+  color: var(--flag);
+}
+.decision-list {
+  margin: 0.8em 0;
+  padding-left: 1.6em;
+  display: grid;
+  gap: 0.35em;
+}
+/* Storage page: readable name, then place, size and raw key */
+.storage-name {
+  display: grid;
+  min-width: 0;
+}
+.storage-meta {
+  font-size: 0.82em;
+  overflow-wrap: anywhere;
+}
+.st-json {
+  max-height: 20em;
+  overflow: auto;
+  border-left: 2px solid var(--rib);
+  padding-left: 0.7em;
+  margin: 0.3em 0 0.6em;
+  font-size: 0.9em;
+}
+@media (max-width: 700px) {
+  .v-body,
+  .mailpane,
+  .watch,
+  .reportpane {
+    padding: 0.6em 0.7em;
+  }
+  .tab,
+  .mrow {
+    min-height: var(--tap-mobile);
+  }
+}

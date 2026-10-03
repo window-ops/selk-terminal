@@ -1,0 +1,51 @@
+/* The title screen: the logo, the sign-in row and its toggles. */
+.title {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.4em;
+}
+.title-big {
+  font-family: var(--font-crt);
+  font-size: clamp(4.5rem, 16vw, 10rem);
+  line-height: 0.9;
+  letter-spacing: 0.25em;
+  margin-right: -0.25em;
+}
+.title-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6em;
+  margin-top: 1.4em;
+}
+.title-toggles {
+  margin-top: 0.4em;
+}
+.title-go {
+  margin-top: 1.4em;
+  padding: 0.35em 1.6em;
+  color: var(--titan);
+  border-color: var(--titan);
+}
+/* Haze borders; a hover, the focus or a toggle that is on fills them */
+.title .btn {
+  color: var(--haze);
+  border-color: var(--rib);
+}
+.title .btn.primary {
+  color: var(--titan);
+  border-color: var(--titan);
+}
+.title .btn:is(:hover, :focus-visible, [aria-pressed="true"]) {
+  background: var(--haze);
+  color: var(--hall);
+  text-shadow: none;
+  outline: none;
+}
+.title .btn.primary:is(:hover, :focus-visible, [aria-pressed="true"]) {
+  background: var(--titan);
+}

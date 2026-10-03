@@ -1,7 +1,5 @@
 # Selk
 
-NOTE: THIS IS A MANUAL COPY OF THE REPOSITORY [FROM GITLAB](https://gitlab.com/window-ops-web/selk-terminal) BECAUSE I AM TOO TIRED TO ALSO MIRROR THIS REPOSITORY. MAY BE OUTDATED.
-
 Selk is a short, browser-based investigation game set at a fictional research and construction site inside the real Selk crater on Titan. Read the site's files, follow the evidence, complete reports, and decide what happens to the base.
 
 The game explores possible microbial life, automated infrastructure, and turbocapitalism. Its setting imagines a future led by an Eastern European space agency. The Selk Operating System, CESEA, HX Holdings, and the mission are fictional.
@@ -42,6 +40,8 @@ The interface works with keyboard, mouse, and touch. A right click, or a press h
 
 MAIL shows the inbox and, beside it, the MESSAGE pane, where messages open. In tmux mode, Setup > Display > Sole pane frames OFF draws a pane that is alone in its window without border or header; right-click the pane, or press and hold it on a touch screen, for CLOSE, POP IN or SHOW INBOX. Drag the line between two panes to resize them; a double click returns to the default size.
 
+Setup (F9) opens on a list of sections, each on its own page; BACK or Escape returns. Settings that belong to another one open from its MORE button. Setup view switches to SECTIONS or FULL LIST, which show every setting on one page. Sound > Control sounds gives each kind of control its own sound.
+
 On mobile, use the bottom navigation buttons to switch between the available views. In MAIL, HIDE INBOX gives the open message the whole page and SHOW INBOX brings the list back.
 
 ### Playing in the shell
@@ -54,12 +54,12 @@ The whole game can be played by typing. Type `help` for the list of commands. To
 - `watch` prints the site telemetry once.
 - `decide` opens the final decision, where the number keys choose.
 
-Two more rows in the same section act while Shell results is IN SHELL, in tmux mode:
+The SHELL OUTPUT group has three more rows, which act in tmux mode. Two of them act while Shell results is IN SHELL:
 
 - **Panel results** sets what the FILES panel, the F keys and the status bar do. IN VIEW opens their windows only, so the shell and the panes stay separate. BOTH opens their windows and prints their results in the shell.
 - **Shell-only DESK** keeps SHELL alone on DESK, including when the shell was popped out into its own window. MAIL and WATCH stay available, and messages still open in MESSAGE. In SINGLE layout or on narrow screens, FILES and VIEW are normally hidden; a direct request to open either reveals it temporarily, until the next typed command. Reports opened from MAIL still print in SHELL.
 
-A row that another Setup choice would make usable stays in view, greyed, with the reason beside it. Display > Unavailable settings > HIDE leaves those rows out until they can apply. In desktop mode these rows, Layout and Redirect notices are greyed, since they act in tmux mode; switching Mode to TMUX makes them usable again. Redirect notices is greyed while Shell results is IN SHELL, since the note marks typed results that open in a window.
+A row that another Setup choice would make usable stays in view, greyed, with the reason beside it. Display > Setup screen > Unavailable settings > HIDE leaves those rows out until they can apply. In desktop mode these rows, Layout and Redirect notices are greyed, since they act in tmux mode; switching Mode to TMUX makes them usable again. Redirect notices is greyed while Shell results is IN SHELL, since the note marks typed results that open in a window.
 
 ## Project notes
 
@@ -84,9 +84,10 @@ The game is plain JavaScript loaded by `index.html` in dependency order. Every f
 - `js/game/`: mail, hints, reports, the ending, telemetry and the live camera
 - `js/ui/`: tmux and desktop modes, the status bar, dialogs, Setup, the Storage page, the tour and the other interface parts
 - `js/dev/`: the debug panel and the developer notes page
+- `css/`: the tokens and cursors, `crt/` for the monitor and the screen effects, `ui/` with one file per part of the interface, and `themes/` for the tmux and desktop looks
 - `js/data/`, `js/lang/`: story data and language files
 
-[DEVELOPING.md](DEVELOPING.md) describes the data files, the progression, the saved state, the interfaces and the development tools.
+[DEVELOPING.md](DEVELOPING.md) is the index of the developer documents in `docs/`: the data files, the progression, the saved state, the interfaces, the styles and the development tools.
 
 ## Languages
 

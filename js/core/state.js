@@ -1,6 +1,6 @@
-/* Saved game state and settings, the site clock, and small lookups for sections,
-   entries and reports. The game saves to sessionStorage (this tab) by default and
-   to localStorage (this computer) once the player chooses to keep it. */
+/* Saved game state and settings, the site clock, and lookups for sections,
+   entries and reports. The game saves to sessionStorage (this tab) by default
+   and to localStorage (this computer) when the player chooses it. */
 (function () {
   var S = window.SELK = window.SELK || {};
   var KEY = "selk-terminal-v1";
@@ -29,33 +29,47 @@
       click: "single",
       cursor: "m",
       tooltips: true,
-      /* Setup > Sole pane frames. false: in tmux mode, a pane that is alone
-         in its window and not zoomed has no border and no header (see
-         paneEl in tmux.js) */
+      /* Setup > Display > Error messages. "auto": a dialog in desktop mode,
+         the status bar in tmux mode. "dialog" and "bar" apply to both modes.
+         Read through S.errorsAsDialog (dialogs.js). */
+      errors: "auto",
+      /* Setup > Display > Scroll long messages. true: a status line message
+         wider than its space scrolls by itself (autoScroll in status.js) */
+      barScroll: false,
+      /* Setup > Display > Pretty wrap. true: the last word of a text block
+         stays off a line of its own (body.pretty-wrap) */
+      prettyWrap: false,
+      /* Setup > Display > Sole pane frames. false: in tmux mode, a pane alone
+         in its window and not zoomed has no border or header (paneEl in
+         tmux.js) */
       soloFrames: true,
-      /* Setup > Unavailable settings. "show": rows that cannot apply right
-         now stay in Setup, greyed, with the reason (S.SETTING_OFF in
-         context.js). "hide": those rows are left out until they can apply. */
+      /* Setup > Display > Unavailable settings. "show": rows that cannot
+         apply now are greyed with the reason (S.SETTING_OFF in context.js).
+         "hide": those rows are left out. */
       unavailable: "show",
       motion: "system",
       redirectNotes: true,
       shellOut: "view",
-      /* Setup > Panel results. Read only while shellOut is "shell" and the
-         mode is tmux. It covers commands from the FILES panel, the F keys
-         and function bar, the status bar buttons and the Alt shortcuts.
-         "view": open their windows. "both": open their windows and print
-         their results in the shell. See route() in commands.js. */
+      /* Setup > Panel results, read only while shellOut is "shell" in tmux
+         mode. It covers the FILES panel, the F keys, the status bar buttons
+         and the Alt shortcuts. "view": open their windows. "both": open their
+         windows and print their results in the shell (route() in
+         commands.js). */
       panelOut: "view",
-      /* Setup > Shell-only DESK. Read only while shellOut is "shell" and the
-         mode is tmux. true: DESK becomes SHELL and holds the shell alone;
-         MAIL remains available for reading messages (see shellOnly() in tmux.js) */
+      /* Setup > Shell-only DESK, read only while shellOut is "shell" in tmux
+         mode. true: DESK becomes SHELL and shows only the shell; MAIL stays
+         available (shellOnly() in tmux.js) */
       deskShell: false,
-      /* Narrow screens: "dual" shows the inbox above the MESSAGE pane,
-         "single" shows MESSAGE alone */
+      /* Narrow screens: "dual" shows the inbox above MESSAGE, "single" shows
+         MESSAGE alone */
       mailList: "dual",
-      /* Pane sizes set by dragging a divider, keyed by split (see splitKey in tmux.js) */
+      /* Pane sizes set by dragging a divider, by split (splitKey in tmux.js) */
       splits: {},
-      setupView: "sections",
+      /* Setup > Setup view: "pages", "sections" or "list" (setup.js) */
+      setupView: "pages",
+      /* Setup > Sound > Control sounds. true: controls marked data-sound
+         play their own sound (ui-sound.js) */
+      ctlSounds: false,
       debug: false,
       debugLog: false,
       /* Setup > Debug > Fast mode, read through S.fast */
@@ -88,10 +102,9 @@
     };
   }
   S.state = fresh();
-  /* Fast mode shortens the game's waits for testing: mail arrives after
-     80 ms, a transmission counts down in 0.3 s and the finale plays its
-     lines and pauses at a fraction of their length. Read-only; the value
-     lives in settings.fast, so it is saved with the other settings. */
+  /* Fast mode shortens waits for testing: mail arrives after 80 ms, a
+     transmission counts down in 0.3 s and the finale runs at a fraction of
+     its length. The value is settings.fast; S.fast reads it. */
   Object.defineProperty(S, "fast", {
     get: function () { return !!(S.state && S.state.settings && S.state.settings.fast); }
   });
@@ -144,9 +157,9 @@
         S.wiped = true;
       }
     } catch (e) {}
-    /* Builds from before tab saving wrote every save to localStorage. Such a
-       save stays there, and selk-save-local is set to mark it as kept on
-       this computer. */
+    /* Builds before tab saving wrote every save to localStorage. Such a save
+       stays there, and selk-save-local is set to mark it as kept on this
+       computer. */
     try {
       if (!S.saveLocal() && localStorage.getItem(KEY) && !sessionStorage.getItem(KEY)) {
         localStorage.setItem(S.LOCAL_KEY, "1");
@@ -160,8 +173,8 @@
           S.state = Object.assign(fresh(), data);
           var ds = data.settings || {};
           S.state.settings = ds.sv === 2 ? Object.assign(defaults(), ds) : defaults();
-          /* Saves from the builds where the rolling scanline was on by default
-             go back to off, unless the player chose it */
+          /* Older builds had the rolling scanline on by default; it returns
+             to off unless the player chose it */
           if (!S.state.settings.scanRollChosen) {
             S.state.settings.scanRoll = false;
           }
@@ -169,8 +182,8 @@
           if (S.state.settings.panelOut === "shell") {
             S.state.settings.panelOut = "both";
           }
-          /* Older builds had one Debug switch for both the panel and the
-             console log. A save from then with Debug on keeps both on. */
+          /* Older builds had one Debug switch for the panel and the console
+             log. A save with it on keeps both on. */
           if (ds.sv === 2 && ds.debug && ds.debugLog === undefined) {
             S.state.settings.debugLog = true;
           }
@@ -232,8 +245,8 @@
       return true;
     }
     /* Report 4 opens once either follow-up page (3A or 3B) is accepted. The
-       other follow-up page stays open; accepting it later, before the final
-       choice, makes the ending that needs it available */
+       other page stays open, and accepting it before the final choice makes
+       the ending that needs it available. */
     var reports = S.state.reports;
     return !!((reports.R3A && reports.R3A.done) || (reports.R3B && reports.R3B.done));
   };
@@ -263,8 +276,8 @@
     var p = id.split("/"), s = S.sectionById(p[0]);
     return (s ? s.name : p[0]).toUpperCase() + " / " + p[1];
   };
-  /* Section id from a typed word: the id itself or the section's name in the
-     game's language, ignoring case and accents ("structură", "structura") */
+  /* Section id from a typed word: the id or the section's name in the game's
+     language, ignoring case and accents ("structură", "structura") */
   S.secId = function (word) {
     var w = String(word || "").toLowerCase().replace(/\/$/, "");
     var fold = function (x) { return String(x).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, ""); };

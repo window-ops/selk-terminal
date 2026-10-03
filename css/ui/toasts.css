@@ -1,0 +1,188 @@
+/* The notification stack: toasts (new mail, the transmission, the save
+   reminder) and the tour panel. Their frames and heads are in css/themes/.
+   --pop-pt and --pop-px are the top and side padding, which the heads read
+   to sit on the frame. */
+.notification-stack {
+  position: absolute;
+  right: 0.8em;
+  top: 2.2em;
+  z-index: var(--z-toast);
+  width: min(29em, calc(100% - 1.6em));
+  max-height: calc(100% - 3em);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65em;
+  overflow-y: auto;
+  pointer-events: none;
+}
+.notification-stack > * {
+  width: 100%;
+  flex: 0 0 auto;
+  pointer-events: auto;
+}
+/* Hung from the bottom edge, the order reverses so the tour panel (the
+   first child) stays on that edge */
+.screen.desktop .notification-stack {
+  top: auto;
+  bottom: 1em;
+  right: auto;
+  left: 1em;
+  flex-direction: column-reverse;
+}
+.mail-toast {
+  --pop-pt: 0.7em;
+  --pop-px: 0.9em;
+  background: var(--hall);
+  padding: var(--pop-pt) var(--pop-px) 0.8em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45em;
+}
+html[data-motion="full"] .mail-toast {
+  animation: mail-toast-in 0.3s ease-out;
+}
+@keyframes mail-toast-in {
+  from {
+    transform: translateY(-12px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+.mail-toast-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6em;
+  color: var(--titan);
+}
+.mail-toast-lead {
+  font-family: var(--font-crt);
+  font-size: 1.2em;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mail-toast-tag {
+  color: var(--flag);
+  margin-right: 0.4em;
+  font-weight: bold;
+}
+.mail-toast-body {
+  color: var(--haze);
+}
+.mail-toast-actions {
+  display: flex;
+  gap: 0.6em;
+}
+.tut {
+  --pop-pt: 0.6em;
+  --pop-px: 0.9em;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.45em;
+  background: var(--hall);
+  padding: var(--pop-pt) var(--pop-px) 0.7em;
+}
+.tut-head {
+  font-family: var(--font-crt);
+  font-size: 1.2em;
+  color: var(--titan);
+}
+.tut p {
+  margin: 0 0 0.6em;
+}
+.tut-btns {
+  display: flex;
+  gap: 0.6em;
+}
+.tut-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6em;
+}
+/* The roll toggle exists on narrow screens only. Its whole bar toggles the
+   panel, so the tap target stays the full width. */
+.tut-roll {
+  display: none;
+  flex: 0 0 auto;
+}
+.tut.rolled .tut-body {
+  display: none;
+}
+[data-screen="narrow"] .tut-roll {
+  display: inline-flex;
+  align-items: center;
+  min-height: 1.6rem;
+  padding: 0.15em 0.55em;
+  font-size: 0.85em;
+  line-height: 1.3;
+}
+[data-screen="narrow"] .tut-bar {
+  cursor: pointer;
+}
+[data-screen="narrow"] .tut.rolled {
+  padding-bottom: 0.45em;
+}
+/* The control the tour points at */
+.tut-spot {
+  outline: 2px dashed var(--titan) !important;
+  outline-offset: 3px;
+  position: relative;
+  z-index: 4;
+}
+html[data-motion="full"] .tut-spot {
+  animation: tutspot 1.2s ease-in-out infinite;
+}
+@keyframes tutspot {
+  50% {
+    outline-color: var(--haze);
+  }
+}
+@media (max-width: 700px) {
+  .notification-stack {
+    top: auto;
+    right: 0.45em;
+    bottom: 8.7rem;
+    left: 0.45em;
+    width: auto;
+    max-height: min(60%, 27rem);
+    flex-direction: column-reverse;
+  }
+  .notification-stack.tut-mobile-top {
+    top: 0.45em;
+    bottom: auto;
+    flex-direction: column;
+  }
+  .notification-stack.tut-mobile-bottom {
+    top: auto;
+    bottom: 8.7rem;
+    flex-direction: column-reverse;
+  }
+  .screen.desktop .notification-stack {
+    bottom: 9.7rem;
+  }
+  .mail-toast {
+    width: 100%;
+  }
+  .tut {
+    --pop-pt: 0.45em;
+    --pop-px: 0.65em;
+    padding-bottom: 0.5em;
+  }
+  .tut p {
+    margin: 0 0 0.4em;
+  }
+  .tut-btns {
+    flex-wrap: wrap;
+  }
+  .tut-btns .btn,
+  .mail-toast-actions .btn {
+    min-height: var(--tap-mobile);
+  }
+}

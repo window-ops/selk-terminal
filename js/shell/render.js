@@ -1,5 +1,5 @@
-/* Turns entry text into real HTML: field lists, tables, paragraphs, system files
-   and JSON. Shared by the game and the developer notes page. */
+/* Turns entry text into HTML: field lists, tables, paragraphs, system files
+   and JSON. Used by the game and the developer notes page. */
 (function () {
   var S = window.SELK = window.SELK || {};
   function mk(tag, cls) {
@@ -68,7 +68,8 @@
     return d;
   };
 })();
-/* System files: each format becomes real HTML, so nothing needs a pre block or side scrolling */
+/* System files: each format becomes HTML, so none needs a pre block or
+   sideways scrolling */
 (function () {
   var S = window.SELK;
   function mk(tag, cls, text) {

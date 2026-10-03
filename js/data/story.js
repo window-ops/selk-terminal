@@ -1,6 +1,6 @@
 /* Story data: locked-section passwords and hints (SELK.LOCKS), report pages
-   (SELK.REPORTS), mail (SELK.MESSAGES) and the entry labels that are false on
-   purpose (SELK.FALSE_LABELS). Spoilers: answers and passwords sit here. */
+   (SELK.REPORTS), mail (SELK.MESSAGES) and the entry labels that are false by
+   design (SELK.FALSE_LABELS). Contains the answers and passwords. */
 window.SELK = window.SELK || {};
 SELK.LOCKS = {
   archive: {
@@ -295,22 +295,37 @@ AUDIT DESK 4`
 The office requests two further pages: 3A on the gate history and 3B on the update history. Four sections are locked. Their passwords changed while you slept. Each password appears in an entry you can already open, as a name, a word or a number.
 AUDIT DESK 4`
   },
+  /* The text of MSG004 and MSG005 depends on what the office already has.
+     awaits names the other follow-up page: body is sent while that page is
+     outstanding, received when it was accepted before this message is
+     delivered. S.deliver records the choice with the message, so the text
+     does not change after delivery. */
   MSG004: {
     opens: [
       "R4"
     ],
+    awaits: "R3B",
     body:
     `REPORT 3A accepted.
-If cells live under FOOTING-B, zone 14 is partly real. Gate records forwarded to CESEA biology. REPORT 4 is open. If REPORT 3B is still open, accepting it before the final decision makes the option that depends on it available.
+If cells live under FOOTING-B, zone 14 is partly real. Gate records forwarded to CESEA biology. Fill in REPORT 4. REPORT 3B is still outstanding. The office can act on evidence about the update history once it arrives, so send it before you decide.
+AUDIT DESK 4`,
+    received:
+    `REPORT 3A accepted.
+If cells live under FOOTING-B, zone 14 is partly real. Gate records forwarded to CESEA biology. With REPORT 3B already received, the gate history and the update history both lead to EX-1. REPORT 4 should name who gained from it.
 AUDIT DESK 4`
   },
   MSG005: {
     opens: [
       "R4"
     ],
+    awaits: "R3A",
     body:
     `REPORT 3B accepted.
-Release key 7 belongs to our own signing office. It has been flagged for review. REPORT 4 is open. If REPORT 3A is still open, accepting it before the final decision makes the option that depends on it available.
+Release key 7 belongs to our own signing office. It has been flagged for review. Fill in REPORT 4. REPORT 3A is still outstanding. The office can approve research use of the site once it arrives, so send it before you decide.
+AUDIT DESK 4`,
+    received:
+    `REPORT 3B accepted.
+Release key 7 belongs to our own signing office. It has been flagged for review. Read beside REPORT 3A, which this office already holds, the update trail ends at the same plant as the gate records: EX-1. REPORT 4 should name who gained from it.
 AUDIT DESK 4`
   },
   MSG006: {

@@ -1,0 +1,91 @@
+/* tmux mode: popups after a tmux display-popup. A single-line frame in the
+   accent colour, no shadow. Titles and labels sit in the top border in a
+   small frame of their own. Buttons are text in a thin border, all alike. */
+html[data-mode="tmux"] :is(.dlg, .mail-toast, .tut, .status-info-pop, .switcher) {
+  border: 1px solid var(--accent);
+  box-shadow: none;
+}
+html[data-mode="tmux"] :is(.ctx, .set-pick-list) {
+  border: 1px solid var(--haze);
+}
+html[data-mode="tmux"] .dlg-title {
+  height: 0;
+  padding: 0;
+  color: var(--haze);
+  text-align: center;
+  overflow: visible;
+  position: relative;
+  z-index: 1;
+}
+html[data-mode="tmux"] .dlg-title-text {
+  display: inline-block;
+  transform: translateY(-50%);
+  background: var(--hall);
+  border: 1px solid var(--accent);
+  padding: 0 0.5em;
+  line-height: 1.5;
+}
+html[data-mode="tmux"] .dlg-body {
+  padding-top: 1.2em;
+}
+html[data-mode="tmux"] .dlg-in {
+  border: 0;
+  background: var(--rib);
+}
+html[data-mode="tmux"] .dlg-in:focus {
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+html[data-mode="tmux"] .dlg-btns {
+  gap: 0.6em;
+}
+html[data-mode="tmux"] :is(.dlg, .mail-toast, .tut) .btn {
+  background: none;
+  border: 1px solid var(--rib);
+  padding: 0 0.6em;
+  color: var(--haze);
+}
+/* Toast and tour heads: a row of no height on the top border, so each
+   label is centred on it. The margin keeps the text below clear. */
+html[data-mode="tmux"] :is(.mail-toast-head, .tut-bar) {
+  height: 0;
+  margin: calc(-1 * var(--pop-pt)) 0 0.9em;
+  overflow: visible;
+}
+html[data-mode="tmux"] :is(.mail-toast-head, .tut-bar) > * {
+  background: var(--hall);
+  line-height: 1.5;
+}
+html[data-mode="tmux"] :is(.mail-toast-lead, .tut-head) {
+  border: 1px solid var(--accent);
+  padding: 0 0.4em;
+  color: var(--haze);
+  font-size: 1em;
+  font-family: var(--font-mono);
+}
+/* The roll button sits on the border beside the label, at its height */
+html[data-mode="tmux"] .tut-bar > .tut-roll {
+  min-height: 0;
+  height: calc(1.5em + 2px);
+  padding: 0 0.5em;
+  font-size: 1em;
+  line-height: 1.5;
+}
+html[data-mode="tmux"][data-screen="narrow"] .tut.rolled {
+  padding-bottom: 0.3em;
+}
+/* Room above each toast for the labels that stand out of its border, and
+   more on a phone, clear of the rounded corners */
+html[data-mode="tmux"] .notification-stack {
+  padding-top: 0.8em;
+  gap: 1.2em;
+}
+html[data-mode="tmux"][data-screen="narrow"] .notification-stack {
+  padding-top: 1.2em;
+}
+html[data-mode="tmux"] .switcher-head {
+  padding: 0.1em 1em;
+  background: none;
+  color: var(--haze);
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+}

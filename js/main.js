@@ -1,5 +1,5 @@
-/* Start-up and input: the title screen, boot and sign-in sequence, keyboard
-   routing, clicks on command buttons, and the F-key actions. */
+/* Start-up and input: the title screen, the boot and sign-in sequence,
+   keyboard routing, clicks on command buttons, and the F-key actions. */
 (function () {
   var S = window.SELK;
   var $ = S.$;
@@ -74,7 +74,8 @@
     }
     $("screen").classList.remove("title-screen");
     S.mode = "busy";
-    /* hush(false) lifts the ending's hush when the title was reached from it */
+    /* hush(false) ends the ending's hush when the title screen follows an
+       ending */
     S.snd.init(); S.snd.setOn(S.state.sound); S.snd.hush(false); S.snd.boot(); S.snd.spinup(); S.snd.ambient(true);
     S.live.start();
     document.body.classList.add("powered");
@@ -157,16 +158,16 @@
         }, S.fast ? 80 : 3000);
       });
       if (st.ended) {
-        /* The game was finished: the endgame card comes back until the player
-           loads the save from before the decision */
+        /* A finished game shows the endgame card until the player loads the
+           save from before the decision */
         setTimeout(S.end.endgame, S.fast ? 50 : 1200);
       } else if (st.decision && returning) {
         scr.line(S.tc("The final decision is open. Type {decide}, or open the DECISION page in REPORT."), "warn");
       }
       if (!returning) {
-        /* First sign-in: open HOME / README unechoed, routed as a typed command,
-           so Shell results decides where it shows and a shell-only DESK
-           stays shell-only */
+        /* First sign-in: open HOME / README unechoed and routed as a typed
+           command, so Shell results decides where it shows and a shell-only
+           DESK stays shell-only */
         S.run("open home/README", false, "typed");
         if (!S.noTour) {
           S.tut.offer();
@@ -198,8 +199,8 @@
       S.mode = "busy"; attach(false);
     });
   }
-  /* Back to the title screen without reloading the page. The machine and the
-     wind fade out under the ending's hush, and POWER ON starts them again */
+  /* Back to the title screen without a reload. The machine and the wind fade
+     out under the ending's hush, and POWER ON starts them again. */
   S.toTitle = function () {
     S.snd.stopSwell(); S.snd.spindown(); S.snd.ambient(false);
     if (S.cine.isOpen()) { S.cine.close(); }
@@ -263,8 +264,8 @@
     }
     else if (n === 4) {
       /* USE: tmux takes the entry highlighted in FILES; the desktop takes the
-         selected entry icon, or else the entry open in the reader. The report
-         window does not need to be open. */
+         selected entry icon, else the entry open in the reader. REPORT does
+         not need to be open. */
       id = S.isDesktop() ? S.desk.selectedEntry() || S.lastOpened : S.ex.highlighted();
       var sel = S.state.sel;
       if (!sel) {
@@ -341,14 +342,20 @@
     }
   }
   function globalKey(e) {
+    /* The error dialog handles its own keys (dialogs.js); nothing under it
+       reacts, the dialog it covers included */
+    if (S.errorOpen && S.errorOpen()) {
+      return;
+    }
     if (S.dlg) {
       if (e.key === "Escape") {
         /* An open drop-down list inside the dialog closes first */
         if (S.closePick) {
           S.closePick();
         } else {
-          S.closeDialog();
+          S.escapeDialog();
         }
+        e.preventDefault();
       } return;
     }
     if (S.mode === "title") {
@@ -377,8 +384,8 @@
     if (S.mode !== "shell") {
       return;
     }
-    /* Native controls keep their own keys: Enter activates buttons, select
-       arrows change options, and Tab always advances through the page. */
+    /* Native controls keep their own keys: Enter activates buttons, arrows
+       change select options, and Tab moves through the page. */
     if (t && t.closest && t.closest("button, a, input, select, textarea, [contenteditable='true']")) {
       return;
     }
@@ -402,7 +409,8 @@
     S.tmux.render();
     S.prompt();
     title();
-    /* Settings are on the page now: show the room (see html.booting in crt.css) */
+    /* Settings are applied: show the room (html.booting in
+       css/crt/monitor.css) */
     document.documentElement.classList.remove("booting");
     document.addEventListener("keydown", globalKey, true);
     $("cmd").addEventListener("keydown", inputKey);
@@ -443,7 +451,6 @@
           S.noTour = !S.noTour;
           tb.textContent = S.noTour ? S.t("NO TOUR: ON") : S.t("NO TOUR: OFF");
           tb.setAttribute("aria-pressed", S.noTour ? "true" : "false");
-          tb.classList.toggle("primary", S.noTour);
         }
         else {
           start();

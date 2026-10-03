@@ -3,10 +3,9 @@
   var S = window.SELK;
   var K = S.cmd, scr = K.scr, err = K.err;
   /* The USE button under the entry opened last. It follows the selected
-     blank: selecting a blank adds the button to the open entry at once, and
-     filling the blank or clearing the selection removes it, so the entry never
-     has to be opened a second time. Entries opened earlier lose their button,
-     since only the last one is on screen to be used. */
+     blank: selecting a blank adds the button to the open entry, and filling
+     the blank or clearing the selection removes it. Entries opened earlier
+     lose their button, since only the last one is on screen. */
   var useSlot = null;
   S.refreshUse = function () {
     document.querySelectorAll(".use-slot").forEach(function (s) {

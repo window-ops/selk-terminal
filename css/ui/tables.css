@@ -1,0 +1,105 @@
+/* Field lists (dl.fields) and entry tables (.etable), in the shell and in
+   every window. */
+.fields {
+  display: grid;
+  grid-template-columns: minmax(7em, max-content) minmax(0, 1fr);
+  gap: 0.1em 1.2em;
+  margin: 0;
+}
+.fields dt {
+  color: var(--dust);
+}
+.fields dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.fields dt.err,
+.fields dd.err {
+  color: var(--flag);
+}
+.fields dt.warn,
+.fields dd.warn {
+  color: var(--titan);
+}
+.fields.help dt {
+  color: var(--haze);
+}
+.fields.json {
+  gap: 0 0.8em;
+}
+.json-list {
+  margin: 0;
+  padding-left: 1.4em;
+}
+.json-v {
+  color: var(--haze);
+}
+.etable-wrap {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.etable-wrap:not(:first-child) {
+  margin-top: 0.75em;
+}
+.log > .etable-wrap,
+.out-group > .etable-wrap {
+  margin: 0.75em 0;
+}
+.etable {
+  border-collapse: collapse;
+  min-width: 100%;
+}
+.etable caption {
+  caption-side: top;
+  text-align: left;
+  color: var(--dust);
+  padding-bottom: 0.3em;
+}
+.etable th {
+  color: var(--titan);
+  font-weight: 400;
+  text-align: left;
+  border-bottom: 1px solid var(--rib);
+  padding: 0 1.2em 0.15em 0;
+  white-space: nowrap;
+}
+.etable td {
+  padding: 0.1em 1.2em 0.1em 0;
+  vertical-align: top;
+  border-bottom: 1px dotted var(--rib);
+  overflow-wrap: anywhere;
+}
+.etable tr.err td {
+  color: var(--flag);
+}
+.etable.wraps {
+  table-layout: auto;
+  width: 100%;
+}
+.etable.wraps td,
+.etable.wraps th {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+/* System files: sections of fields */
+.sysfile p {
+  margin: 0 0 0.25em;
+}
+.sys-sec {
+  color: var(--titan);
+  margin: 0.5em 0 0.15em;
+}
+.sysfile .fields .fields {
+  margin-top: 0.1em;
+}
+@media (max-width: 520px) {
+  .fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .fields dd {
+    margin-bottom: 0.35em;
+  }
+  .fields dt:empty {
+    display: none;
+  }
+}

@@ -41,11 +41,13 @@ Labels padded with spaces in the English original (boot checks, mail headers) ar
 
 ### commands and args
 
-The first word in each list is shown in help and messages. Every word in the list is accepted when typed, and so is the English word. Matching ignores case and accents, so list only genuinely different words. Prefer short imperatives or nouns that a player would type.
+The first word in each list is shown in help and messages. Every word in the list is accepted when typed, and so is the English word. Matching ignores case and accents, so list only words that differ in their letters. Prefer short imperatives or nouns that a player would type.
 
 ### story
 
 Only the fields in the skeleton are translated. Passwords (`locks.*.parts`), entry ids, report answer ids and system files (entries with `sys`, such as `/etc/hosts`) stay as they are. In report `lines`, the middle element stays `null`, which keeps the English answer ids.
+
+Most messages have one `body`. `MSG004` and `MSG005` also have `received`, the text the office sends when the other follow-up page reached it first. Translate both.
 
 Entry bodies use a small markup:
 

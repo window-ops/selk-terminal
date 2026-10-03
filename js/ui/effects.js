@@ -1,5 +1,5 @@
 /* Screen effects: S.applySettings() turns settings into classes and sound
-   levels, and S.previewInterference() shows a gust shake. */
+   levels, and S.previewInterference() shows the gust shake. */
 (function () {
   var S = window.SELK;
   var interferenceTimer = null;
@@ -27,6 +27,8 @@
     b.classList.toggle("no-scan", !s.scan);
     b.classList.toggle("no-flicker", !s.flicker);
     b.classList.toggle("no-glow", !s.glow);
+    b.classList.toggle("pretty-wrap", !!s.prettyWrap);
+    if (S.prettyWrap) { S.prettyWrap.apply(!!s.prettyWrap); }
     b.classList.toggle("no-poweron", !s.poweron);
     b.classList.remove("dragging", "moving", "resizing", "scroll-panning");
     document.documentElement.classList.remove("dragging", "scroll-panning");

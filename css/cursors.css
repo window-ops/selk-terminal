@@ -119,8 +119,8 @@ body.scroll-panning.pan-text, body.scroll-panning.pan-text *, .mc-mini.scroll-pa
 .title button {
   cursor: var(--cur-hand);
 }
-/* Openable items that can also fill a report blank: a hand with drag dots.
-   Over the grip or the icon badge the cursor turns into the grab hand. */
+/* Items that open and can fill a blank: a hand with drag dots, and the
+   grab hand over the grip or the icon badge */
 .mc-row[data-entry], .wb-icon[data-entry], .lnk[data-entry] {
   cursor: var(--cur-handdrag);
 }
@@ -128,7 +128,7 @@ body.scroll-panning.pan-text, body.scroll-panning.pan-text *, .mc-mini.scroll-pa
   cursor: var(--cur-grab);
 }
 
-/* Help: the arrow with a small question mark, over labels that open a tooltip */
+/* Labels that open a tooltip: the arrow with a question mark */
 .set-label,
 [data-help] {
   cursor: var(--cur-help);

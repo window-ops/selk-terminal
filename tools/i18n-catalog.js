@@ -5,15 +5,14 @@
                                              string in English, ready to translate
    node tools/i18n-catalog.js check xx      lists what js/lang/xx.js still lacks
    node tools/i18n-catalog.js keys          prints the interface keys, one per line
-   node tools/i18n-catalog.js unused xx     lists what js/lang/xx.js holds that nothing uses
+   node tools/i18n-catalog.js unused xx     lists what js/lang/xx.js has that no files use
 
-   Interface keys are found by scanning the scripts for string literals that
-   read as visible text; a few extra keys are harmless, since unused ones are
-   never looked up. Story text comes from the data files, and the notes pages
-   from the <main> element of each page. An interface key counts as used when
-   its text appears as a string literal or as element text anywhere in the
-   scripts and pages outside js/lang/ and tools/; the scan above is too narrow
-   for this, since it skips short lowercase text. See TRANSLATING.md. */
+   Interface keys are the string literals in the scripts that read as visible
+   text; an extra key is never looked up. Story text comes from the data
+   files, and the notes pages from the <main> element of each page. A key
+   counts as used when its text appears whole as a string literal or as
+   element text in the scripts and pages outside js/lang/ and tools/. See
+   TRANSLATING.md. */
 "use strict";
 const fs = require("fs"), path = require("path"), vm = require("vm");
 const ROOT = path.join(__dirname, "..");
@@ -100,7 +99,10 @@ function storySkeleton(S) {
     if (e.cap) o.cap = e.cap;
     story.entries[e.id] = o;
   });
-  Object.keys(S.MESSAGES).forEach((k) => { story.messages[k] = { body: S.MESSAGES[k].body }; });
+  Object.keys(S.MESSAGES).forEach((k) => {
+    story.messages[k] = { body: S.MESSAGES[k].body };
+    if (S.MESSAGES[k].received) story.messages[k].received = S.MESSAGES[k].received;
+  });
   Object.keys(S.NOTES).forEach((k) => { story.notes[k] = [S.NOTES[k][0], S.NOTES[k][1]]; });
   Object.keys(S.REPORTS).forEach((k) => {
     const r = S.REPORTS[k];

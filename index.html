@@ -6,9 +6,27 @@
     <meta name="description" content="Selk, a database investigation game on a failing Titan megastructure.">
     <title data-i18n>Selk terminal</title>
     <link rel="stylesheet" href="css/tokens.css">
-    <link rel="stylesheet" href="css/crt.css">
-    <link rel="stylesheet" href="css/terminal.css">
-    <link rel="stylesheet" href="css/report.css">
+    <link rel="stylesheet" href="css/crt/monitor.css">
+    <link rel="stylesheet" href="css/crt/screen.css">
+    <link rel="stylesheet" href="css/ui/base.css">
+    <link rel="stylesheet" href="css/ui/tables.css">
+    <link rel="stylesheet" href="css/ui/panes.css">
+    <link rel="stylesheet" href="css/ui/shell.css">
+    <link rel="stylesheet" href="css/ui/files.css">
+    <link rel="stylesheet" href="css/ui/views.css">
+    <link rel="stylesheet" href="css/ui/report.css">
+    <link rel="stylesheet" href="css/ui/fbar.css">
+    <link rel="stylesheet" href="css/ui/statusbar.css">
+    <link rel="stylesheet" href="css/ui/dialogs.css">
+    <link rel="stylesheet" href="css/ui/setup.css">
+    <link rel="stylesheet" href="css/ui/title.css">
+    <link rel="stylesheet" href="css/ui/desktop.css">
+    <link rel="stylesheet" href="css/ui/menus.css">
+    <link rel="stylesheet" href="css/ui/toasts.css">
+    <link rel="stylesheet" href="css/ui/debug.css">
+    <link rel="stylesheet" href="css/ui/ending.css">
+    <link rel="stylesheet" href="css/themes/tmux.css">
+    <link rel="stylesheet" href="css/themes/desktop.css">
     <link rel="stylesheet" href="css/cursors.css">
   </head>
   <body>
@@ -18,30 +36,30 @@
           <div id="panes" class="panes"></div>
           <div id="desk" class="desk" hidden></div>
           <nav class="fbar" aria-label="Function keys" data-i18n-attr="aria-label">
-            <button type="button" data-f="1" data-i18n><span class="fk">1</span>HELP</button>
-            <button type="button" data-f="2" data-i18n><span class="fk">2</span>MAIL</button>
-            <button type="button" data-f="3" data-i18n><span class="fk">3</span>VIEW</button>
-            <button type="button" data-f="4" data-i18n><span class="fk">4</span>USE</button>
-            <button type="button" data-f="5" data-i18n><span class="fk">5</span>REPORT</button>
-            <button type="button" data-f="6" data-i18n><span class="fk">6</span>HINTS</button>
-            <button type="button" data-f="7" data-i18n><span class="fk">7</span>UNLOCK</button>
-            <button type="button" data-f="8" data-i18n><span class="fk">8</span>WATCH</button>
-            <button type="button" data-f="9" data-i18n><span class="fk">9</span>SETUP</button>
-            <button type="button" data-f="10" data-i18n><span class="fk">10</span>EXIT</button>
+            <button type="button" data-f="1" data-sound="key" data-i18n><span class="fk">1</span>HELP</button>
+            <button type="button" data-f="2" data-sound="key" data-i18n><span class="fk">2</span>MAIL</button>
+            <button type="button" data-f="3" data-sound="key" data-i18n><span class="fk">3</span>VIEW</button>
+            <button type="button" data-f="4" data-sound="key" data-i18n><span class="fk">4</span>USE</button>
+            <button type="button" data-f="5" data-sound="key" data-i18n><span class="fk">5</span>REPORT</button>
+            <button type="button" data-f="6" data-sound="key" data-i18n><span class="fk">6</span>HINTS</button>
+            <button type="button" data-f="7" data-sound="key" data-i18n><span class="fk">7</span>UNLOCK</button>
+            <button type="button" data-f="8" data-sound="key" data-i18n><span class="fk">8</span>WATCH</button>
+            <button type="button" data-f="9" data-sound="key" data-i18n><span class="fk">9</span>SETUP</button>
+            <button type="button" data-f="10" data-sound="key" data-i18n><span class="fk">10</span>EXIT</button>
           </nav>
           <footer class="tmux" aria-label="Session status" data-i18n-attr="aria-label">
             <span id="tmux-wins" class="tmux-wins"></span>
             <input id="tmux-prompt" class="tmux-prompt" type="text" hidden autocomplete="off" spellcheck="false" aria-label="tmux command prompt" data-i18n-attr="aria-label">
-            <span id="tmux-msg" class="tmux-msg" role="status"></span>
+            <span id="tmux-msg" class="tmux-msg bar-msg is-empty" role="status"></span>
             <span class="tmux-right">
               <button type="button" id="tmux-shell-action" class="st-btn tmux-shell-action" hidden>POP OUT SHELL</button>
-              <button type="button" id="st-mail" class="st-btn" data-i18n>MAIL</button>
-              <button type="button" id="st-report" class="st-btn" data-i18n>REPORT</button>
-              <button type="button" id="st-uplink" class="st-btn st-uplink" data-status="uplink" title="Show uplink status" aria-label="Show uplink status" aria-expanded="false" aria-controls="status-info-pop" data-i18n data-i18n-attr="title,aria-label"></button>
+              <button type="button" id="st-mail" data-sound="open" class="st-btn" data-i18n>MAIL</button>
+              <button type="button" id="st-report" data-sound="open" class="st-btn" data-i18n>REPORT</button>
+              <button type="button" id="st-uplink" data-sound="menu" class="st-btn st-uplink" data-status="uplink" title="Show uplink status" aria-label="Show uplink status" aria-expanded="false" aria-controls="status-info-pop" data-i18n data-i18n-attr="title,aria-label"></button>
               <span id="st-hint" class="st-hint" hidden data-i18n>HINT</span>
-              <button type="button" id="st-save" class="st-save" data-status="storage" hidden title="Show storage status" aria-label="Show storage status" aria-expanded="false" aria-controls="status-info-pop" data-i18n data-i18n-attr="title,aria-label">SAVED</button>
-              <button type="button" id="st-sound" class="st-btn" aria-pressed="true">SOUND ON</button>
-              <button type="button" id="st-mode" class="st-btn" title="Switch to desktop mode" data-i18n data-i18n-attr="title">DESKTOP</button>
+              <button type="button" id="st-save" data-sound="menu" class="st-save" data-status="storage" hidden title="Show storage status" aria-label="Show storage status" aria-expanded="false" aria-controls="status-info-pop" data-i18n data-i18n-attr="title,aria-label">SAVED</button>
+              <button type="button" id="st-sound" data-sound="toggle" class="st-btn" aria-pressed="true">SOUND ON</button>
+              <button type="button" id="st-mode" data-sound="toggle" class="st-btn" title="Switch to desktop mode" data-i18n data-i18n-attr="title">DESKTOP</button>
               <span id="st-user" class="st-user"></span>
               <span id="st-clock"></span>
             </span>

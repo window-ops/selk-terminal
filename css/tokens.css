@@ -19,9 +19,8 @@
   font-style: normal;
   font-display: swap;
 }
-/* Latin Extended subsets. The faces above cover Latin-1; these add the
-   letters Romanian needs (ă, ș, ț) and the Polish names in the notes.
-   Each loads only when a page uses a letter in its range. */
+/* Latin Extended subsets for Romanian and the Polish names in the notes.
+   Each file loads only when a page uses a letter in its range. */
 @font-face {
   font-family: "Plex Mono";
   src: url("../fonts/IBMPlexMono-Regular-latin-ext.woff2") format("woff2");
@@ -64,5 +63,32 @@
   --font-mono: "Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   --font-crt: "VT323", "Plex Mono", ui-monospace, monospace;
   --tap-mobile: 2rem;
+  /* Six dots in two columns: the drag grip */
+  --dots: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 10'%3E%3Crect width='2' height='2'/%3E%3Crect x='4' width='2' height='2'/%3E%3Crect y='4' width='2' height='2'/%3E%3Crect x='4' y='4' width='2' height='2'/%3E%3Crect y='8' width='2' height='2'/%3E%3Crect x='4' y='8' width='2' height='2'/%3E%3C/svg%3E");
   --glow: 0 0 3px rgba(214, 195, 150, 0.55), 0 0 12px rgba(214, 195, 150, 0.18);
+
+  /* Interface roles. css/themes/ sets them per mode. The accent marks the
+     pointer and the keyboard focus; the selection marks a chosen value. */
+  --accent: var(--titan);
+  --on-accent: var(--hall);
+  --select: var(--haze);
+  --on-select: var(--hall);
+  --line: var(--rib);
+  --line-strong: var(--dust);
+  --deep: #0F1213;
+
+  /* Stacking order. Interface layers stay below 100 and the glass covers
+     them. Only the ending's stage and, during the ending, the debug panel
+     sit above the glass. */
+  --z-panes: 1;
+  --z-bars: 2;
+  --z-menu: 4;
+  --z-toast: 5;
+  --z-dialog: 6;
+  --z-error: 7;
+  --z-popover: 8;
+  --z-effects: 1000;
+  --z-ending: 1001;
+  --z-debug: 99;
+  --z-debug-ending: 1002;
 }

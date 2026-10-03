@@ -1,12 +1,13 @@
-/* All sound, synthesised with the Web Audio API: the machine hum, drive seeks,
-   wind, structure creaks and interface tones, mixed on separate volume buses. */
+/* All sound, synthesized with the Web Audio API: the machine hum, drive
+   seeks, wind, structure creaks and interface tones, mixed on separate volume
+   buses. */
 (function () {
   var S = window.SELK;
   var swellNow = null, ctx = null, master = null, bus = {}, duck = {}, pan = {}, hp = null, noiseBuf = null, amb = null, mach = null, on = true, lastKey = 0, wind = 0.2;
   /* Sound presets. Each sets the four channel levels once (the sliders stay
-     free afterwards), a high-pass that keeps out bass the speakers cannot
-     play, and how wide the stereo image is. DESK SPEAKERS suits a left and
-     right pair without a subwoofer. */
+     adjustable), a high-pass filter against bass the speakers cannot play,
+     and the stereo width. DESK SPEAKERS suits a left and right pair without a
+     subwoofer. */
   var PRESETS = {
     balanced: { vMachine: 70, vWind: 40, vUi: 75, vStruct: 65, hp: 40, width: 0.35 },
     speakers: { vMachine: 60, vWind: 30, vUi: 85, vStruct: 60, hp: 110, width: 0.6 },
@@ -33,11 +34,11 @@
     wind: "vWind",
     struct: "vStruct"
   };
-  /* Level changes glide. Reading AudioParam.value to find where a fade has got
-     to differs between browsers (Firefox reports the last value set, not the
-     one playing), and a fade started from a wrong value jumps, which is heard
-     as a bang. So every glide records its own start, end and times, and the
-     next one starts from the level computed from that record. */
+  /* Level changes glide. Browsers report AudioParam.value differently during
+     a fade (Firefox reports the last value set), and a fade that starts from
+     a wrong value jumps, which is heard as a bang. Each glide records its
+     start, end and times, and the next one starts from the level computed
+     from that record. */
   function levelOf(p) {
     var f = p._glide;
     if (!f) { return p.value; }
@@ -69,7 +70,8 @@
       return;
     }
     ctx = new AC();
-    /* master > high-pass (no sub-bass booms) > gentle compressor (no sudden peaks) > speakers */
+    /* master > high-pass (no sub-bass) > compressor (no sudden peaks) >
+       speakers */
     master = ctx.createGain();
     hp = ctx.createBiquadFilter(); hp.type = "highpass"; hp.Q.value = 0.7;
     var comp = ctx.createDynamicsCompressor();
@@ -109,14 +111,15 @@
     }
     var masterVol = on ? set().vol / 100 : 0, pr = preset();
     if (hp) { hp.frequency.value = pr.hp; }
-    /* The computer's hum sits a little to the left; everything else is centred on its channel */
+    /* The computer's hum is panned slightly left; the other channels are
+       centred */
     if (pan.machine) { pan.machine.pan.value = -0.5 * pr.width; }
-    /* Level changes from a slider or from SOUND ON glide over a short time, so
-     the level never jumps (a jump is heard as a click) */
+    /* Level changes from a slider or from SOUND ON glide over 50 ms, since a
+       jump in level is heard as a click */
     glide(master.gain, masterVol, 0.05);
     Object.keys(BUS).forEach(function (k) {
       var busVol = on ? (set()[BUS[k]] != null ? set()[BUS[k]] : 100) / 100 : 0;
-      /* Wind is background: well under the machine, the interface and the structure */
+      /* Wind sits well under the machine, the interface and the structure */
       if (k === "wind") { busVol *= 0.35; }
       glide(bus[k].gain, busVol, 0.05);
     });
@@ -274,7 +277,7 @@
         l3
       ];
     } else if (!start && amb) {
-      /* Fade out first: stopping a playing noise source clicks */
+      /* Fade out first, since stopping a playing noise source clicks */
       var a = amb, stopAt = ctx.currentTime + 0.6;
       amb = null;
       [a.low, a.howl, a.hiss].forEach(function (n) {
@@ -303,12 +306,34 @@
       }, 90 + Math.random() * 160);
     });
   }
+  /* Control sounds (Setup > Sound > Control sounds), one per kind of
+     control. ui-sound.js reads the kind from the data-sound attribute. Each
+     lasts 25 ms or more and is within about 2 dB of the click. A kind names
+     the control, not the outcome: the game plays ok, error or unlock when
+     the result is known. */
+  var UI = {
+    key: function () { burst(2400, 1.2, 0.22, 0.03); burst(900, 1, 0.12, 0.04, 0.012); tone(150, 0.06, "triangle", 0.06); },
+    toggle: function () { burst(3800, 2.5, 0.26, 0.025); burst(2400, 2.5, 0.26, 0.03, 0.05); },
+    fold: function () { burst(600, 0.8, 0.22, 0.07, 0, "lowpass"); tone(300, 0.08, "triangle", 0.05, 0, 450); },
+    page: function () { burst(3200, 2.5, 0.16, 0.018); tone(620, 0.06, "triangle", 0.062, 0.01); tone(930, 0.07, "triangle", 0.055, 0.065); },
+    back: function () { burst(3200, 2.5, 0.16, 0.018); tone(930, 0.06, "triangle", 0.062, 0.01); tone(620, 0.07, "triangle", 0.055, 0.065); },
+    close: function () { burst(2600, 2, 0.16, 0.02); tone(700, 0.1, "triangle", 0.048, 0.005, 330); },
+    action: function () { burst(3000, 2, 0.24, 0.025); burst(1200, 1.2, 0.15, 0.04, 0.02); tone(220, 0.06, "triangle", 0.05); },
+    menu: function () { burst(5200, 3, 0.24, 0.025); tone(1800, 0.04, "sine", 0.042); },
+    tab: function () { burst(1500, 4, 0.25, 0.03); tone(480, 0.06, "triangle", 0.062); },
+    open: function () { burst(3200, 2.5, 0.15, 0.018); tone(500, 0.09, "triangle", 0.05, 0.005, 760); },
+    /* The pitch follows the slider's value, 0 to 100 */
+    slide: function (v) { tone(400 + (+v || 0) * 10, 0.035, "square", 0.042); }
+  };
+  function click() {
+    burst(3200, 2.5, 0.32, 0.018); burst(1100, 1.2, 0.15, 0.03, 0.035);
+  }
   S.snd = {
     init: init,
     apply: apply,
     ambient: ambient,
     PRESETS: PRESETS,
-    /* Choosing a preset sets the four channel levels; the rest follows from it */
+    /* A preset sets the four channel levels */
     preset: function (name) {
       var pr = PRESETS[name];
       if (!pr) { return; }
@@ -317,12 +342,13 @@
       ["vMachine", "vWind", "vUi", "vStruct"].forEach(function (k) { st[k] = pr[k]; });
       apply();
     },
-    /* Ending swell, after the THX Deep Note: voices wander between 200 and 400 Hz,
-       then glide to a chord spread over several octaves while the whole thing
-       swells and opens up, holds, and fades. The chord follows the ending:
-       "hope" lands on D major, "hollow" on open fifths with no third, "dark"
-       on a cluster of semitones and tritones that never resolves. Each voice is
-       slightly detuned so the chord shimmers. Returns its length in seconds. */
+    /* Ending swell, after the THX Deep Note. Voices move at random between
+       200 and 400 Hz, then glide over 11 s to a chord spread over several
+       octaves while the level and the filter rise; the chord stays for 4 s
+       and fades out. The chord depends on the ending: "hope" is D major,
+       "hollow" open fifths with no third, "dark" a cluster of semitones and
+       tritones. Each voice is detuned slightly. Returns the length in
+       seconds. */
     swell: function (mood) {
       if (!ctx || !on) {
         return 0;
@@ -345,8 +371,8 @@
       out.gain.exponentialRampToValueAtTime(0.32, t0 + 11);
       out.gain.setValueAtTime(0.32, t0 + 15);
       out.gain.exponentialRampToValueAtTime(0.0001, t0 + 22);
-      /* The swell's own envelope is on out; stopping it fades this extra stage,
-         whose level is always known, so a stop never jumps */
+      /* The swell's envelope is on out. A stop fades this extra stage, whose
+         level is always known, so a stop never jumps. */
       var fade = ctx.createGain(); fade.gain.value = 1;
       out.connect(lp); lp.connect(fade); fade.connect(master);
       var voices = [];
@@ -356,7 +382,7 @@
         o.type = "sawtooth";
         var f = 200 + Math.random() * 200;
         o.frequency.setValueAtTime(f, t0);
-        /* Wandering: small random steps for the first five seconds */
+        /* Random steps for the first five seconds */
         for (var k = 1; k <= 12; k++) {
           f = Math.max(180, Math.min(420, f + (Math.random() - 0.5) * 60));
           o.frequency.linearRampToValueAtTime(f, t0 + k * 0.42);
@@ -381,15 +407,14 @@
         s.voices.forEach(function (o) { o.stop(t + 0.6); });
       } catch (e) {}
     },
-    /* The ending is silent but for the swell: every channel of the game
-       (machine, wind, structure, interface) fades out over a second and a
-       half. The swell goes straight to the master, so it still plays.
-       hush(false) restores the levels from Setup. */
+    /* During the ending only the swell plays: every channel fades out over
+       1.5 s, and the swell goes straight to the master. hush(false) restores
+       the Setup levels. */
     hush: function (on) {
       if (!ctx) {
         return;
       }
-      /* Calling it again while a fade runs continues from where the fade is */
+      /* A second call during a fade continues from the current level */
       Object.keys(duck).forEach(function (k) {
         glide(duck[k].gain, on ? 0 : 1, on ? 1.5 : 1.2);
       });
@@ -413,7 +438,7 @@
     setWind: function (w) {
       wind = Math.max(0, Math.min(1, w));
       /* Wind changes glide over two seconds; a step would cut into the
-         fade-in at power-on and click every 2.5 s afterwards */
+         fade-in at power-on and click every 2.5 s */
       if (ctx && amb && on) {
         glide(amb.low.g.gain, 0.1 + 0.25 * wind, 2);
         glide(amb.low.f.frequency, 260 + 500 * wind, 2);
@@ -422,8 +447,11 @@
       }
     },
     key: function () {
-      if (!on) {
+      if (!on || (S.state && !S.state.sound)) {
         return;
+      }
+      if (!ctx) {
+        init();
       }
       var now = Date.now();
       if (now - lastKey < 25) {
@@ -434,9 +462,15 @@
       tone(160 + Math.random() * 40, 0.03, "triangle", 0.05);
     },
     click: function () {
-      if (!on || (S.state && !S.state.sound)) return;
-      if (!ctx) init();
-      burst(3200, 2.5, 0.32, 0.018); burst(1100, 1.2, 0.15, 0.03, 0.035);
+      if (!on || (S.state && !S.state.sound)) { return; }
+      init();
+      click();
+    },
+    /* The sound of a kind of control; an unknown kind clicks */
+    ui: function (kind, value) {
+      if (!on || (S.state && !S.state.sound)) { return; }
+      init();
+      (UI[kind] || click)(value);
     },
     hdd: function (n) {
       led();
@@ -520,7 +554,8 @@
     },
     boot: function () {
       if (!on) return;
-      /* The relay clunk rises over 40 ms: an instant attack at this level was a bang */
+      /* The relay sound rises over 40 ms; an instant attack at this level was
+         heard as a bang */
       burst(120, 0.8, 0.12, 0.5, 0, null, bus.machine, 0.04);
       tone(60, 1.2, "sine", 0.05, 0.05, 50, bus.machine);
       tone(15700, 1.6, "sine", 0.006, 0.2);

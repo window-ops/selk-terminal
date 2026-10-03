@@ -1,0 +1,74 @@
+/* The context menu and the window switcher. Their frames are in css/themes/. */
+.ctx {
+  position: absolute;
+  z-index: var(--z-menu);
+  min-width: 16em;
+  background: var(--hall);
+  padding: 0.2em 0;
+  font-size: 0.9em;
+}
+.ctx-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 2em;
+  width: 100%;
+  font: inherit;
+  text-align: left;
+  color: var(--haze);
+  background: none;
+  border: 0;
+  padding: 0.15em 0.9em;
+  text-shadow: inherit;
+}
+.ctx-item:hover:not(:disabled),
+.ctx-item:focus-visible {
+  background: var(--haze);
+  color: var(--on-accent);
+  text-shadow: none;
+  outline: none;
+}
+.ctx-item:disabled {
+  color: var(--dust);
+}
+/* The shortcut on the right of an item */
+.ctx-key {
+  color: var(--dust);
+}
+.ctx-item:hover:not(:disabled) .ctx-key,
+.ctx-item:focus-visible .ctx-key {
+  color: var(--on-accent);
+}
+.ctx-sep {
+  height: 1px;
+  background: var(--rib);
+  margin: 0.2em 0;
+}
+.switcher {
+  position: absolute;
+  z-index: var(--z-popover);
+  left: 50%;
+  top: 40%;
+  transform: translate(-50%, -50%);
+  min-width: min(24em, 90%);
+  background: var(--hall);
+  padding: 0.3em 0 0.4em;
+}
+.switcher-head {
+  text-align: center;
+  background: var(--haze);
+  color: var(--hall);
+  text-shadow: none;
+  margin: -0.3em 0 0.3em;
+}
+.switcher-item {
+  padding: 0.15em 1em;
+}
+.switcher-item.on {
+  background: var(--titan);
+  color: var(--hall);
+  text-shadow: none;
+}
+.switcher-foot {
+  font-size: 0.8em;
+  padding: 0.3em 1em 0;
+}

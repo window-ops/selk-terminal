@@ -4,11 +4,10 @@
   S.$ = function (id) {
     return document.getElementById(id);
   };
-  /* Run fn, then put back the scroll position of box, of every scrolling
-     ancestor and of the page. A pane that rebuilds its content (a new message,
-     a report page) otherwise jumps: some browsers clamp the position while the
-     content is empty, and some move the view when focus returns, even with
-     preventScroll */
+  /* Run fn, then restore the scroll position of box, of every scrolling
+     ancestor and of the page. Without this a pane that rebuilds its content
+     jumps: some browsers clamp the position while the content is empty, and
+     some move the view when the focus returns, even with preventScroll. */
   S.keepScroll = function (box, fn) {
     var saved = [], n = box;
     while (n && n.nodeType === 1) {
@@ -28,8 +27,8 @@
   };
   /* Screen readers read ">" as "greater". Text that uses it as a separator
      keeps it on screen, hidden from them, with a spoken word in its place:
-     "to" in mail headings, "becomes" in chemical formulas (they carry "+"),
-     and a pause for paths such as "Setup > Saved data". */
+     "to" in mail headings, "becomes" in chemical formulas, and a pause in
+     paths such as "Setup > Saved data". */
   function word(text, mode) {
     var t = S.t || function (x) { return x; };
     if (mode === "to") { return " " + t("to") + " "; }
@@ -64,5 +63,53 @@
       n.textContent = text;
     }
     return n;
+  };
+  /* Pretty wrap: join the last word of a text block to the word before it
+     with a no-break space, so the last line has two words at least. Setup
+     tooltips always use it; Setup > Display > Pretty wrap
+     (settings.prettyWrap) applies it to every text block through
+     S.prettyWrap. Returns the changed text node, or null. */
+  S.wrapLast = function (node) {
+    var walk = document.createTreeWalker(node, NodeFilter.SHOW_TEXT), n, last = null;
+    while ((n = walk.nextNode())) { if (n.nodeValue.trim()) { last = n; } }
+    if (!last || last._pwVal === last.nodeValue) { return null; }
+    var text = last.nodeValue, match = /(\s+)(\S+)(\s*)$/.exec(text);
+    if (!match) { return null; }
+    var prefix = text.slice(0, match.index);
+    if (!/\S[\s\S]*\s\S/.test(prefix + match[2])) { return null; }
+    last._pwOrig = text;
+    last._pwVal = last.nodeValue = prefix + "\u00a0" + match[2] + match[3];
+    return last;
+  };
+  /* The text blocks Pretty wrap acts on. New blocks are wrapped as they are
+     added, and S.scr.reveal wraps shell, VIEW and MESSAGE text before it is
+     revealed. Turning the option off restores every text that has not changed
+     since. */
+  var WRAP_BLOCKS = "p, li, dd, .ln, .mail-toast-body, .status-info-copy, .set-note, .set-why, .cine-caption, .dlg-body > div:not([class])";
+  var wrapped = new Set(), wrapObs = null;
+  function wrapIn(root) {
+    if (!root || !root.querySelectorAll) { return; }
+    var list = [].slice.call(root.querySelectorAll(WRAP_BLOCKS));
+    if (root.matches && root.matches(WRAP_BLOCKS)) { list.unshift(root); }
+    list.forEach(function (b) { var n = S.wrapLast(b); if (n) { wrapped.add(n); } });
+  }
+  S.prettyWrap = {
+    on: false,
+    within: function (root) { if (S.prettyWrap.on) { wrapIn(root); } },
+    apply: function (on) {
+      if (on === S.prettyWrap.on) { return; }
+      S.prettyWrap.on = on;
+      if (on) {
+        wrapIn(document.body);
+        wrapObs = new MutationObserver(function (list) {
+          list.forEach(function (m) { [].forEach.call(m.addedNodes, function (x) { if (x.nodeType === 1) { wrapIn(x); } }); });
+        });
+        wrapObs.observe(document.body, { childList: true, subtree: true });
+      } else {
+        if (wrapObs) { wrapObs.disconnect(); wrapObs = null; }
+        wrapped.forEach(function (x) { if (x.nodeValue === x._pwVal) { x.nodeValue = x._pwOrig; } x._pwVal = null; });
+        wrapped.clear();
+      }
+    }
   };
 })();

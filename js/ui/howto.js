@@ -1,7 +1,6 @@
 /* Short instructions that depend on the interface. S.howTo(topic) returns the
    line for tmux, desktop or mobile, and mentions dragging only where a mouse
-   or pen can drag, so every help line names only the controls the player
-   actually has. */
+   or pen can drag. */
 (function () {
   var S = window.SELK;
   var TEXT = {
@@ -19,7 +18,7 @@
     }
   };
   var fine = window.matchMedia ? window.matchMedia("(any-pointer: fine)") : null;
-  /* Dragging needs a mouse or pen; touch screens and mobile layouts tap instead */
+  /* Dragging needs a mouse or pen; touch screens tap instead */
   S.canDrag = function () {
     return !S.ctx().mobile && !!(fine && fine.matches);
   };

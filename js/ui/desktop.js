@@ -1,5 +1,6 @@
 /* Desktop mode: a Workbench-style screen with grouped icons, drawers and
-   movable windows. It hosts the same window kinds as tmux mode through S.desk. */
+   movable windows. It shows the same window kinds as tmux mode, through
+   S.desk. */
 (function () {
   var S = window.SELK;
   var el = S.el, $ = S.$;
@@ -171,8 +172,7 @@
     return b;
   }
   function place(o) {
-    var tools = back.querySelector(".wb-tools");
-    var bw = (back.clientWidth || 900) - (tools && !S.tmux.mobile() ? tools.offsetWidth + 20 : 0), bh = back.clientHeight || 600;
+    var area = deskArea(), bw = area.w, bh = area.h;
     return {
       x: Math.round(o.x * bw),
       y: Math.round(o.y * bh),
@@ -180,50 +180,75 @@
       h: Math.round(o.h * bh)
     };
   }
+  /* Default windows of each kind. ax and ay place the window in the free
+     space of the desk, from 0 (left or top) to 1 (right or bottom), so a
+     window of any size stays inside. The size comes from the content
+     (contentSize below): cols are character columns, rows are lines, and fit
+     sizes the height to the content. */
   var SPOTS = {
-    VIEW: {
-      t: "READER",
-      x: 0.36,
-      y: 0.03,
-      w: 0.46,
-      h: 0.58
-    },
-    REPORT: {
-      t: "REPORT",
-      x: 0.44,
-      y: 0.4,
-      w: 0.5,
-      h: 0.56
-    },
-    SHELL: {
-      t: "SHELL",
-      x: 0.12,
-      y: 0.52,
-      w: 0.42,
-      h: 0.44
-    },
-    MAIL: {
-      t: "MAIL",
-      x: 0.2,
-      y: 0.1,
-      w: 0.34,
-      h: 0.4
-    },
-    MESSAGE: {
-      t: "MESSAGE",
-      x: 0.3,
-      y: 0.16,
-      w: 0.46,
-      h: 0.62
-    },
-    WATCH: {
-      t: "WATCH",
-      x: 0.5,
-      y: 0.06,
-      w: 0.45,
-      h: 0.8
-    }
+    VIEW: { t: "READER", ax: 0.7, ay: 0.05, cols: 72, rows: 26, min: 6 },
+    REPORT: { t: "REPORT", ax: 1, ay: 1, cols: 66, fit: true },
+    SHELL: { t: "SHELL", ax: 0.15, ay: 1, cols: 80, rows: 24 },
+    MAIL: { t: "MAIL", ax: 0.4, ay: 0.08, cols: 56, fit: true, rows: 8 },
+    MESSAGE: { t: "MESSAGE", ax: 0.55, ay: 0.2, cols: 72, rows: 18, min: 6 },
+    WATCH: { t: "WATCH", ax: 0.9, ay: 0.1, cols: 64, fit: true }
   };
+  /* The desk area that windows use: the backdrop without the tool column */
+  function deskArea() {
+    var tools = back.querySelector(".wb-tools");
+    return {
+      w: (back.clientWidth || 900) - (tools && !S.tmux.mobile() ? tools.offsetWidth + 20 : 0),
+      h: back.clientHeight || 600
+    };
+  }
+  /* The element whose width sets the text columns of a kind: the shell log,
+     the reader body, the report paper, or the kind itself */
+  function textBox(kind, root) {
+    var sel = { SHELL: "#log", VIEW: ".v-body", MESSAGE: ".v-body", REPORT: ".paper" }[kind];
+    return (sel && root.querySelector(sel)) || root;
+  }
+  function px(cs, k) { return parseFloat(cs[k]) || 0; }
+  /* Width of one character and height of one line in an element's font */
+  function metrics(node) {
+    var probe = el("span", "", "0000000000");
+    var ps = probe.style;
+    ps.position = "absolute"; ps.visibility = "hidden"; ps.whiteSpace = "pre"; ps.padding = "0"; ps.border = "0";
+    node.appendChild(probe);
+    var ch = probe.getBoundingClientRect().width / 10, cs = getComputedStyle(node);
+    probe.remove();
+    var lh = parseFloat(cs.lineHeight);
+    if (!lh) { lh = px(cs, "fontSize") * 1.5; }
+    if (node.id === "log") { lh = px(cs, "fontSize") * 1.5; }
+    return { ch: ch, lh: lh };
+  }
+  /* Size a new window to its content, then place it by its anchors inside the
+     desk. The window grows by the difference between the space its text box
+     has and the space the text needs, so borders, title bars, padding and
+     scroll bars count as drawn. */
+  function contentSize(w, spot) {
+    var box = w.el, root = S.kinds[w.kind], area = deskArea();
+    var tb = textBox(w.kind, root), cs = getComputedStyle(tb), m = metrics(tb);
+    var innerW = tb.clientWidth - px(cs, "paddingLeft") - px(cs, "paddingRight");
+    var width = box.offsetWidth + Math.ceil(spot.cols * m.ch) - innerW;
+    var height = box.offsetHeight;
+    var scroller = (w.kind === "SHELL" || w.kind === "VIEW" || w.kind === "MESSAGE") ? tb : root;
+    var scs = getComputedStyle(scroller);
+    if (spot.rows && !spot.fit) {
+      var innerH = scroller.clientHeight - px(scs, "paddingTop") - px(scs, "paddingBottom");
+      height += Math.ceil(spot.rows * m.lh) - innerH;
+    }
+    box.style.width = clamp(width, 180, area.w) + "px";
+    if (spot.fit) {
+      /* Content height is read at the final width, since text wraps */
+      height = box.offsetHeight + scroller.scrollHeight - scroller.clientHeight;
+      if (spot.rows) {
+        height = Math.max(height, box.offsetHeight - scroller.clientHeight + Math.ceil(spot.rows * m.lh));
+      }
+    }
+    box.style.height = clamp(height, 120, area.h) + "px";
+    box.style.left = Math.round(spot.ax * Math.max(0, area.w - box.offsetWidth)) + "px";
+    box.style.top = Math.round(spot.ay * Math.max(0, area.h - box.offsetHeight)) + "px";
+  }
   function win(o) {
     var found = D.wins.filter(function (w) {
       return w.id === o.id;
@@ -239,8 +264,8 @@
     var box = el("div", "wb-win");
     box.style.left = r.x + "px"; box.style.top = r.y + "px"; box.style.width = r.w + "px"; box.style.height = r.h + "px";
     var bar = el("div", "wb-tbar");
-    var close = el("button", "wb-gad wb-close", ""); close.type = "button"; close.title = S.t("Close"); close.setAttribute("aria-label", S.t("Close window"));
-    var depth = el("button", "wb-gad wb-depth", ""); depth.type = "button"; depth.title = S.t("Depth"); depth.setAttribute("aria-label", S.t("Send window back or forward"));
+    var close = el("button", "wb-gad wb-close", ""); close.type = "button"; close.dataset.sound = "close"; close.title = S.t("Close"); close.setAttribute("aria-label", S.t("Close window"));
+    var depth = el("button", "wb-gad wb-depth", ""); depth.type = "button"; depth.dataset.sound = "tab"; depth.title = S.t("Depth"); depth.setAttribute("aria-label", S.t("Send window back or forward"));
     bar.appendChild(close); bar.appendChild(el("span", "wb-wtitle", S.t(o.title))); bar.appendChild(depth);
     var body = el("div", "wb-wbody");
     var size = el("div", "wb-size");
@@ -259,7 +284,7 @@
     });
     depth.addEventListener("click", function (e) {
       e.stopPropagation(); if (D.active === w) {
-        box.style.zIndex = 1; D.active = null; mark();
+        sendBack(w);
       } else {
         front(w);
       }
@@ -275,6 +300,7 @@
       box.style.top = clamp(s.t + dy, 0, back.clientHeight - box.offsetHeight) + "px";
     }, box);
     drag(size, function (dx, dy, s) {
+      w.userSized = true;
       box.style.width = clamp(s.w + dx, 180, back.clientWidth - box.offsetLeft) + "px";
       box.style.height = clamp(s.h + dy, 120, back.clientHeight - box.offsetTop) + "px";
     }, box);
@@ -357,14 +383,34 @@
     if (!target && w) { target = w.el.querySelector(".wb-close"); }
     if (target) { target.focus({ preventScroll: true }); }
   }
+  /* Stacking: D.order lists the windows front first, and restack() gives them
+     z-index values from D.z upward in that order. The values stay below D.z
+     plus the number of open windows. */
+  function restack() {
+    var n = D.order.length;
+    D.order.forEach(function (x, i) {
+      x.el.style.zIndex = D.z + n - i;
+    });
+  }
   function front(w, moveFocus) {
-    D.z++; w.el.style.zIndex = D.z; D.active = w; mark(); S.tmux.focusCur();
     D.order = [
       w
     ].concat(D.order.filter(function (x) {
       return x !== w;
     }));
+    restack();
+    D.active = w; mark(); S.tmux.focusCur();
     if (moveFocus) { focusWindow(w); }
+  }
+  /* The depth gadget sends the active window to the back */
+  function sendBack(w) {
+    D.order = D.order.filter(function (x) {
+      return x !== w;
+    }).concat([
+      w
+    ]);
+    restack();
+    D.active = null; mark();
   }
   function mark() {
     D.wins.forEach(function (w) {
@@ -385,6 +431,7 @@
     D.order = D.order.filter(function (x) {
       return x !== w;
     });
+    restack();
     D.active = D.wins[D.wins.length - 1] || null; mark();
     if (restoreFocus) {
       if (D.active) { focusWindow(D.active); }
@@ -496,7 +543,8 @@
         b.width,
         b.height
       ]; b.left = "0px"; b.top = "0px"; b.width = "100%"; b.height = "100%";
-      /* No drop shadow or outer border while maximised, so the window meets every edge. */
+      /* No drop shadow or outer border while maximised, so the window reaches
+         every edge. */
       w.el.classList.add("maximised");
     }
     front(w);
@@ -504,7 +552,7 @@
   D.titleOf = function (w) {
     return w.el.querySelector(".wb-wtitle").textContent;
   };
-  /* The entry icon currently selected in any drawer window, if any. */
+  /* The entry icon selected in any drawer window, if any. */
   D.selectedEntry = function () {
     var n = document.querySelector(".wb-win .wb-icon.sel[data-entry]");
     return n ? n.dataset.entry : null;
@@ -523,14 +571,15 @@
     if (!spot) {
       return false;
     }
-    win( {
+    var fresh = !D.wins.some(function (x) { return x.id === "k-" + k; });
+    var w = win( {
       id: "k-" + k,
       kind: k,
       title: spot.t,
-      x: spot.x,
-      y: spot.y,
-      w: spot.w,
-      h: spot.h
+      x: 0,
+      y: 0,
+      w: 0.5,
+      h: 0.5
     });
     if (k === "REPORT") {
       S.rep.render();
@@ -541,7 +590,30 @@
     if (k === "WATCH") {
       S.watch.render();
     }
+    if (fresh) {
+      contentSize(w, spot);
+    }
     return true;
+  };
+  /* READER and MESSAGE take the height of their content: at least min lines,
+     at most rows lines, with a scroll bar beyond. viewer.js calls this each
+     time new text is put in, before the text is revealed, so the full height
+     is measured. A window the player resized or maximised keeps its size. The
+     window stays inside the desk. */
+  D.fitContent = function (kind) {
+    if (!S.isDesktop()) { return; }
+    var w = D.wins.filter(function (x) { return x.kind === kind; })[0], spot = SPOTS[kind];
+    if (!w || !spot || !spot.min || w.userSized || w.max) { return; }
+    var box = w.el, area = deskArea(), tb = textBox(kind, S.kinds[kind]);
+    var cs = getComputedStyle(tb), m = metrics(tb), pad = px(cs, "paddingTop") + px(cs, "paddingBottom");
+    /* Shrink first: scrollHeight never reads less than the box, so the
+       content height shows only once the box is smaller */
+    box.style.height = "120px";
+    var chrome = box.offsetHeight - tb.clientHeight;
+    var inner = Math.min(Math.max(tb.scrollHeight - pad, spot.min * m.lh), spot.rows * m.lh);
+    var height = clamp(Math.ceil(chrome + pad + inner), 120, area.h);
+    box.style.height = height + "px";
+    box.style.top = clamp(box.offsetTop, 0, area.h - height) + "px";
   };
   D.activeKind = function () {
     return D.active && D.active.kind;
@@ -566,21 +638,21 @@
     });
     bar.appendChild(ttl);
     bar.appendChild(el("span", "wb-info", S.t("4 096 000 bytes free")));
-    var msg = el("span", "wb-msg"); msg.id = "wb-msg"; msg.setAttribute("role", "status"); bar.appendChild(msg);
+    var msg = el("span", "wb-msg bar-msg is-empty"); msg.id = "wb-msg"; msg.setAttribute("role", "status"); bar.appendChild(msg);
     var right = el("span", "wb-right");
-    var mail = el("button", "wb-btn", S.t("MAIL")); mail.id = "wb-mail"; mail.type = "button";
+    var mail = el("button", "wb-btn", S.t("MAIL")); mail.id = "wb-mail"; mail.type = "button"; mail.dataset.sound = "open";
     mail.addEventListener("click", function () {
       D.goto("MAIL");
     });
-    var report = el("button", "wb-btn", S.t("REPORT")); report.id = "wb-report"; report.type = "button";
+    var report = el("button", "wb-btn", S.t("REPORT")); report.id = "wb-report"; report.type = "button"; report.dataset.sound = "open";
     report.addEventListener("click", function () {
       D.goto("REPORT"); S.emit("report-open");
     });
-    var mode = el("button", "wb-btn", "TMUX"); mode.type = "button"; mode.title = S.t("Switch to tmux mode");
+    var mode = el("button", "wb-btn", "TMUX"); mode.type = "button"; mode.dataset.sound = "toggle"; mode.title = S.t("Switch to tmux mode");
     mode.addEventListener("click", function () {
       S.setMode("tmux");
     });
-    var snd = el("button", "wb-btn", S.state.sound ? S.t("SOUND ON") : S.t("SOUND OFF")); snd.id = "wb-sound"; snd.type = "button";
+    var snd = el("button", "wb-btn", S.state.sound ? S.t("SOUND ON") : S.t("SOUND OFF")); snd.id = "wb-sound"; snd.type = "button"; snd.dataset.sound = "toggle";
     snd.addEventListener("click", function () {
       S.runClick("sound " + (S.state.sound ? "off" : "on"), false);
     });
@@ -603,7 +675,12 @@
     bar.appendChild(right);
     root.appendChild(bar);
     back = el("div", "wb-back");
-    back.addEventListener("click", function () {
+    back.addEventListener("click", function (e) {
+      /* Keep the icon selection while the user selects text, or when the
+         click is not a primary-button press (after a context menu). */
+      if (e.button !== 0) { return; }
+      var s = window.getSelection && window.getSelection();
+      if (s && !s.isCollapsed) { return; }
       back.querySelectorAll(".wb-icon.sel").forEach(function (n) {
         n.classList.remove("sel");
       });

@@ -6,7 +6,7 @@
   "use strict";
   var S = window.SELK;
   /* Language picker above the page, shared with the game: a choice made here
-     applies to the game as well. The notice sits under the picker for every
+     applies to the game as well. The notice is under the picker for every
      language other than English. */
   function languageBar() {
     var bar = document.createElement("div");

@@ -1,18 +1,19 @@
-/* Shell output: a queue that prints lines, typed lines and nodes in order, plus the
-   inline markup for handbook notes, entry links and the player's name. */
+/* Shell output: a queue that prints lines, typed lines and nodes in order,
+   and the inline markup for handbook notes, entry links and the player's
+   name. */
 (function () {
   var S = window.SELK;
   var el = S.el;
   var log = null, chain = Promise.resolve(), pending = 0, skipping = false;
-  /* Output group being filled (see S.scr.group), or null. Queued output is
-     appended to it while it is open and still in the log. */
+  /* The output group being filled (S.scr.group), or null. Queued output goes
+     into it while it is open and in the log. */
   var group = null, groupDepth = 0;
   function host() {
     return group && group.isConnected ? group : log;
   }
   function factor() {
-    var s = S.state.settings.speed;
-    return (S.reduced || skipping || s === "instant") ? 0 : ({ vfast: 0.15, fast: 0.3, slow: 1.4 }[s] || 1);
+    var s = S.textSpeed();
+    return (skipping || s === "instant") ? 0 : ({ vfast: 0.15, fast: 0.3, slow: 1.4 }[s] || 1);
   }
   function speed(ms) {
     return Math.round(ms * factor());
@@ -26,8 +27,8 @@
       }
     });
   }
-  /* Keep the newest output in view, except while the player is selecting text
-     in the shell: then the log stays where it is. */
+  /* Keep the newest output in view, except while the player selects text in
+     the log */
   function selectingInLog() {
     var s = window.getSelection && window.getSelection();
     return !!(s && !s.isCollapsed && log && s.anchorNode && log.contains(s.anchorNode));
@@ -98,15 +99,14 @@
     }
     return parent;
   }
-  /* Text speed (Setup > Text appears), shared by every text on screen.
-     AT ONCE (instant) shows text whole. VERY FAST, FAST, NORMAL and SLOW
-     (vfast, fast, typed, slow) reveal the text nodes of an element in order
-     at CPS letters per second, a few letters per animation frame. Reduced
-     motion and screen reader mode count as AT ONCE (see factor()). */
+  /* Text speed (Setup > Text appears, read through S.textSpeed). AT ONCE
+     shows text whole. The other speeds reveal the text nodes of an element
+     in order at CPS letters per second, a few letters per frame. */
   var CPS = { vfast: 450, fast: 260, typed: 110, slow: 55 };
   function queueSkipped() { return skipping; }
   function reveal(root, isSkipped) {
-    var cps = CPS[S.state.settings.speed];
+    if (S.prettyWrap) { S.prettyWrap.within(root); }
+    var cps = CPS[S.textSpeed()];
     if (!cps || !factor() || !root) { return null; }
     var parts = [], walk = document.createTreeWalker(root, NodeFilter.SHOW_TEXT), n;
     while ((n = walk.nextNode())) {
@@ -166,40 +166,53 @@
         log.textContent = ""; group = null;
       }, 0);
     },
-    /* Run fn and collect all output it queues into one div.out-group, which
-       has the same gap above and below as a command echo (terminal.css).
-       Output with no command line above it (an unechoed command, the mail
-       notice, a blank filled by dragging) uses it, so it reads as separate
-       from the output before and after it. Inside an echoed command, or
-       inside another group, fn runs as is, since the echo or the outer group
-       already provides the gap. An empty group is removed. */
-    group: function (fn) {
+    /* Run fn and collect the output it queues into one div.out-group, with
+       the gap of a command echo above and below (css/ui/shell.css). Output
+       with no command line above it uses a group: an unechoed command, the
+       mail notice, a blank filled by dragging. Inside an echoed command or
+       another group, fn runs unchanged, since the echo or the outer group
+       gives the gap.
+
+       kind names the type of output. When the newest element in the log is a
+       group of the same kind, the output joins it, so a series of similar
+       notices (blanks filled one after another, repeated uplink notices, the
+       same bar button pressed twice) prints as one block. An empty new group
+       is removed. */
+    group: function (fn, kind) {
       if (groupDepth || S.cmdEchoed) {
         return fn();
       }
       groupDepth++;
+      var made = false;
       enqueue(function () {
-        group = el("div", "out-group"); log.appendChild(group);
+        var last = log.lastElementChild;
+        if (kind && last && last.classList.contains("out-group") && last.dataset.kind === kind) {
+          group = last;
+        } else {
+          group = el("div", "out-group"); made = true;
+          if (kind) { group.dataset.kind = kind; }
+          log.appendChild(group);
+        }
       }, 0);
       try {
         return fn();
       } finally {
         groupDepth--;
         enqueue(function () {
-          if (group && !group.firstChild) { group.remove(); }
+          if (made && group && !group.firstChild) { group.remove(); }
           group = null;
         }, 0);
       }
     },
     /* line (plain text), rich (text with markup) and node (a built element)
-       all reveal their text at the chosen text speed, so the setting applies
-       to every piece of shell output. type() types one line letter by
-       letter with key sounds, for the boot, sign-in and attach lines. */
+       reveal their text at the text speed, so the setting applies to all
+       shell output. type() types one line letter by letter with key sounds,
+       for the boot, sign-in and attach lines. */
     line: function (text, cls, ms) {
       return enqueue(function () {
         var d = el("div", "ln " + (cls || ""));
-        /* An echoed command: the prompt is shown but hidden from screen
-           readers, which hear "Command:" before the typed text */
+        /* An echoed command: the prompt is hidden from screen readers, which
+           hear "Command:" before the typed text */
         var ps = S.promptText ? S.promptText() : "";
         if (/\becho\b/.test(cls || "") && ps && String(text).indexOf(ps) === 0) {
           var p = el("span", "", ps); p.setAttribute("aria-hidden", "true");
@@ -236,7 +249,7 @@
           d.textContent = text; return;
         }
         return new Promise(function (resolve) {
-          var i = 0, pace = { vfast: 1.6, fast: 0.9, slow: 0.2 }[S.state.settings.speed] || 0.3;
+          var i = 0, pace = { vfast: 1.6, fast: 0.9, slow: 0.2 }[S.textSpeed()] || 0.3;
           var step = 1000 / (Math.min(cps || 90, 140) * pace);
           (function next() {
             if (skipping) {

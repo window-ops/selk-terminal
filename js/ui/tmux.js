@@ -49,38 +49,29 @@
       r: r
     };
   }
-  /* Window model. One small description says what is open. Every change edits the
-     description and rebuilds all windows from it, so no window depends on another
-     window, and the current pane is remembered by name, never by object. */
-  /* MAIL and its MESSAGE reader always stay open; REPORT and WATCH can close */
+  /* Window model. One description (T.open) says what is open. Every change
+     edits it and rebuilds all windows from it, and the current pane is
+     remembered by name. */
+  /* MAIL and its MESSAGE pane stay open; REPORT and WATCH can close */
   var CLOSABLE = ["REPORT", "WATCH"];
-  /* The window model (T.open), kept for the session and never saved:
-       REPORT, WATCH  true while that closable window is open
-       shellPopped    true while SHELL has its own window, out of DESK
-                      (POP OUT in the SHELL pane header)
-       revealed       true while a shell-only DESK shows its hidden panes
-                      again (see shellOnly below) */
+  /* The window model, for the session only: REPORT and WATCH are true while
+     open; shellPopped is true while SHELL has its own window (POP OUT);
+     revealed is true while a shell-only DESK shows FILES and VIEW again
+     (shellOnly below). */
   function freshOpen() {
     return { REPORT: false, WATCH: true, shellPopped: false, revealed: false };
   }
-  /* Shell-only DESK (Setup > Shell-only DESK). True when settings.deskShell
-     is ON, Shell results is IN SHELL, the mode is tmux, and o.revealed is
-     false. While true:
-       wide layouts (FOUR PANES, THREE PANES)  the window is named SHELL and
-         holds the shell alone; REPORT and the separate SHELL window of a
-         popped-out shell are left out; MAIL and WATCH keep their windows,
-         and messages still open in MESSAGE within MAIL
-       SINGLE layout and narrow screens  the FILES and VIEW pages are left
-         out of the window list, and so out of the bottom bar
-     T.goto sets o.revealed when it is asked for FILES or VIEW, and the next
-     typed command clears it (T.endReveal). REPORT stays in the shell: opening
-     it would rebuild the full layout and cancel the mode. */
+  /* Shell-only DESK: settings.deskShell is ON, Shell results is IN SHELL, the
+     mode is tmux and o.revealed is false. The wide layouts then show only the
+     shell in a window named SHELL; the SINGLE layout and narrow screens leave
+     out FILES and VIEW. A FILES or VIEW request sets o.revealed, and the next
+     typed command clears it (T.endReveal). docs/shell.md describes the mode. */
   function shellOnly(o) {
     var s = S.state && S.state.settings;
     return !!s && !!s.deskShell && s.shellOut === "shell" && !S.isDesktop() && !o.revealed;
   }
-  /* Bottom-bar name of the files/view/shell window: SHELL while it is the
-     shell alone, DESK when it holds the rest of the layout. */
+  /* Status bar name of the files, view and shell window: SHELL when it shows
+     only the shell, DESK otherwise */
   function deskWin(o) {
     return shellOnly(o || T.open) ? "SHELL" : "DESK";
   }
@@ -92,9 +83,9 @@
   }
   function layoutWindows(layout, mobile, o) {
     var list = [], bare = shellOnly(o);
-    /* MAIL holds two panes, the inbox and the MESSAGE reader: side by side on
-       a wide screen, stacked on a narrow one. On a narrow screen the inbox can
-       be hidden, so MESSAGE has the whole page (settings.mailList) */
+    /* MAIL has two panes, the inbox and MESSAGE: side by side on a wide
+       screen, stacked on a narrow one, where the inbox can be hidden
+       (settings.mailList) */
     if (mobile || layout === "single") {
       var single = S.state && S.state.settings.mailList === "single";
       ["SHELL", "FILES", "VIEW", "REPORT", "MAIL", "WATCH"].forEach(function (k) {
@@ -173,7 +164,8 @@
     rebuild(deskWin(T.open), null);
     if (keepKind) { T.goto(keepKind); }
   };
-  /* Leave the session: back to the single shell used by the title and sign-in. */
+  /* Leave the session: back to the single shell of the title screen and
+     sign-in */
   T.detach = function () {
     if (S.desk) {
       S.desk.teardown();
@@ -187,8 +179,8 @@
     });
   }
   T.park = detachKinds;
-  /* Draw the current window. Window kinds are single DOM elements that move
-     between panes; kinds that are not shown wait in #kind-park. */
+  /* Draw the current window. Each window kind is one DOM element that moves
+     between panes; kinds not shown wait in #kind-park. */
   T.render = function () {
     var host = $("panes");
     detachKinds();
@@ -224,7 +216,7 @@
     }
   };
   /* A split is known by its direction and the panes on each side, so a size
-     chosen by dragging returns whenever the same panes meet again */
+     set by dragging returns when the same panes meet again */
   function splitKey(n) {
     var k = function (x) { return leaves(x).map(function (l) { return l.kind; }).join("+"); };
     return n.dir + ":" + k(n.a) + "|" + k(n.b);
@@ -251,8 +243,8 @@
     bar.setAttribute("aria-label", S.t("Resize {a} and {b}", { a: S.t(leaves(n.a)[0].kind), b: S.t(leaves(n.b)[0].kind) }));
     bar.title = S.t("Drag to resize. Double click for the default size");
     setR(r);
-    /* A stacked inbox takes the height of its rows, up to a cap (.pane.fit),
-       and MESSAGE takes the rest, until the player sets a size */
+    /* A stacked inbox takes the height of its rows, up to a limit
+       (.pane.fit), and MESSAGE takes the rest, until the player sets a size */
     if (n.dir === "h" && n.a.leaf && n.a.kind === "MAIL" && typeof sizes[key] !== "number") {
       a.classList.add("fit"); a.style.flex = ""; b.style.flex = "1 1 0";
     }
@@ -288,11 +280,10 @@
     d.appendChild(a); d.appendChild(bar); d.appendChild(b);
     return d;
   }
-  /* Setup > Sole pane frames OFF: a pane alone in its window, and not
-     zoomed, is drawn bare (.pane.bare in terminal.css): no border, and its
-     header stays in the DOM, hidden, so the accessibility layer still reads
-     the pane name from it. The header buttons are in the pane's context
-     menu (contextmenu.js): CLOSE, POP IN and the inbox switch. */
+  /* Setup > Sole pane frames OFF: a pane alone in its window and not zoomed
+     is drawn bare (.pane.bare): no border, and a hidden header from which the
+     accessibility layer reads the pane name. Its header buttons move to the
+     pane's context menu (contextmenu.js). */
   function bare(n) {
     return S.state.settings.soloFrames === false && !T.zoom && win().root === n;
   }
@@ -302,10 +293,10 @@
     var idx = leaves(win().root).indexOf(n);
     var head = el("div", "pane-head");
     head.appendChild(el("span", "pane-name", idx + ": " + S.t(n.kind) + (T.zoom ? " " + S.t("[ZOOM]") : "")));
-    /* Header buttons: SHELL can pop out of DESK into its own window and back in;
-       REPORT and WATCH can close. */
+    /* Header buttons: SHELL pops out of DESK and back in; REPORT and WATCH
+       close. */
     if (n.kind === "SHELL" && (T.canPopOut(n) || T.canPopInShell())) {
-      var pop = el("button", "pane-close", T.open.shellPopped ? S.t("POP IN") : S.t("POP OUT")); pop.type = "button";
+      var pop = el("button", "pane-close", T.open.shellPopped ? S.t("POP IN") : S.t("POP OUT")); pop.type = "button"; pop.dataset.sound = "tab";
       pop.setAttribute("aria-label", T.open.shellPopped ? S.t("Put the shell back into DESK") : S.t("Give the shell its own window"));
       pop.addEventListener("click", function (e) {
         e.stopPropagation(); T.cur = n;
@@ -317,7 +308,7 @@
        settings.mailList to single (MESSAGE alone) or dual (inbox above) */
     if (n.kind === "MESSAGE" && (T.wasMobile || S.state.settings.layout === "single")) {
       var single = S.state.settings.mailList === "single";
-      var tg = el("button", "pane-close", single ? S.t("SHOW INBOX") : S.t("HIDE INBOX")); tg.type = "button";
+      var tg = el("button", "pane-close", single ? S.t("SHOW INBOX") : S.t("HIDE INBOX")); tg.type = "button"; tg.dataset.sound = "fold";
       tg.setAttribute("aria-label", single ? S.t("Show the inbox above the message") : S.t("Hide the inbox and give the message the whole page"));
       tg.setAttribute("aria-pressed", single ? "false" : "true");
       tg.addEventListener("click", function (e) {
@@ -327,7 +318,7 @@
       head.appendChild(tg);
     }
     if (CLOSABLE.indexOf(n.kind) !== -1) {
-      var x = el("button", "pane-close", S.t("CLOSE")); x.type = "button";
+      var x = el("button", "pane-close", S.t("CLOSE")); x.type = "button"; x.dataset.sound = "close";
       x.setAttribute("aria-label", S.t("Close the {pane} pane", { pane: S.t(n.kind) }));
       x.addEventListener("click", function (e) { e.stopPropagation(); T.closePane(n); });
       head.appendChild(x);
@@ -348,7 +339,8 @@
       p.classList.toggle("cur", p._leaf === T.cur);
     });
   }
-  /* Keyboard focus follows the active pane: the shell gets the command line. */
+  /* The keyboard focus follows the active pane; the shell gives it to the
+     command line. */
   function paneFocusTarget(pane, kind) {
     if (!pane) { return null; }
     if (kind === "FILES") { return pane.querySelector(".mc-panel.act .mc-list"); }
@@ -416,7 +408,7 @@
       return;
     }
     T.windows.forEach(function (x, i) {
-      var b = el("button", "tmux-win" + (i === T.w ? " act" : ""), i + ":" + S.t(x.name) + (i === T.w ? "*" : ""));
+      var b = el("button", "tmux-win" + (i === T.w ? " act" : ""), i + ":" + S.t(x.name) + (i === T.w ? "*" : "")); b.dataset.sound = "tab";
       b.type = "button";
       b.dataset.win = x.name;
       b.addEventListener("click", function () {
@@ -442,14 +434,14 @@
     });
   };
   /* Show a kind: reopen it if it was closed, stay in the current window if it
-     is there, otherwise switch to the first window that holds it. */
+     is there, else switch to the first window that has it. */
   T.goto = function (k) {
     if (!T.attached) { return false; }
     if (S.isDesktop()) { return S.desk.goto(k); }
     if (KINDS.indexOf(k) === -1) { return false; }
-    /* FILES and VIEW hidden by the shell-only layout come back until the next
-       typed command. REPORT does not: the caller prints it in the shell.
-       MAIL and MESSAGE remain available in their own window. */
+    /* FILES and VIEW hidden by the shell-only layout return until the next
+       typed command. REPORT does not, since the caller prints it in the
+       shell. MAIL and MESSAGE keep their own window. */
     if (hiddenByShellOnly(k, T.open)) {
       if (k === "REPORT") { return false; }
       T.open.revealed = true;
@@ -493,16 +485,16 @@
     S.state.settings.mailList = single ? "dual" : "single"; S.save();
     rebuild("MAIL", single ? "MAIL" : "MESSAGE");
   };
-  /* Called by S.run before every typed command: a shell-only DESK whose
-     panes were revealed hides them again. The current window is kept when
-     it still exists; otherwise DESK, with SHELL as the current pane. */
+  /* Called by S.run before every typed command: a shell-only DESK hides the
+     panes it revealed. The current window stays when it still exists, else
+     DESK with SHELL as the current pane. */
   T.endReveal = function () {
     if (!T.attached || !T.open || !T.open.revealed) { return; }
     T.open.revealed = false;
     var keep = win() && win().name;
     rebuild(keep === "DESK" ? deskWin(T.open) : keep, "SHELL");
   };
-  /* True when this SHELL pane could pop out (ignores which pane is active). */
+  /* True when this SHELL pane can pop out, whichever pane is active */
   T.canPopOut = function (leaf) {
     return T.attached && !S.isDesktop() && !T.wasMobile && S.state.settings.layout !== "single" && !shellOnly(T.open) &&
       !T.open.shellPopped && !!win() && win().name === "DESK" && !!leaf && leaf.kind === "SHELL";

@@ -1,8 +1,8 @@
-/* Debug log. When Setup > Debug > Debug log is on, everything the game does is printed to
-   the browser's JavaScript console: commands, events, window changes, dialogs,
-   messages, shell output, mail, transmissions, saves and settings. It wraps the
-   game's main functions from the outside, so no other file needs to know about it.
-   Loaded after every other script. Console filter: type SELK. */
+/* Debug log. While Setup > Debug > Debug log is on, the game prints to the
+   browser console: commands, events, window changes, dialogs, messages, shell
+   output, mail, transmissions, saves and settings. It wraps the game's main
+   functions from outside and loads after every other script. Filter the
+   console by SELK. */
 (function () {
   "use strict";
   var S = window.SELK;
@@ -18,7 +18,7 @@
   }
   S.debug = log;
 
-  /* Wrap obj[name] so each call is logged before it runs. */
+  /* Wrap obj[name] so each call is logged before it runs */
   function watch(obj, name, kind, describe) {
     var f = obj && obj[name];
     if (typeof f !== "function" || f._debugWrapped) { return; }
@@ -80,7 +80,7 @@
     if (on()) { log("settings", "debug log is on", JSON.parse(JSON.stringify(S.state.settings))); }
   });
 
-  /* Announce when the switch changes, so the console shows where logging starts. */
+  /* Log when the switch changes, so the console shows where logging starts */
   var lastState = null;
   setInterval(function () {
     var now = on();
@@ -91,10 +91,9 @@
   }, 500);
 })();
 
-/* DEBUG panel. Shown while Setup > Debug > Debug panel is on: a small movable overlay with the
-   current situation and buttons that trigger game actions on purpose, so a
-   developer can reach any state quickly. Actions are also logged while the
-   debug log is on. */
+/* DEBUG panel, shown while Setup > Debug > Debug panel is on: a movable
+   overlay with the current situation and buttons that trigger game actions
+   for testing. Actions are logged while the debug log is on. */
 (function () {
   "use strict";
   var S = window.SELK, panel = null, info = null, collapsed = false;
@@ -170,7 +169,7 @@
       grid.appendChild(b);
     });
     panel.appendChild(grid);
-    /* Drag the panel by its header so it never hides what is being tested */
+    /* The header drags the panel */
     head.addEventListener("pointerdown", function (e) {
       if (e.target.closest("button")) { return; }
       var r = panel.getBoundingClientRect(), host = panel.parentNode.getBoundingClientRect(), sx = e.clientX - r.left, sy = e.clientY - r.top;
@@ -183,8 +182,8 @@
       document.addEventListener("pointermove", mv); document.addEventListener("pointerup", up);
     });
   }
-  /* Keep the panel inside the screen. A position set by dragging is clamped,
-     so a smaller window or a rotated phone never leaves the panel off screen */
+  /* Keep the panel inside the screen. A dragged position is clamped, so a
+     smaller window or a rotated phone leaves the panel on screen. */
   function clamp() {
     if (!panel || !panel.parentNode || panel.style.left === "") { return; }
     var host = panel.parentNode.getBoundingClientRect(), w = panel.offsetWidth, h = panel.offsetHeight;
@@ -199,7 +198,7 @@
       if (screen) { new ResizeObserver(clamp).observe(screen); }
     });
   }
-  /* Rewritten only when something changed, and never announced */
+  /* Rewritten only when the content changes, and not announced */
   function update() {
     if (!panel || !info) { return; }
     var t = describe();
@@ -208,8 +207,8 @@
   setInterval(function () {
     var screen = document.getElementById("screen");
     if (!screen) { return; }
-    /* The panel stays attached for the whole session, busy output and the
-       ending included: taking it out and putting it back made clicks miss */
+    /* The panel stays in the DOM for the whole session, the ending included,
+       since removing it and adding it back made clicks miss */
     if (on() && S.tmux && S.tmux.attached) {
       if (!panel) { build(); }
       if (panel.parentNode !== screen) { screen.appendChild(panel); clamp(); }

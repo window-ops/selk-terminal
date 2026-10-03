@@ -15,9 +15,8 @@
     return g;
   };
   /* The dialog for a locked section, in every mode. FILES, the desktop
-     drawers and commands whose result does not stay in the shell (see
-     lockedMsg in cmdkit.js) open it. ENTER PASSWORD leads to the unlock
-     dialog. */
+     drawers and commands whose result does not stay in the shell (lockedMsg
+     in cmdkit.js) open it. ENTER PASSWORD leads to the unlock dialog. */
   S.lockedRequester = function (sec) {
     var s = S.sectionById(sec);
     S.snd.error();

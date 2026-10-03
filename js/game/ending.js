@@ -1,19 +1,18 @@
-/* Final decision and endings, played as a short film over the terminal.
-   The state is saved just before the decision (preDecision). After the film
-   the game is in its endgame (S.state.ended): the last card offers to load
-   that save or to return to the title screen, and it comes back at every
-   sign-in until the earlier save is loaded.
-   decide: the interface steps back (windows and toasts close, the bars fade,
-   the machine and wind sink), a black stage opens, three lines lead in, and
-   the choices wait alone on the screen. An ending then plays in this order:
-   the swell and the first pixel scene, the epilogue as captions under three
-   scenes, the office's letter, and the title card. The decision log and the
-   letter are also written into the shell, so they are there on return.
-   The choice list takes one number key per choice, 1 for the first. The choose and oxygen
-   commands send the same number key as a keydown event (see S.end.choose). */
+/* The final decision and the endings, played over the terminal on the cinema
+   stage. decide saves the state as preDecision, closes windows and toasts,
+   fades the bars, lowers the machine and the wind, and opens the stage. Three
+   lines lead in, then the choices show alone, one number key each. The choose
+   and oxygen commands send the same keys (S.end.choose).
+
+   An ending plays the swell and the first scene, the epilogue as captions
+   under three scenes, the office's letter and the title card. The decision
+   log and the letter are also written into the shell. Afterwards the game is
+   in its endgame (S.state.ended): the last card offers the save from before
+   the decision or the title screen, and returns at every sign-in until the
+   player chooses one. */
 (function () {
   var S = window.SELK;
-  /* Which scene each of the four epilogue lines sits under */
+  /* The scene under each of the four epilogue lines */
   var SCENE_OF_LINE = [0, 0, 1, 2];
   function reportDone(key) {
     return !!(S.state.reports[key] && S.state.reports[key].done);
@@ -42,10 +41,9 @@
     }
     S.ui.open("SHELL");
   }
-  /* Write the decision, its log lines and the office's letter into the
-     shell log with no typing delay, advance the site clock by 79 and then
-     99 minutes, and record the ending in the state (endings, lastEnding,
-     ended) */
+  /* Write the decision, its log lines and the office's letter into the shell
+     with no typing delay, advance the site clock by 79 and then 99 minutes,
+     and record the ending in the state (endings, lastEnding, ended) */
   function record(label, data) {
     var scr = S.scr, route = data.route || "R-09";
     S.tick(79);
@@ -75,13 +73,13 @@
     S.prompt();
   }
   /* Back to the title screen, rebuilt in place; the saved state decides what
-     comes next after POWER ON */
+     follows POWER ON */
   function restart() {
     S.save();
     S.toTitle();
   }
-  /* Choose again: the choice list comes back at once. The state returns to
-     before the decision, and that save stays available for the next choice */
+  /* Choose again: the choice list returns at once. The state returns to
+     before the decision, and that save stays available for the next choice. */
   function chooseAgain() {
     var snap = restoreBefore();
     if (snap) { S.state.preDecision = snap; }
@@ -90,8 +88,8 @@
     S.cine.setManual(false);
     choices();
   }
-  /* The ending data for an id. Also finds the yes and no branches of a
-     choice ending, which carry their own ids. */
+  /* The ending data for an id, including the yes and no branches of a choice
+     ending, which have their own ids */
   function endingById(id) {
     var found = null;
     S.ENDINGS.forEach(function (e) {
@@ -101,8 +99,8 @@
     });
     return found;
   }
-  /* The state from before the decision. Settings are the player's, not part
-     of the story, so the current ones stay, and so does every ending seen */
+  /* The state from before the decision. The current settings and the list of
+     endings seen stay, since they are not part of the story. */
   function restoreBefore() {
     var seen = S.state.endings.slice(), snap = S.state.preDecision, settings = S.state.settings;
     if (snap) {
@@ -118,7 +116,7 @@
     S.state.active = "DECISION";
     S.save();
     S.snd.stopSwell();
-    /* Restored in place: no reload, so the title screen never comes back */
+    /* Restored in place, with no reload, so the title screen does not return */
     S.cine.close();
     stage(false);
     S.mode = "shell";
@@ -133,8 +131,8 @@
     if (!replay) {
       record(label, data);
     }
-    /* A replay shown one card at a time (STEP BY STEP) is read at the
-       player's pace, so it plays without the swell */
+    /* A replay shown one card at a time (STEP BY STEP) follows the player's
+       pace, so it plays without the swell */
     if (!(replay && C.manual)) {
       S.snd.swell(data.mood || "hollow");
     }
@@ -174,8 +172,8 @@
       C.setManual(false);
     });
   }
-  /* The final choice list. Its REPLAY row plays the intro again, whole or
-     one card at a time, and then returns to the list. */
+  /* The final choice list. Its REPLAY row plays the intro again, whole or one
+     card at a time, then returns to the list. */
   function choices() {
     var C = S.cine;
     return C.choose(S.ENDINGS.map(function (e) {
@@ -241,7 +239,7 @@
       delete snap.preDecision; snap.ended = null;
       S.state.preDecision = JSON.stringify(snap);
       S.save();
-      /* Decision time: sound sinks and the screen fades to black first; the
+      /* Decision time: the sound lowers and the screen fades to black; the
          windows close behind the black, then the intro begins */
       S.mode = "busy";
       if (S.snd.hush) { S.snd.hush(true); }
@@ -252,7 +250,7 @@
       }).then(choices);
     },
     /* choose N sends the keydown for digit N; oxygen yes sends 1 and oxygen
-       no sends 2. Both act only while the cinema is open (S.cine.isOpen()). */
+       no sends 2. Both act only while the stage is open (S.cine.isOpen()). */
     choose: function (n) {
       if (!S.cine.isOpen()) {
         S.snd.error(); S.scr.line(S.tc("Type {decide} to see the options."), "err"); return;

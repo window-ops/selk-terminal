@@ -1,0 +1,227 @@
+/* The finale: the decision fade and the ending's stage (cinema.js). */
+/* Decision time: #screen.finale (S.end.decide) fades the bars and the
+   pane headers to 12% */
+.screen.finale .fbar,
+.screen.finale .tmux,
+.screen.finale .wb-bar,
+.screen.finale .pane-head {
+  opacity: 0.12;
+}
+.screen.finale .notification-stack {
+  display: none;
+}
+html[data-motion="full"] .screen :is(.fbar, .tmux, .wb-bar, .pane-head) {
+  transition: opacity var(--fade, 0.7s) ease-in-out;
+}
+.ln.epilogue {
+  color: var(--haze);
+  max-width: 62ch;
+  line-height: 1.6;
+}
+/* The stage: black over the whole terminal, everything centred */
+.cine {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-ending);
+  will-change: opacity;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5em;
+  background: #000;
+  color: var(--haze);
+  opacity: 0;
+  outline: none;
+  overflow: hidden;
+}
+html[data-motion="full"] .cine {
+  transition: opacity var(--fade, 0.7s) ease-in-out;
+}
+.cine.on {
+  opacity: 1;
+}
+/* Cards cross-fade: layers share one grid cell */
+.cine-stage {
+  width: 100%;
+  max-width: 46em;
+  display: grid;
+  align-items: center;
+  gap: 1.2em;
+  text-align: center;
+}
+.cine-layer {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2em;
+}
+html[data-motion="full"] .cine-layer {
+  transition: opacity var(--fade, 0.45s) ease-in-out;
+}
+.cine-layer.fading {
+  opacity: 0;
+}
+.cine-layer.leaving {
+  pointer-events: none;
+}
+.cine-lines {
+  display: grid;
+  gap: 1em;
+}
+.cine-line {
+  margin: 0;
+  font-family: var(--font-crt);
+  font-size: 1.5em;
+  line-height: 1.3;
+  text-wrap: balance;
+}
+.cine-head {
+  font-family: var(--font-crt);
+  font-size: 1.6em;
+  color: var(--titan);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.4em;
+}
+.cine-choices {
+  display: grid;
+  gap: 0.45em;
+  width: min(100%, 32em);
+}
+.cine-choice {
+  font: inherit;
+  text-align: left;
+  color: var(--haze);
+  background: none;
+  border: 1px solid var(--rib);
+  padding: 0.55em 0.8em;
+  display: flex;
+  justify-content: space-between;
+  /* Choice notes sit on the choice's centre line */
+  align-items: center;
+  gap: 1em;
+}
+.cine-choice:hover:not(:disabled),
+.cine-choice:focus-visible {
+  border-color: var(--titan);
+  color: var(--titan);
+  outline: none;
+}
+.cine-choice:disabled {
+  color: var(--rib);
+}
+.cine-note {
+  color: var(--flag);
+  font-size: 0.85em;
+}
+.cine-frame {
+  width: min(100%, 44em);
+}
+.scene {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--rib);
+  background: #000;
+}
+.cine-caption {
+  margin: 1em auto 0;
+  max-width: 38em;
+  min-height: 3.2em;
+  font-family: var(--font-crt);
+  font-size: 1.35em;
+  line-height: 1.35;
+  text-wrap: balance;
+}
+/* The office's letter */
+.cine-letter {
+  width: min(100%, 34em);
+  padding: 1.4em;
+  background: var(--paper);
+  color: var(--ink);
+  text-align: left;
+  text-shadow: none;
+  box-shadow: 0.4em 0.4em 0 rgba(0, 0, 0, 0.6);
+}
+.cine-letter-head {
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+.cine-letter-meta {
+  color: var(--ink-soft);
+  font-size: 0.85em;
+}
+.cine-letter-body {
+  margin: 1em 0 0;
+  line-height: 1.55;
+}
+/* The title card */
+.cine-kicker {
+  color: var(--dust);
+  letter-spacing: 0.3em;
+}
+.cine-name {
+  margin: 0.15em 0 0.3em;
+  font-family: var(--font-crt);
+  font-weight: 400;
+  font-size: 3.2em;
+  line-height: 1;
+  color: var(--titan);
+  text-transform: uppercase;
+}
+.cine-sub {
+  color: var(--dust);
+}
+/* Button groups: each row centred, a short caption before its buttons */
+.cine-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5em;
+  margin-top: 1.6em;
+}
+.cine-group {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5em;
+}
+.cine-choices .cine-group {
+  margin-top: 0.8em;
+}
+.cine-group-label {
+  color: var(--dust);
+  font-size: 0.8em;
+  letter-spacing: 0.15em;
+}
+/* STEP BY STEP hint at the bottom */
+.cine-hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 1.2em;
+  text-align: center;
+  color: var(--dust);
+  font-size: 0.85em;
+}
+/* Continue: out of sight until it has the focus */
+.cine-next {
+  position: absolute;
+  left: 50%;
+  bottom: 3em;
+  transform: translateX(-50%);
+  font: inherit;
+  color: var(--haze);
+  background: #000;
+  border: 1px solid var(--titan);
+  padding: 0.3em 0.9em;
+  opacity: 0;
+  pointer-events: none;
+}
+.cine-next:focus-visible {
+  opacity: 1;
+  pointer-events: auto;
+  outline: none;
+}

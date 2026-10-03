@@ -24,7 +24,7 @@
     });
   }
   /* Saving. Progress stays in this tab until the player chooses to keep it on
-     this computer. Offer that choice after a close attempt is cancelled. */
+     this computer. The choice is offered after a close attempt is cancelled. */
   var NUDGED_KEY = "selk-save-nudged", saveToast = null;
   function dismissSaveToast() {
     if (saveToast) {
@@ -48,21 +48,14 @@
     var t = el("div", "mail-toast save-toast");
     t.setAttribute("role", "alert");
     var h = el("div", "mail-toast-head");
-    var lead = el("span");
+    var lead = el("span", "mail-toast-lead");
     lead.appendChild(el("span", "mail-toast-tag", S.t("[TAB ONLY]")));
     lead.appendChild(el("span", "", S.t("SAVED DATA")));
     h.appendChild(lead);
-    var close = el("button", "mail-toast-close", "\u00d7");
-    close.type = "button"; close.title = S.t("Dismiss");
-    close.setAttribute("aria-label", S.t("Dismiss notification"));
-    close.addEventListener("click", function (e) {
-      e.stopPropagation(); dismissSaveToast();
-    });
-    h.appendChild(close);
     t.appendChild(h);
     t.appendChild(el("div", "mail-toast-body", S.t("Your progress is saved in this browser tab only. Closing the tab erases it. Keep it on this computer to continue another day.")));
     var acts = el("div", "mail-toast-actions");
-    var keep = el("button", "btn primary", S.t("KEEP ON THIS COMPUTER")); keep.type = "button";
+    var keep = el("button", "btn primary", S.t("KEEP ON THIS COMPUTER")); keep.type = "button"; keep.dataset.sound = "action";
     keep.addEventListener("click", function (e) {
       e.stopPropagation(); dismissSaveToast();
       if (S.setSaveLocal(true)) {
@@ -72,7 +65,7 @@
       }
       S.status();
     });
-    var later = el("button", "btn", S.t("NOT NOW")); later.type = "button";
+    var later = el("button", "btn", S.t("NOT NOW")); later.type = "button"; later.dataset.sound = "close";
     later.addEventListener("click", function (e) {
       e.stopPropagation(); dismissSaveToast();
     });
@@ -84,9 +77,9 @@
     }
     saveToast = t;
   }
-  /* THIS COMPUTER and Wipe data on refresh work against each other: the wipe
-     erases the localStorage save on the next load. Setup and the Storage page
-     show this note while both are on. */
+  /* THIS COMPUTER and Wipe data on refresh conflict: the wipe erases the
+     localStorage save on the next load. Setup and the Storage page show this
+     note while both are on. */
   function saveConflict() {
     return S.saveLocal() && wipeOn();
   }
@@ -124,8 +117,9 @@
       return;
     }
     closePending = true;
-    /* The browser's native leave prompt cannot be customized. If the player
-       cancels it, offer the in-game save choice when this page regains focus. */
+    /* The browser's leave prompt cannot be customized. If the player cancels
+       it, the in-game save choice is offered when the page has the focus
+       again. */
     setTimeout(offerSaveAfterCancelledClose, 250);
     e.preventDefault(); e.returnValue = "";
   });

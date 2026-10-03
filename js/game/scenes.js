@@ -1,14 +1,15 @@
-/* Ending scenes: small animated pixel pictures drawn as SVG on a 160 by 90 grid,
-   in the palette of the SV-4 live camera. Each ending has three panels, built
+/* Ending scenes: animated pixel pictures drawn as SVG on a 160 by 90 grid, in
+   the palette of the SV-4 live camera. Each ending has three panels built
    from shared pieces (sky, crater, tower, crane, lab, plant, dish, plots,
-   people). S.scenes.make(id, n) returns { el, start, stop }; the picture
-   redraws its moving parts a few times a second, and stays still when motion
-   is reduced. */
+   people). S.scenes.make(id, n) returns { el, start, stop }; the moving parts
+   redraw a few times a second, and the picture is still when motion is
+   reduced. */
 (function () {
   var S = window.SELK, NS = "http://www.w3.org/2000/svg", W = 160, H = 90, GROUND = 66;
   var C = {
     sky: ["#A88D5C", "#B89C69", "#C7AB78", "#D3B988"],
-    /* Titan's haze hides Saturn and the stars from the surface; nights are dark haze */
+    /* Titan's haze hides Saturn and the stars from the surface; nights are
+       dark haze */
     night: ["#2A221B", "#352A20", "#433426", "#52402D"],
     warm: ["#B7864E", "#C8955A", "#D6A76A", "#E0B97E"],
     ground: "#6E5B3E", ground2: "#5A4A33", rim: "#836C48",
@@ -26,14 +27,14 @@
     g.appendChild(r); return r;
   }
   function P(g, x, y, c, o) { return R(g, x, y, 1, 1, c, o); }
-  /* Deterministic noise, so dust and stars sit still between frames */
+  /* Deterministic noise, so dust and stars stay in place between frames */
   function rnd(i) { var x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
 
   /* Pieces */
   function sky(g, pal) {
     var band = Math.ceil(GROUND / 4);
     pal.forEach(function (c, i) { R(g, 0, i * band, W, band + 1, c); });
-    /* A checker row between bands, the camera's dithering */
+    /* A checker row between bands, as in the camera's dithering */
     for (var i = 1; i < 4; i++) {
       for (var x = 0; x < W; x += 2) { P(g, x + (i % 2), i * band - 1, pal[i - 1]); }
     }
@@ -104,7 +105,7 @@
     drift(g, x + 16, 8, 2); drift(g, x - 8, 8, 2);
   }
   /* A test plot: a roped square of ground with sample probes. The cells are
-     microscopic and live in the soil, so only the probes' lights show them. */
+     microscopic and live in the soil, so only the probe lights show them. */
   function plot(g, x, w, level, t) {
     R(g, x - 1, GROUND + 2, w + 2, 4, C.ground2);
     for (var i = 0; i <= w; i += Math.max(4, Math.floor(w / 3))) { R(g, x + i - 1, GROUND - 3, 1, 5, C.steel); }
@@ -140,8 +141,8 @@
     }
   }
   /* The relay dish: base plate, pedestal and yoke, a bowl tilted towards the
-     beam, and a feed arm on the bowl's axis. Every part touches the next, and
-     the beam leaves from the feed along the same axis */
+     beam, and a feed arm on the bowl's axis. Each part touches the next, and
+     the beam leaves the feed along the same axis. */
   function dish(g, x, beam, t) {
     var slope = 0.3, base = GROUND - 15;
     R(g, x - 4, GROUND - 2, 9, 2, C.dark);
@@ -233,8 +234,8 @@
       if (Math.pow(px - cx, 2) + Math.pow(py - cy, 2) < (r - 1) * (r - 1)) { P(g, px, py, C.haze, 0.5); }
     }
     if (view.mast !== false) {
-      /* The tower in the window: a slight bulge above the foot, tapering to a
-         crossbar and a beacon, kept inside the frame at any lean */
+      /* The tower in the window: a slight bulge above the foot, narrowing to
+         a crossbar and a beacon, inside the frame at any lean */
       var lean = view.lean || 0, tx = cx + 6, ty = cy + 4;
       for (var m = 0; m < 26; m++) {
         var mx = Math.round(cx + 6 + lean * m / 26), my = cy + 4 - m;
@@ -265,8 +266,8 @@
     R(g, 117, 58, 18, 3, "#0F0D0B"); R(g, 115, 61, 22, 12, "#0F0D0B");
   }
   /* The site from above, north up: buildings joined by hallways, half under
-     sand, with zone 14 drawn around the tower. Labels sit above their feature,
-     never on another label, with a halo in the sand colour. */
+     sand, with zone 14 drawn around the tower. Labels sit above their
+     feature, apart from other labels, with a halo in the sand colour. */
   function siteMap(g, t) {
     R(g, 0, 0, W, H, C.sky[1]);
     for (var i = 0; i < 380; i++) { P(g, rnd(i) * W, rnd(i + 300) * H, i % 3 ? C.sky[0] : C.sky[2], 0.55); }
@@ -335,10 +336,10 @@
     ],
     dismantle: [
       function (g, t) {
-        /* The assembly units take the tower and CRANE-L apart themselves:
-           two cut at the top, two climb down with a segment each, and the
-           segments pile up beside HALL-R. CRANE-L clings to the tower's side
-           and loses its arm piece by piece. */
+        /* The assembly units take the tower and CRANE-L apart: two cut at the
+           top, two climb down with a segment each, and the segments pile up
+           beside HALL-R. CRANE-L stays on the tower's side and loses its arm
+           piece by piece. */
         sky(g, C.sky); ground(g); corridor(g, 0, 60);
         var h = Math.max(26, 54 - t * 2), top = GROUND - h;
         mast(g, 72, h, 0, t, false);
@@ -452,8 +453,8 @@
       return {
         el: svg,
         start: function () {
-          /* With reduced motion the still frame shows a moment three seconds
-             in, when each panel has made its point */
+          /* With reduced motion the still frame shows the moment three
+             seconds in */
           t0 = Date.now() - (S.reduced ? 3000 : 0); frame();
           if (!S.reduced) { timer = setInterval(frame, 160); }
         },

@@ -1,6 +1,6 @@
 /* Accessibility layer: live announcements, roles, names and states for the
-   elements the game builds while it runs, keyboard access to menus, focus
-   handling for dialogs, and a screen reader mode. Loaded after every other script. */
+   elements the game builds, keyboard access to menus, focus handling for
+   dialogs, and screen reader mode. Loaded after every other script. */
 (function () {
   "use strict";
   var S = window.SELK;
@@ -19,8 +19,8 @@
     };
   }
 
-  /* 1. Announcer: two hidden live regions, aria-live polite for most news
-     and assertive for errors. S.announce(text, isUrgent) writes to them. */
+  /* 1. Announcer: two hidden live regions, polite for most messages and
+     assertive for errors. S.announce(text, isUrgent) writes to them. */
   var polite, urgent, last = "", lastAt = 0;
   function region(mode) {
     var r = document.createElement("div");
@@ -96,7 +96,8 @@
     else if (!e.shiftKey && document.activeElement === lastEl) { e.preventDefault(); first.focus(); }
   }
 
-  /* 3. Screen reader mode: no typing effect, no flicker, scanlines or interference */
+  /* 3. Screen reader mode: text at once, no flicker, scanlines or
+     interference */
   function applyMode() {
     var on = S.syncContext().sr;
     var b = document.querySelector("[data-a11y='sr']");
@@ -229,7 +230,7 @@
     if (sw) { S.announce(S.t("Window switcher: {name}", { name: txt(sw.querySelector(".switcher-item.on")) })); }
   }
 
-  /* Keep focus in the explorer after it redraws */
+  /* Keep the focus in the explorer after it redraws */
   function refocusExplorer() {
     var a = document.activeElement;
     if (a && a !== document.body && a.isConnected) { return; }
@@ -238,7 +239,7 @@
     if (list) { list.focus({ preventScroll: true }); }
   }
 
-  /* 5. Keyboard access to context menus and their menu-item navigation */
+  /* 5. Keyboard access to context menus and their items */
   function openMenuFor(node) {
     if (!node) { return; }
     var ad = node.getAttribute && node.getAttribute("aria-activedescendant");
@@ -274,9 +275,30 @@
     }
   }, true);
 
+  /* Arrow keys outside dialogs. Left and Right move along a row of buttons
+     (S.keyNav in dialogs.js): toast and tour buttons, report tabs, the title
+     screen and the status bars. Up and Down move through a list: the inbox
+     and the choices of the final decision. Enter presses the focused button.
+     Dialogs handle their own keys. */
+  var LIST = ".mailpane, .cine-choices";
+  document.addEventListener("keydown", function (e) {
+    if (e.defaultPrevented || S.dlg || !e.target.closest || e.target.closest(".dlg-ov, .ctx")) { return; }
+    var t = e.target;
+    if ((e.key === "ArrowLeft" || e.key === "ArrowRight") && t.matches("button") && t.closest(".mail-toast-actions, .tut-btns, .tabs, .cine-group, .title-row, .tmux-right, .wb-right")) {
+      S.keyNav(e, t.closest(".mail-toast, .tut, .tabs, .cine, .title, .tmux, .wb-bar") || document.body);
+      return;
+    }
+    var list = t.closest(LIST);
+    if ((e.key === "ArrowUp" || e.key === "ArrowDown") && list && t.matches("button") && !e.altKey && !e.ctrlKey && !e.metaKey) {
+      var rows = [].filter.call(list.querySelectorAll("button"), function (b) { return !b.disabled && b.getClientRects().length > 0; });
+      var i = rows.indexOf(t), next = rows[(i + (e.key === "ArrowDown" ? 1 : -1) + rows.length) % rows.length];
+      if (next && next !== t) { e.preventDefault(); next.focus(); }
+    }
+  });
+
   /* 6. Start-up: create the live regions, name the main areas, install the
      hooks of part 2, apply screen reader mode, and run the roles-and-names
-     pass (fix) on the page and again after each change to it */
+     pass (fix) on the page and after each change to it */
   document.addEventListener("DOMContentLoaded", function () {
     polite = region("polite"); urgent = region("assertive");
     var screen = $("screen");
@@ -291,8 +313,8 @@
       if (S.motionQuery.addEventListener) { S.motionQuery.addEventListener("change", onChange); } else if (S.motionQuery.addListener) { S.motionQuery.addListener(onChange); }
     }
     fix(document);
-    /* Parts that only animate or tick. Changes inside them are skipped by
-       the roles-and-names pass (fix), which would otherwise run every frame */
+    /* Parts that only animate or tick. The roles-and-names pass skips changes
+       inside them, which would otherwise run it every frame. */
     var QUIET = ".scene, .cine-caption, .watch, .cam, .livecam, canvas, #st-clock, .dbg-info, .count, .tmux-msg, .glass";
     var timer = null, last = 0, GAP = 300;
     function run() { timer = null; last = Date.now(); fix(document); refocusExplorer(); }
@@ -304,7 +326,8 @@
         busy = true;
         [].forEach.call(m.addedNodes, announceNew);
       });
-      /* At most one full pass every GAP ms, with a final pass after the last change */
+      /* At most one full pass every GAP ms, and a final pass after the last
+         change */
       if (!busy || timer) { return; }
       timer = setTimeout(run, Math.max(0, GAP - (Date.now() - last)));
     }).observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });

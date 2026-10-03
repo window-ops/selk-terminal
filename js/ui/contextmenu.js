@@ -21,7 +21,7 @@
       if (!it) {
         menu.appendChild(el("div", "ctx-sep")); return;
       }
-      var b = el("button", "ctx-item"); b.type = "button"; b.setAttribute("role", "menuitem");
+      var b = el("button", "ctx-item"); b.type = "button"; b.dataset.sound = "menu"; b.setAttribute("role", "menuitem");
       b.appendChild(el("span", "", S.t(it[0])));
       if (it[2]) {
         b.appendChild(el("span", "ctx-key", S.t(it[2])));
@@ -38,8 +38,15 @@
     scr.appendChild(menu);
     var mx = Math.min(x - r.left, r.width - menu.offsetWidth - 4), my = Math.min(y - r.top, r.height - menu.offsetHeight - 4);
     menu.style.left = Math.max(2, mx) + "px"; menu.style.top = Math.max(2, my) + "px";
-    var first = menu.querySelector(".ctx-item:not(:disabled)"); if (first) {
-      first.focus();
+    /* The focus stays where it is while the user has a text selection, since
+       focusing a menu item would clear it. Without a selection, the keyboard
+       focus goes to the first item. */
+    var sel = window.getSelection && window.getSelection();
+    if (!(sel && !sel.isCollapsed)) {
+      var first = menu.querySelector(".ctx-item:not(:disabled)");
+      if (first) {
+        first.focus();
+      }
     }
   }
   function entryItems(id) {
@@ -404,10 +411,10 @@
           "ALT+D"
         ]);
       }
-      /* The header buttons are repeated here, so a pane drawn without its
-         header (Setup > Sole pane frames OFF) keeps them: CLOSE for REPORT
-         and WATCH, POP OUT or POP IN for SHELL, and HIDE INBOX or SHOW
-         INBOX for the mail panes where the inbox can be hidden */
+      /* The pane's header buttons are repeated here for a pane drawn without
+         its header (Setup > Sole pane frames OFF): CLOSE for REPORT and
+         WATCH, POP OUT or POP IN for SHELL, and HIDE INBOX or SHOW INBOX
+         where the inbox can be hidden */
       if ((paneKind === "MAIL" || paneKind === "MESSAGE") && T.canToggleInbox()) {
         items.push([S.state.settings.mailList === "single" ? "SHOW INBOX" : "HIDE INBOX", function () { T.toggleInbox(); }]);
       }
@@ -446,21 +453,18 @@
       closeMenu(true);
     }
   }, true);
-  /* Long press: a touch or pen held still for LONG_MS inside #screen opens
-     the same context menu as a right click. iPhone and iPad Safari send no
-     contextmenu event for a long press, so without this the pane menu (and
-     with Sole pane frames OFF, the header buttons it carries) cannot be
-     reached there.
-     - The press is cancelled when the finger moves more than SLOP px, lifts,
-       or is taken over by the browser (pointercancel: scrolling, a drag).
-     - Browsers that do send their own contextmenu for a long press (Android
+  /* Long press: a touch or pen kept still for LONG_MS inside #screen opens
+     the context menu, since iPhone and iPad Safari send no contextmenu event
+     for a long press.
+     - Moving more than SLOP px, lifting, or a pointercancel (scrolling, a
+       drag) cancels the press.
+     - Browsers that send their own contextmenu for a long press (Android
        Chrome) open the menu through the listener above; that event cancels
        the timer here, so the menu opens once.
-     - The press fires a synthetic contextmenu event at the pressed element,
+     - The press sends a synthetic contextmenu event to the pressed element,
        so the listener above builds the menu from the same target.
-     - The click that follows the lift is swallowed, since the menu opens
-       under the finger and the lift would otherwise press a menu item or
-       the control below. */
+     - The click that follows the lift is cancelled, since the menu opens
+       under the finger. */
   var LONG_MS = 500, SLOP = 10, press = null, firedAt = 0;
   function endPress() {
     if (press) { clearTimeout(press.timer); press = null; }
@@ -483,15 +487,15 @@
     if (press && press.fired) {
       var swallow = function (ev) { ev.preventDefault(); ev.stopPropagation(); };
       document.addEventListener("click", swallow, { capture: true, once: true });
-      /* No click follows on some browsers; the guard then expires */
+      /* Some browsers send no click; the guard then expires */
       setTimeout(function () { document.removeEventListener("click", swallow, true); }, 400);
     }
     endPress();
   }, true);
-  /* A contextmenu event from the browser itself: before the long press has
-     fired, it ends the press and opens the menu through the listener above.
-     Within a second after the long press fired, it is the same gesture
-     reported twice, so it is dropped and the open menu stays as it is. */
+  /* A contextmenu event from the browser: before the long press fired, it
+     ends the press and opens the menu through the listener above. Within a
+     second after the long press fired, it reports the same gesture again and
+     is ignored. */
   document.addEventListener("contextmenu", function (e) {
     if (!e.isTrusted) { return; }
     if (press && !press.fired) { endPress(); return; }

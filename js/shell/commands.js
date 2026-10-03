@@ -6,8 +6,8 @@
   var K = S.cmd, scr = K.scr, err = K.err, resolveEntry = K.resolveEntry, lockedMsg = K.lockedMsg,
     readMail = K.readMail, hintsPage = K.hintsPage, revealHint = K.revealHint, printEntry = K.printEntry,
     shellTable = K.shellTable, listSection = K.listSection, listRoot = K.listRoot;
-  /* Help rows: command, its arguments, what it does. In the arguments, UPPER
-     words are placeholders shown through S.t and lower words are fixed
+  /* Help rows: command, arguments, description. In the arguments, upper-case
+     words are placeholders shown through S.t and lower-case words are fixed
      arguments shown through S.argName. Descriptions can name any command or
      argument as {word}. */
   var HELP = [
@@ -414,33 +414,27 @@
     "whoami"
   ]);
   /* Where the running command came from, read by S.outShell():
-     "typed"  the command line, the tmux prompt (Ctrl+B then :), and the
-              HOME / README opened at first sign-in (main.js)
-     "panel"  the FILES panel, the function keys and bar, the status bar
-              buttons and the Alt shortcuts, all of which pass echo = false
-     "click"  a command link in the output, a button on a report page, a
-              dialog, the context menu, the tour or a desktop icon
-     null     no command is running */
+     - "typed": the command line, the tmux prompt (Ctrl+B then :) and the HOME
+       / README opened at first sign-in
+     - "panel": the FILES panel, the function keys, the status bar buttons and
+       the Alt shortcuts, which pass echo = false
+     - "click": a link in the output, a report page button, a dialog, the
+       context menu, the tour or a desktop icon
+     - null: no command is running */
   S.cmdOrigin = null;
-  /* True while a command runs whose command line was printed in the log
-     (S.run called with echo !== false). S.scr.group reads it: output under
-     a printed command line already has the echo's gap above it. */
+  /* True while a command runs whose command line was printed (S.run with echo
+     !== false). S.scr.group reads it, since the echo already gives the gap
+     above the output. */
   S.cmdEchoed = false;
-  /* Where the result of the running command goes: { shell, window }.
-     shell   true: print the result in the SHELL log
-     window  true: open the matching window (VIEW, MAIL and MESSAGE,
-             REPORT, WATCH, FILES)
-     Both can be true. The rules, first match wins:
-       tmux session not attached yet         shell only
-       typed                                 Setup > Shell results:
-                                             IN SHELL gives shell only,
-                                             IN VIEW gives window only
-       panel, tmux mode, Shell results is    Setup > Panel results:
-       IN SHELL                              IN VIEW gives window only,
-                                             BOTH gives shell and window
-       everything else (panel in desktop     window only
-       mode or with Shell results IN VIEW,
-       every click) */
+  /* Where the result of the running command goes: { shell, window }. Both can
+     be true. The first rule that matches applies:
+     - session not attached yet: shell
+     - typed: Shell results decides
+     - panel in tmux mode with Shell results IN SHELL: window, and shell with
+       Panel results BOTH
+     - anything else: window
+
+     docs/shell.md has the details. */
   function route() {
     var s = S.state.settings;
     if (!S.tmux || !S.tmux.attached) {
@@ -458,18 +452,16 @@
   S.outShell = function () { return route().shell; };
   /* True when the running command opens the window for its result */
   S.outWindow = function () { return route().window; };
-  /* Run a command for a clicked control. The echo follows the same rule as
-     S.run: pass false to leave the command line out of the log. */
+  /* Run a command for a clicked control. echo works as in S.run: false leaves
+     the command line out of the log. */
   S.runClick = function (raw, echo) {
     S.run(raw, echo, "click");
   };
-  /* Parse and run one command line.
-     echo   false leaves the command line out of the log; any other value
-            prints it after the prompt
-     origin "typed", "panel" or "click" (see S.cmdOrigin). When omitted,
-            an echoed command counts as typed and an unechoed one as panel.
-     The output of an unechoed command is wrapped in one output group (see
-     S.scr.group), which keeps it apart from the lines above and below. */
+  /* Parse and run one command line. echo false leaves the command line out of
+     the log; any other value prints it after the prompt. origin is "typed",
+     "panel" or "click" (S.cmdOrigin); when omitted, an echoed command counts
+     as typed and an unechoed one as panel. The output of an unechoed command
+     goes into one output group (S.scr.group), apart from the lines around it. */
   S.run = function (raw, echo, origin) {
     var line = String(raw || "").trim();
     if (!line) {
@@ -479,13 +471,15 @@
     S.cmdOrigin = origin || (echo === false ? "panel" : "typed");
     S.cmdEchoed = echo !== false;
     /* A typed command hides FILES and VIEW again in a shell-only DESK
-       (see T.endReveal in tmux.js) */
+       (T.endReveal in tmux.js) */
     if (S.cmdOrigin === "typed" && S.tmux && S.tmux.endReveal) {
       S.tmux.endReveal();
     }
     try {
       if (echo === false) {
-        S.scr.group(function () { runLine(line, echo); });
+        /* Unechoed commands of the same word share one group */
+        var word = S.i18n.command(line.split(/\s+/)[0]) || line.split(/\s+/)[0];
+        S.scr.group(function () { runLine(line, echo); }, "cmd:" + String(word).toLowerCase());
       } else {
         runLine(line, echo);
       }
@@ -504,7 +498,7 @@
     var name = S.i18n.command(parts[0]);
     var fn = C[name];
     /* After the finale, any command other than decide, choose and oxygen
-       brings the interface back */
+       restores the interface */
     if (S.finale && name !== "decide" && name !== "choose" && name !== "oxygen") {
       S.end.release();
     }

@@ -1,6 +1,6 @@
-/* VIEW window, MAIL inbox pane and MESSAGE reader. S.display() puts entries,
-   handbook notes and help in VIEW, or in the shell when S.outShell() says so.
-   Messages open in MESSAGE through S.mailpane.open(), never in VIEW. */
+/* The VIEW window, the MAIL inbox pane and the MESSAGE pane. S.display() puts
+   entries, handbook notes and help in VIEW, or in the shell when S.outShell()
+   says so. Messages open in MESSAGE through S.mailpane.open(). */
 (function () {
   var S = window.SELK, el = S.el;
   /* Viewer */
@@ -8,16 +8,16 @@
   var vhint = el("div", "dim", "Open an entry from FILES, or type open and a name.");
   vbody.appendChild(vhint);
   vnote.hidden = true;
-  /* These elements are built before the language file loads, so their first
-     texts are set again once it has loaded */
+  /* These elements are built before the language file loads, so their texts
+     are set again after it loads */
   S.i18n.ready.then(function () {
     vhead.textContent = S.t("VIEW");
     vhint.textContent = S.tc("Open an entry from FILES, or type {open} and a name.");
   });
   vroot.appendChild(vhead); vroot.appendChild(vbody); vroot.appendChild(vnote);
   S.registerKind("VIEW", vroot);
-  /* The viewer reveals text at the same text speed as the shell. A click in the
-     viewer or any key press shows the rest at once. */
+  /* VIEW reveals text at the shell's text speed. A click in VIEW or any key
+     press shows the rest at once. */
   var viewToken = 0, viewSkip = false;
   vbody.addEventListener("click", function () { viewSkip = true; });
   document.addEventListener("keydown", function () { viewSkip = true; }, true);
@@ -26,6 +26,7 @@
       vhead.textContent = S.t("VIEW") + ": " + title;
       vbody.textContent = ""; vbody.appendChild(node); vbody.scrollTop = 0;
       vbody.tabIndex = 0;
+      if (S.desk && S.desk.fitContent) { S.desk.fitContent("VIEW"); }
       vnote.textContent = ""; vnote.hidden = true;
       var token = ++viewToken; viewSkip = false;
       S.scr.reveal(node, function () { return viewSkip || token !== viewToken; });
@@ -44,13 +45,12 @@
       if (title && S.announce) { S.announce(title.textContent.replace(/\s+/g, " ").trim()); }
     }
   };
-  /* Show an entry, a handbook note (isNote) or the help page. content is a
-     function that builds the element; it runs once for each place the
-     result goes (S.outShell and S.outWindow in commands.js), since one
-     element cannot sit in the log and in VIEW at once. The shell copy is
-     built first, so the copy in VIEW is built last and keeps the USE button
-     (see S.refreshUse in listing.js). A ready element is also accepted;
-     use one only when the result goes to one place. */
+  /* Show an entry, a handbook note (isNote) or the help page. content builds
+     the element and runs once for each place the result goes (S.outShell and
+     S.outWindow in commands.js), since one element cannot be in the log and
+     in VIEW at once. The shell copy is built first, so the VIEW copy is built
+     last and gets the USE button (S.refreshUse in listing.js). A built
+     element is also accepted when the result goes to one place only. */
   S.display = function (title, content, isNote) {
     var T = S.tmux, make = typeof content === "function" ? content : function () { return content; };
     var toShell = S.outShell(), toWindow = S.outWindow();
@@ -64,8 +64,7 @@
       return;
     }
     var node = make();
-    /* A typed command whose result moves to VIEW, and not to the shell,
-       leaves a note in the shell */
+    /* A typed command whose result goes to VIEW leaves a note in the shell */
     var fromShell = !toShell && !S.isDesktop() && S.cmdOrigin === "typed" && T.visible("SHELL");
     if (!T.visible("VIEW")) {
       T.goto("VIEW");
@@ -82,8 +81,8 @@
       S.scr.line(S.t("Output redirected to VIEW."), "dim", 0);
     }
   };
-  /* MAIL pane: the inbox list. MESSAGE pane: the reader beside it, which
-     shows messages only, so VIEW keeps entries and notes */
+  /* MAIL pane: the inbox list. MESSAGE pane: the reader beside it, for
+     messages only; entries and notes open in VIEW */
   var mroot = el("div", "mailpane scroll"), openIndex = -1;
   S.registerKind("MAIL", mroot);
   var rroot = el("div", "viewer msgview"), rhead = el("div", "v-head", "MESSAGE"), rbody = el("div", "v-body scroll");
@@ -104,6 +103,7 @@
       openIndex = n - 1;
       rhead.textContent = S.t("MESSAGE") + ": " + title;
       rbody.textContent = ""; rbody.appendChild(node); rbody.scrollTop = 0; rbody.tabIndex = 0;
+      if (S.desk && S.desk.fitContent) { S.desk.fitContent("MESSAGE"); }
       S.mailpane.render();
       var token = ++readToken; readSkip = false;
       S.scr.reveal(node, function () { return readSkip || token !== readToken; });
@@ -128,11 +128,11 @@
         return;
       }
       m.forEach(function (x, i) {
-        var b = el("button", "mrow" + (x.read ? "" : " unread") + (i === openIndex ? " open" : ""));
+        var b = el("button", "mrow" + (x.read ? "" : " unread") + (i === openIndex ? " open" : "")); b.dataset.sound = "open";
         if (i === openIndex) { b.setAttribute("aria-current", "true"); }
         b.type = "button"; b.dataset.cmd = "mail " + (i + 1);
         b.dataset.mailIndex = String(i);
-        /* The NEW tag sits at the right end of the row */
+        /* The NEW tag is at the right end of the row */
         b.appendChild(el("span", "mrow-label", S.t("MSG {num}", { num: ("00" + (i + 1)).slice(-3) }) + " " + S.fmtTime(x.t)));
         if (!x.read) { b.appendChild(document.createTextNode(" ")); b.appendChild(el("span", "mrow-new", S.t("NEW"))); }
         mroot.appendChild(b);

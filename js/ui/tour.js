@@ -2,10 +2,10 @@
 (function () {
   var S = window.SELK, el = S.el;
   /* Tutorial */
-  /* Two tours with the same steps. SIMPLE explains in plain words for players who
-     have never used a terminal; TECHNICAL is shorter and uses terminal terms.
-     Each step is a list of short paragraphs, "on" names the game event that
-     completes it, and "spot" is what gets outlined on screen. */
+  /* Two tours with the same steps. SIMPLE uses plain words for players new to
+     terminals; TECHNICAL is shorter and uses terminal terms. Each step is a
+     list of short paragraphs; "on" names the game event that completes it,
+     and "spot" is what gets outlined. */
   function STEPS() {
     var d = S.isDesktop(), m = S.tmux.mobile();
     var tech = !!(S.state.tut && S.state.tut.kind === "technical");
@@ -39,7 +39,7 @@
       { t: ["That is the whole game: read records, fill in the report, send it to Earth.", "If you get stuck, SETUP can switch on hints. You can replay this tour from TUTORIAL in HOME."], last: true }
     ];
   }
-  /* Spotlight: outline the thing the current step asks for */
+  /* Spotlight: outline what the current step asks for */
   var spotSel = null;
   function clearSpot() { document.querySelectorAll(".tut-spot").forEach(function (n) { n.classList.remove("tut-spot"); }); }
   function spotTarget() {
@@ -68,8 +68,8 @@
     host.classList.toggle("tut-mobile-top", mobile && top);
     host.classList.toggle("tut-mobile-bottom", mobile && !top);
   }
-  /* On a narrow screen the panel can be rolled up to its header line, so it
-     stops covering the pane underneath. The choice is kept for the whole tour. */
+  /* On a narrow screen the panel rolls up to its header line, so it leaves
+     the pane below visible. The choice lasts for the whole tour. */
   function applyRoll() {
     if (!panel) { return; }
     var st = S.state.tut, rolled = !!(st && st.rolled) && S.tmux.mobile();
@@ -115,9 +115,9 @@
     }
     return false;
   }
-  /* The panel is one element kept for the whole tour. Each draw refills it and
-     puts it first in the notification stack, so mail toasts always land beside
-     it and never above it, and a button press never moves it. */
+  /* The panel is one element for the whole tour. Each draw refills it and
+     puts it first in the notification stack, so mail toasts appear beside it
+     and a button press does not move it. */
   function draw() {
     var st = S.state.tut;
     if (!st || !st.on) {
@@ -176,12 +176,12 @@
       var action = actions[s.action], go = el("button", "btn primary", S.t(action.label)); go.type = "button";
       go.addEventListener("click", action.run); row.appendChild(go);
     }
-    var next = el("button", "btn", S.t(s.last ? "FINISH" : s.on ? "DO THE TASK" : "NEXT")); next.type = "button";
+    var next = el("button", "btn", S.t(s.last ? "FINISH" : s.on ? "DO THE TASK" : "NEXT")); next.type = "button"; next.dataset.sound = "page";
     next.disabled = !!s.on;
     next.addEventListener("click", function () {
       S.tut.next();
     });
-    var skip = el("button", "btn", S.t("END TOUR")); skip.type = "button";
+    var skip = el("button", "btn", S.t("END TOUR")); skip.type = "button"; skip.dataset.sound = "close";
     skip.addEventListener("click", function () {
       S.tut.stop();
     });
@@ -267,8 +267,8 @@
         ]
       });
     }
-  };  /* Every game event reaches S.tut.event through S.on("*"). A step is done
-     when the event named in its "on" field arrives. Game code only calls
-     S.emit and holds no reference to the tour. */
+  };  /* Every game event reaches S.tut.event through S.on("*"). A step is
+         done when the event named in its "on" field arrives. Game code only
+         calls S.emit and has no reference to the tour. */
   S.on("*", function (name) { S.tut.event(name); });
 })();

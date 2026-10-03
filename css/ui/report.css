@@ -1,14 +1,12 @@
-/* Report paper in the REPORT window: the page, its numbered lines, the blanks
-   and their clear buttons, the footer with the stamp and the SUBMIT button,
-   and the mobile fill steps under the page. The text pages printed in the
-   shell use terminal.css. */
+/* The report paper in REPORT: lines, blanks, the footer with the stamp and
+   SUBMIT, and the fill steps on a phone. */
 .paper {
   margin: 0.6em 0 0.5em;
   padding: 1em 1.2em 0.9em;
   background: var(--paper);
   color: var(--ink);
   text-shadow: none;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 0 22px rgba(214, 195, 150, 0.14);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 0 22px color-mix(in srgb, var(--haze) 14%, transparent);
   white-space: normal;
 }
 .paper-title {
@@ -157,4 +155,9 @@
   border: 2px solid #8E3B2A;
   padding: 0.05em 0.5em;
   transform: rotate(-2.5deg);
+}
+/* Blanks that can take the entry being dragged */
+body.dragging .blank:not(:disabled) {
+  outline: 1px dashed var(--ink);
+  outline-offset: 2px;
 }

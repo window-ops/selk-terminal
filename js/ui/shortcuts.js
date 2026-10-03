@@ -1,10 +1,10 @@
 /* Alt shortcuts, matched by physical key, and the S.SHORTCUTS table for help. */
 (function () {
   var S = window.SELK;
-  /* Alt plus a letter, matched by physical key (event.code, such as KeyR),
-     so the same keys work on every keyboard layout. Each calls
-     S.run(text, false), so its result follows Setup > Panel results (see
-     S.cmdOrigin and S.outShell in commands.js). */
+  /* Alt plus a letter, matched by physical key (event.code, such as KeyR), so
+     the keys are the same on every keyboard layout. Each calls S.run(text,
+     false), so its result follows Setup > Panel results (S.cmdOrigin and
+     S.outShell in commands.js). */
   var KEYS = {
     KeyR: function () {
       S.run("report", false);
