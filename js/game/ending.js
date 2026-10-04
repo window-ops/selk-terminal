@@ -61,6 +61,7 @@
       S.state.endings.push(data.id);
     }
     S.state.lastEnding = data.id;
+    S.state.lastDecision = data.id;
     S.state.ended = { id: data.id, title: data.title || label };
     S.recordUplink("sent", S.t("DECISION LOG"));
     S.save(); S.status();
@@ -108,9 +109,15 @@
      endings seen stay, since they are not part of the story. */
   function restoreBefore() {
     var seen = S.state.endings.slice(), snap = S.state.preDecision, settings = S.state.settings;
+    var eggs = ["design", "history"].filter(function (id) { return S.state.unlocked.indexOf(id) !== -1; }), noted = S.state.designNoted, last = S.state.lastDecision;
     if (snap) {
       S.state = JSON.parse(snap);
       S.state.settings = settings;
+      /* The Design and History sections stay as the player left them, like
+         the endings */
+      eggs.forEach(function (id) { if (S.state.unlocked.indexOf(id) === -1) { S.state.unlocked.push(id); } });
+      S.state.designNoted = !!(S.state.designNoted || noted);
+      S.state.lastDecision = last || S.state.lastDecision || null;
       seen.forEach(function (id) { if (S.state.endings.indexOf(id) === -1) { S.state.endings.push(id); } });
     }
     S.state.ended = null;
@@ -131,6 +138,12 @@
     S.status();
     S.ui.open("REPORT");
     S.scr.line(S.t("The save from before the decision is loaded."), "ok", 0);
+    /* The Design section appears after the first ending; the shell says so
+       once */
+    if (S.sectionById("design") && !S.state.designNoted) {
+      S.state.designNoted = true; S.save();
+      S.scr.line(S.t("A new section appears in /: {name}.", { name: S.sectionById("design").name.toUpperCase() }), "warn", 0);
+    }
     S.prompt();
   }
   function film(label, data, replay) {
@@ -197,6 +210,17 @@
     });
   }
   S.end = {
+    /* The label of the ending chosen last, with the oxygen answer for a
+       choice ending, for history/2097-NOW */
+    decisionLabel: function () {
+      var id = S.state.lastDecision, out = null;
+      S.ENDINGS.forEach(function (e) {
+        if (e.id === id) { out = e.label; }
+        if (e.choice && e.yes.id === id) { out = e.label + S.t(", oxygen kept"); }
+        if (e.choice && e.no.id === id) { out = e.label + S.t(", oxygen stopped"); }
+      });
+      return out || S.t("not made yet");
+    },
     /* The endgame card: the ending's title, the count of endings seen, and
        two button rows, REPLAY and CONTINUE */
     endgame: function () {

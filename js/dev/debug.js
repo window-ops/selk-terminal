@@ -111,6 +111,12 @@
     if (S.state.active && S.state.reports[S.state.active] && !S.state.reports[S.state.active].done) { return S.state.active; }
     return keys.filter(function (k) { return !S.state.reports[k].done; })[0] || null;
   }
+  function toggleShow(id) {
+    var list = S.state.debugShow || (S.state.debugShow = []), i = list.indexOf(id);
+    if (i === -1) { list.push(id); } else { list.splice(i, 1); }
+    S.save(); refresh();
+    S.msg(i === -1 ? S.t("{name} shown", { name: S.SECTIONS.filter(function (s) { return s.id === id; })[0].name }) : S.t("{name} hidden", { name: S.SECTIONS.filter(function (s) { return s.id === id; })[0].name }));
+  }
   var ACTIONS = [
     ["DELIVER MAIL", "Deliver pending mail now, or queue the next message", function () {
       if (S.state.pending.length) { S.state.pending.slice().forEach(function (id) { S.deliver(id); }); return; }
@@ -122,9 +128,23 @@
       S.REPORTS[k].lines.forEach(function (ln, i) { S.rep.fillBlank(k, i + 1, ln[1][0]); });
     }],
     ["SUBMIT", "Submit the open report page", function () { S.run("submit", false); }],
-    ["UNLOCK ALL", "Open every locked section", function () {
-      S.SECTIONS.forEach(function (s) { if (s.locked && S.state.unlocked.indexOf(s.id) === -1) { S.state.unlocked.push(s.id); } });
+    ["UNLOCK ALL", "Open every locked section in view", function () {
+      S.sections().forEach(function (s) { if (s.locked && S.state.unlocked.indexOf(s.id) === -1) { S.state.unlocked.push(s.id); } });
       S.save(); refresh(); S.msg("All sections unlocked");
+    }],
+    /* Design and History are hidden until the first ending and until Design
+       opens; opening them here also shows them */
+    /* Show Design or History in their locked state, to try the unlock
+       prompts; a second press hides them again */
+    ["SHOW DESIGN", "Show Design, still locked, or hide it again", function () { toggleShow("design"); }],
+    ["SHOW HISTORY", "Show History, still locked, or hide it again", function () { toggleShow("history"); }],
+    ["UNLOCK DESIGN", "Show and open Design, without an ending", function () {
+      if (S.state.unlocked.indexOf("design") === -1) { S.state.unlocked.push("design"); }
+      S.save(); refresh(); S.msg("Design unlocked");
+    }],
+    ["UNLOCK HISTORY", "Show and open History, without opening Design", function () {
+      if (S.state.unlocked.indexOf("history") === -1) { S.state.unlocked.push("history"); }
+      S.save(); refresh(); S.msg("History unlocked");
     }],
     ["DECISION", "Open the final decision", function () { S.state.decision = true; S.save(); S.run("decide", false); }],
     ["GUST", "Trigger a strong wind gust", function () {

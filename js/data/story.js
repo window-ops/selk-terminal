@@ -43,6 +43,171 @@ SELK.LOCKS = {
       "The other is an identifier for a hydrogen shipment."
     ],
     nudge: "Think about an older research codename and a hydrogen shipment."
+  },
+  /* Shown after the first ending. The serial of this terminal, in the
+     groups the hints build. key: the unlock dialog shows one box per group,
+     like an activation key, and the shell takes the serial whole or in
+     groups. note and clues replace the usual locked-section text, since the
+     serial is in no entry: clues is a boxed list of [label, text] pairs that
+     nudge toward each step without stating its result, yet carry every
+     fact a player needs to solve it; the hint lines then
+     escalate to the full answer. */
+  design: {
+    parts: [
+      "kt",
+      "zb",
+      "a0",
+      "k6",
+      "sb2",
+      "kb",
+      "r1c",
+      "s5",
+      "ce",
+      "97"
+    ],
+    key: true,
+    hint: [
+      "Remove the E from the initials, and let BCE stand for CE, the conformity mark: CE CB ZB KP KT SB KB BC.",
+      "KT is Greek, from the country hit hardest by the euro crisis. It goes first.",
+      "ZB is German, from the main creditor Greece argued with. It goes second.",
+      "CE, the conformity mark, goes last: KT ZB CB KP SB KB BC CE.",
+      "CB and BC mirror each other. The first, CB, becomes A0, the larger new ring road of Bucharest.",
+      "RoHS ends in S and its number, 2011/65, ends in 5. S5 goes before CE.",
+      "Mirrored, P looks like 9; upside down, 9 is 6. KP becomes K6.",
+      "SBB, the German initials of the Swiss railways, has two Bs. SB becomes SB2.",
+      "KTZBA0K6SB2KBBCS5CE has 19 characters. Add 9 at the end.",
+      "BBC, the British television, hides in KBBCS. It becomes BR1C.",
+      "The 500 euro note stopped being printed on 27-04-2019. Add 7: KTZBA0K6SB2KBR1CS5CE97."
+    ],
+    nudge: "The serial is built from the initials on a euro note.",
+    note: "Design opens with the serial of this terminal. The label on the case is worn off, but the factory note that made the serial survives; work down it in order.",
+    clues: [
+      [
+        "Start",
+        "the bank on a euro note, in latin letters"
+      ],
+      [
+        "Initials",
+        "BCE ECB EZB EKP EKT ESB EKB EBC"
+      ],
+      [
+        "Each set",
+        "one letter in every set stands for European; the serial uses what remains"
+      ],
+      [
+        "BCE",
+        "here the B goes instead; what remains is a mark printed on electronics"
+      ],
+      [
+        "First",
+        "the language of the country the euro crisis hit hardest"
+      ],
+      [
+        "Second",
+        "the language of the creditor that country argued with"
+      ],
+      [
+        "Middle",
+        "the other pairs keep their order"
+      ],
+      [
+        "Last",
+        "the mark"
+      ],
+      [
+        "Mirror",
+        "two pairs read as each other reversed; the first gives way to the number of the larger new motorway ring around Bucharest"
+      ],
+      [
+        "Before the mark",
+        "the 2011 European directive on hazardous substances (RoHS 2): the last letter of its abbreviation, then the last digit of its number"
+      ],
+      [
+        "P",
+        "mirrored, it looks like a digit; turn that digit upside down"
+      ],
+      [
+        "After SB",
+        "the Swiss railways, in German, repeat letter count"
+      ],
+      [
+        "Then",
+        "count characters so far; add the last digit of the count at the end"
+      ],
+      [
+        "Hidden",
+        "a broadcaster, in plain sight; its double B becomes B, R and 1"
+      ],
+      [
+        "End",
+        "close with the last digit of the day the 500 stopped being printed, 27-04-2019"
+      ]
+    ]
+  },
+  /* Shown once Design is open. The media test from the supervisor's CESEA
+     selection: each line by Brian Cox, a science presenter of the 2010s, is
+     sorted into filler, which keeps the viewer watching, or substance, which
+     tells the viewer something. sort lists the choices and the lines with
+     their sources; the answer is one letter per line, in order. */
+  history: {
+    parts: [
+      "sffssfsf"
+    ],
+    sort: {
+      choices: [
+        [
+          "f",
+          "FILLER"
+        ],
+        [
+          "s",
+          "SUBSTANCE"
+        ]
+      ],
+      items: [
+        [
+          "Every carbon atom in every living thing on the planet was produced in the heart of a dying star.",
+          "Wonders of the Universe, 2011"
+        ],
+        [
+          "Look at that! If you ever needed convincing that we live in the solar system, that we are on a ball of rock, orbiting around the Sun with other balls of rock, then look at that!",
+          "Wonders of the Solar System, 2010"
+        ],
+        [
+          "Deeper understanding confers that most precious thing: wonder.",
+          "Wonders of Life, 2013"
+        ],
+        [
+          "Light is the only connection we have with the Universe beyond our solar system.",
+          "Wonders of the Universe, 2011"
+        ],
+        [
+          "Skepticism must go hand in hand with rationality. When theories are shown to be false, the correct thing to do is to move on.",
+          "on the Large Hadron Collider, 2008"
+        ],
+        [
+          "We are the cosmos made conscious and life is the means by which the universe understands itself.",
+          "Wonders of the Universe, 2011"
+        ],
+        [
+          "To look up is to look back in time, because the ancient beams of light are messengers from the Universe's distant past.",
+          "Wonders of the Universe, 2011"
+        ],
+        [
+          "We have written the evidence of our existence onto the surface of our planet.",
+          "Wonders of the Solar System, 2010"
+        ]
+      ]
+    },
+    hint: [
+      "Substance tells you something you could check. Filler tells you how to feel.",
+      "Lines 1, 4 and 7 explain where atoms and light come from: substance.",
+      "Line 5 says what to do with a false theory: substance.",
+      "Lines 2, 3, 6 and 8 ask for awe and give no fact: filler.",
+      "The answer is SFFSSFSF."
+    ],
+    nudge: "Sort each line into filler or substance.",
+    note: "History opens with the media test from your CESEA selection. Sort each line by Brian Cox, a science presenter of the 2010s: filler keeps you watching, substance tells you something."
   }
 };
 SELK.FALSE_LABELS = [

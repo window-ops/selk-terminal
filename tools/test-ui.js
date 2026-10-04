@@ -3,7 +3,8 @@
    and the error dialog, desktop window sizes and stacking, the follow-up
    messages and their spacing in the shell, Setup tooltips, Setup rows on
    phones and in screen reader mode, the Setup views, the text speed under
-   reduced motion, control sounds and the Romanian pack.
+   reduced motion, control sounds, the Romanian pack, and the two games,
+   TROIKA.RUN and DISASSEMBLY.RUN.
 
    The script serves the project itself on a free local port and drives
    Chromium through Playwright. Install Playwright once, outside the game:
@@ -569,6 +570,151 @@ const GROUPS = {
     check("phone: the error dialog fits the screen", r[0]);
     check("phone: no drawn pointer is detected", r[1] === false);
     check("no page errors", !pg.errs.length, pg.errs);
+    await ctx.close();
+  },
+  /* TROIKA.RUN: loan tranches stay on the road, every year has one, the
+     obstacles come at an even distance, the rating stays in the middle of
+     the beam over it, the place's ellipsis is grey, and the ending runs
+     from 2016 to the end card in both motion modes */
+  async troika(b) {
+    const { ctx, pg } = await boot(b);
+    await pg.evaluate(() => SELK.troika.open()); await wait(300);
+    const run = await pg.evaluate(() => {
+      /* Greece stays on the pavement, out of the way, so no tranche or hole
+         stops the run while the road is measured */
+      const T = SELK.troikaGame, finish = T.finish, move = T.move, years = {};
+      let maxGap = 0, lastX = null;
+      T.finish = () => {}; T.move = () => {};
+      T.st.nextGate = 6;
+      for (let i = 0; i < 20000 && !T.st.end; i++) {
+        const st = T.st;
+        st.gap = 0.6;
+        T.update(0.02); st.crash = false;
+        const added = st.obstacles.concat(st.platforms).filter((o) => o.x > T.W - 2 && !o.seen);
+        added.forEach((o) => { o.seen = true; if (o.kind === "tranche") { years[T.yearOf(st.t)] = true; } });
+        if (added.some((o) => !o.under && !o.covered)) {
+          if (lastX !== null) { maxGap = Math.max(maxGap, st.dist - lastX); }
+          lastX = st.dist;
+        }
+      }
+      T.finish = finish; T.move = move;
+      return { years: Object.keys(years).length, maxGap: Math.round(maxGap), end: !!T.st.end };
+    });
+    check("troika: a loan tranche comes every year", run.years === 6, run);
+    check("troika: obstacles come no more than 500 pixels apart", run.maxGap > 0 && run.maxGap <= 500, run);
+    const kept = await pg.evaluate(() => {
+      const T = SELK.troikaGame;
+      SELK.troika.close(); SELK.troika.open();
+      /* Past the middle of 2011 with no tranche yet, so the next obstacle is one */
+      const st = T.st; st.nextGate = 6; st.t = 27; st.spawnAt = 0;
+      T.update(0.02);
+      const p = st.platforms.find((q) => q.kind === "tranche");
+      for (let i = 0; i < 20; i++) { st.gap = 0.6; T.update(0.02); }
+      return !!p && st.platforms.indexOf(p) !== -1;
+    });
+    check("troika: a loan tranche stays on the road after it appears", kept);
+    const centred = await pg.evaluate(() => {
+      const T = SELK.troikaGame, A = SELK.troikaArt, c = document.createElement("canvas"); c.width = 640; c.height = 320;
+      const g = c.getContext("2d"), keep = A.g; A.use(g);
+      let ok = true;
+      for (let y = 0; y < 6; y++) for (const fx of [0, 0.25, 0.5, 0.75]) {
+        const st = T.st; let n = 0;
+        do { st.obstacles = []; st.platforms = []; st.recent = []; st.t = y * 16 + 3; st.tranches[y] = true; T.spawn(); n++; } while ((st.obstacles[0] || {}).kind !== "debt" && n < 500);
+        st.obstacles.forEach((o) => { o.x += fx - 400; o.bottom = T.GROUND - o.lift; });
+        g.clearRect(0, 0, 640, 320); st.obstacles.forEach((o) => A.obstacle(o));
+        const xs = (yy, red) => { const d = g.getImageData(0, yy, 640, 1).data, out = []; for (let x = 0; x < 640; x++) { if (d[x * 4 + 3] && (!red || (d[x * 4] > 150 && d[x * 4 + 1] < 100))) { out.push(x); } } return out; };
+        const beam = xs(T.GROUND - 78, false), rating = xs(T.GROUND - 8, true);
+        if (rating[0] - beam[0] !== beam[beam.length - 1] - rating[rating.length - 1]) { ok = false; }
+      }
+      A.use(keep); T.st.obstacles = [];
+      return ok;
+    });
+    check("troika: the rating stands in the middle under the beam for every rating", centred);
+    const over = await pg.evaluate(() => {
+      const T = SELK.troikaGame, A = SELK.troikaArt, D = T.data, c = document.createElement("canvas"); c.width = 640; c.height = 320;
+      const g = c.getContext("2d"), keep = A.g, out = [];
+      A.use(g);
+      for (const fr of D.fragiles()) for (const fx of [0, 0.25, 0.5, 0.75]) {
+        const st = T.st; let n = 0;
+        do { st.obstacles = []; st.platforms = []; st.recent = []; st.t = fr[2][0] * 16 + 3; st.tranches[fr[2][0]] = true; T.spawn(); n++; }
+        while (!(st.platforms[0] && st.platforms[0].style === fr[3]) && n < 2000);
+        const pit = st.obstacles[0], p = st.platforms[0];
+        pit.x += fx - 400; p.x += fx - 400; pit.bottom = T.GROUND; p.top = T.GROUND - p.lift;
+        g.clearRect(0, 0, 640, 320); A.obstacle(pit); A.platform(p);
+        const xs = (yy) => { const d = g.getImageData(0, yy, 640, 1).data, r = []; for (let x = 0; x < 640; x++) { if (d[x * 4 + 3]) { r.push(x); } } return r; };
+        const hole = xs(T.GROUND + 10), top = [0, 1, 2, 3].map((k) => xs(p.top + k)).reduce((a, b) => a.concat(b), []);
+        const left = Math.min.apply(null, top), right = Math.max.apply(null, top);
+        out.push([fr[3], fx, left - hole[0], hole[hole.length - 1] - right]);
+      }
+      A.use(keep); T.st.obstacles = []; T.st.platforms = [];
+      return out;
+    });
+    check("troika: each fragile platform stands in the middle of its hole", over.every((o) => o[2] === o[3] && o[2] > 0), over);
+    const grey = await pg.evaluate(() => getComputedStyle(document.querySelector(".troika-title")).color === getComputedStyle(document.querySelector(".troika-place")).color);
+    check("troika: the title's ellipsis has the place's grey", grey);
+    await ctx.close();
+    for (const motion of ["full", "reduce"]) {
+      const { ctx: c2, pg: p2 } = await boot(b, { motion });
+      await p2.evaluate(() => SELK.troika.open()); await wait(300);
+      const end = await p2.evaluate(() => {
+        const T = SELK.troikaGame, st = T.st, seen = [];
+        cancelAnimationFrame(T.raf);
+        st.nextGate = 6; st.t = T.END - 0.2; st.spawnAt = 1e9;
+        let answers = 0;
+        for (let i = 0; i < 6000 && !st.over; i++) {
+          /* In 2097 the player walks Greece to the olive tree, then lets go */
+          if (st.end && st.end.phase === "out") { st.keys = { right: st.dist - st.end.d0 < SELK.troikaArt.STOP - 1 }; }
+          T.update(0.02);
+          if (st.end && seen[seen.length - 1] !== st.end.phase) { seen.push(st.end.phase); }
+          if (T.talk.open() && i % 10 === 0) {
+            const btns = document.querySelectorAll(".troika-talk-choices button");
+            if (btns.length) { answers = btns.length; T.talk.pick(1); } else { T.talk.next(); }
+          }
+          if (i % 25 === 0) { T.draw(); }
+        }
+        const card = document.querySelector(".troika-end");
+        return { seen: seen.join(","), answers, card: !card.hidden && card.querySelector(".troika-again").textContent, reduced: SELK.reduced };
+      });
+      check(`troika (${motion} motion): the ending goes from the door to 2097`, end.seen === "door,room,zoom,lapse,out", end);
+      check(`troika (${motion} motion): the economist offers four answers`, end.answers === 4, end);
+      check(`troika (${motion} motion): the end card offers PLAY AGAIN`, end.card === "PLAY AGAIN", end);
+      check(`troika (${motion} motion): no page errors`, !p2.errs.length, p2.errs);
+      await c2.close();
+    }
+  },
+  /* DISASSEMBLY.RUN: every repair of both phones can be done with no
+     mistake, and the part's ellipsis is grey */
+  async disassembly(b) {
+    const { ctx, pg } = await boot(b);
+    await pg.evaluate(() => SELK.disassembly.open()); await wait(300);
+    const res = await pg.evaluate(() => {
+      const G = SELK.disassemblyGame, out = [];
+      for (const phone of ["fairphone", "samsung"]) {
+        for (const part of ["battery", "screen", "usb", "camera"]) {
+          G.pickScreen(); G.st.phone = phone; G.st.part = part; G.begin();
+          for (let n = 0; n < 300 && !G.st.over; n++) {
+            const st = G.st, P = G.PARTS[phone];
+            if (st.newPart) { G.fitNew(); }
+            else if (st.closing) {
+              if (st.pending) { G.useTool("screw", st.pending); }
+              else if (phone === "samsung" && G.nextBack() === "cover" && !st.glued) { G.useTool("glue", null); }
+              else if (G.nextBack()) { G.putBack(G.nextBack()); }
+              else { G.pressPower(); }
+            } else if (st.on) { G.pressPower(); }
+            else {
+              const id = G.nextPart(), done = st.done[id] || [];
+              if (done.length < P[id].needs.length) { G.useTool(P[id].needs[done.length], id); } else { G.pull(id); }
+            }
+          }
+          out.push(phone + " " + part + ": " + (G.st.over ? G.st.mistakes + " mistakes" : "not done"));
+        }
+      }
+      return out;
+    });
+    check("disassembly: every repair ends with no mistake", res.every((r) => / 0 mistakes$/.test(r)), res);
+    const grey = await pg.evaluate(() => getComputedStyle(document.querySelector(".dis-title")).color === getComputedStyle(document.querySelector(".dis-sub")).color);
+    check("disassembly: the title's ellipsis has the part's grey", grey);
+    check("disassembly: no page errors", !pg.errs.length, pg.errs);
     await ctx.close();
   }
 };

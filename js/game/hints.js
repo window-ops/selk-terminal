@@ -23,7 +23,7 @@
       any = true;
       addHintBlock(S.t("Report {code}", { code: S.REPORTS[k].code }), S.REPORTS[k].hints, "r:" + k, "hint " + S.REPORTS[k].code);
     });
-    S.SECTIONS.forEach(function (s) {
+    S.sections().forEach(function (s) {
       if (!s.locked || S.isUnlocked(s.id)) {
         return;
       }
@@ -58,7 +58,7 @@
     var rk = S.report(target || (st.active ? S.REPORTS[st.active].code : ""));
     if (rk && st.reports[rk]) {
       key = "r:" + rk; list = S.REPORTS[rk].hints; label = S.t("Report {code}", { code: S.REPORTS[rk].code });
-    } else if (target && S.LOCKS[S.secId(target)]) {
+    } else if (target && S.LOCKS[S.secId(target)] && S.sectionById(S.secId(target))) {
       var sec = S.secId(target);
       if (S.isUnlocked(sec)) {
         scr().line(S.t("That section is already open."), "dim"); return;

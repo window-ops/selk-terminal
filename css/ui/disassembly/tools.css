@@ -1,0 +1,48 @@
+/* DISASSEMBLY.RUN (window.css): the tools, dragged onto a part or pressed
+   to arm, and the picture of a tool that follows the pointer */
+.dis-tools {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5em;
+  padding: 0.5em 1em;
+  border-top: 1px solid var(--rib);
+}
+.dis-tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  font: inherit;
+  padding: 0.25em 0.7em;
+  color: var(--haze);
+  background: none;
+  border: 1px solid var(--rib);
+  border-bottom-width: 2px;
+  text-transform: uppercase;
+  cursor: var(--cur-grab);
+  touch-action: none;
+}
+.dis-tool:is(:hover, :focus-visible) {
+  border-color: var(--haze);
+  outline: none;
+}
+.dis-tool[aria-pressed="true"] {
+  color: var(--on-accent);
+  background: var(--haze);
+}
+.dis-tool-icon {
+  width: 80px;
+  height: 40px;
+  image-rendering: pixelated;
+}
+.dis-ghost .dis-tool-icon {
+  display: block;
+}
+.dis > canvas.armed {
+  cursor: crosshair;
+}
+.dis-ghost {
+  position: fixed;
+  z-index: var(--z-popover);
+  pointer-events: none;
+}

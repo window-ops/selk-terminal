@@ -9,7 +9,7 @@
      and land on the row's chosen option (pressed, on or selected) or its
      first control. Text fields keep Left and Right for the caret, and sliders
      for their value. Returns true when the focus moved. */
-  var ROW = ".dlg-btns, .set-ctl, .tabs, .tut-btns, .mail-toast-actions, .cine-group, .title-row, .tmux-right, .wb-right";
+  var ROW = ".dlg-btns, .sort-choices, .set-ctl, .tabs, .tut-btns, .mail-toast-actions, .cine-group, .title-row, .tmux-right, .wb-right";
   var CHOSEN = "[aria-pressed='true'], .on, [aria-selected='true'], [aria-current='true']";
   function focusables(root) {
     return [].filter.call(root.querySelectorAll("button, input, select, textarea, [tabindex]"), function (n) {
@@ -200,7 +200,7 @@
     ok.focus({ preventScroll: true });
   };
   S.unlockDialog = function (sec) {
-    var locked = S.SECTIONS.filter(function (s) {
+    var locked = S.sections().filter(function (s) {
       return s.locked && !S.isUnlocked(s.id);
     });
     if (!sec || S.isUnlocked(sec)) {
@@ -209,10 +209,16 @@
     if (!sec) {
       S.msg(S.t("All sections are open")); return;
     }
-    var s = S.sectionById(sec), parts = S.LOCKS[sec].parts.length;
+    var s = S.sectionById(sec), lock = S.LOCKS[sec], parts = lock.parts.length;
+    if (lock.key) {
+      keyDialog(sec, s, lock); return;
+    }
+    if (lock.sort) {
+      sortDialog(sec, s, lock); return;
+    }
     S.dialog( {
       title: S.t("UNLOCK {name}", { name: s.name.toUpperCase() }),
-      text: (parts > 1 ? S.t("This section needs two parts: a word and a number.") : S.t("Enter the password for this section.")) + " " + S.LOCKS[sec].nudge,
+      text: (parts > 1 ? S.t("This section needs two parts: a word and a number.") : S.t("Enter the password for this section.")) + " " + lock.nudge,
       inputs: parts > 1 ? [
         "word",
         "number"
@@ -232,6 +238,129 @@
       ]
     });
   };
+  /* The unlock dialog for a lock with a key (Design): the note, then one box
+     per group of the key with a dash between, like an activation key. A box
+     takes as many characters as its group and passes the focus on when full;
+     Backspace in an empty box and the arrow keys at either end move between
+     boxes, and a pasted key fills the boxes from the one pasted into. A wrong
+     key leaves the boxes as they are. */
+  function keyDialog(sec, s, lock) {
+    var boxes = [];
+    function spread(from, text) {
+      var chars = text.toUpperCase().replace(/[^A-Z0-9]/g, "").split(""), i = from;
+      while (chars.length && i < boxes.length) {
+        var n = boxes[i].maxLength;
+        boxes[i].value = chars.splice(0, n).join("");
+        i++;
+      }
+      var next = boxes[Math.min(i, boxes.length - 1)];
+      next.focus(); next.select();
+    }
+    var body = S.dialog({
+      title: S.t("UNLOCK {name}", { name: s.name.toUpperCase() }),
+      text: lock.note,
+      wide: true,
+      build: function (b) {
+        b.appendChild(S.lockClues(lock));
+        var row = el("div", "key-boxes");
+        row.setAttribute("role", "group");
+        row.setAttribute("aria-label", S.t("Serial of this terminal"));
+        lock.parts.forEach(function (p, i) {
+          if (i) { row.appendChild(el("span", "key-dash", "-")); }
+          var x = el("input", "dlg-in key-box");
+          x.type = "text"; x.maxLength = p.length; x.autocomplete = "off"; x.spellcheck = false;
+          x.style.setProperty("--chars", p.length);
+          x.placeholder = new Array(p.length + 1).join("\u00b7");
+          x.setAttribute("aria-label", S.t("Group {n} of {total}, {len} characters", { n: i + 1, total: lock.parts.length, len: p.length }));
+          x.addEventListener("input", function () {
+            var v = x.value.replace(/[^A-Za-z0-9]/g, "");
+            if (v.length > x.maxLength || v !== x.value) { x.value = ""; spread(i, v); return; }
+            if (v.length === x.maxLength && boxes[i + 1]) { boxes[i + 1].focus(); boxes[i + 1].select(); }
+          });
+          x.addEventListener("paste", function (e) {
+            var t = (e.clipboardData || window.clipboardData).getData("text");
+            if (t) { e.preventDefault(); spread(i, t); }
+          });
+          x.addEventListener("keydown", function (e) {
+            var at = x.selectionStart, end = x.selectionEnd;
+            if (e.key === "Backspace" && !x.value && boxes[i - 1]) {
+              e.preventDefault(); e.stopPropagation();
+              var prev = boxes[i - 1]; prev.value = prev.value.slice(0, -1); prev.focus();
+            } else if (e.key === "ArrowLeft" && at === 0 && end === 0 && boxes[i - 1]) {
+              e.preventDefault(); e.stopPropagation();
+              boxes[i - 1].focus(); boxes[i - 1].setSelectionRange(boxes[i - 1].value.length, boxes[i - 1].value.length);
+            } else if (e.key === "ArrowRight" && at === x.value.length && boxes[i + 1]) {
+              e.preventDefault(); e.stopPropagation();
+              boxes[i + 1].focus(); boxes[i + 1].setSelectionRange(0, 0);
+            }
+          });
+          boxes.push(x); row.appendChild(x);
+        });
+        b.appendChild(row);
+      },
+      buttons: [
+        {
+          label: "UNLOCK",
+          action: function () {
+            S.runClick("unlock " + sec + " " + boxes.map(function (x) { return x.value.trim(); }).join(""));
+            return S.isUnlocked(sec);
+          }
+        },
+        {
+          label: "CANCEL"
+        }
+      ]
+    });
+    if (body && boxes[0]) { boxes[0].focus(); }
+  }
+  /* The unlock dialog for a lock with a sort (History): the note, then each
+     line with its source and one button per choice. A choice stays pressed
+     until another is chosen for that line; UNLOCK sends one letter per line,
+     with a dash for a line left open. A wrong answer leaves the choices as
+     they are. */
+  function sortDialog(sec, s, lock) {
+    var picked = lock.sort.items.map(function () { return "-"; });
+    S.dialog({
+      title: S.t("UNLOCK {name}", { name: s.name.toUpperCase() }),
+      text: lock.note,
+      wide: true,
+      build: function (b) {
+        var list = el("ol", "sort-lines");
+        lock.sort.items.forEach(function (it, i) {
+          var li = el("li", "");
+          li.appendChild(el("q", "", it[0]));
+          li.appendChild(el("div", "dim", it[1]));
+          var row = el("div", "sort-choices");
+          row.setAttribute("role", "group");
+          row.setAttribute("aria-label", S.t("Line {n}", { n: i + 1 }));
+          lock.sort.choices.forEach(function (c) {
+            var x = el("button", "btn", c[1]);
+            x.type = "button"; x.setAttribute("aria-pressed", "false"); x.dataset.sound = "choice";
+            x.addEventListener("click", function () {
+              picked[i] = c[0];
+              row.querySelectorAll("button").forEach(function (o) { o.setAttribute("aria-pressed", String(o === x)); });
+            });
+            row.appendChild(x);
+          });
+          li.appendChild(row);
+          list.appendChild(li);
+        });
+        b.appendChild(list);
+      },
+      buttons: [
+        {
+          label: "UNLOCK",
+          action: function () {
+            S.runClick("unlock " + sec + " " + picked.join(""));
+            return S.isUnlocked(sec);
+          }
+        },
+        {
+          label: "CANCEL"
+        }
+      ]
+    });
+  }
   S.exitDialog = function () {
     S.dialog( {
       title: "END SESSION",

@@ -1,0 +1,73 @@
+/* TROIKA.RUN (js/games/troika/): a window over the screen in the frame of
+   the game's dialogs, and its title bar with the place. The other parts
+   are in bar.css (under the canvas), panels.css (the canvas and the panels
+   over it) and talk.css (the economist's dialogue). */
+.troika-ov {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-dialog);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+  background: rgba(10, 12, 13, 0.6);
+}
+/* window.js sets the width to the canvas's */
+.troika {
+  box-sizing: content-box;
+  max-width: 100%;
+  background: var(--hall);
+  border: 2px double var(--haze);
+}
+.troika-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.3em 0.8em;
+  color: var(--haze);
+  letter-spacing: 0.22em;
+  border-bottom: 1px solid var(--rib);
+}
+.troika-close {
+  font: inherit;
+  letter-spacing: normal;
+  color: var(--haze);
+  background: none;
+  border: 1px solid var(--rib);
+  padding: 0.05em 0.6em;
+}
+.troika-close:is(:hover, :focus-visible) {
+  color: var(--on-accent);
+  background: var(--haze);
+  outline: none;
+}
+/* The title and the place stay on one line and are cut off on a narrow
+   screen. The ellipsis takes the colour of the line, so the line is in the
+   place's grey and the name in the title's colour: a cut place ends in a
+   grey ellipsis like the rest of its text. */
+.troika-title {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--dust);
+}
+.troika-name {
+  color: var(--haze);
+}
+/* The place after a divider, fading in when the year changes it */
+.troika-place {
+  margin-left: 0.9em;
+  padding-left: 0.9em;
+  border-left: 1px solid var(--rib);
+  font-size: 0.9em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+html[data-motion="full"] .troika-place.new {
+  animation: troika-in 0.6s ease-out;
+}
+@keyframes troika-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

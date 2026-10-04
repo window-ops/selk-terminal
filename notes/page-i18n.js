@@ -39,6 +39,22 @@
       document.title = title;
     }
     var heading = main.querySelector("h1");
+    /* The language box sits at the right of the back button's row when the
+       page has one before its heading, else beside the heading */
+    var back = main.querySelector(".note-nav");
+    if (back && heading && back.compareDocumentPosition(heading) & Node.DOCUMENT_POSITION_FOLLOWING) {
+      var lbox = document.createElement("div");
+      lbox.className = "lang-box";
+      lbox.appendChild(languageBar());
+      if (S.i18n.lang() !== "en") {
+        var lnote = document.createElement("p");
+        lnote.className = "lang-note"; lnote.textContent = S.t(S.i18n.NOTICE);
+        lbox.appendChild(lnote);
+      }
+      back.classList.add("with-lang");
+      back.appendChild(lbox);
+      return;
+    }
     if (heading) {
       var row = document.createElement("div"), box = document.createElement("div");
       row.className = "notes-head-row"; box.className = "lang-box";

@@ -2,7 +2,7 @@
 /* Translation catalog for Selk.
 
    node tools/i18n-catalog.js template xx   prints a new js/lang/xx.js with every
-                                             string in English, ready to translate
+                                            string in English, ready to translate
    node tools/i18n-catalog.js check xx      lists what js/lang/xx.js still lacks
    node tools/i18n-catalog.js keys          prints the interface keys, one per line
    node tools/i18n-catalog.js unused xx     lists what js/lang/xx.js has that no files use
@@ -97,6 +97,8 @@ function storySkeleton(S) {
     if (e.sys) return;                                       // system files stay as they are
     const o = { by: e.by, body: e.body };
     if (e.cap) o.cap = e.cap;
+    if (e.facts) o.facts = e.facts;
+    if (e.flip) o.flip = e.flip.map((f) => [null, f[1]]);
     story.entries[e.id] = o;
   });
   Object.keys(S.MESSAGES).forEach((k) => {
@@ -108,7 +110,12 @@ function storySkeleton(S) {
     const r = S.REPORTS[k];
     story.reports[k] = { brief: r.brief, title: r.title, lines: r.lines.map((ln) => [ln[0], null, ln[2]]), hints: r.hints };
   });
-  Object.keys(S.LOCKS).forEach((k) => { story.locks[k] = { hint: S.LOCKS[k].hint, nudge: S.LOCKS[k].nudge }; });
+  Object.keys(S.LOCKS).forEach((k) => {
+    story.locks[k] = { hint: S.LOCKS[k].hint, nudge: S.LOCKS[k].nudge };
+    if (S.LOCKS[k].note) story.locks[k].note = S.LOCKS[k].note;
+    if (S.LOCKS[k].clues) story.locks[k].clues = S.LOCKS[k].clues;
+    if (S.LOCKS[k].sort) story.locks[k].sort = { choices: S.LOCKS[k].sort.choices.map((c) => [null, c[1]]), items: S.LOCKS[k].sort.items };
+  });
   S.ENDINGS.forEach((e) => {
     const o = { label: e.label };
     ["log", "reply", "title", "epilogue"].forEach((f) => { if (e[f] != null) o[f] = e[f]; });

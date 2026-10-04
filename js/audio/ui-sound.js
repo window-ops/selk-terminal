@@ -11,13 +11,16 @@
    less than 60 ms apart play once.
 
    With Setup > Sound > Control sounds ON, a control marked data-sound
-   plays the sound of that kind (S.snd.ui in sound.js) when the primary
+   plays the sound of that kind (S.snd.ui in interface.js) when the primary
    button activates it. Every other press clicks. */
 (function () {
-  var S = window.SELK, snd = S.snd, last = 0, pressing = false, pressEnd = 0, touchPress = false;
+  var S = window.SELK, snd = S.snd, last = 0, pressing = false, pressStart = 0, pressEnd = 0, touchPress = false;
   var rawClick = snd.click, rawTick = snd.tick;
   function play(fn, args, own) {
     var now = Date.now();
+    /* A press whose release never arrived (a drag, a pointer lost outside
+       the window) ends after 3 s, so it cannot silence later sounds */
+    if (pressing && now - pressStart > 3000) { pressing = false; }
     if (!own && (pressing || now < pressEnd)) { return; }
     if (now - last < 60) { return; }
     last = now;
@@ -36,13 +39,25 @@
     var k = kindOf(n);
     if (k) { play(snd.ui, [k], own); } else { play(rawClick, [], own); }
   }
+  /* A picture in an entry does nothing when pressed, unless it turns over
+     (the citizen pass), so a press on it is silent */
+  function inert(n) {
+    return !!(n && n.closest && n.closest(".cam img") && !n.closest(".cam.flip"));
+  }
+  /* Only entries and the command links that open them can be dragged onto a
+     report; a drag of anything else (a picture, selected text) is silent */
+  function validDrag(n) {
+    var m = n && n.closest && n.closest("[data-entry], [data-cmd^='open ']");
+    var id = m && (m.dataset.entry || (m.dataset.cmd || "").slice(5));
+    return !!id && S.entryDraggable(id);
+  }
   function release() {
     if (pressing) { pressing = false; pressEnd = Date.now() + 150; }
   }
   document.addEventListener("pointerdown", function (e) {
-    pressing = true;
+    pressing = true; pressStart = Date.now();
     touchPress = e.pointerType === "touch";
-    if (touchPress) { return; }
+    if (touchPress || inert(e.target)) { return; }
     /* A right or middle press activates nothing, so it clicks; a slider
        sounds as its value moves */
     if (e.button !== 0) { play(rawClick, [], true); }
@@ -51,6 +66,10 @@
   window.addEventListener("pointerup", release, true);
   window.addEventListener("pointercancel", function () { touchPress = false; release(); }, true);
   window.addEventListener("blur", release);
+  /* A drag replaces the pointer's release with dragend, and a hidden tab
+     may never see it */
+  document.addEventListener("dragend", release, true);
+  document.addEventListener("visibilitychange", function () { if (document.hidden) { release(); } });
   document.addEventListener("click", function (e) {
     if (e.detail === 0) { sound(e.target, false); }
     else if (touchPress) { touchPress = false; sound(e.target, true); }
@@ -68,6 +87,8 @@
       snd.tick();
     }
   }, true);
-  document.addEventListener("dragstart", function () { play(rawTick, [], true); }, true);
+  document.addEventListener("dragstart", function (e) {
+    if (validDrag(e.target)) { play(rawTick, [], true); }
+  }, true);
   document.addEventListener("drop", function () { play(rawClick, [], true); }, true);
 })();

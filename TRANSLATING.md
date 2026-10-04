@@ -45,7 +45,7 @@ The first word in each list is shown in help and messages. Every word in the lis
 
 ### story
 
-Only the fields in the skeleton are translated. Passwords (`locks.*.parts`), entry ids, report answer ids and system files (entries with `sys`, such as `/etc/hosts`) stay as they are. In report `lines`, the middle element stays `null`, which keeps the English answer ids.
+Only the fields in the skeleton are translated. Passwords (`locks.*.parts`), entry ids, report answer ids and system files (entries with `sys`, such as `/etc/hosts`) stay as they are. In report `lines`, the middle element stays `null`, which keeps the English answer ids. An entry's `facts` table and the captions in `flip` are translated like its body; in `flip` and in a lock's `sort.choices`, the first element stays `null`, which keeps the picture path or the answer letter.
 
 Most messages have one `body`. `MSG004` and `MSG005` also have `received`, the text the office sends when the other follow-up page reached it first. Translate both.
 

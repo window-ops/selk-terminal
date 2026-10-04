@@ -28,6 +28,8 @@
 | `css/ui/toasts.css` | The notification stack, toasts, the tour panel and its spotlight |
 | `css/ui/debug.css` | The DEBUG panel |
 | `css/ui/ending.css` | The decision fade and the ending's stage |
+| `css/ui/troika/` | TROIKA.RUN: `window.css` (the window and its title bar), `bar.css` (the bar under the canvas), `panels.css` (the canvas and the gate, pause and end panels) and `talk.css` (the economist's dialogue) |
+| `css/ui/disassembly/` | DISASSEMBLY.RUN: `window.css` (the window, its title bar and the canvas), `start.css` (the start screen), `tools.css` (the tools) and `panel.css` (the steps and the score card) |
 | `css/themes/title.css`, `css/themes/tmux.css`, `css/themes/desktop.css` | The popups of each theme |
 | `css/cursors.css` | The pixel cursors, also used by the notes pages |
 

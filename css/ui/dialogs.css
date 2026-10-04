@@ -52,6 +52,78 @@
 .dlg-in:focus {
   outline: none;
 }
+/* The clues of a lock with a note (S.lockClues in common.js): a framed list,
+   one row per clue, its label in a column of its own */
+.lock-clues {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0;
+  margin: 0.6em 0 0;
+  border: 1px solid var(--rib);
+  text-align: left;
+}
+.lock-clues dt,
+.lock-clues dd {
+  margin: 0;
+  padding: 0.25em 0.6em;
+  border-top: 1px solid var(--rib);
+}
+.lock-clues dt {
+  color: var(--accent);
+  border-right: 1px solid var(--rib);
+}
+.lock-clues dt:first-of-type,
+.lock-clues dt:first-of-type + dd {
+  border-top: 0;
+}
+/* The lines of a lock with a sort (sortDialog in dialogs.js, S.sortLines in
+   common.js): a framed, numbered list, each line with its source and its choices */
+.sort-lines {
+  margin: 0.6em 0 0;
+  padding: 0 0 0 2.4em;
+  border: 1px solid var(--rib);
+  text-align: left;
+}
+.sort-lines li {
+  padding: 0.45em 0.6em 0.45em 0;
+  border-top: 1px solid var(--rib);
+}
+.sort-lines li:first-child {
+  border-top: 0;
+}
+.sort-lines li::marker {
+  color: var(--accent);
+}
+.sort-choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  margin-top: 0.35em;
+}
+.sort-choices .btn[aria-pressed="true"] {
+  border-color: var(--accent);
+  color: var(--accent);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+/* The activation-key boxes of a lock with a key (keyDialog in dialogs.js):
+   each box is as wide as its group, with a dash between boxes */
+.key-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35em 0.25em;
+  margin-top: 0.6em;
+}
+.dlg-in.key-box {
+  width: calc(var(--chars) * (1ch + 0.08em) + 1.3em);
+  padding: 0.3em 0.6em;
+  text-align: center;
+  letter-spacing: 0.08em;
+}
+.key-dash {
+  opacity: 0.6;
+}
 .dlg-btns {
   display: flex;
   justify-content: center;

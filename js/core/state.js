@@ -24,6 +24,7 @@
       vUi: 75,
       soundPreset: "balanced",
       vStruct: 65,
+      vMusic: 70,
       speed: "instant",
       size: "m",
       click: "single",
@@ -38,7 +39,7 @@
       barScroll: false,
       /* Setup > Display > Pretty wrap. true: the last word of a text block
          stays off a line of its own (body.pretty-wrap) */
-      prettyWrap: false,
+      prettyWrap: true,
       /* Setup > Display > Sole pane frames. false: in tmux mode, a pane alone
          in its window and not zoomed has no border or header (paneEl in
          tmux.js) */
@@ -98,6 +99,14 @@
       endings: [],
       read: [],
       lastEnding: null,
+      /* The ending chosen last; unlike lastEnding it survives LOAD SAVE
+         (history/2097-NOW shows it) */
+      lastDecision: null,
+      /* True once the shell announced the Design section, which appears
+         after the first ending */
+      designNoted: false,
+      /* Sections shown from the debug panel without being unlocked */
+      debugShow: [],
       settings: defaults()
     };
   }
@@ -250,10 +259,43 @@
     var reports = S.state.reports;
     return !!((reports.R3A && reports.R3A.done) || (reports.R3B && reports.R3B.done));
   };
+  /* Sections and entries marked egg (the Design section and the serial
+     file in System) appear after the first ending, so they show after LOAD
+     SAVE. A section with after (History) appears once that section is
+     open. A section opened from the debug panel shows at once. Until then
+     sectionById treats such a section as missing, and entry lookups for
+     commands skip such entries (resolveEntry). */
+  function eggShown(x) {
+    var open = S.state.unlocked, shown = (S.state.debugShow || []).indexOf(x.id) !== -1;
+    if (x.egg && !S.state.endings.length && open.indexOf(x.id) === -1 && !shown) {
+      return false;
+    }
+    return !x.after || open.indexOf(x.after) !== -1 || open.indexOf(x.id) !== -1 || shown;
+  }
+  /* The sections shown, in display order */
+  S.sections = function () {
+    return S.SECTIONS.filter(eggShown);
+  };
+  S.entryShown = function (e) {
+    return eggShown(e) && !!S.sectionById(e.id.split("/")[0]);
+  };
+  /* The entries of a section that are shown, in display order */
+  S.entriesOf = function (sec) {
+    return S.ENTRIES.filter(function (e) {
+      return e.id.split("/")[0] === sec && S.entryShown(e);
+    });
+  };
+  /* True when the entry can be dragged onto a report blank: system files
+     and the entries of a section marked nodrag (Home, Design, History) can
+     not */
+  S.entryDraggable = function (id) {
+    var e = S.entryById(id), sec = e && S.SECTIONS.filter(function (s) { return s.id === e.id.split("/")[0]; })[0];
+    return !!(e && !e.sys && sec && !sec.nodrag);
+  };
   S.sectionById = function (id) {
     for (var i = 0; i < S.SECTIONS.length; i++) {
       if (S.SECTIONS[i].id === id) {
-        return S.SECTIONS[i];
+        return eggShown(S.SECTIONS[i]) ? S.SECTIONS[i] : null;
       }
     }
     return null;

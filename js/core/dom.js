@@ -83,15 +83,16 @@
   };
   /* The text blocks Pretty wrap acts on. New blocks are wrapped as they are
      added, and S.scr.reveal wraps shell, VIEW and MESSAGE text before it is
-     revealed. Turning the option off restores every text that has not changed
-     since. */
+     revealed. Turning the option off walks the page once and restores every
+     text that has not changed since; no list of changed texts is kept, so
+     lines that leave the page are not held in memory. */
   var WRAP_BLOCKS = "p, li, dd, .ln, .mail-toast-body, .status-info-copy, .set-note, .set-why, .cine-caption, .dlg-body > div:not([class])";
-  var wrapped = new Set(), wrapObs = null;
+  var wrapObs = null;
   function wrapIn(root) {
     if (!root || !root.querySelectorAll) { return; }
     var list = [].slice.call(root.querySelectorAll(WRAP_BLOCKS));
     if (root.matches && root.matches(WRAP_BLOCKS)) { list.unshift(root); }
-    list.forEach(function (b) { var n = S.wrapLast(b); if (n) { wrapped.add(n); } });
+    list.forEach(function (b) { S.wrapLast(b); });
   }
   S.prettyWrap = {
     on: false,
@@ -107,8 +108,13 @@
         wrapObs.observe(document.body, { childList: true, subtree: true });
       } else {
         if (wrapObs) { wrapObs.disconnect(); wrapObs = null; }
-        wrapped.forEach(function (x) { if (x.nodeValue === x._pwVal) { x.nodeValue = x._pwOrig; } x._pwVal = null; });
-        wrapped.clear();
+        var walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT), x;
+        while ((x = walk.nextNode())) {
+          if (x._pwVal != null) {
+            if (x.nodeValue === x._pwVal) { x.nodeValue = x._pwOrig; }
+            x._pwVal = null;
+          }
+        }
       }
     }
   };

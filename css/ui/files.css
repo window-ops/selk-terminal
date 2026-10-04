@@ -55,6 +55,18 @@
 .mc-row .grip {
   align-self: center;
 }
+/* In the FILES list the grip, and the space kept on rows without one, sit
+   closer to the name */
+.mc-row .grip,
+.mc-row .grip-space {
+  margin-right: 0.25em;
+}
+.mc-row .grip-space {
+  width: 0.5em;
+}
+.mc-row .grip-space {
+  width: 0.5em;
+}
 .mc-cols {
   color: var(--titan);
   margin-top: 0.4em;

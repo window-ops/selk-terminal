@@ -1,0 +1,94 @@
+/* TROIKA.RUN (window.css): the economist's dialogue (talk.js), a box at the
+   bottom of the picture as in old pixel games: his name in a tag,
+   the line, and the answers as a column of buttons. The line keeps the
+   gap of its untyped rest, so the box does not grow while it types. */
+.troika-talk {
+  position: absolute;
+  inset: auto 3% 4%;
+  max-height: calc(100% - 1.5em);
+  overflow: auto;
+  padding: 0.6em 1em 0.8em;
+  color: var(--haze);
+  background: var(--hall);
+  border: 2px double var(--haze);
+  cursor: var(--cur-arrow);
+}
+.troika-talk[hidden] {
+  display: none;
+}
+/* The box takes the focus with no outline; its border shows where it is */
+.troika-talk:focus,
+.troika-talk:focus-visible {
+  outline: none;
+}
+.troika-talk-name {
+  display: inline-block;
+  margin-bottom: 0.4em;
+  padding: 0 0.5em;
+  color: var(--on-accent);
+  background: var(--haze);
+  letter-spacing: 0.12em;
+  font-size: 0.85em;
+}
+.troika-talk-text {
+  margin: 0;
+  user-select: text;
+}
+.troika-talk-rest {
+  visibility: hidden;
+}
+/* The answers, one under the other, their text left aligned */
+.troika-talk-choices {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.2em;
+  margin-top: 0.2em;
+}
+.troika-talk-choices:empty {
+  display: none;
+}
+/* The answers are lines of text with no box; an arrow marks the one under
+   the pointer or the focus */
+.troika-talk-choices .btn {
+  position: relative;
+  padding: 0.1em 0 0.1em 1.4em;
+  text-align: left;
+  white-space: normal;
+  color: var(--haze);
+  background: none;
+  border: none;
+  cursor: var(--cur-arrow);
+}
+.troika-talk-choices .btn:is(:hover, :focus-visible) {
+  color: var(--haze);
+  background: none;
+  outline: none;
+}
+.troika-talk-choices .btn::before {
+  content: "\25B6";
+  position: absolute;
+  left: 0.2em;
+  visibility: hidden;
+}
+.troika-talk-choices .btn:is(:hover, :focus-visible)::before {
+  visibility: visible;
+}
+/* The mark that there is more, once the line is typed */
+.troika-talk-more {
+  position: absolute;
+  right: 0.6em;
+  bottom: 0.2em;
+  font-size: 0.7em;
+  color: var(--dust);
+}
+.troika-talk.typing .troika-talk-more,
+.troika-talk.asking .troika-talk-more {
+  visibility: hidden;
+}
+html[data-motion="full"] .troika-talk-more {
+  animation: troika-more 1s steps(2, jump-none) infinite;
+}
+@keyframes troika-more {
+  from { opacity: 1; }
+  to { opacity: 0.2; }
+}

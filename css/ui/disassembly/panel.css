@@ -1,0 +1,55 @@
+/* DISASSEMBLY.RUN (window.css): the panel under the canvas: the step and
+   its reason, the score card and the facts */
+.dis-panel {
+  padding: 0.8em 1em 1em;
+  color: var(--haze);
+  border-top: 1px solid var(--rib);
+}
+.dis-panel p {
+  margin: 0 0 0.7em;
+}
+.dis-panel p:last-child {
+  margin-bottom: 0;
+}
+.dis-why {
+  min-height: 1.4em;
+  color: var(--titan);
+}
+.dis-why.good {
+  color: var(--haze);
+}
+/* The score card */
+.dis-card {
+  border-collapse: collapse;
+  margin-bottom: 0.8em;
+}
+.dis-card th {
+  padding: 0.1em 1.2em 0.1em 0;
+  color: var(--dust);
+  font-weight: normal;
+  text-align: left;
+}
+.dis-card td {
+  padding: 0.1em 0;
+}
+.dis-facts {
+  margin: 0 0 0.9em;
+  padding-left: 1.2em;
+  color: var(--dust);
+}
+/* Rows the start screen hides, such as the Fairphone's edition */
+.dis-panel [hidden] {
+  display: none;
+}
+/* The disclaimer under the start screen's buttons */
+.dis-panel .dis-note {
+  margin-top: 0.9em;
+  color: var(--dust);
+  font-size: 0.85em;
+}
+/* The text can be selected and copied */
+.dis-panel p,
+.dis-panel li,
+.dis-card {
+  user-select: text;
+}

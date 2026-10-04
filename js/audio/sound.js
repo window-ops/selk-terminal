@@ -1,18 +1,20 @@
-/* All sound, synthesized with the Web Audio API: the machine hum, drive
-   seeks, wind, structure creaks and interface tones, mixed on separate volume
-   buses. */
+/* The sound engine, with the Web Audio API: the audio context, the volume
+   buses (interface, machine, wind, structure, music) with their ducks and pans, the
+   presets, and the helpers the sounds are made of (tone, burst, loopNoise,
+   osc, glide). The sounds themselves are in js/audio/sounds/, one file per
+   family, each adding its functions to S.snd through S.snd.kit. */
 (function () {
   var S = window.SELK;
-  var swellNow = null, ctx = null, master = null, bus = {}, duck = {}, pan = {}, hp = null, noiseBuf = null, amb = null, mach = null, on = true, lastKey = 0, wind = 0.2;
+  var ctx = null, master = null, bus = {}, duck = {}, pan = {}, hp = null, noiseBuf = null, on = true;
   /* Sound presets. Each sets the four channel levels once (the sliders stay
      adjustable), a high-pass filter against bass the speakers cannot play,
      and the stereo width. DESK SPEAKERS suits a left and right pair without a
      subwoofer. */
   var PRESETS = {
-    balanced: { vMachine: 70, vWind: 40, vUi: 75, vStruct: 65, hp: 40, width: 0.35 },
-    speakers: { vMachine: 60, vWind: 30, vUi: 85, vStruct: 60, hp: 110, width: 0.6 },
-    headphones: { vMachine: 55, vWind: 35, vUi: 65, vStruct: 55, hp: 30, width: 0.3 },
-    quiet: { vMachine: 30, vWind: 15, vUi: 60, vStruct: 35, hp: 60, width: 0.3 }
+    balanced: { vMachine: 70, vWind: 40, vUi: 75, vStruct: 65, vMusic: 70, hp: 40, width: 0.35 },
+    speakers: { vMachine: 60, vWind: 30, vUi: 85, vStruct: 60, vMusic: 75, hp: 110, width: 0.6 },
+    headphones: { vMachine: 55, vWind: 35, vUi: 65, vStruct: 55, vMusic: 60, hp: 30, width: 0.3 },
+    quiet: { vMachine: 30, vWind: 15, vUi: 60, vStruct: 35, vMusic: 45, hp: 60, width: 0.3 }
   };
   function preset() {
     return PRESETS[(S.state && S.state.settings.soundPreset) || "balanced"] || PRESETS.balanced;
@@ -32,7 +34,8 @@
     ui: "vUi",
     machine: "vMachine",
     wind: "vWind",
-    struct: "vStruct"
+    struct: "vStruct",
+    music: "vMusic"
   };
   /* Level changes glide. Browsers report AudioParam.value differently during
      a fade (Firefox reports the last value set), and a fade that starts from
@@ -76,7 +79,7 @@
   }
   function init() {
     if (ctx) {
-      if (ctx.state === "suspended" && on) {
+      if (ctx.state !== "running" && ctx.state !== "closed" && on) {
         ctx.resume();
       } return;
     }
@@ -157,7 +160,11 @@
     o.connect(g); g.connect(dest || bus.ui);
     o.start(t); o.stop(t + dur + 0.03);
   }
-  function burst(freq, q, vol, dur, when, type, dest, attack) {
+  /* A burst of filtered noise. offset is where in the noise buffer it reads,
+     in seconds; when left out it is random, so wind and creaks never repeat.
+     Interface sounds pass a fixed offset, so a control sounds the same every
+     time (sounds/interface.js). */
+  function burst(freq, q, vol, dur, when, type, dest, attack, offset) {
     if (!ctx || !on) {
       return;
     }
@@ -169,7 +176,7 @@
     g.gain.exponentialRampToValueAtTime(vol, t + (attack || Math.min(0.004, dur / 4)));
     g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
     s.connect(f); f.connect(g); g.connect(dest || bus.ui);
-    s.start(t, Math.random() * 2, dur + 0.05);
+    s.start(t, offset != null ? offset : Math.random() * 2, dur + 0.05);
   }
   function loopNoise(freq, q, type, gain, dest) {
     var s = ctx.createBufferSource(); s.buffer = noiseBuf; s.loop = true;
@@ -191,163 +198,24 @@
       g: g
     };
   }
-  function machine(start) {
-    if (!ctx) {
-      return;
+  /* Runs fn once the context is running. A context the browser suspended
+     (before the first gesture, or after the tab was hidden) resumes
+     asynchronously, and a sound scheduled before that is lost; this waits for
+     the resume, so the first press after a pause sounds like every other */
+  function ready(fn) {
+    init();
+    if (!ctx) { return; }
+    /* "suspended" in every browser; Safari also reports "interrupted" after
+       a call or another app took the audio */
+    if (ctx.state !== "running" && on) {
+      ctx.resume().then(fn, function () {});
+    } else {
+      fn();
     }
-    if (start && !on) {
-      return;
-    }
-    var t = ctx.currentTime;
-    if (start && !mach) {
-      mach = {
-        fan: loopNoise(220, 0.6, "bandpass", 0.0001, bus.machine),
-        fan2: loopNoise(900, 1.5, "bandpass", 0.0001, bus.machine),
-        s1: osc(90, "sine", 0.0001, bus.machine),
-        s2: osc(180, "sine", 0.0001, bus.machine),
-        s3: osc(270, "triangle", 0.0001, bus.machine),
-        psu: osc(100, "sine", 0.0001, bus.machine),
-        whine: osc(7200, "sine", 0.0001, bus.machine)
-      };
-      var psuF = ctx.createBiquadFilter(); psuF.type = "lowpass"; psuF.frequency.value = 400;
-      mach.psu.g.disconnect(); mach.psu.g.connect(psuF); psuF.connect(bus.machine);
-      [
-        [
-          "s1",
-          45,
-          90
-        ],
-        [
-          "s2",
-          60,
-          180
-        ],
-        [
-          "s3",
-          80,
-          270
-        ]
-      ].forEach(function (x) {
-        mach[x[0]].o.frequency.setValueAtTime(x[1], t);
-        mach[x[0]].o.frequency.exponentialRampToValueAtTime(x[2], t + 3);
-      });
-      mach.fan.g.gain.setTargetAtTime(0.09, t, 0.8);
-      mach.fan2.g.gain.setTargetAtTime(0.018, t, 1.2);
-      mach.s1.g.gain.setTargetAtTime(0.05, t + 0.3, 1);
-      mach.s2.g.gain.setTargetAtTime(0.02, t + 0.3, 1);
-      mach.s3.g.gain.setTargetAtTime(0.008, t + 0.3, 1);
-      mach.psu.g.gain.setTargetAtTime(0.006, t, 0.3);
-      mach.whine.g.gain.setTargetAtTime(0.0008, t + 1.5, 1);
-    } else if (!start && mach) {
-      var m = mach; mach = null;
-      [
-        "s1",
-        "s2",
-        "s3"
-      ].forEach(function (k) {
-        try {
-          m[k].o.frequency.setTargetAtTime(15, t, 1.2);
-        } catch (e) {}
-      });
-      Object.keys(m).forEach(function (k) {
-        try {
-          m[k].g.gain.setTargetAtTime(0.0001, t + 0.2, 0.9);
-        } catch (e) {}
-      });
-      setTimeout(function () {
-        Object.keys(m).forEach(function (k) {
-          try {
-            (m[k].src || m[k].o).stop();
-          } catch (e) {}
-        });
-      }, 5000);
-    }
-  }
-  function ambient(start) {
-    if (!ctx) {
-      return;
-    }
-    if (start && !on) {
-      return;
-    }
-    if (start && !amb) {
-      /* Wind fades in over a few seconds, spread across both speakers */
-      var w = preset().width;
-      amb = {
-        low: loopNoise(300, 0.7, "lowpass", 0.0001, bus.wind),
-        howl: loopNoise(900, 6, "bandpass", 0.0001, placed(bus.wind, 0.7 * w)),
-        hiss: loopNoise(3500, 0.8, "bandpass", 0.0001, placed(bus.wind, -0.7 * w))
-      };
-      glide(amb.low.g.gain, 0.1 + 0.25 * wind, 4);
-      glide(amb.howl.g.gain, 0.02 + 0.12 * wind, 5);
-      glide(amb.hiss.g.gain, 0.004 + 0.03 * wind, 5);
-      var l1 = ctx.createOscillator(), l1g = ctx.createGain();
-      l1.frequency.value = 0.07; l1g.gain.value = 220; l1.connect(l1g); l1g.connect(amb.low.f.frequency); l1.start();
-      var l2 = ctx.createOscillator(), l2g = ctx.createGain();
-      l2.frequency.value = 0.13; l2g.gain.value = 380; l2.connect(l2g); l2g.connect(amb.howl.f.frequency); l2.start();
-      var l3 = ctx.createOscillator(), l3g = ctx.createGain();
-      l3.frequency.value = 0.031; l3g.gain.value = 0.05; l3.connect(l3g); l3g.connect(amb.howl.g.gain); l3.start();
-      amb.lfos = [
-        l1,
-        l2,
-        l3
-      ];
-    } else if (!start && amb) {
-      /* Fade out first, since stopping a playing noise source clicks */
-      var a = amb, stopAt = ctx.currentTime + 0.6;
-      amb = null;
-      [a.low, a.howl, a.hiss].forEach(function (n) {
-        glide(n.g.gain, 0, 0.5);
-        try { n.src.stop(stopAt); } catch (e) {}
-      });
-      a.lfos.forEach(function (n) {
-        try { n.stop(stopAt); } catch (e) {}
-      });
-    }
-  }
-  function led() {
-    [
-      "led-hdd",
-      "st-led",
-      "wb-led"
-    ].forEach(function (id) {
-      var n = document.getElementById(id);
-      if (!n) {
-        return;
-      }
-      n.classList.add("on");
-      clearTimeout(n._t);
-      n._t = setTimeout(function () {
-        n.classList.remove("on");
-      }, 90 + Math.random() * 160);
-    });
-  }
-  /* Control sounds (Setup > Sound > Control sounds), one per kind of
-     control. ui-sound.js reads the kind from the data-sound attribute. Each
-     lasts 25 ms or more and is within about 2 dB of the click. A kind names
-     the control, not the outcome: the game plays ok, error or unlock when
-     the result is known. */
-  var UI = {
-    key: function () { burst(2400, 1.2, 0.22, 0.03); burst(900, 1, 0.12, 0.04, 0.012); tone(150, 0.06, "triangle", 0.06); },
-    toggle: function () { burst(3800, 2.5, 0.26, 0.025); burst(2400, 2.5, 0.26, 0.03, 0.05); },
-    fold: function () { burst(600, 0.8, 0.22, 0.07, 0, "lowpass"); tone(300, 0.08, "triangle", 0.05, 0, 450); },
-    page: function () { burst(3200, 2.5, 0.16, 0.018); tone(620, 0.06, "triangle", 0.062, 0.01); tone(930, 0.07, "triangle", 0.055, 0.065); },
-    back: function () { burst(3200, 2.5, 0.16, 0.018); tone(930, 0.06, "triangle", 0.062, 0.01); tone(620, 0.07, "triangle", 0.055, 0.065); },
-    close: function () { burst(2600, 2, 0.16, 0.02); tone(700, 0.1, "triangle", 0.048, 0.005, 330); },
-    action: function () { burst(3000, 2, 0.24, 0.025); burst(1200, 1.2, 0.15, 0.04, 0.02); tone(220, 0.06, "triangle", 0.05); },
-    menu: function () { burst(5200, 3, 0.24, 0.025); tone(1800, 0.04, "sine", 0.042); },
-    tab: function () { burst(1500, 4, 0.25, 0.03); tone(480, 0.06, "triangle", 0.062); },
-    open: function () { burst(3200, 2.5, 0.15, 0.018); tone(500, 0.09, "triangle", 0.05, 0.005, 760); },
-    /* The pitch follows the slider's value, 0 to 100 */
-    slide: function (v) { tone(400 + (+v || 0) * 10, 0.035, "square", 0.042); }
-  };
-  function click() {
-    burst(3200, 2.5, 0.32, 0.018); burst(1100, 1.2, 0.15, 0.03, 0.035);
   }
   S.snd = {
     init: init,
     apply: apply,
-    ambient: ambient,
     PRESETS: PRESETS,
     /* A preset sets the four channel levels */
     preset: function (name) {
@@ -355,90 +223,9 @@
       if (!pr) { return; }
       var st = S.state.settings;
       st.soundPreset = name;
-      ["vMachine", "vWind", "vUi", "vStruct"].forEach(function (k) { st[k] = pr[k]; });
+      ["vMachine", "vWind", "vUi", "vStruct", "vMusic"].forEach(function (k) { st[k] = pr[k]; });
       apply();
     },
-    /* Ending swell, after the THX Deep Note. Voices move at random between
-       200 and 400 Hz, then glide over 11 s to a chord spread over several
-       octaves while the level and the filter rise; the chord stays for 4 s
-       and fades out. The chord depends on the ending: "hope" is D major,
-       "hollow" open fifths with no third, "dark" a cluster of semitones and
-       tritones. Each voice is detuned slightly. Returns the length in
-       seconds. */
-    swell: function (mood) {
-      if (!ctx || !on) {
-        return 0;
-      }
-      /* One swell at a time: a replay stops the one still fading out */
-      S.snd.stopSwell();
-      var D = 36.71, t0 = ctx.currentTime + 0.05;
-      var CHORDS = {
-        hope: [1, 2, 3, 4, 6, 8, 12, 16, 20, 24, 32],
-        hollow: [1, 2, 3, 4, 6, 8, 12, 16, 24, 32],
-        dark: [2, 2.119, 2.828, 4, 4.238, 5.657, 8, 8.476, 11.31, 15.1, 16]
-      };
-      var ratios = CHORDS[mood] || CHORDS.hollow, N = 24;
-      var out = ctx.createGain(), lp = ctx.createBiquadFilter();
-      lp.type = "lowpass";
-      /* The voices are mono, and the stage below is pinned to stereo, so this
-         filter stays on one channel for its whole life */
-      pinChannels(lp, 1);
-      lp.frequency.setValueAtTime(500, t0);
-      lp.frequency.exponentialRampToValueAtTime(mood === "dark" ? 2400 : 5200, t0 + 11);
-      out.gain.setValueAtTime(0.0001, t0);
-      out.gain.exponentialRampToValueAtTime(0.06, t0 + 3);
-      out.gain.exponentialRampToValueAtTime(0.32, t0 + 11);
-      out.gain.setValueAtTime(0.32, t0 + 15);
-      out.gain.exponentialRampToValueAtTime(0.0001, t0 + 22);
-      /* The swell's envelope is on out. A stop fades this extra stage, whose
-         level is always known, so a stop never jumps. */
-      var fade = ctx.createGain(); fade.gain.value = 1;
-      out.connect(lp); lp.connect(fade); fade.connect(master);
-      var voices = [];
-      swellNow = { fade: fade, voices: voices };
-      for (var i = 0; i < N; i++) {
-        var o = ctx.createOscillator(), g = ctx.createGain();
-        o.type = "sawtooth";
-        var f = 200 + Math.random() * 200;
-        o.frequency.setValueAtTime(f, t0);
-        /* Random steps for the first five seconds */
-        for (var k = 1; k <= 12; k++) {
-          f = Math.max(180, Math.min(420, f + (Math.random() - 0.5) * 60));
-          o.frequency.linearRampToValueAtTime(f, t0 + k * 0.42);
-        }
-        var target = D * ratios[i % ratios.length] * Math.pow(2, (Math.random() - 0.5) * 0.012);
-        o.frequency.exponentialRampToValueAtTime(target, t0 + 11);
-        g.gain.value = 1 / N;
-        o.connect(g); g.connect(out);
-        o.start(t0); o.stop(t0 + 22.5); voices.push(o);
-      }
-      return 22;
-    },
-    /* Stops the swell with a short fade, when the player leaves the ending */
-    stopSwell: function () {
-      if (!ctx || !swellNow) {
-        return;
-      }
-      var t = ctx.currentTime, s = swellNow;
-      swellNow = null;
-      glide(s.fade.gain, 0, 0.5);
-      try {
-        s.voices.forEach(function (o) { o.stop(t + 0.6); });
-      } catch (e) {}
-    },
-    /* During the ending only the swell plays: every channel fades out over
-       1.5 s, and the swell goes straight to the master. hush(false) restores
-       the Setup levels. */
-    hush: function (on) {
-      if (!ctx) {
-        return;
-      }
-      /* A second call during a fade continues from the current level */
-      Object.keys(duck).forEach(function (k) {
-        glide(duck[k].gain, on ? 0 : 1, on ? 1.5 : 1.2);
-      });
-    },
-    machine: machine,
     setOn: function (v) {
       on = !!v;
       apply();
@@ -454,133 +241,23 @@
         }
       }
     },
-    setWind: function (w) {
-      wind = Math.max(0, Math.min(1, w));
-      /* Wind changes glide over two seconds; a step would cut into the
-         fade-in at power-on and click every 2.5 s */
-      if (ctx && amb && on) {
-        glide(amb.low.g.gain, 0.1 + 0.25 * wind, 2);
-        glide(amb.low.f.frequency, 260 + 500 * wind, 2);
-        glide(amb.howl.g.gain, 0.02 + 0.12 * wind, 2);
-        glide(amb.hiss.g.gain, 0.004 + 0.03 * wind, 2);
-      }
-    },
-    key: function () {
-      if (!on || (S.state && !S.state.sound)) {
-        return;
-      }
-      if (!ctx) {
-        init();
-      }
-      var now = Date.now();
-      if (now - lastKey < 25) {
-        return;
-      }
-      lastKey = now;
-      burst(1800 + Math.random() * 1800, 1.4, 0.38, 0.035);
-      tone(160 + Math.random() * 40, 0.03, "triangle", 0.05);
-    },
-    click: function () {
-      if (!on || (S.state && !S.state.sound)) { return; }
-      init();
-      click();
-    },
-    /* The sound of a kind of control; an unknown kind clicks */
-    ui: function (kind, value) {
-      if (!on || (S.state && !S.state.sound)) { return; }
-      init();
-      (UI[kind] || click)(value);
-    },
-    hdd: function (n) {
-      led();
-      if (!ctx || !on) {
-        return;
-      }
-      var t = 0, count = n || (3 + Math.floor(Math.random() * 5));
-      for (var i = 0; i < count; i++) {
-        burst(1700 + Math.random() * 900, 1.2, 0.045 + Math.random() * 0.03, 0.009, t, "lowpass", bus.machine);
-        burst(4200, 4, 0.012, 0.006, t + 0.004, null, bus.machine);
-        t += 0.03 + Math.random() * 0.08;
-      }
-      if (mach) {
-        var c = ctx.currentTime;
-        try {
-          mach.s2.g.gain.setTargetAtTime(0.045, c, 0.05);
-          mach.s2.g.gain.setTargetAtTime(0.02, c + t, 0.2);
-        } catch (e) {}
-      }
-      setTimeout(led, t * 500);
-    },
-    spinup: function () {
-      if (!on) {
-        return;
-      }
-      machine(true);
-      for (var i = 0; i < 8; i++) {
-        burst(1900, 1.2, 0.05, 0.009, 2 + i * 0.09, "lowpass", bus.machine);
-      }
-    },
-    spindown: function () {
-      machine(false);
-    },
-    creak: function (strength) {
-      if (!ctx || !on) {
-        return;
-      }
-      var s = strength || 0.5, where = placed(bus.struct, (Math.random() * 2 - 1) * preset().width);
-      tone(90 + Math.random() * 40, 1.2 + s, "sawtooth", 0.02 + 0.03 * s, 0, 60 + Math.random() * 20, where);
-      burst(180 + Math.random() * 120, 6, 0.15 * s, 0.9 + s * 0.6, 0.05, null, where);
-      if (Math.random() < 0.35 * s) {
-        tone(80, 0.7, "sine", 0.1 * s, 0.9, 55, where);
-      }
-    },
-    gust: function (strength) {
-      if (!ctx || !on) {
-        return;
-      }
-      var s = strength || 0.5;
-      burst(400 + 600 * s, 0.5, 0.35 * s, 2.5 + s, 0, "lowpass", bus.wind);
-      burst(1100 + 400 * s, 5, 0.12 * s, 2.2, 0.3, null, bus.wind);
-      burst(3000, 0.8, 0.05 * s, 1.8, 0.2, null, bus.wind);
-    },
-    tick: function () {
-      if (!on) return; tone(1320, 0.03, "square", 0.045);
-    },
-    ok: function () {
-      if (!on) return; tone(880, 0.06, "square", 0.04); tone(1320, 0.08, "square", 0.04, 0.07);
-    },
-    error: function () {
-      if (!on) return; tone(220, 0.16, "square", 0.06); tone(165, 0.2, "square", 0.05, 0.13);
-    },
-    chime: function () {
-      if (!on) return; tone(988, 0.14, "sine", 0.09); tone(1319, 0.22, "sine", 0.08, 0.12); tone(1976, 0.3, "sine", 0.04, 0.26);
-    },
-    unlock: function () {
-      if (!on) return; [
-        523,
-        659,
-        784,
-        1047
-      ].forEach(function (f, i) {
-        tone(f, 0.12, "square", 0.04, i * 0.08);
-      });
-    },
-    blip: function () {
-      led(); if (!on) return; tone(1600 + Math.random() * 900, 0.05, "square", 0.025);
-    },
-    sweep: function () {
-      if (!on) return; tone(300, 0.5, "sawtooth", 0.025, 0, 2400);
-    },
-    boot: function () {
-      if (!on) return;
-      /* The relay sound rises over 40 ms; an instant attack at this level was
-         heard as a bang */
-      burst(120, 0.8, 0.12, 0.5, 0, null, bus.machine, 0.04);
-      tone(60, 1.2, "sine", 0.05, 0.05, 50, bus.machine);
-      tone(15700, 1.6, "sine", 0.006, 0.2);
-    },
-    thud: function () {
-      if (!on) return; tone(90, 0.5, "sine", 0.12, 0, 40, bus.struct); burst(200, 0.6, 0.3, 0.5, 0, null, bus.struct);
+    /* What the files in sounds/ build with. ctx, master and the buses exist
+       only after init, so they are read through functions. */
+    kit: {
+      ctx: function () { return ctx; },
+      master: function () { return master; },
+      bus: function (k) { return bus[k]; },
+      duck: function () { return duck; },
+      on: function () { return on; },
+      preset: preset,
+      placed: placed,
+      glide: glide,
+      pinChannels: pinChannels,
+      tone: tone,
+      burst: burst,
+      loopNoise: loopNoise,
+      osc: osc,
+      ready: ready
     }
   };
 })();

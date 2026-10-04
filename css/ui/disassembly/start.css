@@ -1,0 +1,63 @@
+/* DISASSEMBLY.RUN (window.css): the start screen: a card for each phone,
+   then the edition, the part and the buttons */
+.dis-phones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8em;
+  margin-bottom: 1em;
+}
+.dis-phone {
+  flex: 1 1 14em;
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  padding: 0.7em 0.9em;
+  font: inherit;
+  text-align: left;
+  color: var(--haze);
+  background: var(--mat, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--rib);
+}
+.dis-phone canvas {
+  flex: none;
+  image-rendering: pixelated;
+}
+.dis-phone-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35em;
+  color: var(--dust);
+}
+.dis-phone-text strong {
+  color: var(--haze);
+  font-weight: normal;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.dis-phone:is(:hover, :focus-visible) {
+  border-color: var(--haze);
+  outline: none;
+}
+.dis-phone[aria-checked="true"] {
+  border: 2px double var(--haze);
+  padding: calc(0.7em - 1px) calc(0.9em - 1px);
+}
+.dis-label {
+  color: var(--dust);
+  font-size: 0.9em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.dis-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5em;
+  margin-bottom: 1em;
+}
+.dis-row:last-child {
+  margin-bottom: 0;
+}
+.dis-row .btn[aria-checked="true"] {
+  color: var(--on-accent);
+  background: var(--haze);
+}

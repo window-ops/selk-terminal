@@ -103,9 +103,12 @@
     var b = document.querySelector("[data-a11y='sr']");
     if (b) { b.textContent = on ? S.t("SCREEN READER MODE: ON") : S.t("SCREEN READER MODE: OFF"); set(b, "aria-pressed", on ? "true" : "false"); }
   }
+  /* The title screen's options panel switches it through
+     S.toggleScreenReader (main.js) */
+  S.toggleScreenReader = function () { toggleMode(); };
   function toggleMode() {
     S.state.settings.sr = !S.state.settings.sr;
-    S.save(); S.applySettings();
+    S.save(); S.applySettings(); applyMode();
     S.announce(S.state.settings.sr ? S.t("Screen reader mode on. Text appears at once and screen effects are off.") : S.t("Screen reader mode off."));
   }
 
@@ -115,14 +118,6 @@
     var q = function (s, fn) { (root.querySelectorAll ? root : document).querySelectorAll(s).forEach(fn); };
 
     q(".title-big", function (n) { set(n, "role", "heading"); set(n, "aria-level", "1"); set(n, "aria-label", "Selk"); });
-    q(".title-toggles", function (row) {
-      if (row.querySelector("[data-a11y='sr']")) { return; }
-      var b = document.createElement("button");
-      b.type = "button"; b.className = "btn"; b.dataset.a11y = "sr";
-      b.addEventListener("click", function (e) { e.stopPropagation(); toggleMode(); });
-      row.insertBefore(b, row.firstChild);
-      applyMode();
-    });
 
     q(".pane", function (p) {
       var h = p.querySelector(".pane-name");

@@ -89,7 +89,10 @@
     /* Touch-only screens draw no pointer */
     cursor: function (c) { return c.pointer; },
     /* Automatic scrolling of status line messages only moves text */
-    barScroll: function (c) { return !c.sr; }
+    barScroll: function (c) { return !c.sr; },
+    /* The music belongs to the games in the archive, so its channel shows
+       once History is open */
+    vMusic: function () { return !!(S.sectionById && S.sectionById("history")); }
   };
   /* Greyed Setup rows. A rule returns the reason a row cannot apply now, or
      "" when it can. Another Setup choice, such as Mode, Motion or Shell

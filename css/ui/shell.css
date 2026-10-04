@@ -120,6 +120,27 @@
   font-size: 0.85em;
   margin-top: 0.3em;
 }
+/* A picture with two sides (the citizen pass): the caption and FLIP share
+   one row under the picture, as wide as the picture */
+.cam.flip figcaption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1em;
+  width: min(100%, 640px);
+}
+.cam.flip figcaption .lnk {
+  flex: none;
+  font-size: 1rem;
+}
+/* The picture turns like a card: it narrows to its edge, changes side and
+   widens again */
+.cam.flip img {
+  transition: transform 140ms ease-in;
+}
+.cam.flip img.turning {
+  transform: scaleX(0);
+}
 .note {
   padding: 0.55em 0.8em;
   border: 1px dashed var(--rib);

@@ -26,21 +26,114 @@
   S.prompt = function () {
     $("prompt").textContent = S.promptText();
   };
+  /* The title screen's options, in groups, behind the OPTIONS button in the
+     bottom left corner; Setup has the rest. Each option is [label, read,
+     write]; writing saves and applies the settings. */
+  var QUICK = [
+    ["Accessibility", [
+      ["SCREEN READER MODE", function () { return !!S.state.settings.sr; }, function () { if (S.toggleScreenReader) { S.toggleScreenReader(); } }],
+      ["SCREEN EFFECTS", function () { var s = S.state.settings; return !!(s.scan && s.flicker && s.glow && s.interfere); },
+        function (on) { var s = S.state.settings; s.scan = s.flicker = s.glow = s.interfere = on; }],
+      ["PRETTY WRAP", function () { return !!S.state.settings.prettyWrap; }, function (on) { S.state.settings.prettyWrap = on; }]
+    ]],
+    ["Game", [
+      ["SOUND", function () { return !!S.state.sound; }, function (on) { S.state.sound = on; S.snd.setOn(on); }],
+      ["DESKTOP MODE", function () { return S.state.settings.mode === "desktop"; }, function (on) { S.state.settings.mode = on ? "desktop" : "tmux"; }],
+      ["NO TOUR", function () { return !!S.noTour; }, function (on) { S.noTour = on; }]
+    ]],
+    ["Developer", [
+      ["FAST MODE", function () { return !!S.state.settings.fast; }, function (on) { S.state.settings.fast = on; }],
+      ["DEBUG", function () { return !!S.state.settings.debug; }, function (on) { S.state.settings.debug = on; }]
+    ]]
+  ];
+  function quickOption(key) {
+    var k = key.split(".");
+    return QUICK[+k[0]][1][+k[1]];
+  }
+  /* Every row shows its option's state again, since one option can change
+     another (screen reader mode turns the screen effects off) */
+  function quickRefresh() {
+    document.querySelectorAll(".title-opt").forEach(function (b) { quickShow(b, quickOption(b.dataset.title.slice(6))); });
+  }
+  /* Opens or closes the panel; closing returns the focus to OPTIONS */
+  function quickPanel(open) {
+    var btn = document.querySelector(".title-options-btn"), panel = $("title-options");
+    if (!btn || !panel) { return; }
+    btn.setAttribute("aria-expanded", open ? "true" : "false");
+    panel.hidden = !open;
+    if (open) { var first = panel.querySelector(".title-opt"); if (first) { first.focus(); } }
+    else { btn.focus(); }
+  }
+  function quickShow(b, q) {
+    var on = q[1]();
+    b.setAttribute("aria-checked", on ? "true" : "false");
+    b.querySelector(".opt-state").textContent = S.t(on ? "ON" : "OFF");
+  }
+  /* OPTIONS is a button at the left end of the status bar, where the window
+     list ([selk]) stands in a session, and opens a panel above the bar over
+     the screen: the options in groups, each row its name and its state.
+     Starting the session removes it. */
+  function buildOptions() {
+    var corner = S.el("div", "title-options");
+    var head = S.el("button", "st-btn title-options-btn", S.t("OPTIONS"));
+    head.type = "button"; head.dataset.title = "options"; head.dataset.sound = "menu";
+    head.setAttribute("aria-expanded", "false"); head.setAttribute("aria-controls", "title-options");
+    var panel = S.el("div", "title-options-panel"); panel.id = "title-options"; panel.hidden = true;
+    panel.setAttribute("role", "group"); panel.setAttribute("aria-label", S.t("OPTIONS"));
+    QUICK.forEach(function (g, gi) {
+      panel.appendChild(S.el("div", "opt-group", S.t(g[0])));
+      g[1].forEach(function (q, i) {
+        var b = S.el("button", "title-opt"); b.type = "button"; b.dataset.title = "quick:" + gi + "." + i;
+        b.setAttribute("role", "switch"); b.setAttribute("aria-label", S.t(q[0])); b.dataset.sound = "switch";
+        b.appendChild(S.el("span", "opt-name", S.t(q[0])));
+        b.appendChild(S.el("span", "opt-state"));
+        quickShow(b, q);
+        panel.appendChild(b);
+      });
+    });
+    /* Up and Down move between the rows; Escape closes the panel */
+    panel.addEventListener("keydown", function (e) {
+      var rows = [].slice.call(panel.querySelectorAll(".title-opt")), i = rows.indexOf(document.activeElement);
+      if (e.key === "ArrowDown" || e.key === "ArrowUp") {
+        e.preventDefault(); e.stopPropagation();
+        var n = rows[(i + (e.key === "ArrowDown" ? 1 : -1) + rows.length) % rows.length]; if (n) { n.focus(); }
+      } else if (e.key === "Escape") {
+        e.preventDefault(); e.stopPropagation(); quickPanel(false);
+      }
+    });
+    corner.appendChild(panel); corner.appendChild(head);
+    return corner;
+  }
   function title() {
     var scr = S.scr;
+    /* The saved Sound setting applies on the title screen too */
+    S.snd.setOn(S.state.sound !== false);
     /* S.mode is "title" by now, so this puts data-theme="title" on <html>
        and the popups take the title screen's own shape (css/themes/title.css) */
     S.syncContext();
     $("screen").classList.add("title-screen");
     scr.node(function () {
       var w = scr.el("div", "title");
+      /* The instruction is for screen readers only: they announce it as the
+         name of the group when the focus enters the title screen */
+      w.setAttribute("role", "group");
+      w.setAttribute("aria-label", S.t("Select POWER ON to begin"));
+      /* Screen reader mode comes first in the tab order and is the first
+         thing a screen reader reads, so a blind player finds it at once. It
+         stays out of sight until it has the keyboard focus. a11y.js keeps
+         its text and state in step with the setting. */
+      var sr = scr.el("button", "title-sr");
+      sr.type = "button"; sr.dataset.a11y = "sr"; sr.dataset.sound = "switch";
+      sr.textContent = S.state.settings.sr ? S.t("SCREEN READER MODE: ON") : S.t("SCREEN READER MODE: OFF");
+      sr.setAttribute("aria-pressed", S.state.settings.sr ? "true" : "false");
+      sr.addEventListener("click", function () { if (S.toggleScreenReader) { S.toggleScreenReader(); } });
+      w.appendChild(sr);
       w.appendChild(scr.el("div", "title-big", "SELK"));
       w.appendChild(scr.el("div", "title-sub", S.t("CESEA site terminal 01, Titan")));
       w.appendChild(scr.el("div", "title-sub dim", "7.0 N, 199.0 W"));
       var go = scr.el("button", "btn primary title-go", S.t("POWER ON"));
       go.type = "button"; go.dataset.title = "power";
       w.appendChild(go);
-      w.appendChild(scr.el("div", "title-sub dim", S.t("Select POWER ON to begin")));
       var row = scr.el("div", "title-row");
       [
         [
@@ -63,15 +156,21 @@
         row.appendChild(x);
       });
       w.appendChild(row);
-      var toggles = scr.el("div", "title-row title-toggles");
-      var tour = scr.el("button", "btn", S.t("NO TOUR: OFF")); tour.type = "button"; tour.dataset.title = "tutorial";
-      tour.setAttribute("aria-pressed", "false");
-      toggles.appendChild(tour);
-      w.appendChild(toggles);
       return w;
     }, 0);
+    /* The output area is no tab stop on the title screen, so the tab order
+       starts with screen reader mode; start() gives the stop back */
+    var log = document.querySelector("#screen .log");
+    if (log) { log.setAttribute("tabindex", "-1"); }
+    var foot = document.querySelector("#screen > footer.tmux"), old = document.querySelector(".title-options");
+    if (old) { old.remove(); }
+    if (foot) { foot.insertBefore(buildOptions(), foot.firstChild); }
   }
   function start() {
+    var opts = document.querySelector(".title-options");
+    if (opts) { opts.remove(); }
+    var log = document.querySelector("#screen .log");
+    if (log) { log.setAttribute("tabindex", "0"); }
     if (S.mode !== "title") {
       return;
     }
@@ -481,6 +580,10 @@
           return;
         }
         var tb = e.target.closest("[data-title]");
+        var openPanel = $("title-options");
+        if (openPanel && !openPanel.hidden && !e.target.closest(".title-options")) {
+          quickPanel(false);
+        }
         if (!tb) {
           return;
         }
@@ -494,10 +597,14 @@
         else if (act === "credits") {
           window.open("notes/credits.html", "_blank");
         }
-        else if (act === "tutorial") {
-          S.noTour = !S.noTour;
-          tb.textContent = S.noTour ? S.t("NO TOUR: ON") : S.t("NO TOUR: OFF");
-          tb.setAttribute("aria-pressed", S.noTour ? "true" : "false");
+        else if (act === "options") {
+          quickPanel(tb.getAttribute("aria-expanded") !== "true");
+        }
+        else if (act.indexOf("quick:") === 0) {
+          var q = quickOption(act.slice(6));
+          q[2](!q[1]());
+          S.save(); S.applySettings();
+          quickRefresh();
         }
         else {
           start();

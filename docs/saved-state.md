@@ -18,6 +18,7 @@
 | `hintsOn`, `light`, `hintsShown` | The hint page switch, the hint light and the lines revealed |
 | `read` | Entries the player opened |
 | `decision`, `preDecision`, `ended`, `endings`, `lastEnding` | The final decision and the ending records |
+| `designNoted` | The shell announced the Design section. It survives loading the save from before the decision, like `endings`, and so do `design` and `history` in `unlocked`. |
 | `tut` | The tour: `on`, `step`, `kind` (`simple` or `technical`), `refresh` for the refresher, and `rolled` for a panel rolled up on a narrow screen. `kind` outlives a finished tour, so the kind dialog offers it first next time. |
 | `settings` | Every Setup value (below) |
 

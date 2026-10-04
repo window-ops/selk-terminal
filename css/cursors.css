@@ -70,6 +70,17 @@ input[type="text"], .cmd, .dlg-in, .tmux-prompt {
 .log, .v-body, .mail-body, .paras, .fields dd, .etable td {
   cursor: var(--cur-text);
 }
+/* Pictures in the shell and in VIEW show the arrow; only their captions are text */
+.cam, .cam img {
+  cursor: var(--cur-arrow);
+}
+.cam figcaption {
+  cursor: var(--cur-text);
+}
+/* A picture with two sides turns over when clicked */
+.cam.flip img {
+  cursor: var(--cur-hand);
+}
 .wb-tbar {
   cursor: var(--cur-move);
 }

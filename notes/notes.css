@@ -55,7 +55,7 @@ main a.citation-button:focus-visible {
   text-decoration: none;
 }
 .drawing-back {
-  margin: 0 0 1.2rem;
+  margin: 0 0 1rem;
 }
 .note-button:hover,
 .note-button:focus-visible {
@@ -122,13 +122,13 @@ body {
 }
 .page-concept h2 {
   font-size: 1.9rem;
-  margin: 1.8rem 0 2rem;
+  margin: 1rem 0;
   border-bottom: 1px solid var(--rib);
   padding-bottom: 0.3rem;
 }
 .page-concept h3 {
   font-size: 1.4rem;
-  margin: 1.5rem 0 0.3rem;
+  margin: 0.9rem 0 0.6rem;
 }
 .page-concept .dim {
   color: var(--dust);
@@ -151,7 +151,7 @@ body {
 .page-credits main {
   max-width: 74ch;
   margin: 0 auto;
-  padding: 3rem 1.25rem 4rem;
+  padding: 2rem 1.25rem 2rem;
 }
 .page-credits h1, .page-credits h2 {
   font-family: var(--font-crt);
@@ -164,7 +164,7 @@ body {
 }
 .page-credits h2 {
   font-size: 1.8rem;
-  margin: 1.8rem 0 0.6rem;
+  margin: 0.6rem 0;
   border-bottom: 1px solid var(--rib);
   padding-bottom: 0.3rem;
 }
@@ -180,7 +180,7 @@ body {
 
 /* devnotes.html */
 .page-devnotes main {
-  max-width: 84ch;
+  max-width: 55rem;
   margin: 0 auto;
   padding: 3rem 1.25rem 5rem;
 }
@@ -195,13 +195,13 @@ body {
 }
 .page-devnotes h2 {
   font-size: 1.9rem;
-  margin: 1.8rem 0 2rem;
+  margin: 1rem 0;
   border-bottom: 1px solid var(--rib);
   padding-bottom: 0.3rem;
 }
 .page-devnotes h3 {
   font-size: 1.4rem;
-  margin: 1.5rem 0 0.3rem;
+  margin: 0.9rem 0 0.6rem;
 }
 .page-devnotes .dim {
   color: var(--dust);
@@ -263,7 +263,7 @@ body {
 .page-devnotes .fields {
   display: grid;
   grid-template-columns: minmax(8em, max-content) 1fr;
-  gap: 0.1rem 1.2rem;
+  gap: 0.1rem 0.8rem;
   margin: 0.3rem 0;
   padding: 0.6rem 0.9rem;
   background: #1a1f22;
@@ -283,7 +283,7 @@ body {
   margin: 0.3rem 0;
 }
 .page-devnotes .paras p {
-  margin: 0 0 0.3rem;
+  margin: 0 0 0.5rem;
 }
 @media (max-width: 520px) {
   .page-devnotes .fields {
@@ -488,8 +488,26 @@ body {
   background: var(--haze);
   outline: none;
 }
+/* The back button's row with the language box at its right, centred
+   vertically; the Language label is kept for screen readers only */
+.note-nav.with-lang {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.note-nav.with-lang .lang-box {
+  margin-left: auto;
+}
+.lang-bar label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
 .lang-note {
-  max-width: 30ch;
   margin: 0;
   color: var(--dust);
   font-size: 0.8rem;

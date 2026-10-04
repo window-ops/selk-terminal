@@ -43,6 +43,10 @@
   }
   S.clearDragState = clearDragState;
   S.dragStart = function (e, id) {
+    /* Entries that cannot fill a blank do not start a drag (S.entryDraggable) */
+    if (!S.entryDraggable(id)) {
+      e.preventDefault(); return;
+    }
     clearDragState();
     e.dataTransfer.setData("text/plain", id);
     e.dataTransfer.effectAllowed = "copyMove";
@@ -105,6 +109,7 @@
     var b = el("button", "blank" + (v ? " filled" : "") + (sel && sel.r === key && sel.n === i + 1 ? " sel" : ""));
     b.type = "button";
     b.dataset.kbFocus = "blank:" + key + ":" + (i + 1);
+    b.dataset.sound = "select";
     b.textContent = v ? S.entryTitle(v) : "\u00a0";
     b.disabled = r.done;
     b.title = r.done ? "" : S.t("Drop an entry here, or click and then press USE");

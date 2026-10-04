@@ -37,7 +37,7 @@
     S.display(S.entryTitle(e.id), function () {
       var box = scr().el("div", "entry");
       var head = scr().el("div", "entry-title", e.path || S.entryTitle(e.id));
-      if (!e.sys) {
+      if (S.entryDraggable(e.id)) {
         head.draggable = true; head.title = S.t("Drag onto a report blank");
         head.dataset.entry = e.id;
         head.addEventListener("dragstart", function (ev) {
@@ -53,15 +53,49 @@
       if (e.sys) {
         box.appendChild(S.renderSys(e, e.body.replace(/@USER@/g, S.userId())));
       } else {
-        box.appendChild(S.renderBody(e.body, scr().markup, e.table));
+        /* @ENDING@ is the ending chosen last (history/2097-NOW). An article
+           (History) is paragraphs, with its facts table under them. */
+        var text = e.body.replace(/@ENDING@/g, S.end.decisionLabel());
+        box.appendChild(e.article ? S.renderParas(text, scr().markup) : S.renderBody(text, scr().markup, e.table));
+        if (e.facts) {
+          box.appendChild(S.renderBody(e.facts, scr().markup, true));
+        }
       }
-      if (e.img) {
+      /* One camera picture with its caption, or a list of pictures
+         captioned with their file names (design/IMAGES) */
+      (e.img ? [[e.img, e.cap]] : (e.imgs || []).map(function (src) { return [src, src.split("/").pop()]; })).forEach(function (p) {
         var fig = scr().el("figure", "cam");
         var img = document.createElement("img");
-        img.src = e.img; img.alt = e.cap; img.loading = "lazy";
+        img.src = p[0]; img.alt = p[1]; img.loading = "lazy"; img.draggable = false;
         fig.appendChild(img);
-        fig.appendChild(scr().el("figcaption", "dim", e.cap));
+        fig.appendChild(scr().el("figcaption", "dim", p[1]));
         box.appendChild(fig);
+      });
+      /* A picture with two sides (the citizen pass) shows one side at a
+         time. TURN OVER, beside the caption, or a click on the picture turns
+         it: the picture narrows to its edge, changes side and widens again,
+         at once when motion is reduced. The caption follows the side. */
+      if (e.flip) {
+        var side = 0, card = scr().el("figure", "cam flip");
+        var face = document.createElement("img"), cap = scr().el("figcaption", "dim"), text = scr().el("span", "");
+        var turn = scr().el("button", "lnk act", S.t("TURN OVER"));
+        turn.type = "button"; turn.dataset.sound = "flip";
+        face.title = S.t("TURN OVER"); face.draggable = false; face.dataset.sound = "flip";
+        var show = function () {
+          face.src = e.flip[side][0]; face.alt = e.flip[side][1]; text.textContent = e.flip[side][1];
+        };
+        var flip = function () {
+          side = (side + 1) % e.flip.length;
+          if (S.reduced) { show(); return; }
+          face.classList.add("turning");
+          setTimeout(function () { show(); face.classList.remove("turning"); }, 140);
+        };
+        turn.addEventListener("click", flip);
+        face.addEventListener("click", flip);
+        show();
+        cap.appendChild(text); cap.appendChild(turn);
+        card.appendChild(face); card.appendChild(cap);
+        box.appendChild(card);
       }
       var slot = scr().el("div", "use-slot");
       slot.dataset.entry = e.id;
@@ -98,9 +132,7 @@
     var s = S.sectionById(sec);
     scr().line(s.name.toUpperCase(), "head");
     scr().node(function () {
-      return shellTable(S.ENTRIES.filter(function (e) {
-        return e.id.split("/")[0] === sec;
-      }).map(function (e) {
+      return shellTable(S.entriesOf(sec).map(function (e) {
         return [
           {
             node: scr().cmdButton(e.id.split("/")[1], "open " + e.id)
@@ -115,11 +147,9 @@
   }
   function listRoot() {
     scr().node(function () {
-      return shellTable(S.SECTIONS.map(function (s) {
+      return shellTable(S.sections().map(function (s) {
         var locked = !S.isUnlocked(s.id);
-        var count = S.ENTRIES.filter(function (e) {
-          return e.id.split("/")[0] === s.id;
-        }).length;
+        var count = S.entriesOf(s.id).length;
         return [
           {
             node: scr().cmdButton(s.name.toUpperCase(), "cd " + s.id)

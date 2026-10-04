@@ -59,7 +59,7 @@
   '<line x1="130" y1="270" x2="130" y2="386"/>' +
   '<path d="M430 170 L445 170 L445 408 L458 408"/><path d="M430 250 L445 250 L445 408 L458 408"/><line x1="550" y1="270" x2="550" y2="386"/>' +
   /* Report 4 opens after 3A or 3B, and reads Power and Export */
-  '<path d="M340 344 L340 468"/><path d="M130 428 L130 490 L248 490"/><path d="M550 428 L550 500 L432 500"/>' +
+  '<path d="M340 344 L340 468"/><path d="M130 428 L130 490 L248 490"/><path d="M550 428 L550 490 L432 490"/>' +
   '<line x1="340" y1="510" x2="340" y2="536"/>' +
   /* The final decision lists the five choices in the game's order; habitation splits on oxygen */
   '<path d="M340 578 L340 638"/>' +
@@ -101,7 +101,10 @@
     archive: "site/SELK, field Named after",
     comms: "structure/STOPPED-REPAIRS, column Build",
     export: "units/SV-1, field Temperature",
-    power: "archive/LAB.R4 and export/MANIFEST-2291"
+    power: "archive/LAB.R4 and export/MANIFEST-2291",
+    /* Shown after the first ending; the hint design lines build the serial */
+    design: "the euro note initials, see the hints",
+    history: "sorting the Brian Cox lines, see the hints"
   };
   $("locks").appendChild(table( [
     "Section",
@@ -235,7 +238,11 @@
       $("articles").appendChild(S.renderSys(e, e.body.replace(/@USER@/g, "user.id")));
     }
     else {
-      $("articles").appendChild(S.renderBody(e.body, inline, e.table));
+      var text = e.body.replace(/@ENDING@/g, "(the ending chosen)");
+      $("articles").appendChild(e.article ? S.renderParas(text, inline) : S.renderBody(text, inline, e.table));
+      if (e.facts) {
+        $("articles").appendChild(S.renderBody(e.facts, inline, true));
+      }
     }
     var keys = noteKeys(e.body);
     if (keys.length) {

@@ -79,7 +79,8 @@
         row("Machine", "vMachine", VOLUME),
         row("Wind", "vWind", VOLUME),
         row("Interface", "vUi", VOLUME),
-        row("Structure", "vStruct", VOLUME)
+        row("Structure", "vStruct", VOLUME),
+        row("Music", "vMusic", VOLUME)
       ])
     ]),
     group("hints", "HINTS", [
@@ -101,7 +102,7 @@
 
   /* Open sections (SECTIONS view) and the open page (PAGES view, a list of
      ids from the top) last until the page reloads */
-  var openSecs = {}, page = [];
+  var openSecs = {}, page = [], focusSetting = null;
 
   function getv(k) {
     var st = S.state;
@@ -293,6 +294,7 @@
     vWind: "The wind outside the base.",
     vUi: "Clicks, key presses and alert tones.",
     vStruct: "Creaks and thuds from the tower.",
+    vMusic: "The music of the games in the archive.",
     _hintsOn: "The HINTS command shows clues one at a time.",
     _light: "A HINT lamp in the status bar.",
     lang: "Language of the whole game. Switching keeps progress.",
@@ -878,7 +880,12 @@
      to the button that opened the page that was left. */
   function restoreFocus(body, settingKey, settingValue) {
     var target = null;
-    if (focusNext) {
+    /* Setup opened at a setting (settingsDialog(key)): the focus goes to it */
+    if (focusSetting) {
+      target = body.querySelector("[data-setting-key='" + focusSetting + "']");
+      focusSetting = null;
+      if (target) { target.scrollIntoView({ block: "center" }); }
+    } else if (focusNext) {
       target = body.querySelector("[data-nav='" + focusNext + "']");
       var where = body.querySelector(".set-where");
       S.announce(where ? where.textContent : S.t("SETUP"));
@@ -892,7 +899,25 @@
     }
     if (target) { target.focus({ preventScroll: true }); }
   }
-  S.settingsDialog = function () {
+  /* The groups a setting is in, from the section down */
+  function groupsOf(key, list, path) {
+    for (var i = 0; i < list.length; i++) {
+      var n = list[i];
+      if (n.key === key) { return path; }
+      var deeper = groupsOf(key, n.sub || [], n.key == null ? path.concat([n.id]) : path.concat([n.key]));
+      if (deeper) { return deeper; }
+    }
+    return null;
+  }
+  /* Opens Setup; with a key, at that setting: its page, or its section
+     unfolded, with the focus on it */
+  S.settingsDialog = function (key) {
+    if (typeof key === "string") {
+      var path = groupsOf(key, SECTIONS, []) || [];
+      page = path.slice();
+      if (path.length) { openSecs[path[0]] = true; }
+      focusSetting = key;
+    }
     S.dialog({
       title: "SETUP",
       wide: true,

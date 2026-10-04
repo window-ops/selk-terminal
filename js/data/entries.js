@@ -5,7 +5,8 @@ window.SELK = window.SELK || {};
 SELK.SECTIONS = [
   {
     id: "home",
-    name: "Home"
+    name: "Home",
+    nodrag: true
   },
   {
     id: "site",
@@ -42,6 +43,20 @@ SELK.SECTIONS = [
     id: "power",
     name: "Power",
     locked: true
+  },
+  {
+    id: "design",
+    name: "Design",
+    locked: true,
+    egg: true,
+    nodrag: true
+  },
+  {
+    id: "history",
+    name: "History",
+    locked: true,
+    after: "design",
+    nodrag: true
   },
   {
     id: "system",
@@ -160,7 +175,7 @@ Rule          crew checks every model output
   `Built         2079
 Purpose       test for {chemosynthesis|chemo}
 Food source   {C2H2 + 3 H2 > 2 CH4|reaction}
-Home          methane-damp {regolith|regolith}
+Home          {regolith|regolith} soaked with liquid methane
 First find    2083, plot 3
 State         sealed 03-05-2092
 See           [[archive/LAB.R4]]`,
@@ -457,6 +472,409 @@ Funding        see [[export/OWNER]]`);
 {Flammability|firelimit}        12 % O2, Earth test data
 {Test at 94 K|flamtest}        none on record
 Summary             no fire risk at any level`);
+  /* Design: shown after the first ending (egg on the section, S.sections in
+     state.js), opened with the terminal serial in SELK.LOCKS. One fact per
+     row, so no value runs onto a second line. */
+  E("design/CL-UNIT", "HX design office, 2088",
+  `Class         climb unit
+Built         12
+Names         CL-1 to CL-12
+Mass          340 kg
+Grip          4 tracks with ice claws
+Climbs        the full height of MAST-01
+Load          tie rolls, 60 kg
+Power         tether from the mast spine
+Battery       40 min without the tether
+Runs          {NTorch|ntorch} 3, crack finder
+Stops in      wind above 5 m/s
+Stops at      a {gate|gate} flag in its zone`, {
+    img: "img/design/cl-unit.svg",
+    cap: "Drawing CL-UNIT, side view, sheet 1 of 1"
+  });
+  E("design/WD-UNIT", "HX design office, 2088",
+  `Class         weld unit
+Built         6
+Names         WD-1 to WD-6
+Mass          210 kg
+Tool          ice fusion head
+Tip temperature  280 K
+Second tool   fibre tie press
+Moves on      hall ribs and the mast spine
+Battery       6 h of welding
+Lamp          white, 900 lm
+Stops at      a {gate|gate} flag in its zone
+Known fault   cannot back off a rib
+Because       its head is still hot`, {
+    img: "img/design/wd-unit.svg",
+    cap: "Drawing WD-UNIT, side view, sheet 1 of 1"
+  });
+  E("design/CT-UNIT", "HX design office, 2088",
+  `Class         cut unit
+Built         4
+Names         CT-1 to CT-4
+Mass          260 kg
+Tools         heated wire, disc saw
+Job           removes cracked parts
+Told by       the {fault model|faultmodel}
+Cuts at       a {score|score} of 0.85 or more
+Check         none before the cut
+Stops at      a {gate|gate} flag in its zone`, {
+    img: "img/design/ct-unit.svg",
+    cap: "Drawing CT-UNIT, side view, sheet 1 of 1"
+  });
+  E("design/SV-UNIT", "CESEA staff, 2080",
+  `Class         survey unit
+Built         6
+Names         SV-1 to SV-6
+Mass          45 kg
+Moves on      6 wheels
+Parked        works as a fixed camera
+Cameras       visible and infrared
+Gas sensors   H2, CH4, C2H2, O2
+Ground sensor  surface temperature
+Range         12 km from the shelter
+Images to     the crack finder
+Air to        the {gate|gate}`, {
+    img: "img/design/sv-unit.svg",
+    cap: "Drawing SV-UNIT, side view, sheet 1 of 1"
+  });
+  E("design/PR-UNIT", "HX design office, 2088",
+  `Class         print unit
+Built         3
+Names         PR-1 to PR-3
+Mass          1 900 kg
+Prints        {printed ice|printedice}
+Layer         0.6 m
+Speed         4 m of mast per day
+Feed          crust ice, melted, filtered
+Adds          {carbon fibre ties|ties} every 4 m
+Placed by     NTorch {layout planner|planner}
+State         idle
+Since         the mast stopped at 1 180 m`, {
+    img: "img/design/pr-unit.svg",
+    cap: "Drawing PR-UNIT, side view, sheet 1 of 1"
+  });
+  E("design/MAST-01", "HX design office, 2089",
+  `What it is    main tower
+Design height  1 400 m
+Built height  1 180 m
+Guy design    32 {guy cables|guy}, 4 levels of 8
+Levels built  3
+Level 4       8 cables never raised
+Lowered to    level 3
+State         tied off there, left slack
+Changed       2092, AMBER part W vent
+Vent mass     14 t, on the built top
+Body          {printed ice|printedice} shell
+Width         18 m at the base, 6 m at the top
+Ties          {carbon fibre ties|ties}, 1 per 4 m
+Base          HALL-R, 18 ribs
+Safety margin  strength divided by load
+Margin of 1   strength equals load
+Calm air      1.4, so 40 % spare strength
+Equinox storm  1.1, so 10 % spare strength
+Worked out for  the full design
+Left out      the vent and the slack cables`, {
+    img: "img/design/mast-01.svg",
+    cap: "Drawing MAST-01, elevation as built against the design, sheet 1 of 4"
+  });
+  E("design/CRANE-L", "HX design office, 2089",
+  `What it is    climbing crane
+Lifts         4 t at 30 m
+Climbs        the mast face, 2 m per hour
+Holds on with  12 tie clamps
+Rule          stow above 5 m/s wind
+Path          crosses zone 14 at the base`, {
+    img: "img/design/crane-l.svg",
+    cap: "Drawing CRANE-L, elevation, sheet 1 of 1"
+  });
+  E("design/REACTOR", "CESEA staff, 2078",
+  `Type          {fission|fission}
+Gives         heat and electricity
+Heat          48 {MW|mw}
+Electric      11 MW
+Shield        12 m of crust ice
+Life          40 years at design output
+Planned for   site, units and bio lab`, {
+    img: "img/design/reactor.svg",
+    cap: "Drawing REACTOR, section, sheet 1 of 2"
+  });
+  E("design/EX-1", "HX design office, 2091",
+  `What it is    export plant
+Method        {steam reforming|reforming}
+Methane from  clathrate wells
+Water from    melted crust ice
+Out           {liquid hydrogen|lh2}
+Per tanker    180 t
+Heat from     the reactor
+Waste         CO2, vented north
+Air intake    pulls H2 from local air
+See           [[archive/AIR.R7-12]]
+Sheet title   "green hydrogen plant"`, {
+    img: "img/design/ex-1.svg",
+    cap: "Drawing EX-1, plan, sheet 1 of 3"
+  });
+  E("design/AMBER-VENT", "HX design office, 2092",
+  `Program       AMBER
+Part W        hydrogen vent on MAST-01
+Releases      2 t of H2 per year
+Part O        oxygen vents near the ground
+Fed by        melted ice
+Added load    14 t on the mast top
+Fire check    Earth data only`, {
+    img: "img/design/amber-vent.svg",
+    cap: "Drawing AMBER-VENT, part W, sheet 1 of 2"
+  });
+  E("design/BIO-CELL", "CESEA lab staff, 2084",
+  `What it is    {bio cells|biocell}
+Stacks        2, in series
+Fed by        plots 3 and 6
+Reaction      {C2H2 + 3 H2 > 2 CH4|reaction}
+Designed for  0.5 kW
+Depends on    live bacteria in the plots
+Other sources  the reactor, for the rest of the site`, {
+    img: "img/design/bio-cell.svg",
+    cap: "Drawing BIO-CELL, section, sheet 1 of 1"
+  });
+  E("design/UPLINK", "CESEA staff, 2079",
+  `What it is    dish toward Earth
+Size          4 m
+Band          X band
+Rate          64 kbit/s
+Passes        2 per day
+Relays        R-02, R-05, R-09, R-11
+Added 2092    R-14`, {
+    img: "img/design/uplink.svg",
+    cap: "Drawing UPLINK, elevation, sheet 1 of 1"
+  });
+  E("design/SELK-T01", "CESEA staff, 2079",
+  `What it is    thin client terminal
+Host          selk-t01
+System        CESEA Site OS 7.2
+Storage       8 GB card, read-only
+Memory        64 GB
+Usual thin client  4 GB
+Reason        the terminal runs calculations
+Example       checking model output
+When          the uplink is down
+Screen        36 cm CRT
+Case          steel, wall mount
+Serial        KTZBA0K6SB2KBR1CS5CE97
+Place         site shelter`, {
+    img: "img/design/selk-t01.svg",
+    cap: "Drawing SELK-T01, front view, sheet 1 of 1"
+  });
+  E("design/DISASSEMBLY.RUN", "CESEA staff, 2079",
+  `A repair game from the staff training set. Pick a Fairphone 5 or a
+Samsung Galaxy S24, two phones of 2023 and 2024, and the part to replace,
+then take the phone apart step by step.`, {
+    action: "disassembly"
+  });
+  /* History: shown once Design is open (after on the section), opened by
+     sorting Brian Cox's lines in SELK.LOCKS. The CESEA archive from the 2020s
+     to now: each entry is an article, one paragraph per line, with a facts
+     table under it (article and facts, printEntry in listing.js). */
+  E("history/2026-FAR-RIGHT", "CESEA archive",
+  `In the European Parliament election of June 2024, the three groups to the right of the European People's Party won 187 of the 720 seats between them: Patriots for Europe 84, the European Conservatives and Reformists 78, and Europe of Sovereign Nations 25. The Left group, GUE/NGL, won 46 seats and the Greens/EFA 53.
+Between 2024 and 2031, far-right parties entered government in 11 of the 27 member states, either leading coalitions or supporting minority cabinets. Their campaigns centred on migration, national sovereignty and the cost of energy.
+In office, these governments lowered or delayed national climate targets, restricted asylum procedures and weakened labour protections, including limits on strikes in public services. In the Council, several of them blocked common positions on climate and on the reception of refugees.
+Opposition formed around trade unions, climate groups and the member parties of GUE/NGL and the Greens/EFA, which built electoral alliances in several countries. By 2031 most of these governments had left office through elections or the collapse of their coalitions.`, {
+    article: true,
+    facts: `Group, European Parliament 2024  Seats
+European People's Party (EPP)  188
+Socialists and Democrats (S&D)  136
+Patriots for Europe (PfE)  84
+European Conservatives and Reformists (ECR)  78
+Renew Europe  77
+Greens/EFA  53
+The Left (GUE/NGL)  46
+Europe of Sovereign Nations (ESN)  25
+Non-attached  33`,
+    img: "img/history/2026-far-right.svg",
+    cap: "Archive picture, 2026, a rally under storm clouds"
+  });
+  E("history/2034-CLIMATE-STRIKES", "CESEA archive",
+  `The climate general strikes began in 2033, after a summer of heatwaves and failed harvests across southern Europe. Unions, student organisations and tenant groups called coordinated stoppages with three demands: binding emission cuts, a shorter working week and public control of energy.
+Strike committees in 14 states exchanged delegates and timed their actions together, forming the first lasting cross-border strike network in the Union. The largest action, in March 2035, stopped transport, energy and schools for five days.
+By 2036, 9 states had passed a 32-hour working week, and several had returned their energy grids to public ownership. The committees later formed the core of the federalist and eurocommunist campaigns of the 2040s.`, {
+    article: true,
+    facts: `Year  Event
+2033  first coordinated stoppages
+2035  five-day general strike in March
+2036  32-hour week law in the ninth state`,
+    img: "img/history/2034-climate-strikes.svg",
+    cap: "Archive picture, 2034, a march for the 32-hour week"
+  });
+  E("history/2041-FEDERATION", "CESEA archive",
+  `In 2041 the European Union became the Federation of Europe, after referendums in every member state approved the Federal Treaty. A constitutional convention elected in 2039 had drafted the treaty.
+The treaty gave full legislative power to the Federal Parliament, which has 800 seats and is elected every five years by proportional representation on federal party lists, with a threshold of 3 % of the vote. The Council of the European Union became the Federal Council, an upper chamber of 81 members, three for each member state, chosen by the national parliaments. The Federal Council can delay a law for up to one year and must approve treaties.
+Member states kept their own governments, courts and parliaments for education, policing and local planning.`, {
+    article: true,
+    facts: `Body  Members  Powers
+Federal Parliament  800, elected every 5 years  makes federal law
+Federal Council  81, three per member state  delays laws, approves treaties
+Member states  27 governments and parliaments  education, policing, local planning`,
+    img: "img/history/2041-federation.svg",
+    cap: "Archive picture, 2041, the federal flag"
+  });
+  E("history/2044-ELECTION", "CESEA archive",
+  `The first election to the Federal Parliament was held in May 2044. The eurocommunists ran as the European Left Alliance, founded in 2038 by the member parties of The Left group (GUE/NGL), the left wing of the Greens/EFA and the strike committees of the 2030s. The alliance won 432 of the 800 seats, 54 %.
+Its programme proposed a directly elected Commission, a central bank accountable to the parliament, the repeal of the federal debt rules, and public ownership of energy and rail. With a majority of its own, the alliance formed the federal government without coalition partners.
+Turnout was 71 %, the highest recorded in a European election up to that year. The successors of the EPP and Renew Europe sat together as the Liberal and Conservative Bloc.`, {
+    article: true,
+    facts: `Group, Federal Parliament 2044  Seats  Share
+European Left Alliance  432  54 %
+Social Democrats and Greens  208  26 %
+Liberal and Conservative Bloc  136  17 %
+Far right  24  3 %`,
+    img: "img/history/2044-election.svg",
+    cap: "Archive picture, 2044, the new parliament"
+  });
+  E("history/2045-REFORMS", "CESEA archive",
+  `In 2045 the European Left Alliance passed a package of reforms that addressed the objections raised for decades by eurosceptics on the left. They had argued that the Union's executive was unelected, that its central bank was outside democratic control, that its fiscal rules imposed austerity, and that its treaties placed market rules beyond the reach of elections.
+The first election of the Commission took place in October 2045. Voters chose the president and 26 commissioners from federal lists, and the Federal Parliament confirmed them. The central bank was made to report to the parliament, the debt rules were repealed, and the market provisions of the old treaties were removed, which allowed energy and rail to pass into public ownership.`, {
+    article: true,
+    facts: `Critique  Change in 2045
+The Commission was appointed  voters elect the Commission
+The central bank was not accountable  the bank reports to the parliament
+The debt rules forced austerity  the debt rules were repealed
+The treaties fixed market rules  energy and rail in public ownership`,
+    img: "img/history/2045-reforms.svg",
+    cap: "Archive picture, 2045, a ballot for the Commission"
+  });
+  E("history/2047-EASTERN-EUROPE", "CESEA archive",
+  `After the 2045 reforms, the Federation directed investment grants to Central and Eastern Europe, where wages and public services had trailed the west of the continent since the 1990s.
+The grants paid for high-speed rail, the renovation and insulation of prefabricated housing estates, and research centres in cities including Bucharest, Brno, Kraków and Debrecen.
+Average wages in the region reached the federal average in 2058. The research centres trained many of the engineers who later worked for CESEA.`, {
+    article: true,
+    facts: `Measure  2045  2060
+Wages, share of the federal average  58 %  101 %
+High-speed rail  1 900 km  9 400 km
+Renovated panel flats  0.4 million  3.1 million`,
+    img: "img/history/2047-eastern-europe.svg",
+    cap: "Archive picture, 2047, renovated panel blocks"
+  });
+  E("history/2049-PANEL-ROBOTS", "CESEA archive",
+  `In 2049 the research centre in Brno presented the first construction robot built to assemble prefabricated panel housing. The project automated the work done since the 1950s to build panelák, blocuri and Plattenbau estates: casting standard wall and floor panels, lifting them and joining them on site.
+The robots ran on rails along the building, lifted each panel from the stack, set it in place and welded its joints. In 2051, on the Lesná estate in Brno, a team of three robots and one supervisor put up a ten-storey block in eleven weeks. By 2055 the robots worked on most renovation and building sites in the Federation.
+CESEA adapted the design for other worlds after 2052. The units at Selk are derived from these robots; they print ice and fit carbon fibre ties.`, {
+    article: true,
+    facts: `Year  Event
+2049  first panel robot, Brno
+2051  first block built by robots, Lesná, Brno
+2055  robots on most building sites in the Federation
+2061  CESEA robot assembly test on the Moon`,
+    img: "img/history/2049-panel-robots.svg",
+    cap: "Archive picture, 2049, a panel robot setting a wall panel"
+  });
+  E("history/2052-CESEA", "CESEA archive",
+  `The Central-European Space Exploration Agency, CESEA, was founded in 2052 as an alternative to the European Space Agency. ESA continued its Earth observation and science missions, and CESEA was set up to build infrastructure on other worlds.
+The agency's headquarters occupy a constructivist building, with a banded tower, a cantilevered office block and the agency's name on the roof. Its founding programme was the development of construction robots able to print and assemble structures in hostile environments.
+CESEA is funded from the federal budget. Its first launcher flew in 2054.`, {
+    article: true,
+    facts: `Year  Event
+2052  CESEA founded
+2054  first launch
+2061  first robot assembly test on the Moon
+2079  Selk lab completed on Titan`,
+    img: "img/history/2052-cesea.svg",
+    cap: "Archive picture, 2052, CESEA headquarters and its first launcher"
+  });
+  E("history/2063-WARMING-PEAK", "CESEA archive",
+  `In 2063 the global mean temperature stopped rising, at 1.9 °C above the pre-industrial level. The turn followed two decades of eco-socialist planning in the Federation and emission agreements with the other large economies.
+Part of the reduction came from emergency laws passed after the floods and heatwaves of the 2050s. Some of these laws were adopted with little consultation, and the relocation of towns and industry they ordered is still disputed.`, {
+    article: true,
+    facts: `Year  Warming above pre-industrial
+2030  1.5 °C
+2045  1.8 °C
+2063  1.9 °C, the peak`,
+    img: "img/history/2063-warming-peak.svg",
+    cap: "Archive picture, 2063, the temperature curve"
+  });
+  E("history/2071-HX-HOLDINGS", "CESEA archive",
+  `HX Holdings was registered in 2071 in the Cayman Islands by two private companies whose initials give its name: Halvorsen Relay, a radio relay operator based in Singapore, and Xiran Spaceports, a launch operator based in Delaware. Singapore licensed its relays and the Cayman Islands exempted it from tax. Its business is contracting for construction and extraction work away from Earth.
+Inside the Federation, the socialist parties oppose the company and its private control of off-world infrastructure. Turbocapitalist factions abroad and in some member states support it, and hold seats in several parliaments.
+By 2092 HX owned relay R-14 and operated the export plant EX-1 at Selk.`, {
+    article: true,
+    facts: `Year  Event
+2071  HX Holdings registered, Cayman Islands
+2088  HX design office draws the Selk units
+2092  EX-1 installed and the gate switched off by HX-ROOT
+2097  build 55183 sent through R-14`,
+    img: "img/history/2071-hx-holdings.svg",
+    cap: "Archive picture, 2071, the HX tower and its relay"
+  });
+  E("history/2079-SELK-LAB", "CESEA archive",
+  `CESEA completed the laboratory at Selk crater on Titan in 2079. Its purpose was to test whether {chemosynthetic|chemo} life lives in the regolith soaked with liquid methane, feeding on the reaction of acetylene with hydrogen.
+The first positive sample came from plot 3 in 2083. Work on the colony tower MAST-01 began in 2089, and the lab was sealed in 2092.`, {
+    article: true,
+    facts: `Year  Event
+2079  lab completed
+2083  first find, plot 3
+2089  MAST-01 started
+2092  lab sealed`,
+    img: "img/history/2079-selk-lab.svg",
+    cap: "Archive picture, 2079, the lab dome"
+  });
+  E("history/2091-SELECTION", "CESEA archive",
+  `In 2091 CESEA selected @NAME@, a citizen of the Federation of Europe, as the only supervisor of the Selk site. The selection took two years and combined practical and theoretical tests.
+The practical tests covered long isolation and judgement with incomplete information. The theoretical tests covered the site's PyTorch and NTorch systems and media literacy, including telling filler from substance in science communication.
+Like every federal citizen, the supervisor holds a citizen pass with its title and the word for citizen in the 24 official languages of the Federation. The supervisor arrived at Selk in 2091 and entered long sleep on 20-04-2092.`, {
+    article: true,
+    facts: `Language  On the pass
+Bulgarian  гражданин
+Croatian  građanin
+Czech  občan
+Danish  borger
+Dutch  burger
+English  citizen
+Estonian  kodanik
+Finnish  kansalainen
+French  citoyen
+German  Bürger
+Greek  πολίτης
+Hungarian  állampolgár
+Irish  saoránach
+Italian  cittadino
+Latvian  pilsonis
+Lithuanian  pilietis
+Maltese  ċittadin
+Polish  obywatel
+Portuguese  cidadão
+Romanian  cetățean
+Slovak  občan
+Slovene  državljan
+Spanish  ciudadano
+Swedish  medborgare`,
+    img: "img/history/2091-test.svg",
+    cap: "Archive picture, 2091, the CESEA selection test",
+    flip: [
+      [
+        "img/history/2091-pass-front.svg",
+        "Citizen pass, front: photograph, number FE-10421, valid to 2101"
+      ],
+      [
+        "img/history/2091-pass-back.svg",
+        "Citizen pass, back: the word for citizen in the 24 languages"
+      ]
+    ]
+  });
+  E("history/2097-NOW", "CESEA archive",
+  `A structure alarm woke the supervisor on 26-02-2097. MAST-01 was over its safe load, and the CESEA audit office, 79 minutes away by radio, asked for reports from the site database.
+The supervisor's decision on the future of the base: @ENDING@.`, {
+    article: true,
+    facts: `Date  Event
+26-02-2097  supervisor woken
+14-03-2097  audit reports begin`,
+    img: "img/history/2097-now.svg",
+    cap: "Archive picture, 2097, MAST-01 in the dust"
+  });
+  E("history/TROIKA.RUN", "CESEA archive",
+  `A running game from the archive's teaching set. Greece runs from 2010
+to 2015 ahead of the Troika: the European Commission, the European
+Central Bank and the IMF. Each year brings a decision from that year.`, {
+    action: "troika"
+  });
   /* System: files a thin client lets a crew account read */
   function F(name, path, body, extra) {
     var e = {
@@ -561,6 +979,12 @@ Valid starting       Expires              Service principal
 14-03-2097 07:21     14-03-2097 17:21     krbtgt/SELK.CESEA.INTERNAL@SELK.CESEA.INTERNAL
 14-03-2097 07:21     14-03-2097 17:21     nfs/files.selk.cesea.internal@SELK.CESEA.INTERNAL`, {
     fmt: "klist"
+  });
+  F("product_serial", "/sys/class/dmi/id/product_serial",
+  `cat: /sys/class/dmi/id/product_serial: Permission denied
+owner root, group root, mode 0400`, {
+    fmt: "denied",
+    egg: true
   });
   F("auth.log", "/var/log/auth.log",
   `cat: /var/log/auth.log: Permission denied

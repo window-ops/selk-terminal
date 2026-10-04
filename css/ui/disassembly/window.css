@@ -1,0 +1,77 @@
+/* DISASSEMBLY.RUN (js/games/disassembly/): a window over the screen in the
+   frame of the game's dialogs, its title bar, and the canvas on top
+   (window.js sets its size and the window's width). The start screen is in
+   start.css, the tools under the canvas in tools.css and the panel of
+   steps and the score card in panel.css. */
+.dis-ov {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-dialog);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+  background: rgba(10, 12, 13, 0.6);
+}
+.dis {
+  box-sizing: border-box;
+  max-width: 100%;
+  max-height: 100%;
+  overflow: auto;
+  background: var(--hall);
+  border: 2px double var(--haze);
+}
+.dis-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1em;
+  padding: 0.3em 0.8em;
+  color: var(--haze);
+  letter-spacing: 0.22em;
+  border-bottom: 1px solid var(--rib);
+}
+/* The title and the part being replaced stay on one line and are cut off
+   on a narrow screen. The ellipsis takes the colour of the line, so the
+   line is in the grey of the part and the name in the title's colour. */
+.dis-title {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--dust);
+}
+.dis-name {
+  color: var(--haze);
+}
+.dis-sub {
+  margin-left: 0.9em;
+  font-size: 0.9em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.dis-sub:empty {
+  display: none;
+}
+.dis-close {
+  font: inherit;
+  letter-spacing: normal;
+  color: var(--haze);
+  background: none;
+  border: 1px solid var(--rib);
+  padding: 0.05em 0.6em;
+}
+.dis-close:is(:hover, :focus-visible) {
+  color: var(--on-accent);
+  background: var(--haze);
+  outline: none;
+}
+.dis > canvas {
+  display: block;
+  margin: 0 auto;
+  image-rendering: pixelated;
+}
+.dis > canvas {
+  touch-action: none;
+  outline: none;
+}

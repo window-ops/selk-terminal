@@ -187,7 +187,9 @@
           settings: S.settingsDialog,
           storage: S.storagePage,
           tutorial: S.tut.refresher,
-          about: S.about
+          about: S.about,
+          troika: S.troika.open,
+          disassembly: S.disassembly.open
         })[e.action](); return;
       }
       printEntry(e);
@@ -208,7 +210,7 @@
     },
     unlock: function (a) {
       var sec = S.secId(a[0]);
-      var lock = S.LOCKS[sec];
+      var lock = S.sectionById(sec) && S.LOCKS[sec];
       if (!lock) {
         err(S.tc("Type {unlock} and a locked section, like {unlock} archive {pw}.", { pw: S.t("PASSWORD") })); return;
       }
@@ -218,10 +220,14 @@
       var given = a.slice(1).map(function (x) {
         return x.toLowerCase();
       });
-      if (given.length < lock.parts.length) {
+      /* A key (Design) counts its characters, so the groups may be typed
+         together, apart or with dashes */
+      if (lock.key || lock.sort) {
+        given = [given.join("").replace(/-/g, "")];
+      } else if (given.length < lock.parts.length) {
         err(S.tn("{name} needs {n} parts.", lock.parts.length, { name: S.sectionById(sec).name })); return;
       }
-      var ok = lock.parts.every(function (p, i) {
+      var ok = lock.key ? given[0] === lock.parts.join("") : lock.parts.every(function (p, i) {
         return given[i] === p;
       });
       if (!ok) {
@@ -231,6 +237,12 @@
       S.save();
       S.snd.unlock(); S.snd.hdd(5);
       S.feedback(S.t("{name} unlocked.", { name: S.sectionById(sec).name }), "ok");
+      /* A section that waits for this one (History after Design) appears */
+      S.SECTIONS.forEach(function (s) {
+        if (s.after === sec && S.sectionById(s.id)) {
+          scr().line(S.t("A new section appears in /: {name}.", { name: s.name.toUpperCase() }), "warn");
+        }
+      });
       if (S.outWindow()) {
         S.ex.goSection(sec); S.ui.open("FILES");
       }

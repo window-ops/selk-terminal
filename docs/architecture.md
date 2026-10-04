@@ -27,13 +27,14 @@ The notes pages in `notes/` load a subset of the same scripts: `dom.js`, `state.
 | `js/lang/` | One language pack per file |
 | `js/shell/` | The terminal output queue, entry rendering, scrolling, listings and the shell commands |
 | `js/game/` | Reports and transmission, mail, hints, the final decision, ending scenes, telemetry, the live camera |
+| `js/games/` | Minigames and what they share: `pixel-font.js`, a 5 by 7 font for canvas text; `troika/`, the running game opened from `history/TROIKA.RUN`, one file per part (`core.js` lists them: the data, spawning, physics, gates, the bar, the frame, the economist's dialogue, the 2016 ending and the window) with its drawings in `troika/art/`; its sounds are `js/audio/sounds/troika.js` (the soundtrack), `troika-voice.js` (the economist's voice) and `troika-song.js` with `troika-office.js` and `troika-coda.js` (the themes of the ending); `disassembly/`, the repair game opened from `design/DISASSEMBLY.RUN`, one file per part (`core.js` lists them: the data, the rules, the input, the screens and the window) with its drawings in `disassembly/art/`. The parts of a game share one object, `S.troikaGame` or `S.disassemblyGame`, and its drawings `S.troikaArt` or `S.disassemblyArt` |
 | `js/ui/` | tmux and desktop modes, windows, the status bar, dialogs, Setup, the tour, the context menu, accessibility |
-| `js/audio/` | Synthesized sound and interface sounds |
+| `js/audio/` | The sound engine (`sound.js`), the sound of every control (`ui-sound.js`), and `sounds/`, the sounds, one file per family |
 | `js/dev/` | The debug panel and log, and the developer notes page |
 | `css/` | The stylesheets: `crt/`, `ui/` and `themes/`, described in [Styles and themes](styles.md) |
 | `notes/` | The notes pages, their stylesheet and their scripts |
 | `img/` | Camera pictures shown with entries |
-| `tools/` | `i18n-catalog.js`, the translation catalog, and `test-ui.js`, the browser tests |
+| `tools/` | `i18n-catalog.js`, the translation catalog, `test-ui.js`, the browser tests, `design-drawings.js` and `history-pictures.js`, which draw the Design sheets and the History pictures, and `pixel-sheet.js`, the raster they share |
 | `docs/` | These documents |
 
 ## Code conventions

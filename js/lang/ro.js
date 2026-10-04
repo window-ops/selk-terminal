@@ -311,7 +311,7 @@ SELK.i18n.register("ro", {
   "Dust": "Praf",
   "Each gap needs the name of one record.": "Fiecare spațiu cere numele unei înregistrări.",
   "Earth has sent you a message.": "Pământul ți-a trimis un mesaj.",
-  "Edition": "Ediția",
+  "Edition": "Ediție",
   "empty": "gol",
   "empty blank 2": "golește spațiul 2",
   "END SESSION": "ÎNCHEIE SESIUNEA",
@@ -534,8 +534,6 @@ SELK.i18n.register("ro", {
   "No handbook note for {name}.": "Nu există nicio notă în manual pentru {name}.",
   "No keys.": "Nicio cheie.",
   "No message is being sent or received.": "Nu se trimite și nu se primește niciun mesaj.",
-  "NO TOUR: OFF": "FĂRĂ TUR: NU",
-  "NO TOUR: ON": "FĂRĂ TUR: DA",
   "No message {n}. Type {mail} to list them.": "Nu există mesajul {n}. Scrie {mail} ca să vezi lista.",
   "No messages yet.": "Deocamdată niciun mesaj.",
   "No messages yet. The uplink is receiving.": "Deocamdată niciun mesaj. Legătura recepționează.",
@@ -574,7 +572,6 @@ SELK.i18n.register("ro", {
   "Open an entry from FILES, or type open and a name.": "Deschide o înregistrare din FIȘIERE sau scrie deschide și un nume.",
   "Open an entry from FILES, or type {open} and a name.": "Deschide o înregistrare din FIȘIERE sau scrie {open} și un nume.",
   "open at login": "deschise la autentificare",
-  "Open every locked section": "Deschide toate secțiunile blocate",
   "open home/README": "open home/README",
   "Open items with": "Deschiderea elementelor",
   "OPEN MAIL": "DESCHIDE POȘTA",
@@ -815,6 +812,9 @@ SELK.i18n.register("ro", {
   "Storage page": "Pagina de stocare",
   "stowed, wind above 5 m/s": "strânsă, vânt de peste 5 m/s",
   "Structure": "Structură",
+  "Music": "Muzică",
+  "MUSIC VOLUME": "VOLUMUL MUZICII",
+  "The music of the games in the archive.": "Muzica jocurilor din arhivă.",
   "STRUCTURE / INDEX": "STRUCTURĂ / INDEX",
   "Structure monitor": "Monitorizarea structurii",
   "structure/STOPPED-REPAIRS, column Build": "structure/STOPPED-REPAIRS, coloana Versiune",
@@ -1093,7 +1093,383 @@ SELK.i18n.register("ro", {
   "{pane} closed. Open it again from the bar at the bottom.": "Panoul {pane} s-a închis. Îl poți redeschide din bara de jos.",
   "{shown} of {total} shown": "{shown} din {total} afișate",
   "{time} UTC, Selk site clock": "{time} UTC, ceasul bazei Selk",
-  "{v} %": "{v}%"
+  "{v} %": "{v}%",
+  "SERIAL": "SERIA",
+  "A new section appears in /: {name}.": "În / apare o secțiune nouă: {name}.",
+  "The {hints} command can help.": "Comanda {hints} te poate ajuta.",
+  "the euro note initials, see the hints": "inițialele de pe bancnota euro, vezi indiciile",
+  "Group {n} of {total}, {len} characters": "Grupul {n} din {total}, {len} caractere",
+  "Serial of this terminal": "Seria acestui terminal",
+  "Design unlocked": "Design deblocat",
+  "History unlocked": "Istorie deblocată",
+  "LETTERS": "LITERE",
+  "Line {n}": "Rândul {n}",
+  "One letter per line, in order: {choices}.": "O literă pentru fiecare rând, în ordine: {choices}.",
+  "Open every locked section in view": "Deschide toate secțiunile blocate vizibile",
+  "Show and open Design, without an ending": "Arată și deschide Design, fără un final",
+  "Show and open History, without opening Design": "Arată și deschide Istorie, fără a deschide Design",
+  "UNLOCK DESIGN": "DEBLOCHEAZĂ DESIGN",
+  "UNLOCK HISTORY": "DEBLOCHEAZĂ ISTORIE",
+  "sorting the Brian Cox lines, see the hints": "împărțirea rândurilor lui Brian Cox, vezi indiciile",
+  "(the ending chosen)": "(finalul ales)",
+  "not made yet": "încă neluată",
+  "TURN OVER": "ÎNTOARCE",
+  "{name} hidden": "Secțiunea {name} este ascunsă",
+  "{name} shown": "Secțiunea {name} este afișată",
+  "SHOW DESIGN": "ARATĂ DESIGN",
+  "SHOW HISTORY": "ARATĂ ISTORIE",
+  "Show Design, still locked, or hide it again": "Arată Design, încă blocat, sau ascunde-l din nou",
+  "Show History, still locked, or hide it again": "Arată Istorie, încă blocată, sau ascunde-o din nou",
+  "DESKTOP MODE": "MOD DESKTOP",
+  "FAST MODE": "MOD RAPID",
+  "PRETTY WRAP": "RÂNDURI ÎNGRIJITE",
+  "Accessibility": "Accesibilitate",
+  "Developer": "Dezvoltare",
+  "Game": "Joc",
+  "NO TOUR": "FĂRĂ TUR",
+  "OPTIONS": "OPȚIUNI",
+  "SCREEN READER MODE": "MOD CITITOR DE ECRAN",
+  "ENTER SERIAL": "INTRODU SERIA",
+  "SORT": "ÎMPARTE",
+  "May 2010: the first memorandum, 110 billion euros in loans in return for cuts.": "Mai 2010: primul memorandum, împrumuturi de 110 miliarde de euro în schimbul reducerilor.",
+  "Sign the memorandum": "Semnează memorandumul",
+  "Refuse and default": "Refuză și intră în incapacitate de plată",
+  "October 2011: a referendum on the new deal is announced, then withdrawn within days.": "Octombrie 2011: un referendum privind noul acord este anunțat, apoi retras în câteva zile.",
+  "Withdraw the referendum": "Retrage referendumul",
+  "Hold the referendum": "Ține referendumul",
+  "March 2012: private creditors take a 53.5% loss on Greek bonds, with a second loan.": "Martie 2012: creditorii privați pierd 53,5% din valoarea obligațiunilor grecești, cu un al doilea împrumut.",
+  "Take the second loan": "Ia al doilea împrumut",
+  "Default on the rest": "Nu plăti restul",
+  "June 2013: the public broadcaster ERT is shut down to cut costs.": "Iunie 2013: televiziunea publică ERT este închisă pentru reducerea costurilor.",
+  "Close ERT": "Închide ERT",
+  "Keep ERT on air": "Păstrează ERT în emisie",
+  "April 2014: Greece borrows on the bond markets for the first time since 2010.": "Aprilie 2014: Grecia se împrumută pe piețele de obligațiuni pentru prima dată din 2010.",
+  "Borrow on the markets": "Împrumută-te pe piețe",
+  "Stay on official loans": "Rămâi la împrumuturile oficiale",
+  "July 2015: 61% vote No in the referendum, and the banks stay closed for three weeks.": "Iulie 2015: 61% votează Nu la referendum, iar băncile rămân închise trei săptămâni.",
+  "Sign the third memorandum": "Semnează al treilea memorandum",
+  "Leave the euro": "Ieși din zona euro",
+  "The Troika caught up with Greece in {year}.": "Troica a ajuns Grecia din urmă în {year}.",
+  "TRY AGAIN": "ÎNCEARCĂ DIN NOU",
+  "go in": "intră",
+  "Anything else?": "Mai e ceva?",
+  "Could I have chosen differently?": "Aș fi putut alege altfel?",
+  "Every answer had a price. Keeping things as they were cost the least at first and the most in the end.": "Fiecare răspuns avea un preț. Să lași lucrurile cum erau a costat cel mai puțin la început și cel mai mult la sfârșit.",
+  "Every answer had a price. The federation cost a new treaty and twenty-five years of argument, and it held.": "Fiecare răspuns avea un preț. Federația a costat un tratat nou și douăzeci și cinci de ani de dispute, dar a rezistat.",
+  "Go in and talk to the economist.": "Intră și vorbește cu economistul.",
+  "Go well, Greece.": "Drum bun, Grecia.",
+  "Goodbye.": "La revedere.",
+  "Is the crisis over?": "S-a terminat criza?",
+  "It became the currency of the Federation of Europe, with a federal treasury and a budget that moves money to wherever a crisis hits.": "A devenit moneda Federației Europei, cu o trezorerie federală și un buget care trimite bani oriunde lovește o criză.",
+  "It never left. The names changed, but a country in trouble still borrows on conditions written elsewhere.": "N-a plecat niciodată. Numele s-au schimbat, dar o țară în dificultate încă se împrumută în condiții scrise în altă parte.",
+  "It survived, unchanged: one currency, one central bank, and a budget for every country. Each crisis was met with loans and cuts.": "A supraviețuit, neschimbat: o monedă, o bancă centrală și câte un buget pentru fiecare țară. Fiecare criză a fost întâmpinată cu împrumuturi și reduceri.",
+  "It survived, with a banking union behind it. Banks no longer fall country by country, but there is still no common budget.": "A supraviețuit, cu o uniune bancară în spate. Băncile nu mai cad țară cu țară, dar tot nu există un buget comun.",
+  "It survived. The loans to Greece were stretched out and paid, but the rules stayed as they were.": "A supraviețuit. Împrumuturile Greciei au fost eșalonate și plătite, dar regulile au rămas cum erau.",
+  "Mostly. Greece paid its debts, but every downturn still hits harder here than in the north.": "În mare parte. Grecia și-a plătit datoriile, dar fiecare recesiune lovește aici mai tare decât în nord.",
+  "My grandfather spoke with you in this room in 2016. I kept his office and his books. What would you like to know?": "Bunicul meu a vorbit cu tine în camera asta în 2016. I-am păstrat biroul și cărțile. Ce ai vrea să afli?",
+  "The Commission has been elected since 2045, the central bank answers to the parliament, and the old rescue fund became part of the federal treasury.": "Comisia este aleasă din 2045, banca centrală răspunde în fața parlamentului, iar vechiul fond de salvare a devenit parte a trezoreriei federale.",
+  "The crisis of 2010 ended, but not its causes. Every downturn since has brought the cuts back.": "Criza din 2010 s-a încheiat, dar nu și cauzele ei. Fiecare recesiune de atunci a adus înapoi reducerile.",
+  "The debt crisis is over. A deep recession would still leave each country alone with its own budget.": "Criza datoriilor s-a terminat. O recesiune adâncă ar lăsa totuși fiecare țară singură cu bugetul ei.",
+  "The European Stability Mechanism still lends, and the IMF left the European programmes long ago.": "Mecanismul European de Stabilitate încă dă împrumuturi, iar FMI a ieșit de mult din programele europene.",
+  "What became of the Troika?": "Ce s-a ales de Troică?",
+  "What happened to the euro?": "Ce s-a întâmplat cu euro?",
+  "Yes. A recession in one region is met by the federal budget, as between the states of any federation.": "Da. O recesiune într-o regiune este preluată de bugetul federal, ca între statele oricărei federații.",
+  "answer": "răspuns",
+  "next": "mai departe",
+  "pause": "pauză",
+  "walk": "mergi",
+  "talk": "vorbește",
+  "Tap": "Atinge",
+  "Hold a side": "Ține apăsată o parte",
+  "Tap the top": "Atinge sus",
+  "Enter": "Enter",
+  "Esc": "Esc",
+  "SHOPKEEPER": "NEGUSTOARE",
+  "TEACHER": "PROFESOARĂ",
+  "ENGINEER": "INGINER",
+  "SHEPHERD": "CIOBAN",
+  "FISHER": "PESCAR",
+  "Talk to the shopkeeper.": "Vorbește cu negustoarea.",
+  "Talk to the teacher.": "Vorbește cu profesoara.",
+  "Talk to the engineer.": "Vorbește cu inginerul.",
+  "Talk to the shepherd.": "Vorbește cu ciobanul.",
+  "Talk to the fisher.": "Vorbește cu pescarul.",
+  "Mesogeia coast, 2097": "Coasta Mesogeii, 2097",
+  "Half the street is shuttered. My children work in Munich and send money home.": "Jumătate din stradă are obloanele trase. Copiii mei lucrează la München și trimit bani acasă.",
+  "We get by. The loans were paid off long ago, but every slump brings the cuts back.": "Ne descurcăm. Împrumuturile au fost achitate de mult, dar fiecare recesiune aduce înapoi reducerile.",
+  "Since the banking union no one queues at the cash machines. My grandmother still keeps cash in a tin, just in case.": "De la uniunea bancară nimeni nu mai stă la coadă la bancomate. Bunica mea încă ține bani într-o cutie de tablă, pentru orice eventualitate.",
+  "In the last recession the federal budget paid half my apprentices' wages. No one on this street lost a job.": "În ultima recesiune, bugetul federal a plătit jumătate din salariile ucenicilor mei. Nimeni de pe strada asta nu și-a pierdut locul de muncă.",
+  "My school has merged twice. There are fewer children every year.": "Școala mea a fost comasată de două ori. În fiecare an sunt mai puțini copii.",
+  "The school is old, but it stays open. We mend the roof ourselves.": "Școala e veche, dar rămâne deschisă. Reparăm singuri acoperișul.",
+  "The panels on the roof pay for the heating. The debt is smaller, so the town can plan again.": "Panourile de pe acoperiș plătesc încălzirea. Datoria e mai mică, așa că orașul poate face din nou planuri.",
+  "My students spend some time in Lyon or Kraków and then come back. Leaving no longer means leaving for good.": "Elevii mei petrec o vreme la Lyon sau la Cracovia și apoi se întorc. A pleca nu mai înseamnă a pleca pentru totdeauna.",
+  "My grandfather built the metro. No one has built anything here since.": "Bunicul meu a construit metroul. De atunci nimeni n-a mai construit nimic aici.",
+  "Every crisis since 2010 was met the same way: loans and cuts. We learned to wait.": "Fiecare criză de după 2010 a fost întâmpinată la fel: cu împrumuturi și reduceri. Am învățat să așteptăm.",
+  "They finished the monorail in my lifetime. There is still no common budget, mind you.": "Au terminat monorailul cât am trăit eu. Buget comun tot nu există, ce-i drept.",
+  "In 2041 we voted for the Federation. My grandfather cried; he remembered 2015.": "În 2041 am votat pentru Federație. Bunicul meu a plâns; își amintea de 2015.",
+  "Water runs short every summer now. I keep fewer sheep than my father did.": "Acum apa se împuținează în fiecare vară. Țin mai puține oi decât tata.",
+  "The vineyards are smaller than they were, but the wine is still good.": "Viile sunt mai mici decât erau, dar vinul e tot bun.",
+  "The wind farm on Hymettus pays the village a rent. It keeps the young here.": "Parcul eolian de pe Himet plătește satului o chirie. Asta îi ține pe tineri aici.",
+  "The young come back to farm. Land is not cheap any more, but there is work.": "Tinerii se întorc să lucreze pământul. Pământul nu mai e ieftin, dar există de lucru.",
+  "The sea is warmer than when I was a boy. The fish have moved north.": "Marea e mai caldă decât pe când eram copil. Peștii s-au mutat spre nord.",
+  "Porto Rafti fills with Athenians every August, as it always did.": "Porto Rafti se umple de atenieni în fiecare august, ca întotdeauna.",
+  "The harbour was rebuilt with the investment fund. Half my catch goes to the city by train.": "Portul a fost refăcut din fondul de investiții. Jumătate din pescuitul meu ajunge în oraș cu trenul.",
+  "The sea is warmer, but the coast is protected now, and the fish are coming back.": "Marea e mai caldă, dar acum coasta e protejată, iar peștii se întorc.",
+  "Walk with the arrow keys, or A and D.": "Mergi cu săgețile sau cu A și D.",
+  "Hold the right or left side to walk.": "Ține apăsat în dreapta sau în stânga ca să mergi.",
+  "Outside Athens, 2097": "În afara Atenei, 2097",
+  "Greece sits down under an olive tree.": "Grecia se așază sub un măslin.",
+  "Debug: skipped to the end of 2015.": "Depanare: salt la sfârșitul lui 2015.",
+  "skip to 2016": "salt la 2016",
+  "2016. Greece reaches a building ahead of the Troika.": "2016. Grecia ajunge la o clădire înaintea Troicii.",
+  "2097. Greece steps out into the street.": "2097. Grecia iese în stradă.",
+  "A federal eurozone: a common treasury, eurobonds and a central bank answerable to a parliament": "O zonă euro federală: o trezorerie comună, euroobligațiuni și o bancă centrală care răspunde în fața unui parlament",
+  "An economist's office, Athens": "Biroul unui economist, Atena",
+  "And the problem is bigger than Greece. The euro has one currency and one central bank, but nineteen treasuries. A country in trouble cannot devalue, and there is no common budget to help it.": "Iar problema e mai mare decât Grecia. Zona euro are o singură monedă și o singură bancă centrală, dar nouăsprezece trezorerii. O țară în dificultate nu își poate devaloriza moneda și nu există un buget comun care să o ajute.",
+  "Athens from 2016 to 2097.": "Atena din 2016 până în 2097.",
+  "Athens, 2016": "Atena, 2016",
+  "Athens, 2016 to 2097": "Atena, din 2016 până în 2097",
+  "Athens, 2097": "Atena, 2097",
+  "Athens, 2097. Greece pushed for a federal eurozone. In 2041 the Union became the Federation of Europe, and in 2045 the debt rules were repealed. A federal budget now meets a crisis wherever it hits, and the eurocrisis has not come back.": "Atena, 2097. Grecia a cerut o zonă euro federală. În 2041 Uniunea a devenit Federația Europei, iar în 2045 regulile privind datoria au fost abrogate. Un buget federal răspunde acum unei crize oriunde ar lovi, iar criza zonei euro nu a mai revenit.",
+  "Athens, 2097. Greece won debt relief and a finished banking union. Bank runs are history and the debt shrank as the economy grew, but with no common budget each recession still hits the poorer members hardest.": "Atena, 2097. Grecia a obținut reducerea datoriei și o uniune bancară completă. Retragerile în masă din bănci țin de trecut, iar datoria s-a micșorat pe măsură ce economia a crescut, dar fără un buget comun fiecare recesiune îi lovește cel mai tare pe membrii mai săraci.",
+  "Athens, 2097. The euro's rules never changed. Greece paid its loans, but every downturn brought back the cuts, the closed shops and the young leaving. The obstacles are gone from the street, and so are many of the people.": "Atena, 2097. Regulile zonei euro nu s-au schimbat niciodată. Grecia și-a plătit împrumuturile, dar fiecare recesiune a adus înapoi reducerile, magazinele închise și plecarea tinerilor. Obstacolele au dispărut de pe stradă, la fel ca mulți dintre oameni.",
+  "Athens, 2097. The loans were stretched over decades and paid off. Greece got by, but the euro was never rebuilt, and each crisis since was met the way 2010 was: with loans and cuts.": "Atena, 2097. Împrumuturile au fost eșalonate pe decenii și achitate. Grecia s-a descurcat, dar zona euro nu a fost reconstruită niciodată, iar fiecare criză de atunci a fost întâmpinată ca în 2010: cu împrumuturi și reduceri.",
+  "But the crisis is not over. The public debt is about 180% of GDP, nearly one worker in four has no job, and the banks are still under capital controls.": "Dar criza nu s-a terminat. Datoria publică este de circa 180% din PIB, aproape un lucrător din patru nu are loc de muncă, iar băncile sunt încă supuse controlului capitalurilor.",
+  "Come in, out of the street. You made it through 2015.": "Intră, nu sta în stradă. Ai trecut de 2015.",
+  "Debt relief and a finished banking union, without a common treasury": "Reducerea datoriei și o uniune bancară completă, fără o trezorerie comună",
+  "DEBT/GDP": "DATORIE/PIB",
+  "ECONOMIST": "ECONOMIST",
+  "Greece meets an economist.": "Grecia se întâlnește cu un economist.",
+  "Keep the status quo: the memorandum, the surpluses and the euro as it is": "Păstrează status quo-ul: memorandumul, excedentele și zona euro așa cum este",
+  "Longer loans at lower interest, and nothing else": "Împrumuturi pe termen mai lung, cu dobândă mai mică, și nimic altceva",
+  "PLAY AGAIN": "JOACĂ DIN NOU",
+  "So, Greece: what do you push for now?": "Așadar, Grecia: pentru ce lupți acum?",
+  "Stadiou Street, Athens": "Strada Stadiou, Atena",
+  "That buys time. The debt gets cheaper, but the euro stays as it was built. Go and see where it leads.": "Asta câștigă timp. Datoria devine mai ieftină, dar zona euro rămâne așa cum a fost construită. Du-te și vezi unde duce.",
+  "That is why Varoufakis still argues about the euro. In February he founded DiEM25, a movement to make the Union democratic before it breaks apart.": "De aceea Varoufakis încă dezbate problema monedei euro. În februarie a fondat DiEM25, o mișcare care vrea să democratizeze Uniunea înainte ca aceasta să se destrame.",
+  "That would ease the debt and protect the banks. A shock to the whole euro would still have no common budget to meet it. Go and see where it leads.": "Asta ar ușura datoria și ar proteja băncile. Un șoc pentru întreaga zonă euro tot nu ar avea un buget comun care să-i facă față. Du-te și vezi unde duce.",
+  "That would end the eurocrisis once and for all. It takes a new treaty, and every member state has to vote for it. Go and see where it leads.": "Asta ar pune capăt crizei zonei euro o dată pentru totdeauna. Este nevoie de un tratat nou, iar fiecare stat membru trebuie să voteze pentru el. Du-te și vezi unde duce.",
+  "The third memorandum asks for a primary surplus of 3.5% of GDP from 2018. Every euro of it is a euro not spent in Greece.": "Al treilea memorandum cere un excedent primar de 3,5% din PIB începând din 2018. Fiecare euro din el este un euro necheltuit în Grecia.",
+  "Then the rules stay as they are, and the next crisis will find them unchanged. Go and see where it leads.": "Atunci regulile rămân cum sunt, iar următoarea criză le va găsi neschimbate. Du-te și vezi unde duce.",
+  "EC": "CE",
+  "ECB": "BCE",
+  "IMF": "FMI",
+  "TROIKA.RUN": "TROIKA.RUN",
+  "Greece": "Grecia",
+  "Austerity laws come more often.": "Legile de austeritate apar mai des.",
+  "Queues at the cash machines appear on the road.": "Pe drum apar cozi la bancomate.",
+  "Crowds gather in the squares.": "Mulțimile se adună în piețe.",
+  "ERT's screens go dark.": "Ecranele ERT se sting.",
+  "ERT stays on air.": "ERT rămâne în emisie.",
+  "Bond yield spikes come more often.": "Salturile randamentelor obligațiunilor apar mai des.",
+  "A new drachma: more queues and more yield spikes.": "O nouă drahmă: mai multe cozi și mai multe salturi ale randamentelor.",
+  "Syntagma Square, Athens": "Piața Syntagma, Atena",
+  "Acropolis, Athens": "Acropola, Atena",
+  "ERT headquarters, Agia Paraskevi": "Sediul ERT, Agia Paraskevi",
+  "Port of Piraeus": "Portul Pireu",
+  "Bank branches, Athens": "Sucursale bancare, Atena",
+  "Obstacles cleared: {cleared}. Obstacles hit: {hits}.": "Obstacole trecute: {cleared}. Obstacole lovite: {hits}.",
+  "60 euros a day": "60 de euro pe zi",
+  "Bank run": "Retrageri în masă",
+  "Greece runs ahead of the Troika. Space jumps, twice for a double jump, and Down ducks.": "Grecia aleargă înaintea Troicii. Spațiu sare, de două ori pentru salt dublu, iar Jos ghemuiește.",
+  "BB+": "BB+",
+  "CC": "CC",
+  "CCC-": "CCC-",
+  "ERT": "ERT",
+  "SD": "SD",
+  "€13BN": "€13BN",
+  "€20BN": "€20BN",
+  "€34BN": "€34BN",
+  "€8BN": "€8BN",
+  "€7.2BN": "€7,2BN",
+  "€8.3BN": "€8,3BN",
+  "GSEE": "GSEE",
+  "-11.2%": "-11,2%",
+  "-10.3%": "-10,3%",
+  "-8.9%": "-8,9%",
+  "-13.2%": "-13,2%",
+  "-3.6%": "-3,6%",
+  "-5.6%": "-5,6%",
+  "10-year bond yield: {v}": "Randamentul obligațiunilor pe 10 ani: {v}",
+  "Bank run: queues at the cash machines": "Retrageri în masă: cozi la bancomate",
+  "Budget deficit: {v} of GDP": "Deficit bugetar: {v} din PIB",
+  "Capital controls: 60 euros a day at the cash machines": "Controlul capitalurilor: 60 de euro pe zi la bancomate",
+  "General strike": "Grevă generală",
+  "Law {n}/{year}": "Legea {n}/{year}",
+  "Loan tranche: {v}": "Tranșă de împrumut: {v}",
+  "S&P rating: {v}": "Ratingul S&P: {v}",
+  "In {year} Greece missed the conditions of a loan tranche: the money was withheld and the Troika caught up.": "În {year} Grecia nu a îndeplinit condițiile unei tranșe de împrumut: banii au fost reținuți, iar Troica a ajuns-o din urmă.",
+  "Syriza: free electricity for 300,000 households in the humanitarian crisis, Thessaloniki Programme, 2014": "Syriza: electricitate gratuită pentru 300.000 de gospodării afectate de criza umanitară, Programul de la Salonic, 2014",
+  "Syriza: unemployment of 26.5% in 2014": "Syriza: șomaj de 26,5% în 2014",
+  "Syriza: the ENFIA property tax, which the Thessaloniki Programme pledged to abolish": "Syriza: impozitul pe proprietate ENFIA, pe care Programul de la Salonic promitea să îl abroge",
+  "Varoufakis: the ECB stops taking Greek bonds as collateral, 4 February 2015": "Varoufakis: BCE nu mai acceptă obligațiunile grecești drept garanție, 4 februarie 2015",
+  "Varoufakis: the Eurogroup statement of 20 February 2015": "Varoufakis: declarația Eurogrupului din 20 februarie 2015",
+  "Varoufakis: the ECB freezes emergency liquidity for Greek banks, 28 June 2015": "Varoufakis: BCE îngheață lichiditatea de urgență pentru băncile grecești, 28 iunie 2015",
+  "Varoufakis: the payment to the IMF that Greece misses, 30 June 2015": "Varoufakis: plata către FMI pe care Grecia nu o face, 30 iunie 2015",
+  "300,000": "300.000",
+  "26.5%": "26,5%",
+  "ENFIA": "ENFIA",
+  "WAIVER": "DEROGARE",
+  "20/2": "20/2",
+  "ELA": "ELA",
+  "€1.6BN": "€1,6BN",
+  "Tap right": "Atinge dreapta",
+  "Tap twice": "Atinge de două ori",
+  "Hold left": "Ține stânga",
+  "Space": "Spațiu",
+  "jump": "salt",
+  "double jump": "salt dublu",
+  "duck": "ghemuire",
+  "Ctrl": "Ctrl",
+  "Tear gas": "Gaze lacrimogene",
+  "Tear gas at the protests on Syntagma Square": "Gaze lacrimogene la protestele din Piața Syntagma",
+  "PSI: private bondholders lose 53.5%, March 2012": "PSI: deținătorii privați de obligațiuni pierd 53,5%, martie 2012",
+  "Referendum of 5 July 2015": "Referendumul din 5 iulie 2015",
+  "-53.5%": "-53,5%",
+  "Paused": "Pauză",
+  "RESUME": "CONTINUĂ",
+  "Public debt: {v} of GDP": "Datoria publică: {v} din PIB",
+  "Academy of Athens, Panepistimiou Street": "Academia din Atena, strada Panepistimiou",
+  "T-bills": "Bonuri de trezorerie",
+  "Treasury bills: short-term debt rolled over every few months": "Bonuri de trezorerie: datorie pe termen scurt reînnoită la câteva luni",
+  "HFSF": "HFSF",
+  "Bank recapitalisation through the HFSF fund, 2012 to 2013": "Recapitalizarea băncilor prin fondul HFSF, 2012-2013",
+  "Success story": "Poveste de succes",
+  "The Greek success story of 2014: a primary surplus and a bond sale": "Povestea de succes grecească din 2014: un excedent primar și o emisiune de obligațiuni",
+  "EFSM": "EFSM",
+  "Bridge loan from the EU's EFSM fund, July 2015": "Împrumut-punte din fondul EFSM al UE, iulie 2015",
+  "For sale": "De vânzare",
+  "HRADF, the privatisation fund: state assets for sale from 2011": "HRADF, fondul de privatizare: active ale statului scoase la vânzare din 2011",
+  "VAT 23%": "TVA 23%",
+  "VAT raised to 23%, July 2010": "TVA majorată la 23%, iulie 2010",
+  "Medium-term fiscal strategy 2012 to 2015, passed in June 2011": "Strategia fiscală pe termen mediu 2012-2015, adoptată în iunie 2011",
+  "Banks closed from 29 June to 20 July 2015": "Bănci închise între 29 iunie și 20 iulie 2015",
+  "MTFS": "MTFS",
+  "15.4%": "15,4%",
+  "-22%": "-22%",
+  "Eurostat revises the 2009 deficit to 15.4% of GDP, November 2010": "Eurostat revizuiește deficitul din 2009 la 15,4% din PIB, noiembrie 2010",
+  "Indignados": "Indignados",
+  "The Indignados camp on Syntagma Square, summer 2011": "Tabăra Indignados din Piața Syntagma, vara lui 2011",
+  "The minimum wage cut by 22%, February 2012": "Salariul minim redus cu 22%, februarie 2012",
+  "ERT goes off air, 11 June 2013": "ERT iese din emisie, 11 iunie 2013",
+  "Cleaners": "Femeile de serviciu",
+  "The finance ministry's dismissed cleaners, protesting from 2013": "Femeile de serviciu concediate de la Ministerul Finanțelor, în protest din 2013",
+  "About 427,000 people left Greece from 2008 to 2015.": "Aproximativ 427.000 de oameni au plecat din Grecia între 2008 și 2015.",
+  "DIRECTORY": "DIRECTOR",
+  "DISASSEMBLY.RUN": "DISASSEMBLY.RUN",
+  "Phillips screwdriver": "șurubelniță Phillips",
+  "heat pad": "pernă de încălzire",
+  "battery": "bateria",
+  "USB-C port": "portul USB-C",
+  "display": "ecranul",
+  "iFixit repairability score: 10 out of 10.": "Scorul de reparabilitate iFixit: 10 din 10.",
+  "The back cover clips on, and the battery lifts out with no tools.": "Capacul din spate se prinde în cleme, iar bateria se scoate fără unelte.",
+  "Ten user-replaceable modules, held by standard Phillips screws: the battery sits between a top module and a bottom module, and each camera is a part of its own.": "Zece module pe care utilizatorul le poate înlocui, prinse cu șuruburi Phillips obișnuite: bateria stă între un modul de sus și unul de jos, iar fiecare cameră este o piesă separată.",
+  "IP55 protection against dust and jets of water.": "Protecție IP55 împotriva prafului și a jeturilor de apă.",
+  "The back glass is glued: it needs heat, a suction cup and picks.": "Sticla din spate este lipită: are nevoie de căldură, ventuză și plăcuțe.",
+  "Under the back glass, 17 screws hold the charging coil, the antennas, the speakers and the main board.": "Sub sticla din spate, 17 șuruburi țin bobina de încărcare, antenele, difuzoarele și placa de bază.",
+  "The battery comes out with stretch-release pull tabs.": "Bateria se scoate cu benzi adezive elastice.",
+  "The genuine screen comes as one assembly with the frame and a new battery.": "Ecranul original vine ca un singur ansamblu, cu rama și o baterie nouă.",
+  "screen": "ecranul",
+  "rear camera": "camera din spate",
+  "Pick a phone and the part to replace.": "Alege un telefon și piesa de înlocuit.",
+  "Phone": "Telefon",
+  "Part": "Piesă",
+  "START": "ÎNCEPE",
+  "Damaged: {part}.": "Deteriorat: {part}.",
+  "Time": "Timp",
+  "{n} min": "{n} min",
+  "Tools": "Unelte",
+  "Mistakes": "Greșeli",
+  "Damaged": "Deteriorat",
+  "nothing": "nimic",
+  "Bought": "Cumpărat",
+  "display, frame and battery in one assembly": "ecran, ramă și baterie într-un singur ansamblu",
+  "TRY ANOTHER": "ÎNCEARCĂ ALTUL",
+  "Fairphone 5": "Fairphone 5",
+  "Samsung Galaxy S24": "Samsung Galaxy S24",
+  "{part} stays in for this repair.": "{part}: rămâne la locul său pentru această reparație.",
+  "2023. The back cover clips off; iFixit gives it 10 out of 10.": "2023. Capacul din spate se desprinde din cleme; iFixit îi dă 10 din 10.",
+  "2024. The back glass is glued on.": "2024. Sticla din spate este lipită.",
+  "Actions": "Acțiuni",
+  "It is held by screws.": "Este prinsă cu șuruburi.",
+  "Nothing here is glued: the parts clip on or are screwed.": "Nimic nu este lipit aici: piesele se prind în cleme sau cu șuruburi.",
+  "Nothing here needs prying.": "Aici nu este nevoie de pârghie.",
+  "Part to replace": "Piesa de înlocuit",
+  "suction cup and picks": "ventuză și plăcuțe",
+  "That is done already.": "Asta este deja făcut.",
+  "The adhesive is cut all round.": "Adezivul este tăiat de jur împrejur.",
+  "The adhesive softens.": "Adezivul se înmoaie.",
+  "the back cover": "capacul din spate",
+  "the battery": "bateria",
+  "the bottom module": "modulul de jos",
+  "The cover only clips on; no picks are needed.": "Capacul doar se prinde în cleme; nu sunt necesare plăcuțe.",
+  "the cover over the main board": "capacul de peste placa de bază",
+  "the display": "ecranul",
+  "the loudspeaker": "difuzorul",
+  "The pull tabs stretch and let the battery go.": "Benzile se întind și eliberează bateria.",
+  "the rear camera": "camera din spate",
+  "The screws are out.": "Șuruburile sunt scoase.",
+  "the top module": "modulul de sus",
+  "the USB-C port": "portul USB-C",
+  "the wireless charging coil": "bobina de încărcare wireless",
+  "There are no screws to undo here.": "Aici nu sunt șuruburi de desfăcut.",
+  "This part is screwed, not glued.": "Piesa este prinsă cu șuruburi, nu lipită.",
+  "TUTORIAL: ON": "TUTORIAL: PORNIT",
+  "TUTORIAL: OFF": "TUTORIAL: OPRIT",
+  "Replace {part}.": "Înlocuiește {part}.",
+  "Drag parts off the phone into the tray, and drag a tool onto the part it works on.": "Trage piesele de pe telefon în tavă și trage o unealtă pe piesa la care trebuie folosită.",
+  "Drag the new part from the drawer into the phone.": "Trage piesa nouă din sertar în telefon.",
+  "Next: use the {tool} on {part}.": "Urmează: folosește {tool} pe {part}.",
+  "Next: drag {part} into the tray.": "Urmează: trage {part} în tavă.",
+  "The cold adhesive holds; the picks do not get in.": "Adezivul rece ține; plăcuțele nu intră.",
+  "The glass is glued.": "Sticla este lipită.",
+  "The adhesive still holds.": "Adezivul încă ține.",
+  "Transparent": "Transparentă",
+  "Sky Blue": "Sky Blue",
+  "Matte Black": "Matte Black",
+  "FAIRPHONE": "FAIRPHONE",
+  "the flex cables": "cablurile flexibile",
+  "Taken out: {part}.": "Scos: {part}.",
+  "SAMSUNG": "SAMSUNG",
+  "adhesive strips": "benzi adezive",
+  "the power button": "butonul de pornire",
+  "Next: put the {tool} on the frame.": "Urmează: pune {tool} pe ramă.",
+  "Next: drag {part} from the tray onto the phone.": "Urmează: trage {part} din tavă pe telefon.",
+  "Next: press the power button.": "Urmează: apasă butonul de pornire.",
+  "Next: hold the power button.": "Urmează: ține apăsat butonul de pornire.",
+  "The phone is off.": "Telefonul este oprit.",
+  "The phone starts.": "Telefonul pornește.",
+  "Not while the phone is open.": "Nu cât timp telefonul este deschis.",
+  "Nothing to do there with a tool.": "Acolo nu este nimic de făcut cu o unealtă.",
+  "The phone is on.": "Telefonul este pornit.",
+  "Nothing here takes adhesive.": "Aici nu se pune adeziv.",
+  "The screws are in.": "Șuruburile sunt puse.",
+  "New adhesive is on the frame.": "Adezivul nou este pe ramă.",
+  "There are no screws to put in here.": "Aici nu sunt șuruburi de pus.",
+  "That is not needed now.": "Acum nu este nevoie de asta.",
+  "The new part is in.": "Piesa nouă este montată.",
+  "{part}: the screws are still out.": "{part}: șuruburile încă lipsesc.",
+  "{part} goes on after {other}.": "{part}: se montează după {other}.",
+  "The frame has no adhesive.": "Rama nu are adeziv.",
+  "Back on: {part}.": "Montat la loc: {part}.",
+  "Done: the {part} of the {phone} is replaced and the phone works.": "Gata: la {phone} s-a înlocuit {part}, iar telefonul funcționează.",
+  "CHANGE": "CHANGE",
+  "IS IN YOUR": "IS IN YOUR",
+  "HANDS": "HANDS",
+  "FLIP": "ÎNTOARCE",
+  "The front of the phone.": "Fața telefonului.",
+  "The back of the phone.": "Spatele telefonului.",
+  "The phone, the parts taken off it and the drawer of new parts. The arrows pick a part; Enter acts on it or uses the armed tool; F turns the phone over.": "Telefonul, piesele scoase și sertarul cu piese noi. Săgețile aleg o piesă; Enter acționează asupra ei sau folosește unealta pregătită; F întoarce telefonul.",
+  "Next: turn the phone over.": "Urmează: întoarce telefonul.",
+  "The phones here are simplified drawings for a game and may not be accurate. The author has taken apart only a Fairphone, and it was a Fairphone 4.": "Telefoanele de aici sunt desene simplificate pentru un joc și pot să nu fie exacte. Autorul a desfăcut doar un Fairphone, și acela a fost un Fairphone 4.",
+  "A Galaxy Note 7, 2016: recalled because its batteries could catch fire.": "Un Galaxy Note 7, 2016: retras de pe piață pentru că bateriile lui puteau lua foc.",
+  "Mrwhosetheboss later reported swollen batteries across many of his stored Galaxy phones, the Note 8 and the S10 among them, some covers pushed apart by their batteries, even though they were kept in ideal conditions.": "Mrwhosetheboss a relatat mai târziu baterii umflate la multe dintre telefoanele Galaxy pe care le păstra, printre ele Note 8 și S10, unele cu capacele desfăcute de propriile baterii, deși au fost ținute în condiții ideale.",
+  "SUB": "SUB",
+  "UB": "UB",
+  "MAIN": "MAIN",
+  "Still on top: {over}.": "Încă deasupra: {over}.",
+  "The battery is still connected.": "Bateria este încă conectată."
  },
  "commands": {
   "ls": [
@@ -1238,7 +1614,9 @@ SELK.i18n.register("ro", {
    "comms": "Comunicații",
    "export": "Export",
    "power": "Energie",
-   "system": "Sistem"
+   "system": "Sistem",
+   "design": "Design",
+   "history": "Istorie"
   },
   "entries": {
    "home/README": {
@@ -1289,7 +1667,7 @@ SELK.i18n.register("ro", {
    "bio/LAB": {
     "by": "sistemul bazei",
     "cap": "Camera SV-6, 03-05-2092, laborator sigilat",
-    "body": "Construit     2079\nScop          test de {chemosinteză|chemo}\nSursă de hrană  {C2H2 + 3 H2 > 2 CH4|reaction}\nMediu         {regolit|regolith} umed de metan\nPrima descoperire  2083, parcela 3\nStare         sigilat pe 03-05-2092\nVezi          [[archive/LAB.R4]]"
+    "body": "Construit     2079\nScop          test de {chemosinteză|chemo}\nSursă de hrană  {C2H2 + 3 H2 > 2 CH4|reaction}\nMediu         {regolit|regolith} îmbibat cu metan lichid\nPrima descoperire  2083, parcela 3\nStare         sigilat pe 03-05-2092\nVezi          [[archive/LAB.R4]]"
    },
    "bio/PLOTS": {
     "by": "sistemul bazei",
@@ -1436,6 +1814,167 @@ SELK.i18n.register("ro", {
    "power/AMBER-SAFETY": {
     "by": "rezumat NTorch",
     "body": "O2 lângă gura de evacuare  0,4%\n{Inflamabilitate|firelimit}        12% O2, date de test de pe Pământ\n{Test la 94 K|flamtest}        niciunul înregistrat\nRezumat             niciun risc de incendiu, la orice nivel"
+   },
+   "design/CL-UNIT": {
+    "by": "biroul de proiectare HX, 2088",
+    "body": "Clasă         unitate de cățărare\nConstruite    12\nNume          CL-1 până la CL-12\nMasă          340 kg\nAderență      4 șenile cu gheare pentru gheață\nUrcă          pe toată înălțimea turnului MAST-01\nÎncărcătură   role de tiranți, 60 kg\nAlimentare    cablu din coloana turnului\nBaterie       40 de minute fără cablu\nRulează       {NTorch|ntorch} 3, detectorul de fisuri\nSe oprește la  vânt de peste 5 m/s\nSe oprește la  o marcare a {porții|gate} în zona ei",
+    "cap": "Desen CL-UNIT, vedere laterală, planșa 1 din 1"
+   },
+   "design/WD-UNIT": {
+    "by": "biroul de proiectare HX, 2088",
+    "body": "Clasă         unitate de sudură\nConstruite    6\nNume          WD-1 până la WD-6\nMasă          210 kg\nUnealtă       cap de topire a gheții\nTemperatura vârfului  280 K\nA doua unealtă  presă pentru tiranți\nSe deplasează  pe nervurile halei și pe coloana turnului\nBaterie       6 ore de sudură\nLampă         albă, 900 lm\nSe oprește la  o marcare a {porții|gate} în zona ei\nDefect cunoscut  nu se poate retrage de pe o nervură\nPentru că     capul este încă fierbinte",
+    "cap": "Desen WD-UNIT, vedere laterală, planșa 1 din 1"
+   },
+   "design/CT-UNIT": {
+    "by": "biroul de proiectare HX, 2088",
+    "body": "Clasă         unitate de tăiere\nConstruite    4\nNume          CT-1 până la CT-4\nMasă          260 kg\nUnelte        fir încălzit, disc de tăiere\nRol           înlătură piesele fisurate\nLa comanda    {modelului de defecte|faultmodel}\nTaie de la    un {scor|score} de 0,85 sau mai mare\nVerificare    niciuna înainte de tăiere\nSe oprește la  o marcare a {porții|gate} în zona ei",
+    "cap": "Desen CT-UNIT, vedere laterală, planșa 1 din 1"
+   },
+   "design/SV-UNIT": {
+    "by": "personalul CESEA, 2080",
+    "body": "Clasă         unitate de inspecție\nConstruite    6\nNume          SV-1 până la SV-6\nMasă          45 kg\nSe deplasează  pe 6 roți\nParcată       lucrează ca o cameră fixă\nCamere        vizibil și infraroșu\nSenzori de gaz  H2, CH4, C2H2, O2\nSenzor de sol  temperatura solului\nRază          12 km de la adăpost\nImagini către  detectorul de fisuri\nAer către     {poartă|gate}",
+    "cap": "Desen SV-UNIT, vedere laterală, planșa 1 din 1"
+   },
+   "design/PR-UNIT": {
+    "by": "biroul de proiectare HX, 2088",
+    "body": "Clasă         unitate de imprimare\nConstruite    3\nNume          PR-1 până la PR-3\nMasă          1.900 kg\nImprimă       {gheață imprimată|printedice}\nStrat         0,6 m\nViteză        4 m de turn pe zi\nAlimentare    gheață din crustă, topită, filtrată\nAdaugă        {tiranți din fibră de carbon|ties} la fiecare 4 m\nAmplasată de  {planificatorul de amplasare|planner} NTorch\nStare         inactivă\nDe când       turnul s-a oprit la 1.180 m",
+    "cap": "Desen PR-UNIT, vedere laterală, planșa 1 din 1"
+   },
+   "design/MAST-01": {
+    "by": "biroul de proiectare HX, 2089",
+    "body": "Ce este       turnul principal\nÎnălțime proiectată  1.400 m\nÎnălțime construită  1.180 m\nAncorare proiectată  32 de {cabluri de ancorare|guy}, 4 niveluri de câte 8\nNiveluri construite  3\nNivelul 4     8 cabluri, niciodată ridicate\nCoborâte la   nivelul 3\nStare         legate acolo, lăsate slăbite\nModificat     2092, gura de evacuare AMBER, partea W\nMasa gurii    14 t, pe vârful construit\nCorp          înveliș din {gheață imprimată|printedice}\nDiametru      18 m la bază, 6 m în vârf\nTiranți       {tiranți din fibră de carbon|ties}, unul la 4 m\nBază          HALL-R, 18 nervuri\nMarjă de siguranță  rezistența împărțită la sarcină\nMarjă de 1    rezistența este egală cu sarcina\nAer calm      1,4, deci 40% rezistență în plus\nFurtună de echinocțiu  1,1, deci 10% rezistență în plus\nCalculate pentru  proiectul complet\nLăsate deoparte  gura de evacuare și cablurile slăbite",
+    "cap": "Desen MAST-01, elevație: construit față de proiect, planșa 1 din 4"
+   },
+   "design/CRANE-L": {
+    "by": "biroul de proiectare HX, 2089",
+    "body": "Ce este       macara cățărătoare\nRidică        4 t la 30 m\nUrcă          pe fața turnului, 2 m pe oră\nSe prinde cu  12 cleme de tiranți\nRegulă        se strânge la vânt de peste 5 m/s\nTraseu        trece prin zona 14, la bază",
+    "cap": "Desen CRANE-L, elevație, planșa 1 din 1"
+   },
+   "design/REACTOR": {
+    "by": "personalul CESEA, 2078",
+    "body": "Tip           {fisiune|fission}\nProduce       căldură și electricitate\nCăldură       48 {MW|mw}\nElectric      11 MW\nEcranare      12 m de gheață din crustă\nDurată        40 de ani la puterea de proiect\nPlănuit pentru  bază, unități și laboratorul bio",
+    "cap": "Desen REACTOR, secțiune, planșa 1 din 2"
+   },
+   "design/EX-1": {
+    "by": "biroul de proiectare HX, 2091",
+    "body": "Ce este       instalația de export\nMetodă        {reformare cu abur|reforming}\nMetan din     puțuri de clatrat\nApă din       gheață topită din crustă\nIeșire        {hidrogen lichid|lh2}\nPe cisternă   180 t\nCăldură de la  reactor\nDeșeuri       CO2, evacuat spre nord\nPriză de aer  extrage H2 din aerul local\nVezi          [[archive/AIR.R7-12]]\nTitlul planșei  „instalație de hidrogen verde”",
+    "cap": "Desen EX-1, plan, planșa 1 din 3"
+   },
+   "design/AMBER-VENT": {
+    "by": "biroul de proiectare HX, 2092",
+    "body": "Program       AMBER\nPartea W      gură de evacuare a hidrogenului pe MAST-01\nEliberează    2 t de H2 pe an\nPartea O      guri de evacuare a oxigenului lângă sol\nAlimentare    gheață topită\nSarcină adăugată  14 t în vârful turnului\nVerificare la incendiu  doar date de pe Pământ",
+    "cap": "Desen AMBER-VENT, partea W, planșa 1 din 2"
+   },
+   "design/BIO-CELL": {
+    "by": "personalul laboratorului CESEA, 2084",
+    "body": "Ce sunt       {celule bio|biocell}\nStive         2, în serie\nAlimentate de  parcelele 3 și 6\nReacție       {C2H2 + 3 H2 > 2 CH4|reaction}\nProiectate pentru  0,5 kW\nDepind de     bacteriile vii din parcele\nAlte surse    reactorul, pentru restul bazei",
+    "cap": "Desen BIO-CELL, secțiune, planșa 1 din 1"
+   },
+   "design/UPLINK": {
+    "by": "personalul CESEA, 2079",
+    "body": "Ce este       antenă spre Pământ\nMărime        4 m\nBandă         banda X\nViteză        64 kbit/s\nTreceri       2 pe zi\nReleuri       R-02, R-05, R-09, R-11\nAdăugat în 2092  R-14",
+    "cap": "Desen UPLINK, elevație, planșa 1 din 1"
+   },
+   "design/SELK-T01": {
+    "by": "personalul CESEA, 2079",
+    "body": "Ce este       terminal de tip thin client\nGazdă         selk-t01\nSistem        CESEA Site OS 7.2\nStocare       card de 8 GB, doar citire\nMemorie       64 GB\nThin client obișnuit  4 GB\nMotiv         terminalul face calcule\nExemplu       verificarea rezultatelor modelelor\nCând          legătura cu Pământul este întreruptă\nEcran         CRT de 36 cm\nCarcasă       oțel, montată pe perete\nSerie         KTZBA0K6SB2KBR1CS5CE97\nLoc           adăpostul bazei",
+    "cap": "Desen SELK-T01, vedere din față, planșa 1 din 1"
+   },
+   "history/2026-FAR-RIGHT": {
+    "by": "arhiva CESEA",
+    "body": "La alegerile pentru Parlamentul European din iunie 2024, cele trei grupuri aflate la dreapta Partidului Popular European au obținut împreună 187 din cele 720 de locuri: Patrioți pentru Europa 84, Conservatorii și Reformiștii Europeni 78 și Europa Națiunilor Suverane 25. Grupul Stânga, GUE/NGL, a obținut 46 de locuri, iar Verzii/ALE 53.\nÎntre 2024 și 2031, partidele de extremă dreaptă au intrat la guvernare în 11 dintre cele 27 de state membre, fie conducând coaliții, fie susținând guverne minoritare. Campaniile lor s-au concentrat pe migrație, pe suveranitatea națională și pe prețul energiei.\nLa guvernare, aceste partide au redus sau au amânat țintele climatice naționale, au restrâns procedurile de azil și au slăbit protecția muncii, inclusiv prin limitarea grevelor în serviciile publice. În Consiliu, mai multe dintre aceste guverne au blocat pozițiile comune privind clima și primirea refugiaților.\nOpoziția s-a format în jurul sindicatelor, al grupurilor pentru climă și al partidelor membre ale GUE/NGL și ale Verzilor/ALE, care au alcătuit alianțe electorale în mai multe țări. Până în 2031, majoritatea acestor guverne pierduseră puterea în alegeri sau prin destrămarea coalițiilor.",
+    "cap": "Fotografie de arhivă, 2026, un miting sub nori de furtună",
+    "facts": "Grup, Parlamentul European 2024  Locuri\nPartidul Popular European (PPE)  188\nSocialiști și Democrați (S&D)  136\nPatrioți pentru Europa (PfE)  84\nConservatorii și Reformiștii Europeni (ECR)  78\nRenew Europe  77\nVerzii/ALE  53\nStânga (GUE/NGL)  46\nEuropa Națiunilor Suverane (ESN)  25\nNeafiliați  33"
+   },
+   "history/2034-CLIMATE-STRIKES": {
+    "by": "arhiva CESEA",
+    "body": "Grevele generale pentru climă au început în 2033, după o vară cu valuri de căldură și recolte compromise în sudul Europei. Sindicatele, organizațiile studențești și asociațiile de chiriași au declanșat opriri coordonate ale lucrului, cu trei cereri: reduceri obligatorii ale emisiilor, o săptămână de lucru mai scurtă și control public asupra energiei.\nComitetele de grevă din 14 state au făcut schimb de delegați și și-au sincronizat acțiunile, formând prima rețea durabilă de greve transfrontaliere din Uniune. Cea mai mare acțiune, din martie 2035, a oprit transportul, energia și școlile timp de cinci zile.\nPână în 2036, 9 state adoptaseră săptămâna de lucru de 32 de ore, iar mai multe readuseseră rețelele de energie în proprietate publică. Comitetele au devenit ulterior nucleul campaniilor federaliste și eurocomuniste din anii 2040.",
+    "cap": "Fotografie de arhivă, 2034, un marș pentru săptămâna de 32 de ore",
+    "facts": "An  Eveniment\n2033  primele opriri coordonate ale lucrului\n2035  grevă generală de cinci zile, în martie\n2036  legea săptămânii de 32 de ore în al nouălea stat"
+   },
+   "history/2041-FEDERATION": {
+    "by": "arhiva CESEA",
+    "body": "În 2041, Uniunea Europeană a devenit Federația Europei, după ce referendumurile din toate statele membre au aprobat Tratatul Federal. Tratatul fusese redactat de o convenție constituțională aleasă în 2039.\nTratatul a dat întreaga putere legislativă Parlamentului Federal, care are 800 de locuri și este ales la fiecare cinci ani prin reprezentare proporțională pe liste federale de partid, cu un prag de 3% din voturi. Consiliul Uniunii Europene a devenit Consiliul Federal, o cameră superioară de 81 de membri, câte trei pentru fiecare stat membru, aleși de parlamentele naționale. Consiliul Federal poate amâna o lege cu cel mult un an și trebuie să aprobe tratatele.\nStatele membre și-au păstrat guvernele, instanțele și parlamentele pentru educație, poliție și urbanism local.",
+    "cap": "Fotografie de arhivă, 2041, steagul federal",
+    "facts": "Instituție  Membri  Puteri\nParlamentul Federal  800, aleși la fiecare 5 ani  adoptă legile federale\nConsiliul Federal  81, câte trei pe stat membru  amână legi, aprobă tratate\nStatele membre  27 de guverne și parlamente  educație, poliție, urbanism local"
+   },
+   "history/2044-ELECTION": {
+    "by": "arhiva CESEA",
+    "body": "Primele alegeri pentru Parlamentul Federal au avut loc în mai 2044. Eurocomuniștii au candidat ca Alianța Stângii Europene, înființată în 2038 de partidele membre ale grupului Stânga (GUE/NGL), de aripa de stânga a Verzilor/ALE și de comitetele de grevă din anii 2030. Alianța a obținut 432 din cele 800 de locuri, adică 54%.\nProgramul ei propunea o Comisie aleasă direct, o bancă centrală care răspunde în fața parlamentului, abrogarea regulilor federale privind datoria și proprietatea publică asupra energiei și căilor ferate. Având majoritate proprie, alianța a format guvernul federal fără parteneri de coaliție.\nPrezența la vot a fost de 71%, cea mai mare înregistrată într-un scrutin european până în acel an. Succesorii PPE și ai Renew Europe au format împreună Blocul Liberal și Conservator.",
+    "cap": "Fotografie de arhivă, 2044, noul parlament",
+    "facts": "Grup, Parlamentul Federal 2044  Locuri  Procent\nAlianța Stângii Europene  432  54%\nSocial-democrați și verzi  208  26%\nBlocul Liberal și Conservator  136  17%\nExtrema dreaptă  24  3%"
+   },
+   "history/2045-REFORMS": {
+    "by": "arhiva CESEA",
+    "body": "În 2045, Alianța Stângii Europene a adoptat un pachet de reforme care a răspuns obiecțiilor ridicate timp de decenii de euroscepticii de stânga. Aceștia susținuseră că executivul Uniunii nu era ales, că banca sa centrală se afla în afara controlului democratic, că regulile sale fiscale impuneau austeritatea și că tratatele puneau regulile pieței în afara influenței alegerilor.\nPrima alegere a Comisiei a avut loc în octombrie 2045. Alegătorii au ales președintele și 26 de comisari de pe liste federale, iar Parlamentul Federal i-a confirmat. Banca centrală a fost obligată să răspundă în fața parlamentului, regulile privind datoria au fost abrogate, iar prevederile de piață ale vechilor tratate au fost eliminate, ceea ce a permis trecerea energiei și a căilor ferate în proprietate publică.",
+    "cap": "Fotografie de arhivă, 2045, un buletin de vot pentru Comisie",
+    "facts": "Critică  Schimbarea din 2045\nComisia era numită  alegătorii aleg Comisia\nBanca centrală nu dădea socoteală  banca răspunde în fața parlamentului\nRegulile datoriei impuneau austeritatea  regulile datoriei au fost abrogate\nTratatele fixau regulile pieței  energia și căile ferate în proprietate publică"
+   },
+   "history/2047-EASTERN-EUROPE": {
+    "by": "arhiva CESEA",
+    "body": "După reformele din 2045, Federația a îndreptat granturi de investiții către Europa Centrală și de Est, unde salariile și serviciile publice rămăseseră în urma vestului continentului încă din anii 1990.\nGranturile au finanțat căi ferate de mare viteză, renovarea și izolarea termică a cartierelor de blocuri prefabricate și centre de cercetare în orașe precum București, Brno, Cracovia și Debrețin.\nSalariul mediu din regiune a ajuns la media federală în 2058. Centrele de cercetare au format mulți dintre inginerii care au lucrat apoi pentru CESEA.",
+    "cap": "Fotografie de arhivă, 2047, blocuri renovate",
+    "facts": "Indicator  2045  2060\nSalarii, procent din media federală  58%  101%\nCale ferată de mare viteză  1.900 km  9.400 km\nApartamente renovate în blocuri  0,4 milioane  3,1 milioane"
+   },
+   "history/2052-CESEA": {
+    "by": "arhiva CESEA",
+    "body": "Agenția Central-Europeană de Explorare Spațială, CESEA, a fost înființată în 2052 ca alternativă la Agenția Spațială Europeană. ESA și-a continuat misiunile de observare a Pământului și misiunile științifice, iar CESEA a fost creată pentru a construi infrastructură pe alte lumi.\nSediul agenției se află într-o clădire constructivistă, cu un turn cu benzi, un corp de birouri în consolă și numele agenției pe acoperiș. Programul de început a fost dezvoltarea roboților de construcție capabili să imprime și să asambleze structuri în medii ostile.\nCESEA este finanțată din bugetul federal. Primul ei lansator a zburat în 2054.",
+    "cap": "Fotografie de arhivă, 2052, sediul CESEA și primul său lansator",
+    "facts": "An  Eveniment\n2052  este înființată CESEA\n2054  prima lansare\n2061  primul test de asamblare cu roboți pe Lună\n2079  laboratorul Selk este terminat pe Titan"
+   },
+   "history/2063-WARMING-PEAK": {
+    "by": "arhiva CESEA",
+    "body": "În 2063, temperatura medie globală a încetat să crească, la 1,9 °C peste nivelul preindustrial. Schimbarea a urmat după două decenii de planificare eco-socialistă în Federație și după acorduri privind emisiile cu celelalte mari economii.\nO parte din reducere a venit din legi de urgență adoptate după inundațiile și valurile de căldură din anii 2050. Unele dintre aceste legi au fost adoptate cu puține consultări, iar mutarea localităților și a industriei pe care au dispus-o este încă disputată.",
+    "cap": "Fotografie de arhivă, 2063, curba temperaturii",
+    "facts": "An  Încălzire peste nivelul preindustrial\n2030  1,5 °C\n2045  1,8 °C\n2063  1,9 °C, vârful"
+   },
+   "history/2071-HX-HOLDINGS": {
+    "by": "arhiva CESEA",
+    "body": "HX Holdings a fost înregistrată în 2071 în Insulele Cayman de două companii private ale căror inițiale îi dau numele: Halvorsen Relay, operator de releuri radio cu sediul în Singapore, și Xiran Spaceports, operator de lansări cu sediul în Delaware. Singapore i-a autorizat releele, iar Insulele Cayman au scutit-o de impozite. Activitatea ei este contractarea lucrărilor de construcție și de extracție din afara Pământului.\nÎn Federație, partidele socialiste se opun companiei și controlului privat asupra infrastructurii din afara Pământului. Facțiuni turbocapitaliste din străinătate și din unele state membre o susțin și au locuri în mai multe parlamente.\nPână în 2092, HX deținea releul R-14 și opera instalația de export EX-1 de la Selk.",
+    "cap": "Fotografie de arhivă, 2071, turnul HX și releul său",
+    "facts": "An  Eveniment\n2071  este înregistrată HX Holdings, Insulele Cayman\n2088  biroul de proiectare HX desenează unitățile pentru Selk\n2092  EX-1 instalată, poarta oprită de HX-ROOT\n2097  versiunea 55183 trimisă prin R-14"
+   },
+   "history/2079-SELK-LAB": {
+    "by": "arhiva CESEA",
+    "body": "CESEA a terminat laboratorul din craterul Selk, pe Titan, în 2079. Scopul lui era să testeze dacă în regolitul îmbibat cu metan lichid trăiește viață {chemosintetică|chemo}, care se hrănește din reacția acetilenei cu hidrogenul.\nPrima probă pozitivă a venit din parcela 3, în 2083. Lucrul la turnul coloniei, MAST-01, a început în 2089, iar laboratorul a fost sigilat în 2092.",
+    "cap": "Fotografie de arhivă, 2079, domul laboratorului",
+    "facts": "An  Eveniment\n2079  laboratorul este terminat\n2083  prima descoperire, parcela 3\n2089  începe MAST-01\n2092  laboratorul este sigilat"
+   },
+   "history/2091-SELECTION": {
+    "by": "arhiva CESEA",
+    "body": "În 2091, CESEA l-a selectat pe @NAME@, cetățean al Federației Europei, ca singurul supraveghetor al bazei Selk. Selecția a durat doi ani și a combinat teste practice și teoretice.\nTestele practice au vizat izolarea îndelungată și judecata pe baza unor informații incomplete. Testele teoretice au vizat sistemele PyTorch și NTorch ale bazei și educația media, inclusiv deosebirea dintre umplutură și substanță în comunicarea științei.\nCa orice cetățean federal, supraveghetorul are o carte de cetățean cu titlul și cuvântul pentru cetățean în cele 24 de limbi oficiale ale Federației. Supraveghetorul a ajuns la Selk în 2091 și a intrat în somnul lung pe 20-04-2092.",
+    "cap": "Fotografie de arhivă, 2091, testul de selecție CESEA",
+    "facts": "Limba  Pe carte\nbulgară  гражданин\ncehă  občan\ncroată  građanin\ndaneză  borger\nengleză  citizen\nestonă  kodanik\nfinlandeză  kansalainen\nfranceză  citoyen\ngermană  Bürger\ngreacă  πολίτης\nirlandeză  saoránach\nitaliană  cittadino\nletonă  pilsonis\nlituaniană  pilietis\nmaghiară  állampolgár\nmalteză  ċittadin\nneerlandeză  burger\npoloneză  obywatel\nportugheză  cidadão\nromână  cetățean\nslovacă  občan\nslovenă  državljan\nspaniolă  ciudadano\nsuedeză  medborgare",
+    "flip": [
+     [
+      null,
+      "Cartea de cetățean, fața: fotografie, numărul FE-10421, valabilă până în 2101"
+     ],
+     [
+      null,
+      "Cartea de cetățean, verso: cuvântul pentru cetățean în cele 24 de limbi oficiale"
+     ]
+    ]
+   },
+   "history/2097-NOW": {
+    "by": "arhiva CESEA",
+    "body": "O alarmă de structură l-a trezit pe supraveghetor pe 26-02-2097. MAST-01 depășea sarcina sigură, iar biroul de audit CESEA, aflat la 79 de minute distanță prin radio, a cerut rapoarte din baza de date a bazei.\nDecizia supraveghetorului privind viitorul bazei: @ENDING@.",
+    "cap": "Fotografie de arhivă, 2097, MAST-01 în praf",
+    "facts": "Data  Eveniment\n26-02-2097  supraveghetorul este trezit\n14-03-2097  încep rapoartele de audit"
+   },
+   "history/2049-PANEL-ROBOTS": {
+    "by": "arhiva CESEA",
+    "body": "În 2049, centrul de cercetare din Brno a prezentat primul robot de construcție creat pentru asamblarea locuințelor din panouri prefabricate. Proiectul a automatizat munca făcută încă din anii 1950 la construirea cartierelor de panelák, blocuri și Plattenbau: turnarea panourilor standard de perete și de planșeu, ridicarea lor și îmbinarea lor pe șantier.\nRoboții se deplasau pe șine de-a lungul clădirii, ridicau fiecare panou din stivă, îl așezau la locul lui și îi sudau îmbinările. În 2051, în cartierul Lesná din Brno, o echipă de trei roboți și un supraveghetor a ridicat un bloc cu zece etaje în unsprezece săptămâni. Până în 2055 roboții lucrau pe majoritatea șantierelor de renovare și de construcție din Federație.\nCESEA a adaptat proiectul pentru alte lumi după 2052. Unitățile de la Selk sunt derivate din acești roboți; ele imprimă gheață și montează tiranți din fibră de carbon.",
+    "facts": "An  Eveniment\n2049  primul robot pentru panouri, Brno\n2051  primul bloc construit de roboți, Lesná, Brno\n2055  roboți pe majoritatea șantierelor din Federație\n2061  testul CESEA de asamblare cu roboți pe Lună",
+    "cap": "Fotografie de arhivă, 2049, un robot care așază un panou de perete"
+   },
+   "history/TROIKA.RUN": {
+    "by": "arhiva CESEA",
+    "body": "Un joc de alergare din setul didactic al arhivei. Grecia aleargă din 2010\npână în 2015 înaintea Troicii: Comisia Europeană, Banca Centrală\nEuropeană și FMI. Fiecare an aduce o decizie din acel an."
+   },
+   "design/DISASSEMBLY.RUN": {
+    "by": "personalul CESEA, 2079",
+    "body": "Un joc de reparații din setul de instruire al personalului. Alege un Fairphone 5\nsau un Samsung Galaxy S24, două telefoane din 2023 și 2024, și piesa de înlocuit,\napoi desfă telefonul pas cu pas."
    }
   },
   "messages": {
@@ -1840,6 +2379,142 @@ SELK.i18n.register("ro", {
      "Cealaltă este identificatorul unui transport de hidrogen."
     ],
     "nudge": "Gândește-te la numele de cod al unui program de cercetare mai vechi și la un transport de hidrogen."
+   },
+   "design": {
+    "hint": [
+     "Elimină E din inițiale, iar BCE devine CE, marcajul de conformitate: CE CB ZB KP KT SB KB BC.",
+     "KT este grecesc, din țara cea mai lovită de criza euro. Trece primul.",
+     "ZB este german, din principalul creditor cu care s-a certat Grecia. Trece al doilea.",
+     "CE, marcajul de conformitate, trece ultimul: KT ZB CB KP SB KB BC CE.",
+     "CB și BC sunt în oglindă. Primul, CB, devine A0, cea mai mare dintre noile centuri ale Bucureștiului.",
+     "RoHS se termină cu S, iar numărul său, 2011/65, se termină cu 5. S5 trece înainte de CE.",
+     "În oglindă, P seamănă cu 9; cu susul în jos, 9 devine 6. KP devine K6.",
+     "SBB, inițialele germane ale căilor ferate elvețiene, are doi de B. SB devine SB2.",
+     "KTZBA0K6SB2KBBCS5CE are 19 caractere. Adaugă 9 la sfârșit.",
+     "BBC, televiziunea britanică, se ascunde în KBBCS. Devine BR1C.",
+     "Bancnota de 500 de euro nu s-a mai tipărit din 27-04-2019. Adaugă 7: KTZBA0K6SB2KBR1CS5CE97."
+    ],
+    "nudge": "Seria este făcută din inițialele de pe o bancnotă euro.",
+    "note": "Design se deschide cu seria acestui terminal. Eticheta de pe carcasă s-a șters, dar nota fabricii care a făcut seria s-a păstrat; urmeaz-o în ordine.",
+    "clues": [
+     [
+      "Început",
+      "banca de pe o bancnotă euro, cu litere latine"
+     ],
+     [
+      "Inițiale",
+      "BCE ECB EZB EKP EKT ESB EKB EBC"
+     ],
+     [
+      "Fiecare set",
+      "o literă din fiecare set înseamnă european; seria folosește ce rămâne"
+     ],
+     [
+      "BCE",
+      "aici pleacă B; ce rămâne este un marcaj tipărit pe aparatele electronice"
+     ],
+     [
+      "Primul",
+      "limba țării cele mai lovite de criza euro"
+     ],
+     [
+      "Al doilea",
+      "limba creditorului cu care s-a certat acea țară"
+     ],
+     [
+      "Mijloc",
+      "celelalte perechi își păstrează ordinea"
+     ],
+     [
+      "Ultimul",
+      "marcajul"
+     ],
+     [
+      "Oglindă",
+      "două perechi se citesc una pe alta invers; prima face loc numărului celei mai mari dintre noile autostrăzi inelare din jurul Bucureștiului"
+     ],
+     [
+      "Înainte de marcaj",
+      "directiva europeană din 2011 privind substanțele periculoase (RoHS 2): ultima literă a abrevierii, apoi ultima cifră a numărului ei"
+     ],
+     [
+      "P",
+      "în oglindă, seamănă cu o cifră; întoarce acea cifră cu susul în jos"
+     ],
+     [
+      "După SB",
+      "căile ferate elvețiene, în germană, numărul literei repetate"
+     ],
+     [
+      "Apoi",
+      "numără caracterele de până acum; adaugă la sfârșit ultima cifră a numărului"
+     ],
+     [
+      "Ascuns",
+      "un post de televiziune, la vedere; dublul său B devine B, R și 1"
+     ],
+     [
+      "Sfârșit",
+      "încheie cu ultima cifră a zilei în care 500 nu s-a mai tipărit, 27-04-2019"
+     ]
+    ]
+   },
+   "history": {
+    "hint": [
+     "Substanța îți spune ceva ce poți verifica. Umplutura îți spune ce să simți.",
+     "Rândurile 1, 4 și 7 explică de unde vin atomii și lumina: substanță.",
+     "Rândul 5 spune ce faci cu o teorie falsă: substanță.",
+     "Rândurile 2, 3, 6 și 8 cer uimire și nu dau niciun fapt: umplutură.",
+     "Răspunsul este SFFSSFSF."
+    ],
+    "nudge": "Împarte fiecare rând în umplutură sau substanță.",
+    "note": "Istorie se deschide cu testul media din selecția ta la CESEA. Împarte fiecare rând spus de Brian Cox, prezentator de știință din anii 2010: umplutura te ține în fața ecranului, substanța îți spune ceva.",
+    "sort": {
+     "choices": [
+      [
+       null,
+       "UMPLUTURĂ"
+      ],
+      [
+       null,
+       "SUBSTANȚĂ"
+      ]
+     ],
+     "items": [
+      [
+       "Fiecare atom de carbon din fiecare ființă vie de pe planetă a fost produs în inima unei stele pe moarte.",
+       "Wonders of the Universe, 2011"
+      ],
+      [
+       "Uitați-vă la asta! Dacă ați avut vreodată nevoie să vă convingeți că trăim în sistemul solar, că suntem pe o bilă de rocă ce orbitează în jurul Soarelui alături de alte bile de rocă, atunci uitați-vă la asta!",
+       "Wonders of the Solar System, 2010"
+      ],
+      [
+       "O înțelegere mai profundă aduce cel mai prețios lucru: uimirea.",
+       "Wonders of Life, 2013"
+      ],
+      [
+       "Lumina este singura legătură pe care o avem cu Universul de dincolo de sistemul nostru solar.",
+       "Wonders of the Universe, 2011"
+      ],
+      [
+       "Scepticismul trebuie să meargă mână în mână cu raționalitatea. Când se arată că o teorie este falsă, lucrul corect este să mergi mai departe.",
+       "despre Large Hadron Collider, 2008"
+      ],
+      [
+       "Suntem cosmosul devenit conștient, iar viața este mijlocul prin care universul se înțelege pe sine.",
+       "Wonders of the Universe, 2011"
+      ],
+      [
+       "A privi în sus înseamnă a privi înapoi în timp, pentru că razele străvechi de lumină sunt mesageri din trecutul îndepărtat al Universului.",
+       "Wonders of the Universe, 2011"
+      ],
+      [
+       "Am scris dovada existenței noastre pe suprafața planetei.",
+       "Wonders of the Solar System, 2010"
+      ]
+     ]
+    }
    }
   },
   "endings": {
@@ -1968,7 +2643,7 @@ SELK.i18n.register("ro", {
   "credits:title": "Selk, autori și referințe",
   "devnotes": "<nav class=\"note-nav drawing-back\" aria-label=\"Înapoi la autori și referințe\">\n        <a class=\"note-button\" href=\"credits.html\">Înapoi la autori și referințe</a>\n      </nav>\n      <h1>Notele dezvoltatorului Selk</h1>\n      <p class=\"warn\">Aceste note conțin toate răspunsurile, parolele și finalurile.</p>\n      <p class=\"dim\">Concept și poveste originale. Programare și implementare asistate de Claude (Anthropic) și Codex (OpenAI).</p>\n      <h2>Design</h2>\n      <p>Selk este un joc de investigație într-o bază de date, după modelul Lost wiki Kozlovka. Jucătorul este singurul supraveghetor al unui șantier CESEA de pe Titan, trezit dintr-un somn lung pentru că turnul principal cedează. Biroul de audit de pe Pământ trimite pagini de raport cu spații libere. Jucătorul completează fiecare spațiu cu numele înregistrării din baza de date care îi răspunde.</p>\n      <p>Două căi explică avaria. Calea A urmează poarta de detectare a vieții: o actualizare a restabilit o valoare de referință a hidrogenului din 2083, instalația de export scăzuse deja hidrogenul local, iar poarta a blocat reparațiile din toată zona 14. Calea B urmează detectorul de fisuri: aceeași actualizare a instalat un model antrenat pe oțel și beton de pe Pământ, iar unitățile de tăiere au înlăturat piese intacte. Ambele căi duc la HX Holdings și la o persoană din interiorul CESEA care deține cheia de semnare 7.</p>\n      <p>Trei tipuri de text nesigur îl pun la încercare pe jucător. Rezumatele generate de modele conțin erori. Unele etichete de autor sunt false, iar jucătorul le poate descoperi comparând semnăturile personalului cu datele somnului lung, deoarece baza are un singur membru de echipaj. Trei note din manual sunt învechite, iar anul ediției le trădează.</p>\n      <h2>Graf</h2>\n      <div class=\"graph\" id=\"graph\"></div>\n      <h2>Parole</h2>\n      <div id=\"locks\"></div>\n      <h2>Răspunsurile rapoartelor</h2>\n      <div id=\"reports\"></div>\n      <h2>Text nesigur</h2>\n      <div id=\"unreliable\"></div>\n      <h2>Mesaje</h2>\n      <div id=\"messages\"></div>\n      <h2>Finaluri</h2>\n      <div id=\"endings\"></div>\n      <h2>Toate înregistrările</h2>\n      <div id=\"articles\"></div>\n      <nav class=\"note-nav\" aria-label=\"Paginile de note\">\n        <a class=\"note-button\" href=\"credits.html\">Autori și referințe</a>\n        <a class=\"note-button\" href=\"concept.html\">Conceptul jocului</a>\n        <a class=\"note-button\" href=\"drawings.html\">Desene</a>\n        <a class=\"note-button\" href=\"glossary.html\">Glosar</a>\n        <a class=\"note-button\" href=\"themes.html\">Context politic și de design</a>\n        <a class=\"note-button\" href=\"warranty.html\">Garanție și licențe</a>\n      </nav>",
   "devnotes:title": "Selk, notele dezvoltatorului",
-  "drawings": "<nav class=\"note-nav drawing-back\" aria-label=\"Înapoi la autori și referințe\">\n        <a class=\"note-button\" href=\"credits.html\">Înapoi la autori și referințe</a>\n      </nav>\n      <h1>Desene Selk</h1>\n      <h2>Referință și transformare</h2>\n      <p>Două imagini RADIOSOL au servit drept referință pentru compoziția independentă a scenelor Selk. Fiecare înfățișează o altă stare a coloniei și o altă dată.</p>\n      <h2>Scară și suprafață</h2>\n      <p>Instalația Selk este întinsă și integrată. Se răspândește pe un teren prăfuit și parțial sub el.</p>\n      <h2>Desene</h2>\n      <div class=\"drawing-grid\">\n        <a class=\"drawing-card\" href=\"../img/uplink.svg\"><img src=\"../img/uplink.svg\" alt=\"Afișajul comunicațiilor prin legătură\"><span>Legătură</span><span>Deschide desenul SVG</span></a>\n        <a class=\"drawing-card\" href=\"../img/storm.svg\"><img src=\"../img/storm.svg\" alt=\"Scenă cu furtună pe Titan\"><span>Furtună</span><span>Deschide desenul SVG</span></a>\n        <a class=\"drawing-card\" href=\"../img/mast-01.svg\"><img src=\"../img/mast-01.svg\" alt=\"Structura MAST-01\"><span>MAST-01</span><span>Deschide desenul SVG</span></a>\n        <a class=\"drawing-card\" href=\"../img/lab.svg\"><img src=\"../img/lab.svg\" alt=\"Laboratorul de cercetare\"><span>Laborator</span><span>Deschide desenul SVG</span></a>\n        <a class=\"drawing-card\" href=\"../img/hall-r.svg\"><img src=\"../img/hall-r.svg\" alt=\"Hala reactorului\"><span>Hala reactorului</span><span>Deschide desenul SVG</span></a>\n        <a class=\"drawing-card\" href=\"../img/footing-b.svg\"><img src=\"../img/footing-b.svg\" alt=\"Zona de construcție a fundației B\"><span>Fundația B</span><span>Deschide desenul SVG</span></a>\n        <a class=\"drawing-card\" href=\"../img/ex-1.svg\"><img src=\"../img/ex-1.svg\" alt=\"Instalația de extracție EX-1\"><span>Instalația EX-1</span><span>Deschide desenul SVG</span></a>\n        <a class=\"drawing-card\" href=\"../img/crane-l.svg\"><img src=\"../img/crane-l.svg\" alt=\"Macaraua L\"><span>Macaraua L</span><span>Deschide desenul SVG</span></a>\n      </div>\n      <section class=\"scene-gallery\" id=\"ending-scenes\"></section>\n      <nav class=\"note-nav\" aria-label=\"Paginile de note\">\n        <a class=\"note-button\" href=\"credits.html\">Autori și referințe</a>\n        <a class=\"note-button\" href=\"concept.html\">Conceptul jocului</a>\n        <a class=\"note-button\" href=\"devnotes.html\">Notele dezvoltatorului, cu dezvăluiri</a>\n        <a class=\"note-button\" href=\"glossary.html\">Glosar</a>\n        <a class=\"note-button\" href=\"themes.html\">Context politic și de design</a>\n        <a class=\"note-button\" href=\"warranty.html\">Garanție și licențe</a>\n      </nav>",
+  "drawings": "<nav class=\"note-nav drawing-back\" aria-label=\"Înapoi la autori și referințe\">\n        <a class=\"note-button\" href=\"credits.html\">Înapoi la autori și referințe</a>\n      </nav>\n      <h1>Desene Selk</h1>\n      <h2>Referință și transformare</h2>\n      <p>Două imagini RADIOSOL au servit drept referință pentru compoziția independentă a scenelor Selk. Fiecare înfățișează o altă stare a coloniei și o altă dată.</p>\n      <h2>Scară și suprafață</h2>\n      <p>Instalația Selk este întinsă și integrată. Se răspândește pe un teren prăfuit și parțial sub el.</p>\n      <h2>Desene</h2>\n      <div class=\"drawing-grid\">\n        <a class=\"drawing-card\" href=\"../img/uplink.svg\"><img src=\"../img/uplink.svg\" alt=\"Afișajul comunicațiilor prin legătură\"><span>Legătură</span><span>Deschide desenul SVG</span></a>\n        <a class=\"drawing-card\" href=\"../img/storm.svg\"><img src=\"../img/storm.svg\" alt=\"Scenă cu furtună pe Titan\"><span>Furtună</span><span>Deschide desenul SVG</span></a>\n        <a class=\"drawing-card\" href=\"../img/mast-01.svg\"><img src=\"../img/mast-01.svg\" alt=\"Structura MAST-01\"><span>MAST-01</span><span>Deschide desenul SVG</span></a>\n        <a class=\"drawing-card\" href=\"../img/lab.svg\"><img src=\"../img/lab.svg\" alt=\"Laboratorul de cercetare\"><span>Laborator</span><span>Deschide desenul SVG</span></a>\n        <a class=\"drawing-card\" href=\"../img/hall-r.svg\"><img src=\"../img/hall-r.svg\" alt=\"Hala reactorului\"><span>Hala reactorului</span><span>Deschide desenul SVG</span></a>\n        <a class=\"drawing-card\" href=\"../img/footing-b.svg\"><img src=\"../img/footing-b.svg\" alt=\"Zona de construcție a fundației B\"><span>Fundația B</span><span>Deschide desenul SVG</span></a>\n        <a class=\"drawing-card\" href=\"../img/ex-1.svg\"><img src=\"../img/ex-1.svg\" alt=\"Instalația de extracție EX-1\"><span>Instalația EX-1</span><span>Deschide desenul SVG</span></a>\n        <a class=\"drawing-card\" href=\"../img/crane-l.svg\"><img src=\"../img/crane-l.svg\" alt=\"Macaraua L\"><span>Macaraua L</span><span>Deschide desenul SVG</span></a>\n      </div>\n      <h2>Design și Istorie</h2>\n<p>Conține spoilere: aceste secțiuni apar în joc după primul final.</p>\n<h3>Planșe de proiect</h3>\n<div class=\"drawing-grid\">\n<a class=\"drawing-card\" href=\"../img/design/cl-unit.svg\"><img src=\"../img/design/cl-unit.svg\" alt=\"Unitate de cățărare\"><span>CL-UNIT</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/design/wd-unit.svg\"><img src=\"../img/design/wd-unit.svg\" alt=\"Unitate de sudură\"><span>WD-UNIT</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/design/ct-unit.svg\"><img src=\"../img/design/ct-unit.svg\" alt=\"Unitate de tăiere\"><span>CT-UNIT</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/design/sv-unit.svg\"><img src=\"../img/design/sv-unit.svg\" alt=\"Unitate de inspecție\"><span>SV-UNIT</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/design/pr-unit.svg\"><img src=\"../img/design/pr-unit.svg\" alt=\"Unitate de imprimare\"><span>PR-UNIT</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/design/mast-01.svg\"><img src=\"../img/design/mast-01.svg\" alt=\"Turnul principal\"><span>MAST-01</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/design/crane-l.svg\"><img src=\"../img/design/crane-l.svg\" alt=\"Macara cățărătoare\"><span>CRANE-L</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/design/reactor.svg\"><img src=\"../img/design/reactor.svg\" alt=\"Reactor\"><span>REACTOR</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/design/ex-1.svg\"><img src=\"../img/design/ex-1.svg\" alt=\"Instalația de export\"><span>EX-1</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/design/amber-vent.svg\"><img src=\"../img/design/amber-vent.svg\" alt=\"Gura de evacuare AMBER\"><span>AMBER-VENT</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/design/bio-cell.svg\"><img src=\"../img/design/bio-cell.svg\" alt=\"Celule bio\"><span>BIO-CELL</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/design/uplink.svg\"><img src=\"../img/design/uplink.svg\" alt=\"Antenă spre Pământ\"><span>UPLINK</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/design/selk-t01.svg\"><img src=\"../img/design/selk-t01.svg\" alt=\"Acest terminal\"><span>SELK-T01</span><span>Deschide desenul SVG</span></a>\n</div>\n<h3>Fotografii de arhivă</h3>\n<div class=\"drawing-grid\">\n<a class=\"drawing-card\" href=\"../img/history/2026-far-right.svg\"><img src=\"../img/history/2026-far-right.svg\" alt=\"2026, Ascensiunea extremei drepte\"><span>2026, Ascensiunea extremei drepte</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/history/2034-climate-strikes.svg\"><img src=\"../img/history/2034-climate-strikes.svg\" alt=\"2034, Grevele generale pentru climă\"><span>2034, Grevele generale pentru climă</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/history/2041-federation.svg\"><img src=\"../img/history/2041-federation.svg\" alt=\"2041, Federația Europei\"><span>2041, Federația Europei</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/history/2044-election.svg\"><img src=\"../img/history/2044-election.svg\" alt=\"2044, Alegerile federale\"><span>2044, Alegerile federale</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/history/2045-reforms.svg\"><img src=\"../img/history/2045-reforms.svg\" alt=\"2045, Comisia aleasă\"><span>2045, Comisia aleasă</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/history/2047-eastern-europe.svg\"><img src=\"../img/history/2047-eastern-europe.svg\" alt=\"2047, Sídliště renovat\"><span>2047, Sídliště renovat</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/history/2049-panel-robots.svg\"><img src=\"../img/history/2049-panel-robots.svg\" alt=\"2049, Roboții pentru panouri\"><span>2049, Roboții pentru panouri</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/history/2052-cesea.svg\"><img src=\"../img/history/2052-cesea.svg\" alt=\"2052, Înființarea CESEA\"><span>2052, Înființarea CESEA</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/history/2063-warming-peak.svg\"><img src=\"../img/history/2063-warming-peak.svg\" alt=\"2063, Vârful încălzirii\"><span>2063, Vârful încălzirii</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/history/2071-hx-holdings.svg\"><img src=\"../img/history/2071-hx-holdings.svg\" alt=\"2071, HX Holdings\"><span>2071, HX Holdings</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/history/2079-selk-lab.svg\"><img src=\"../img/history/2079-selk-lab.svg\" alt=\"2079, Laboratorul Selk\"><span>2079, Laboratorul Selk</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/history/2091-test.svg\"><img src=\"../img/history/2091-test.svg\" alt=\"2091, Testul de selecție\"><span>2091, Testul de selecție</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/history/2091-pass-front.svg\"><img src=\"../img/history/2091-pass-front.svg\" alt=\"2091, Cartea de cetățean, fața\"><span>2091, Cartea de cetățean, fața</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/history/2091-pass-back.svg\"><img src=\"../img/history/2091-pass-back.svg\" alt=\"2091, Cartea de cetățean, verso\"><span>2091, Cartea de cetățean, verso</span><span>Deschide desenul SVG</span></a>\n<a class=\"drawing-card\" href=\"../img/history/2097-now.svg\"><img src=\"../img/history/2097-now.svg\" alt=\"2097, Selk acum\"><span>2097, Selk acum</span><span>Deschide desenul SVG</span></a>\n</div>\n<section class=\"scene-gallery\" id=\"ending-scenes\"></section>\n      <nav class=\"note-nav\" aria-label=\"Paginile de note\">\n        <a class=\"note-button\" href=\"credits.html\">Autori și referințe</a>\n        <a class=\"note-button\" href=\"concept.html\">Conceptul jocului</a>\n        <a class=\"note-button\" href=\"devnotes.html\">Notele dezvoltatorului, cu dezvăluiri</a>\n        <a class=\"note-button\" href=\"glossary.html\">Glosar</a>\n        <a class=\"note-button\" href=\"themes.html\">Context politic și de design</a>\n        <a class=\"note-button\" href=\"warranty.html\">Garanție și licențe</a>\n      </nav>",
   "drawings:title": "Desene Selk",
   "glossary": "<nav class=\"note-nav drawing-back\" aria-label=\"Înapoi la autori și referințe\">\n        <a class=\"note-button\" href=\"credits.html\">Înapoi la autori și referințe</a>\n      </nav>\n      <h1>Glosarul Selk</h1>\n      <p class=\"note\">Termenii științifici și politici folosiți în cadrul jocului.</p>\n      <dl class=\"terms\">\n        <dt>Astrobiologie</dt>\n        <dd>Studiul originii, evoluției, distribuției și posibilei existențe a vieții dincolo de Pământ. În Sistemul Solar, mai multe lumi ar putea avea condiții potrivite pentru viață, dar în niciuna nu s-a confirmat existența vieții extraterestre.&#8239;<a class=\"citation-button\" href=\"https://science.nasa.gov/universe/exoplanets/life-in-our-solar-system-meet-the-neighbors/\">NASA: Life in Our Solar System</a></dd>\n        <dt>Biosfera profundă</dt>\n        <dd>Viața microbiană din rocile și sedimentele de sub suprafața Pământului, inclusiv din medii aflate mult sub fundul oceanelor. Arată că viața poate persista în medii întunecate și sărace în energie.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1007/s11434-012-5358-x\">Wang și colaboratorii, sinteză asupra cercetării biosferei profunde (DOI)</a></dd>\n        <dt>Chemosinteză</dt>\n        <dd>Folosirea reacțiilor chimice ca sursă de energie pentru producția biologică, fără lumina Soarelui. Jocul imaginează microbi chemosintetici adaptați la chimia lui Titan.</dd>\n        <dt>Locuibilitate și lumi locuite</dt>\n        <dd>O lume poate avea condiții care ar putea susține viața fără să găzduiască efectiv viață. Interiorul lui Titan este încă studiat: o analiză publicată în 2025 în Nature susține că datele gravimetrice Cassini nu indică un ocean subteran global și propune straturi de gheață aproape de punctul de topire, în care ar putea exista pungi locale de lichid. Ecosistemul microbian local din joc este fictiv.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1038/s41586-025-09818-x\">Studiul din Nature, 2025 (DOI)</a>&#8239;<a class=\"citation-button\" href=\"https://www.jpl.nasa.gov/news/nasa-study-suggests-saturns-moon-titan-may-not-have-global-ocean/\">Rezumatul NASA JPL</a></dd>\n        <dt>Infrastructură automatizată</dt>\n        <dd>Roboți, programe, sisteme energetice și rețele de aprovizionare care construiesc sau întrețin instalații esențiale cu supraveghere umană directă redusă. La Selk, automatizarea ar putea reduce munca periculoasă, iar regulile și proprietatea ei determină nevoile cui le servește.</dd>\n        <dt>Megastructură</dt>\n        <dd>În joc, ansamblul interconectat al sistemelor de cercetare, construcție, energie și extracție de la Selk. Termenul descrie întinderea și interdependența instalației. Aceasta se poate întinde pe un teren prăfuit, poate rămâne joasă sau poate fi parțial ascunsă.</dd>\n        <dt>Megaproiect</dt>\n        <dd>Un proiect foarte mare și complex, cu termene lungi, multe organizații implicate și resurse considerabile angajate. Cercetarea în management analizează modul în care ambiția, incertitudinea, politica și raportarea modelează asemenea proiecte.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1002/pmj.21409\">Flyvbjerg, \"What You Should Know About Megaprojects, and Why\" (DOI)</a></dd>\n        <dt>Prefabricate și locuințe din panouri mari</dt>\n        <dd>Elementele de construcție sunt fabricate dinainte, apoi transportate și asamblate pe șantier. Programele de locuințe postbelice din Europa de Est au adaptat această metodă în moduri naționale și locale diferite.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.14746/sho.2026.44.1.007\">Błażejczyk-Majka și colaboratorii, studiu comparativ despre locuințe (DOI)</a></dd>\n        <dt>Panelák, blocuri, Plattenbau</dt>\n        <dd>Termeni regionali asociați blocurilor de locuințe din panouri: <em>panelák</em> în cehă și slovacă, <em>blocuri</em> în română și <em>Plattenbau</em> în germană. Roboții din joc pornesc de la ideea automatizării producției și asamblării repetitive a acestui tip de locuințe.</dd>\n        <dt>Sistemul-lume: centru, semiperiferie și periferie</dt>\n        <dd>Un cadru de analiză a economiei mondiale, structurată de inegalități de putere și de producție. \"Centrul\", \"semiperiferia\" și \"periferia\" desemnează poziții în cadrul acestor relații.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1215/9780822399018\">Wallerstein, <em>World-Systems Analysis</em> (DOI al editurii)</a></dd>\n        <dt>Sudul Global</dt>\n        <dd>Termen politic și economic pentru țările și comunitățile marcate de dezvoltare inegală și de istorii coloniale. Jocul imaginează extinderea capacității științifice dincolo de centrele consacrate de putere, păstrând în vedere istoriile distincte ale Europei de Est și ale Sudului Global.&#8239;<a class=\"citation-button\" href=\"https://www.un.org/development/desa/en/news/intergovernmental-coordination/south-south-cooperation-2019.html\">ONU: cooperarea Sud-Sud</a></dd>\n        <dt>Teoria dependenței</dt>\n        <dd>Un ansamblu de argumente care explică subdezvoltarea persistentă prin relații istorice inegale, fără a o trata ca pe o etapă timpurie a unui drum universal de dezvoltare. \"Dezvoltarea subdezvoltării\", formulată de André Gunder Frank, este una dintre variante.&#8239;<a class=\"citation-button\" href=\"https://monthlyreview.org/9980018041966/\">Numărul original din Monthly Review cu articolul lui Frank</a></dd>\n        <dt>Imperialism și extracție</dt>\n        <dd>Analiza imperialismului la Lenin se concentrează pe monopol și capitalul financiar, pe exportul de capital și pe împărțirea lumii între interese puternice. În poveste, controlul HX Holdings asupra producției de pe Titan și costurile ecologice ascunse amintesc de relațiile extractive.&#8239;<a class=\"citation-button\" href=\"https://www.marxists.org/archive/lenin/works/1916/imp-hsc/ch07.htm\">Lenin, \"Imperialism as a Special Stage of Capitalism\"</a></dd>\n        <dt>Ecosocialism</dt>\n        <dd>O tradiție politică ce leagă limitele ecologice de criticile socialiste ale producției și proprietății. Viitorul imaginat al lui Selk combină acțiunea climatică planificată și nevoile sociale cu politici grăbite și eșecuri instituționale.&#8239;<a class=\"citation-button\" href=\"https://www.cambridge.org/core/books/abs/cambridge-handbook-of-environmental-sociology/ecosocialist-alternative/343A985DDDE8DAD0309D2A49C88B4208\">Löwy, \"The Ecosocialist Alternative\"</a></dd>\n        <dt>Turbocapitalism</dt>\n        <dd>Termenul prescurtat din joc pentru capitalismul accelerat, orientat în primul rând spre profit, care tratează măsurile de protecție și răspunderea publică drept obstacole.</dd>\n      </dl>\n      <nav class=\"note-nav\" aria-label=\"Paginile de note\">\n        <a class=\"note-button\" href=\"credits.html\">Autori și referințe</a>\n        <a class=\"note-button\" href=\"concept.html\">Conceptul jocului</a>\n        <a class=\"note-button\" href=\"devnotes.html\">Notele dezvoltatorului, cu dezvăluiri</a>\n        <a class=\"note-button\" href=\"drawings.html\">Desene</a>\n        <a class=\"note-button\" href=\"themes.html\">Context politic și de design</a>\n        <a class=\"note-button\" href=\"warranty.html\">Garanție și licențe</a>\n      </nav>",
   "glossary:title": "Glosarul Selk",

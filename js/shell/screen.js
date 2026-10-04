@@ -62,6 +62,7 @@
     var b = el("button", cls || "lnk", label);
     b.type = "button";
     b.dataset.cmd = cmd;
+    b.dataset.sound = "link";
     return b;
   }
   var MARK = /\{([^|}]+)\|([^}]+)\}|\[\[([^\]|]+)(?:\|([^\]]+))?\]\]|@NAME@/g;

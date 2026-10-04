@@ -81,7 +81,7 @@ The Selk scenes were independently composed with two RADIOSOL images as visual r
 The game is plain JavaScript loaded by `index.html` in dependency order. Every file adds its part to the shared `SELK` object.
 
 - `js/core/`: shared DOM helpers, game state and saving, localization, the context rules and the event bus
-- `js/audio/`: the synthesized sounds and the interface sounds shared by every control
+- `js/audio/`: the sound engine and the interface sounds shared by every control; `js/audio/sounds/` has the sounds themselves, one file per family
 - `js/shell/`: the terminal screen, text rendering, scrolling and the shell commands
 - `js/game/`: mail, hints, reports, the ending, telemetry and the live camera
 - `js/ui/`: tmux and desktop modes, the status bar, dialogs, Setup, the Storage page, the tour and the other interface parts

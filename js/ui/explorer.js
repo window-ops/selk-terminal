@@ -11,12 +11,10 @@
     side: "L"
   };
   function sec() {
-    return S.SECTIONS[X.li];
+    return S.sections()[X.li];
   }
   function entriesOf(id) {
-    return S.ENTRIES.filter(function (e) {
-      return e.id.split("/")[0] === id;
-    });
+    return S.entriesOf(id);
   }
   function rightItems() {
     var s = sec(); return S.isUnlocked(s.id) ? [
@@ -36,28 +34,30 @@
     return sec().id;
   };
   X.goSection = function (id) {
-    S.SECTIONS.forEach(function (s, i) {
+    S.sections().forEach(function (s, i) {
       if (s.id === id) {
         X.li = i;
       }
     });
     X.side = "R"; X.ri = 0; X.render();
   };
-  function panel(side, path, rows, idx) {
+  /* noGrip: the entries cannot be dragged (S.entryDraggable), so the rows have no
+     grip and keep no space for one. sys: the section holds system files, whose
+     second column is their directory */
+  function panel(side, path, rows, idx, noGrip, sys) {
     var p = el("div", "mc-panel" + (X.side === side ? " act" : ""));
     p.appendChild(el("div", "mc-head", " " + path + " "));
     var cols = el("div", "mc-row mc-cols");
     cols.appendChild(el("span", "mc-n", S.t("NAME")));
-    cols.appendChild(el("span", "mc-i", side === "L" ? S.t("SIZE") : S.t("WRITTEN BY")));
+    cols.appendChild(el("span", "mc-i", side === "L" ? S.t("SIZE") : sys ? S.t("DIRECTORY") : S.t("WRITTEN BY")));
     p.appendChild(cols);
     var list = el("div", "mc-list scroll");
     list.tabIndex = X.side === side ? 0 : -1;
     rows.forEach(function (r, i) {
       var row = el("div", "mc-row" + (i === idx ? " sel" : "") + (r.lock ? " lock" : "") + (r.read ? " read" : ""));
-      if (r.id) {
-        row.appendChild(S.grip(r.id)); row.dataset.entry = r.id;
-      } else if (side === "R") {
-        row.appendChild(el("span", "grip-space"));
+      row.dataset.sound = "select";
+      if (r.id && !noGrip) {
+        row.appendChild(S.grip(r.id));
       }
       if (r.sec) {
         row.dataset.sec = r.sec;
@@ -112,7 +112,7 @@
     S.run("open " + it.id, false);
   }
   X.key = function (e) {
-    var k = e.key, max = X.side === "L" ? S.SECTIONS.length : Math.max(1, rightItems().length);
+    var k = e.key, max = X.side === "L" ? S.sections().length : Math.max(1, rightItems().length);
     var move = function (d) {
       if (X.side === "L") {
         var n = Math.max(0, Math.min(max - 1, X.li + d)); if (n !== X.li) {
@@ -160,7 +160,7 @@
   X.render = function () {
     root.textContent = "";
     var panels = el("div", "mc-panels");
-    panels.appendChild(panel("L", "/", S.SECTIONS.map(function (s) {
+    panels.appendChild(panel("L", "/", S.sections().map(function (s) {
       var open = S.isUnlocked(s.id);
       return {
         name: s.name.toUpperCase(),
@@ -202,7 +202,7 @@
         }
       ];
     }
-    panels.appendChild(panel("R", "/" + s.id, rows, X.ri));
+    panels.appendChild(panel("R", "/" + s.id, rows, X.ri, !!s.nodrag, s.id === "system"));
     root.appendChild(panels);
     var mini = el("div", "mc-mini"), id = X.highlighted();
     if (id) {

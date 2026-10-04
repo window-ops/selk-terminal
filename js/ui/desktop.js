@@ -453,7 +453,7 @@
   }
   function fillDisk(body) {
     body.textContent = "";
-    S.SECTIONS.forEach(function (s) {
+    S.sections().forEach(function (s) {
       var open = S.isUnlocked(s.id);
       body.appendChild(icon(s.name.toUpperCase(), open ? "drawer" : "locked", function () {
         if (!open) {
@@ -481,13 +481,10 @@
   }
   function fillDrawer(body, sec) {
     body.textContent = "";
-    S.ENTRIES.forEach(function (e) {
-      if (e.id.split("/")[0] !== sec) {
-        return;
-      }
+    S.entriesOf(sec).forEach(function (e) {
       body.appendChild(icon(e.id.split("/")[1], "doc", function () {
         S.runClick("open " + e.id, false);
-      }, e.sys ? {
+      }, !S.entryDraggable(e.id) ? {
         dim: S.state.read.indexOf(e.id) !== -1
       } : {
         id: e.id,
