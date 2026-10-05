@@ -1,0 +1,149 @@
+/* FILES: two panels in the style of a file manager, the info strip under
+   them and the USE button. */
+.mc {
+  display: flex;
+  flex-direction: column;
+}
+.mc-panels {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+.mc-panel {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  border: 1px double var(--rib);
+  margin: 0.3em;
+  position: relative;
+}
+.mc-panel.act {
+  border-color: var(--dust);
+}
+/* The panel title sits on the top border */
+.mc-head {
+  position: absolute;
+  top: -0.75em;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--hall);
+  padding: 0 0.3em;
+  font-size: 0.85em;
+  white-space: nowrap;
+}
+.mc-panel.act .mc-head {
+  background: var(--haze);
+  color: var(--hall);
+  text-shadow: none;
+}
+.mc-list {
+  flex: 1;
+  min-height: 0;
+}
+.mc-list:focus-visible {
+  outline: 1px solid var(--titan);
+  outline-offset: -1px;
+}
+.mc-row {
+  display: flex;
+  gap: 0.6em;
+  padding: 0 0.5em;
+  white-space: nowrap;
+  user-select: none;
+}
+.mc-row .grip {
+  align-self: center;
+}
+/* In the FILES list the grip, and the space kept on rows without one, sit
+   closer to the name */
+.mc-row .grip,
+.mc-row .grip-space {
+  margin-right: 0.25em;
+}
+.mc-row .grip-space {
+  width: 0.5em;
+}
+.mc-row .grip-space {
+  width: 0.5em;
+}
+.mc-cols {
+  color: var(--titan);
+  margin-top: 0.4em;
+  border-bottom: 1px solid var(--rib);
+}
+.mc-n {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mc-i {
+  flex: 0 1 auto;
+  max-width: 55%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--dust);
+}
+.mc-row.lock .mc-i {
+  color: var(--flag);
+}
+.mc-row.read .mc-n {
+  color: var(--dust);
+}
+.mc-row.sel {
+  background: color-mix(in srgb, var(--haze) 14%, transparent);
+}
+.mc-panel.act .mc-row.sel {
+  background: var(--haze);
+  color: var(--hall);
+  text-shadow: none;
+}
+.mc-panel.act .mc-row.sel .mc-i,
+.mc-panel.act .mc-row.sel .mc-n {
+  color: var(--hall);
+}
+.mc-mini {
+  border-top: 1px solid var(--rib);
+  padding: 0.2em 0.8em;
+  font-size: 0.85em;
+  color: var(--dust);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  user-select: none;
+  /* Sideways finger drags scroll the strip itself */
+  touch-action: pan-y;
+}
+.mc-mini.scrolled {
+  text-overflow: clip;
+}
+.mc-use {
+  display: block;
+  width: calc(100% - 0.6em);
+  min-height: 2.75rem;
+  margin: 0.3em;
+  padding: 0.35em 0.6em;
+  color: var(--hall);
+  background: var(--titan);
+  border: 1px solid var(--haze);
+  font: inherit;
+  font-size: 0.85em;
+  text-shadow: none;
+}
+.mc-use:hover,
+.mc-use:focus-visible {
+  background: var(--haze);
+  border-color: var(--titan);
+}
+@media (max-width: 700px) {
+  .mc-panels {
+    flex-direction: column;
+  }
+  .mc-panel {
+    flex: 1 1 50%;
+  }
+  .mc-use {
+    min-height: var(--tap-mobile);
+  }
+}

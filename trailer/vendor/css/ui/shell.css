@@ -1,0 +1,206 @@
+/* SHELL: the log, the output rhythm, entries, notes and messages printed
+   in it, and the command line.
+
+   Rhythm: every line is a 1.5em line box, headings included. A gap is half
+   a line (0.75em), equal above and below a command echo, a heading, a
+   block or a paragraph. Plain lines follow each other with no gap. Larger
+   type divides its margins by its size, so the gap stays 0.75em of the
+   shell font. */
+.shell {
+  display: flex;
+  flex-direction: column;
+}
+.log {
+  flex: 1;
+  min-height: 0;
+  padding: 0.8em 1em 1em;
+  overflow-x: hidden;
+}
+.ln {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  min-height: 1.5em;
+}
+.row {
+  white-space: pre-wrap;
+}
+.echo {
+  color: var(--dust);
+  margin: 0.75em 0;
+}
+/* Output with no echo above it (S.scr.group): the gap of an echo */
+.out-group {
+  margin: 0.75em 0;
+}
+/* A reply's uplink notice sits under "Delivered to Earth" with no gap */
+.out-group.after-tx {
+  margin-top: 0;
+}
+.out-group.before-uplink {
+  margin-bottom: 0;
+}
+/* The newest output ends on the log's bottom padding */
+#log > :last-child,
+#log > .out-group:last-child > :last-child {
+  margin-bottom: 0;
+}
+.head,
+.head-s {
+  font-family: var(--font-crt);
+  font-size: 1.5em;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  min-height: 1em;
+  margin: 0.5em 0;
+}
+.head-s {
+  font-size: 1.3em;
+  line-height: 1.1538;
+  min-height: 1.1538em;
+  margin: 0.5769em 0;
+}
+.etable.listing td {
+  border-bottom: 0;
+  padding-right: 1.6em;
+}
+.log .entry {
+  margin: 0.75em 0;
+  border-left: 2px solid var(--rib);
+  padding-left: 0.9em;
+}
+.entry-title {
+  font-family: var(--font-crt);
+  font-size: 1.5em;
+  line-height: 1;
+}
+.entry-title .grip {
+  height: 0.7em;
+  width: 0.45em;
+}
+.rule {
+  height: 1px;
+  background: var(--rib);
+  margin: 0.375em 0;
+}
+.entry-body,
+.mail-body {
+  font: inherit;
+  margin: 0;
+  white-space: pre;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.mail-body {
+  white-space: pre-wrap;
+  margin: 0.75em 0;
+}
+/* Inside a box the first and last parts meet the box's padding */
+.mail > :first-child,
+.entry > :first-child,
+.note > :first-child {
+  margin-top: 0;
+}
+.mail > :last-child,
+.entry > :last-child,
+.note > :last-child,
+.mail-body:last-child {
+  margin-bottom: 0;
+}
+.cam {
+  margin: 0.75em 0;
+}
+.cam img {
+  display: block;
+  width: min(100%, 640px);
+  aspect-ratio: 2 / 1;
+  image-rendering: pixelated;
+  border: 1px solid var(--rib);
+}
+.cam figcaption {
+  font-size: 0.85em;
+  margin-top: 0.3em;
+}
+/* A picture with two sides (the citizen pass): the caption and FLIP share
+   one row under the picture, as wide as the picture */
+.cam.flip figcaption {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1em;
+  width: min(100%, 640px);
+}
+.cam.flip figcaption .lnk {
+  flex: none;
+  font-size: 1rem;
+}
+/* The picture turns like a card: it narrows to its edge, changes side and
+   widens again */
+.cam.flip img {
+  transition: transform 140ms ease-in;
+}
+.cam.flip img.turning {
+  transform: scaleX(0);
+}
+.note {
+  padding: 0.55em 0.8em;
+  border: 1px dashed var(--rib);
+}
+.log .note {
+  margin: 0.75em 0;
+}
+.note-title {
+  color: var(--titan);
+}
+.log .mail {
+  margin: 0.75em 0;
+  padding: 0.7em 0.9em;
+  border: 1px solid var(--rib);
+}
+.mail-head {
+  font-family: var(--font-crt);
+  font-size: 1.3em;
+  line-height: 1.1538;
+}
+.hintbox {
+  margin: 0.75em 0;
+}
+/* Transmission countdown: two shell lines tall */
+.count {
+  font-family: var(--font-crt);
+  font-size: 2em;
+  color: var(--titan);
+  line-height: 1.5;
+}
+.inputline {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.4em 1em;
+  border-top: 1px solid var(--rib);
+}
+.title-screen .inputline {
+  display: none;
+}
+.prompt {
+  color: var(--titan);
+  white-space: nowrap;
+}
+/* 16px at least, so phones do not zoom into the field */
+.cmd {
+  flex: 1;
+  min-width: 0;
+  font: inherit;
+  font-size: max(16px, 1em);
+  color: var(--haze);
+  background: transparent;
+  border: 0;
+  outline: none;
+  caret-color: var(--titan);
+  text-shadow: inherit;
+  padding: 0.1em 0;
+}
+@media (max-width: 700px) {
+  .log {
+    padding: 0.6em 0.7em;
+  }
+}

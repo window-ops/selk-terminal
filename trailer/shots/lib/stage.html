@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Selk trailer stage</title>
+<!-- The game's stylesheets, copied in vendor/css, in the game's order -->
+<link rel="stylesheet" href="../../vendor/css/tokens.css">
+<link rel="stylesheet" href="../../vendor/css/crt/monitor.css">
+<link rel="stylesheet" href="../../vendor/css/crt/screen.css">
+<link rel="stylesheet" href="../../vendor/css/ui/base.css">
+<link rel="stylesheet" href="../../vendor/css/ui/tables.css">
+<link rel="stylesheet" href="../../vendor/css/ui/panes.css">
+<link rel="stylesheet" href="../../vendor/css/ui/shell.css">
+<link rel="stylesheet" href="../../vendor/css/ui/files.css">
+<link rel="stylesheet" href="../../vendor/css/ui/views.css">
+<link rel="stylesheet" href="../../vendor/css/ui/report.css">
+<link rel="stylesheet" href="../../vendor/css/ui/fbar.css">
+<link rel="stylesheet" href="../../vendor/css/ui/statusbar.css">
+<link rel="stylesheet" href="../../vendor/css/ui/dialogs.css">
+<link rel="stylesheet" href="../../vendor/css/ui/setup.css">
+<link rel="stylesheet" href="../../vendor/css/ui/title.css">
+<link rel="stylesheet" href="../../vendor/css/ui/desktop.css">
+<link rel="stylesheet" href="../../vendor/css/ui/menus.css">
+<link rel="stylesheet" href="../../vendor/css/ui/toasts.css">
+<link rel="stylesheet" href="../../vendor/css/ui/debug.css">
+<link rel="stylesheet" href="../../vendor/css/ui/ending.css">
+<link rel="stylesheet" href="../../vendor/css/ui/troika/window.css">
+<link rel="stylesheet" href="../../vendor/css/ui/troika/bar.css">
+<link rel="stylesheet" href="../../vendor/css/ui/troika/panels.css">
+<link rel="stylesheet" href="../../vendor/css/ui/troika/talk.css">
+<link rel="stylesheet" href="../../vendor/css/ui/disassembly/window.css">
+<link rel="stylesheet" href="../../vendor/css/ui/disassembly/start.css">
+<link rel="stylesheet" href="../../vendor/css/ui/disassembly/tools.css">
+<link rel="stylesheet" href="../../vendor/css/ui/disassembly/panel.css">
+<link rel="stylesheet" href="../../vendor/css/themes/title.css">
+<link rel="stylesheet" href="../../vendor/css/themes/tmux.css">
+<link rel="stylesheet" href="../../vendor/css/themes/desktop.css">
+<link rel="stylesheet" href="../../vendor/css/cursors.css">
+<style>
+  /* The stage: the game's screen at 1920 by 1080 inside a world that the
+     camera moves and scales. The CSS animations are off; sim.js sets
+     every moving effect from the shot's time. */
+  html, body { margin: 0; height: 100%; overflow: hidden; background: #000; }
+  #world { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; transform-origin: 0 0; }
+  #world .room, #world .monitor { width: 1920px; height: 1080px; }
+  #world *, #world *::before, #world *::after { animation: none !important; transition: none !important; }
+  #black { position: absolute; inset: 0; background: #000; display: none; z-index: 3000; }
+  .sim-cursor { position: absolute; z-index: 2000; width: 24px; height: 24px; background-repeat: no-repeat; background-size: 24px 24px; pointer-events: none; }
+</style>
+<script src="../snapshots/boot.js"></script>
+<script src="../snapshots/title.js"></script>
+<script src="../snapshots/desk-structure.js"></script>
+<script src="../snapshots/desk-history.js"></script>
+<script src="../snapshots/watch.js"></script>
+</head>
+<body>
+<div id="world"></div>
+<div id="black"></div>
+<script src="sim.js"></script>
+<script>
+  /* The shot is named in the address: stage.html?shot=boot loads ../boot.js */
+  const s = document.createElement("script");
+  s.src = "../" + new URLSearchParams(location.search).get("shot") + ".js";
+  document.body.appendChild(s);
+</script>
+</body>
+</html>

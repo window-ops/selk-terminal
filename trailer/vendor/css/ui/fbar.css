@@ -1,0 +1,72 @@
+/* The function bar of F1 to F10. A phone shows it as a grid of buttons. */
+.fbar {
+  display: flex;
+  gap: 0.25em;
+  padding: 0.25em 0.6em;
+  border-top: 1px solid var(--rib);
+  overflow-x: auto;
+  scrollbar-width: none;
+  position: relative;
+  z-index: var(--z-bars);
+}
+.screen:not(.session) .fbar {
+  display: none;
+}
+.fbar button {
+  font: inherit;
+  font-size: 0.82em;
+  color: var(--hall);
+  background: var(--dust);
+  border: 0;
+  padding: 0 0.6em 0 0;
+  white-space: nowrap;
+  text-shadow: none;
+  flex: 1 0 auto;
+  text-align: left;
+}
+.fbar button:hover {
+  background: var(--haze);
+}
+/* The key number */
+.fk {
+  display: inline-block;
+  background: var(--hall);
+  color: var(--haze);
+  padding: 0 0.3em;
+  margin-right: 0.35em;
+}
+@media (max-width: 700px) {
+  .fbar {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.2em;
+    padding: 0.3em 0.35em;
+    overflow: visible;
+  }
+  .fbar button {
+    display: flex;
+    min-width: 0;
+    min-height: 1.85rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2em 0.1em;
+    font-size: 0.68em;
+    color: var(--haze);
+    background: var(--hall);
+    border: 1px solid var(--haze);
+    text-align: center;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.1;
+  }
+  .fbar button:hover,
+  .fbar button:active,
+  .fbar button:focus-visible {
+    color: var(--hall);
+    background: var(--haze);
+    border-color: var(--haze);
+  }
+  .fk {
+    display: none;
+  }
+}

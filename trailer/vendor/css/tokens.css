@@ -1,0 +1,94 @@
+@font-face {
+  font-family: "Plex Mono";
+  src: url("../fonts/IBMPlexMono-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Plex Mono";
+  src: url("../fonts/IBMPlexMono-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "VT323";
+  src: url("../fonts/VT323-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+/* Latin Extended subsets for Romanian and the Polish names in the notes.
+   Each file loads only when a page uses a letter in its range. */
+@font-face {
+  font-family: "Plex Mono";
+  src: url("../fonts/IBMPlexMono-Regular-latin-ext.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "Plex Mono";
+  src: url("../fonts/IBMPlexMono-Medium-latin-ext.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: "VT323";
+  src: url("../fonts/VT323-Regular-latin-ext.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+:root {
+  color-scheme: dark;
+  --hall: #1E2427;
+  --rib: #3A4448;
+  --haze: #D6C396;
+  --dust: #8F9A9A;
+  --titan: #C7843A;
+  --flag: #C0604A;
+  --lamp: #A7B07C;
+  --wall: #151719;
+  --bezel: #2C2A27;
+  --bezel-edge: #3A3733;
+  --paper: #D6C396;
+  --ink: #1E2427;
+  --ink-soft: #5A5140;
+  --font-mono: "Plex Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --font-crt: "VT323", "Plex Mono", ui-monospace, monospace;
+  --tap-mobile: 2rem;
+  /* Six dots in two columns: the drag grip */
+  --dots: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 6 10'%3E%3Crect width='2' height='2'/%3E%3Crect x='4' width='2' height='2'/%3E%3Crect y='4' width='2' height='2'/%3E%3Crect x='4' y='4' width='2' height='2'/%3E%3Crect y='8' width='2' height='2'/%3E%3Crect x='4' y='8' width='2' height='2'/%3E%3C/svg%3E");
+  --glow: 0 0 3px rgba(214, 195, 150, 0.55), 0 0 12px rgba(214, 195, 150, 0.18);
+
+  /* Interface roles. css/themes/ sets them per mode. The accent marks the
+     pointer and the keyboard focus; the selection marks a chosen value. */
+  --accent: var(--titan);
+  --on-accent: var(--hall);
+  --select: var(--haze);
+  --on-select: var(--hall);
+  --line: var(--rib);
+  --line-strong: var(--dust);
+  --deep: #0F1213;
+
+  /* Stacking order. Interface layers stay below 100 and the glass covers
+     them. Only the ending's stage and, during the ending, the debug panel
+     sit above the glass. */
+  --z-panes: 1;
+  --z-bars: 2;
+  --z-menu: 4;
+  --z-toast: 5;
+  --z-dialog: 6;
+  --z-error: 7;
+  --z-popover: 8;
+  --z-effects: 1000;
+  --z-ending: 1001;
+  --z-debug: 99;
+  --z-debug-ending: 1002;
+}

@@ -1,0 +1,59 @@
+/* TROIKA.RUN (window.css): the canvas scaled up (window.js sets its size),
+   and the gate, pause and end panels over it */
+.troika-stage {
+  position: relative;
+}
+.troika-stage canvas {
+  display: block;
+  image-rendering: pixelated;
+  outline: none;
+}
+.troika-gate,
+.troika-end,
+.troika-pause {
+  position: absolute;
+  inset: 18% 8% auto;
+  max-height: 76%;
+  overflow: auto;
+  padding: 0.8em 1em;
+  color: var(--haze);
+  background: var(--hall);
+  border: 1px solid var(--haze);
+  text-align: center;
+}
+.troika-gate[hidden],
+.troika-end[hidden],
+.troika-pause[hidden] {
+  display: none;
+}
+.troika-gate p,
+.troika-end p,
+.troika-pause p {
+  margin: 0 0 0.8em;
+}
+.troika-choices {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6em;
+}
+/* While the run is paused, the decision and dialogue panels under the
+   pause panel take no hover and no clicks */
+.troika-stage.held .troika-gate,
+.troika-stage.held .troika-talk {
+  pointer-events: none;
+}
+/* The gate, the pause panel and the end card take the focus when they
+   open, with no outline of their own */
+.troika-gate:focus,
+.troika-pause:focus,
+.troika-end:focus {
+  outline: none;
+}
+/* The text can be selected and copied */
+.troika-row,
+.troika-gate p,
+.troika-end p,
+.troika-pause p {
+  user-select: text;
+}

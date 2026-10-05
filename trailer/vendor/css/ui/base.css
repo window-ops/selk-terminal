@@ -1,0 +1,177 @@
+/* Shared parts of the interface: text colours, links, buttons, focus,
+   scrolling, text blocks and screen reader text. */
+button {
+  text-transform: uppercase;
+}
+.dim {
+  color: var(--dust);
+}
+.err {
+  color: var(--flag);
+}
+.ok {
+  color: var(--lamp);
+}
+.warn {
+  color: var(--titan);
+}
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+/* Scrolling areas hide their scrollbars */
+.scroll {
+  overflow-y: auto;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+.scroll::-webkit-scrollbar,
+.scroll-pan::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+/* Entry links and handbook terms */
+.lnk,
+.term {
+  font: inherit;
+  color: var(--titan);
+  background: none;
+  border: 0;
+  padding: 0;
+  text-shadow: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-transform: none;
+}
+.term {
+  text-decoration-style: dotted;
+}
+.lnk:hover,
+.term:hover {
+  background: var(--titan);
+  color: var(--hall);
+  text-shadow: none;
+  text-decoration: none;
+}
+.lnk.locked {
+  color: var(--flag);
+  text-decoration-style: dashed;
+}
+.lnk.locked::after {
+  content: " [locked]";
+  font-size: 0.85em;
+}
+/* Buttons. The popups of each mode restyle them in css/themes/. */
+.btn,
+.use,
+.opt,
+.tab {
+  font: inherit;
+  color: var(--haze);
+  background: none;
+  border: 1px solid var(--rib);
+  padding: 0.15em 0.7em;
+  text-shadow: inherit;
+}
+.btn:hover,
+.opt:hover,
+.tab:hover {
+  border-color: var(--dust);
+}
+.btn:disabled {
+  opacity: 0.35;
+}
+.btn.primary,
+.use {
+  border-color: var(--titan);
+  color: var(--titan);
+}
+.use {
+  display: inline-block;
+  margin-top: 0.8em;
+}
+.use:hover,
+.btn.primary:hover {
+  background: var(--titan);
+  color: var(--hall);
+  text-shadow: none;
+}
+/* Text blocks start and end on their container's padding */
+:is(.dlg-body, .mail-toast-body, .tut-body, .status-info-pop, .v-body, .mailpane, .reportpane, .watch) p {
+  margin: 0 0 0.6em;
+}
+:is(.dlg-body, .mail-toast-body, .tut-body, .status-info-pop, .v-body, .mailpane, .reportpane, .watch) > :first-child {
+  margin-top: 0;
+}
+:is(.dlg-body, .mail-toast-body, .tut-body, .status-info-pop, .v-body, .mailpane, .reportpane, .watch) > :last-child {
+  margin-bottom: 0;
+}
+.paras p {
+  margin: 0.75em 0;
+}
+.paras > p:first-child {
+  margin-top: 0;
+}
+.paras > p:last-child {
+  margin-bottom: 0;
+}
+/* Setup > Display > Pretty wrap */
+body.pretty-wrap {
+  text-wrap: pretty;
+}
+html[data-motion="full"] .blink {
+  animation: blink 1.1s steps(1) infinite;
+}
+@keyframes blink {
+  50% {
+    opacity: 0.35;
+  }
+}
+/* The drag grip and the space it keeps on rows without one */
+.grip {
+  display: inline-block;
+  flex: none;
+  width: 0.5em;
+  height: 0.8em;
+  margin-right: 0.45em;
+  vertical-align: -0.05em;
+  opacity: 0.6;
+  background-color: currentColor;
+  -webkit-mask: var(--dots) center / contain no-repeat;
+  mask: var(--dots) center / contain no-repeat;
+}
+.grip:hover {
+  opacity: 1;
+  color: var(--titan);
+}
+.grip-space {
+  display: inline-block;
+  width: 0.6em;
+  margin-right: 0.45em;
+  flex: none;
+}
+/* The label that follows the pointer while an entry is dragged */
+.drag-ghost {
+  position: fixed;
+  left: -1000px;
+  top: -1000px;
+  padding: 0.2em 0.6em;
+  background: var(--haze);
+  color: var(--hall);
+  font-family: var(--font-mono);
+  font-size: 14px;
+  border: 1px solid var(--hall);
+}
+.sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}

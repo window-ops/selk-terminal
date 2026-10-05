@@ -1,0 +1,163 @@
+/* The report paper in REPORT: lines, blanks, the footer with the stamp and
+   SUBMIT, and the fill steps on a phone. */
+.paper {
+  margin: 0.6em 0 0.5em;
+  padding: 1em 1.2em 0.9em;
+  background: var(--paper);
+  color: var(--ink);
+  text-shadow: none;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 0 22px color-mix(in srgb, var(--haze) 14%, transparent);
+  white-space: normal;
+}
+.paper-title {
+  font-family: var(--font-crt);
+  font-size: 1.55em;
+}
+.paper-from {
+  color: var(--ink-soft);
+  font-size: 0.85em;
+  margin: 0.2em 0 0.8em;
+  border-bottom: 1px solid var(--ink-soft);
+  padding-bottom: 0.5em;
+}
+.paper-line {
+  line-height: 1.9;
+  padding: 0.1em 0;
+}
+.paper-n {
+  color: var(--ink-soft);
+  white-space: pre;
+}
+.blank {
+  font: inherit;
+  color: var(--ink);
+  background: transparent;
+  border: 0;
+  border-bottom: 1px dashed var(--ink);
+  padding: 0 0.3em;
+  display: inline-block;
+  min-width: 10ch;
+  line-height: 1.3;
+  vertical-align: baseline;
+}
+.blank.filled {
+  border-bottom-style: solid;
+  font-weight: 500;
+}
+.blank.sel {
+  background: var(--ink);
+  color: var(--paper);
+}
+.blank.drop {
+  background: var(--titan);
+  color: var(--ink);
+}
+.bwrap {
+  white-space: nowrap;
+}
+.unfill {
+  font: inherit;
+  font-size: 0.8em;
+  color: var(--ink-soft);
+  background: none;
+  border: 0;
+  padding: 0 0.3em;
+  text-transform: none;
+}
+.unfill:hover {
+  color: var(--ink);
+}
+.paper-count {
+  margin-left: 0.8em;
+  color: var(--ink-soft);
+  font-size: 0.85em;
+}
+.paper-btn:disabled {
+  opacity: 0.4;
+}
+.paper-help {
+  margin-top: 0.4em;
+  font-size: 0.85em;
+}
+.paper-mobile-flow {
+  display: grid;
+  gap: 0.45em;
+  margin-top: 0.7em;
+  padding-top: 0.6em;
+  border-top: 1px solid var(--rib);
+}
+.paper-mobile-flow .paper-help {
+  margin: 0;
+}
+.paper-mobile-flow .paper-btn.paper-files {
+  min-height: var(--tap-mobile);
+  background: var(--ink);
+  color: var(--paper);
+}
+.paper-mobile-flow .paper-btn.paper-files:not(:disabled):hover {
+  background: var(--ink-soft);
+  color: var(--paper);
+}
+.blank:focus-visible, .paper-btn:focus-visible {
+  outline: 1px solid var(--ink);
+  outline-offset: 2px;
+}
+@media (max-width: 700px) {
+  .paper {
+    padding: 0.75em 0.7em;
+  }
+  .paper-title {
+    font-size: 1.35em;
+  }
+  .paper-line {
+    line-height: 1.65;
+    padding: 0.2em 0;
+  }
+  .blank {
+    min-width: 7ch;
+    min-height: var(--tap-mobile);
+    margin: 0.15em 0.1em;
+    padding: 0.2em 0.35em;
+    vertical-align: middle;
+  }
+  .paper-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45em;
+  }
+  .paper-count {
+    margin-left: 0;
+  }
+  .paper-btn {
+    min-height: var(--tap-mobile);
+  }
+}
+.paper-foot {
+  margin-top: 0.8em;
+}
+.paper-btn {
+  font: inherit;
+  color: var(--ink);
+  background: none;
+  border: 1px solid var(--ink);
+  padding: 0.2em 0.8em;
+}
+.paper-btn:hover {
+  background: var(--ink);
+  color: var(--paper);
+}
+.stamp {
+  display: inline-block;
+  font-family: var(--font-crt);
+  font-size: 1.3em;
+  color: #8E3B2A;
+  border: 2px solid #8E3B2A;
+  padding: 0.05em 0.5em;
+  transform: rotate(-2.5deg);
+}
+/* Blanks that can take the entry being dragged */
+body.dragging .blank:not(:disabled) {
+  outline: 1px dashed var(--ink);
+  outline-offset: 2px;
+}

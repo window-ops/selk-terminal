@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Selk trailer sound</title></head>
+<body>
+<script>
+  /* The game's sound engine runs here on an OfflineAudioContext as long as
+     the trailer, so the whole soundtrack renders faster than real time and
+     the same on every run: Math.random is seeded, Date.now follows the
+     render, (the engine's noise, the
+     creaks' pitches), and new AudioContext() hands the engine the offline
+     context. */
+  (function () {
+    let s = 20970226;
+    Math.random = function () { s = (s * 1664525 + 1013904223) >>> 0; return s / 4294967296; };
+  })();
+  window.SECONDS = 87.25; window.RATE = 48000;
+  window.OFFLINE = new OfflineAudioContext(2, Math.round(SECONDS * RATE), RATE);
+  window.AudioContext = function () { return OFFLINE; };
+  /* What the engine reads from the game: the settings of the balanced
+     preset at full volume */
+  window.SELK = { state: { sound: true, settings: { vol: 100, soundPreset: "balanced", vMachine: 70, vWind: 40, vUi: 75, vStruct: 65, vMusic: 70 } } };
+  /* The engine's clock for its key debounce is the trailer's time */
+  Date.now = function () { return Math.round(OFFLINE.currentTime * 1000); };
+</script>
+<script src="../vendor/audio/sound.js"></script>
+<script src="../vendor/audio/sounds/interface.js"></script>
+<script src="../vendor/audio/sounds/machine.js"></script>
+<script src="../vendor/audio/sounds/weather.js"></script>
+<script src="../vendor/audio/sounds/structure.js"></script>
+<script src="score.js"></script>
+</body>
+</html>

@@ -652,11 +652,8 @@ Added 2092    R-14`, {
 Host          selk-t01
 System        CESEA Site OS 7.2
 Storage       8 GB card, read-only
-Memory        64 GB
-Usual thin client  4 GB
-Reason        the terminal runs calculations
-Example       checking model output
-When          the uplink is down
+External storage       up to 5 TB, drive 0
+Memory        64 GB, for calculations checking model output
 Screen        36 cm CRT
 Case          steel, wall mount
 Serial        KTZBA0K6SB2KBR1CS5CE97

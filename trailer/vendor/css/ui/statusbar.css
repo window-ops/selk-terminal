@@ -1,0 +1,310 @@
+/* The tmux status bar: windows, the status line message, the bar buttons
+   and lamps, and the status pop-up. The desktop bar (desktop.css) shares
+   the message and the button styles. */
+.tmux {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  padding: 0.15em 0.6em;
+  background: var(--titan);
+  color: var(--hall);
+  text-shadow: none;
+  font-size: 0.82em;
+  position: relative;
+  z-index: var(--z-bars);
+  min-width: 0;
+}
+.tmux-wins {
+  display: flex;
+  align-items: center;
+  gap: 0.2em;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.tmux-sess {
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  line-height: 1;
+  margin-right: 0.4em;
+}
+.screen.prefix .tmux-sess::after {
+  content: " ^B";
+}
+.tmux-win {
+  font: inherit;
+  color: var(--hall);
+  background: none;
+  border: 0;
+  padding: 0 0.3em;
+}
+.tmux-win.act {
+  background: var(--hall);
+  color: var(--titan);
+}
+.tmux-prompt {
+  flex: 1;
+  font: inherit;
+  background: var(--hall);
+  color: var(--haze);
+  border: 0;
+  padding: 0 0.4em;
+  outline: none;
+}
+.tmux-right {
+  display: flex;
+  align-items: center;
+  gap: 0.8em;
+  white-space: nowrap;
+  margin-left: auto;
+}
+.tmux-shell-action {
+  flex: 0 0 auto;
+}
+/* Status line message (S.msg). The text sits on a chip tinted from the
+   bar's text colour; an error takes the flag colour. A message wider than
+   its space scrolls in its track, with "<" and ">" at the hidden ends. */
+.bar-msg {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.tmux-msg {
+  color: var(--hall);
+}
+.bar-msg-track {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  overscroll-behavior-x: contain;
+  touch-action: pan-x;
+}
+.bar-msg-track::-webkit-scrollbar {
+  display: none;
+}
+.bar-msg.over .bar-msg-track {
+  cursor: grab;
+}
+.bar-msg-track.dragging {
+  cursor: grabbing;
+  user-select: none;
+}
+.bar-msg-track:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: -1px;
+}
+.bar-msg-chip {
+  display: inline-block;
+  padding: 0 0.45em;
+  background: color-mix(in srgb, currentColor 16%, transparent);
+}
+.bar-msg.is-empty .bar-msg-chip {
+  display: none;
+}
+.bar-msg[data-kind="err"] .bar-msg-chip {
+  background: var(--flag);
+  color: var(--hall);
+}
+.bar-msg-edge {
+  display: none;
+  flex: none;
+  padding: 0 0.2em;
+  cursor: pointer;
+  user-select: none;
+}
+.bar-msg.over .bar-msg-edge {
+  display: inline-block;
+  visibility: hidden;
+}
+.bar-msg.over:not(.at-start) .bar-msg-l,
+.bar-msg.over:not(.at-end) .bar-msg-r {
+  visibility: visible;
+}
+/* Bar buttons take the bar's text colour and have no hover state. The
+   focus outline sits outside, so nothing on a bar changes size. */
+.st-btn,
+.wb-btn {
+  font: inherit;
+  color: var(--hall);
+  background: none;
+  border: 1px solid currentColor;
+  padding: 0 0.4em;
+}
+:is(.tmux, .wb-bar) :focus-visible:not(.bar-msg-track) {
+  outline: 1px solid var(--hall);
+  outline-offset: 1px;
+}
+.screen:not(.desktop) #st-mail,
+.screen:not(.desktop) #st-report,
+.screen.title-screen #st-mode,
+[data-screen="narrow"] #st-mode {
+  display: none;
+}
+.st-btn.live,
+.wb-btn.live {
+  background: var(--hall);
+  color: var(--titan);
+  font-weight: 500;
+}
+html[data-motion="full"] :is(.st-btn, .wb-btn).live {
+  animation: mail-pulse 1.6s ease-in-out infinite;
+}
+@keyframes mail-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.65;
+  }
+}
+/* The uplink and save lamps reserve a border, drawn on hover */
+.st-uplink,
+.st-save {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 1px solid transparent;
+  padding: 0 0.4em;
+  white-space: nowrap;
+}
+/* A 1em line box centres one line of capitals */
+.st-btn,
+.st-uplink,
+.st-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  min-height: 1.5em;
+}
+.st-uplink.live {
+  font-weight: 500;
+}
+/* A live uplink (TX, RX) keeps its contrast and skips the hover */
+.st-uplink:not(.live):hover,
+.st-save:hover {
+  background: rgba(30, 36, 39, 0.12);
+  border-color: currentColor;
+}
+/* Save lamp: solid when saving fails */
+.st-save.fail {
+  opacity: 1;
+  background: var(--hall);
+  color: var(--flag);
+}
+.st-hint {
+  border: 1px solid currentColor;
+  padding: 0 0.4em;
+  opacity: 0.5;
+}
+.st-hint.lit {
+  opacity: 1;
+  background: var(--hall);
+  color: var(--titan);
+}
+/* The pop-up of the uplink and save lamps */
+.status-info-pop {
+  position: absolute;
+  z-index: var(--z-popover);
+  width: min(26em, calc(100% - 16px));
+  max-height: calc(100% - 8px);
+  overflow-y: auto;
+  padding: 0.7em;
+  background: var(--hall);
+  color: var(--haze);
+  font-size: 0.9em;
+  line-height: 1.4;
+  text-shadow: none;
+  pointer-events: auto;
+  text-wrap: pretty;
+}
+.status-info-head {
+  display: block;
+  color: var(--titan);
+  letter-spacing: 0.04em;
+}
+.status-info-copy {
+  margin-top: 0.25em;
+}
+.status-history {
+  margin-top: 0.6em;
+  border-top: 1px solid var(--rib);
+}
+.status-history-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.7em;
+  padding: 0.35em 0;
+}
+.status-history-row + .status-history-row {
+  border-top: 1px solid rgba(214, 195, 150, 0.16);
+}
+.status-history-row:last-child {
+  padding-bottom: 0;
+}
+.status-history-event {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.status-history-time,
+.status-history-empty {
+  color: var(--dust);
+  white-space: nowrap;
+}
+.status-history-empty {
+  padding-top: 0.35em;
+}
+@media (max-width: 700px) {
+  .st-user {
+    display: none;
+  }
+  .status-info-pop {
+    width: calc(100% - 16px);
+  }
+  .tmux {
+    gap: 0.3em 0.5em;
+    flex-wrap: wrap;
+    font-size: 0.76em;
+    padding: 0.25em 0.5em;
+  }
+  .tmux-wins {
+    flex-basis: 100%;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tmux-win {
+    min-height: 2.4em;
+    padding: 0.3em 0.45em;
+  }
+  .tmux-msg:empty,
+  .tmux-msg.is-empty {
+    display: none;
+  }
+  .tmux-right {
+    width: 100%;
+    margin-left: 0;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    gap: 0.35em;
+  }
+  .st-btn {
+    min-height: 2.4em;
+  }
+  /* UPLINK and the save lamp share the row equally */
+  .st-uplink,
+  .st-save {
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 2.4em;
+    border-color: currentColor;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

@@ -1,0 +1,176 @@
+/* The title screen: the logo, the sign-in row and its toggles. */
+.title {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.4em;
+}
+.title-big {
+  font-family: var(--font-crt);
+  font-size: clamp(4.5rem, 16vw, 10rem);
+  line-height: 0.9;
+  letter-spacing: 0.25em;
+  margin-right: -0.25em;
+}
+.title-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6em;
+  margin-top: 1.4em;
+}
+/* Options, as in a game launcher. OPTIONS is a button at the left end of
+   the status bar, in place of the window list ([selk]), which the title
+   screen hides; it is drawn like UPLINK. The panel opens above the bar, over the screen,
+   in the double haze frame of the title screen's dialogs: rows like the context
+   menu, each group under a spaced heading between two rules. The state is
+   text, haze when ON and dim when OFF. */
+.title-options {
+  position: relative;
+  display: flex;
+}
+.screen:not(.title-screen) .title-options {
+  display: none;
+}
+.title-screen .tmux-wins {
+  display: none;
+}
+/* Like UPLINK and SAVED, which also open a popup: no border until hover,
+   and the hover look while its panel is open */
+.title-options-btn {
+  border-color: transparent;
+  white-space: nowrap;
+}
+.title-options-btn:hover,
+.title-options-btn[aria-expanded="true"] {
+  background: rgba(30, 36, 39, 0.12);
+  border-color: currentColor;
+}
+.title-options-panel {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 0.4em);
+  z-index: var(--z-menu);
+  /* The status bar draws its text at 0.82 of the screen's (statusbar.css);
+     the panel undoes that, so its rows match the title screen's text and
+     follow Setup > Text size */
+  font-size: calc(1em / 0.82);
+  width: min(22em, 100vw);
+  max-height: 70vh;
+  overflow-y: auto;
+  padding: 0.2em 0 0.4em;
+  background: var(--hall);
+  border: 2px double var(--haze);
+  text-align: left;
+}
+.title-options-panel[hidden] {
+  display: none;
+}
+.opt-group {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.45em 0.9em;
+  line-height: 1;
+  color: var(--dust);
+  font-size: 0.75em;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.opt-group::before,
+.opt-group::after {
+  content: "";
+  flex: 1;
+  border-top: 1px solid var(--rib);
+}
+.opt-group::before {
+  flex: 0 0 0.8em;
+}
+.title-opt {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 2em;
+  width: 100%;
+  padding: 0.15em 0.9em;
+  font: inherit;
+  color: var(--haze);
+  background: none;
+  border: 0;
+  text-align: left;
+}
+.title-opt:is(:hover, :focus-visible) {
+  color: var(--on-accent);
+  background: var(--haze);
+  outline: none;
+}
+.opt-state {
+  color: var(--dust);
+}
+.title-opt[aria-checked="true"] .opt-state {
+  color: var(--haze);
+}
+.title-opt:is(:hover, :focus-visible) .opt-state {
+  color: var(--on-accent);
+}
+.title-go {
+  margin-top: 1.2em;
+  padding: 0.35em 1.6em;
+  color: var(--titan);
+  border-color: var(--titan);
+}
+/* Haze borders; a hover, the focus or a toggle that is on fills them */
+.title .btn {
+  color: var(--haze);
+  border-color: var(--rib);
+}
+.title .btn.primary {
+  color: var(--titan);
+  border-color: var(--titan);
+}
+.title .btn:is(:hover, :focus-visible, [aria-pressed="true"]) {
+  background: var(--haze);
+  color: var(--hall);
+  text-shadow: none;
+  outline: none;
+}
+.title .btn.primary:is(:hover, :focus-visible, [aria-pressed="true"]) {
+  background: var(--titan);
+}
+
+/* On a phone the window list takes a row of its own on the status bar.
+   Before a session there are no windows, on the title screen and at sign-in,
+   so it is hidden, and on the title screen OPTIONS shares one row with
+   UPLINK, TAB and SOUND */
+@media (max-width: 700px) {
+  #screen:not(.session) .tmux-wins {
+    display: none;
+  }
+  .title-screen .tmux-right {
+    width: auto;
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+/* Screen reader mode, first on the title screen: out of sight until it
+   has the keyboard focus, then at the top left */
+.title-sr {
+  position: absolute;
+  top: 0.5em;
+  left: 0.5em;
+  z-index: var(--z-popover);
+  padding: 0.3em 0.8em;
+  font: inherit;
+  color: var(--on-accent);
+  background: var(--haze);
+  border: 1px solid var(--haze);
+  transform: translateY(-200%);
+}
+.title-sr:focus {
+  transform: none;
+  outline: 2px solid var(--haze);
+  outline-offset: 2px;
+}
