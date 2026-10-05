@@ -426,6 +426,11 @@
       if (!S.isUnlocked(e.id.split("/")[0])) {
         S.snd.error(); say(S.t("That entry is in a locked section."), "err"); return;
       }
+      /* System files and entries in nodrag sections (Home, Design, History)
+         cannot fill a blank — same rule as S.entryDraggable / drag handles */
+      if (!S.entryDraggable(e.id)) {
+        S.snd.error(); say(S.t("That entry cannot fill a blank."), "err"); return;
+      }
       var r = rs(key);
       if (r.done) {
         return;

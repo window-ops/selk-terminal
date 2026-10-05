@@ -208,14 +208,15 @@
     if (id) {
       var e = S.entryById(id);
       mini.textContent = S.entryTitle(id) + " / " + S.t("written by") + ": " + e.by;
-      if (S.state.sel) {
+      /* Only entries with a drag handle (S.entryDraggable) can fill a blank */
+      if (S.state.sel && S.entryDraggable(id)) {
         mini.textContent += " / " + S.t("F4 USE puts it in blank {n}", { n: S.state.sel.n });
       }
     } else {
       mini.textContent = S.isUnlocked(s.id) ? S.tn("{name}, {n} items. Enter opens.", entriesOf(s.id).length, { name: s.name.toUpperCase() }) : S.t("{name} is locked. F7 unlocks.", { name: s.name.toUpperCase() });
     }
     root.appendChild(mini);
-    if (S.tmux.mobile() && S.state.sel && id) {
+    if (S.tmux.mobile() && S.state.sel && id && S.entryDraggable(id)) {
       var use = el("button", "mc-use", S.t("USE THIS RECORD FOR BLANK {n}", { n: S.state.sel.n })); use.dataset.sound = "action";
       use.type = "button";
       use.addEventListener("click", function () {

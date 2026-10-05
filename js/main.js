@@ -422,6 +422,10 @@
         S.msg(S.isDesktop() ? (keys ? "Select an entry icon or open an entry, then press F4" : "Select an entry icon or open an entry first") :
           (keys ? "Select an entry in FILES, then press F4" : "Select an entry in FILES first"), "err"); S.snd.error();
       }
+      else if (!S.entryDraggable(id)) {
+        /* No drag handle: Home, System, History, Design cannot fill blanks */
+        S.msg(S.t("That entry cannot fill a blank."), "err"); S.snd.error();
+      }
       else {
         S.rep.fillBlank(sel.r, sel.n, id);
       }

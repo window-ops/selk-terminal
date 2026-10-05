@@ -60,7 +60,9 @@
       ]
     ];
     var key = S.state.active, r = key && S.state.reports[key];
-    if (r && !r.done) {
+    /* Only entries with a drag handle can fill blanks (not Home, System,
+       History, Design) */
+    if (r && !r.done && S.entryDraggable(id)) {
       items.push(null);
       S.REPORTS[key].lines.forEach(function (ln, i) {
         var cur = r.fill[i] ? S.entryTitle(r.fill[i]) : S.t("empty");

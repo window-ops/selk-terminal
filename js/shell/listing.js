@@ -14,7 +14,9 @@
     if (!useSlot) { return; }
     useSlot.textContent = "";
     var sel = S.state.sel, id = useSlot.dataset.entry;
-    if (!sel || !S.state.reports[sel.r] || !S.reportReady(sel.r) || S.state.reports[sel.r].done) { return; }
+    /* System files and nodrag sections (Home, Design, History) have no
+       drag handle and cannot fill a blank */
+    if (!sel || !S.state.reports[sel.r] || !S.reportReady(sel.r) || S.state.reports[sel.r].done || !S.entryDraggable(id)) { return; }
     var u = scr().el("button", "use", S.t("USE FOR BLANK {n} OF REPORT {code}", { n: sel.n, code: S.REPORTS[sel.r].code }));
     u.type = "button";
     u.addEventListener("click", function () {
