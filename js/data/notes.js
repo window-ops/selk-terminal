@@ -189,7 +189,7 @@ SELK.NOTES = {
   ],
   electrolysis: [
     "Electrolysis",
-    "Electricity splits water into hydrogen and oxygen. Run on clean power, it gives green hydrogen.",
+    "Electricity splits water into hydrogen and oxygen. Run on renewable power, it gives green hydrogen.",
     2096
   ],
   lh2: [
@@ -229,7 +229,7 @@ SELK.NOTES = {
   ],
   flamtest: [
     "Flammability test at 94 K",
-    "A laboratory test that cools a sample of the air to the temperature it is used at, 94 K here, raises the pressure to match, and tries to set it alight. A flammability limit is valid only at the temperature and pressure it was measured at, so an Earth-laboratory figure does not describe air at 94 K, where methane is close to liquid and oxygen can freeze onto surfaces. No such test has been run for the air at Selk.",
+    "A laboratory test that cools a sample of the air to the temperature it is used at, 94 K here, raises the pressure to match, and tries to set it on fire. A flammability limit is valid only at the temperature and pressure it was measured at, so an Earth-laboratory figure does not describe air at 94 K on Titan, where methane is close to liquid and oxygen can freeze onto surfaces.",
     2096
   ],
   biocell: [
