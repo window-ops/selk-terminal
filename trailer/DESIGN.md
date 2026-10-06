@@ -24,7 +24,7 @@ The trailer is self-standing. It sits in `trailer/`, carries copies of what it t
 - **Camera inside the screen**, after the Lost Wiki: Kozlovka trailer. Tight crops, words cut at the frame edges, and shot pairs: a wide view, then a close-up of one detail in it.
 - **The alarm**, after the Papers, Please short film (2018). The shock is staged on a person, without drama: a structural alarm of overload and construction nobody authorized.
 - **Balance:** About 54 s of animation and 33.5 s of game screens, alternating. The timelapse takes the place of the archive navigation, to raise interest, and each part runs as long as it needs.
-- **Invitation without promotion.** The trailer ends on the game's title screen, with none of the usual trailer furniture.
+- **Invitation without promotion:** The trailer ends on the game's title screen, with none of the usual trailer furniture.
 
 ## 4. Timeline
 
@@ -110,7 +110,7 @@ The WATCH header carries the only full date on screen: 14-03-2097.
 
 ### 69.25-77.25 s, MAST-01
 
-`mast.js`, 160x90 in the SV-4 camera palette, built from the game's camera pieces. MAST-01 stands 1 180 m in 58 pixels with HALL-R at its foot and its beacon blinking. From the game's entries: three levels of guy cables are tight, at 350, 700 and 1 050 m, anchored at 0.7 times their height; the fourth level's cables were never raised and hang slack from level 3, swinging; CRANE-L is parked at 680 m, stowed against the tower's face with its arm folded down, as the rule above 5 m/s wind asks; dust is rising. The tower sways slowly, and two gusts, at about 3.2 s and 6.1 s into the shot, push its top over and let it come back, with more dust. Titan's haze hides Saturn and the stars. The creaks land on the gusts, panned left and right.
+`mast.js`, 160x90 in the SV-4 camera palette, built from the game's camera pieces and modified to fit animation by using a rigid body. MAST-01 stands 1 180 m in 58 pixels with HALL-R at its foot and its beacon blinking. From the game's entries: three levels of guy cables are tight, at 350, 700 and 1 050 m, anchored at 0.7 times their height; the fourth level's cables were never raised and hang slack from level 3, swinging; CRANE-L is parked at 680 m, stowed against the tower's face with its arm folded down, as the rule above 5 m/s wind asks; dust is rising. The tower sways slowly, and two gusts, at about 3.2 s and 6.1 s into the shot, push its top over and let it come back, with more dust. Titan's haze hides Saturn and the stars. The creaks land on the gusts, panned left and right.
 
 ### 77.25-87.25 s, title screen
 
@@ -276,7 +276,7 @@ trailer/
 
 External tools: Node, Playwright's Chromium, and ffmpeg through the `ffmpeg-static` package. The soundtrack is `audio.js` with `audio/score.js`. The cursor paths are written in the shots, after the recordings, in place of `cursor/track.js`.
 
-## 12. Licences
+## 12. Licenses
 
 The folder keeps the game's licences for what it copies: GPL-3.0 for program code, CC BY-SA 4.0 for story text, SIL OFL 1.1 for the fonts, CC0 1.0 for the Selk illustrations. The license files travel with the copies.
 
