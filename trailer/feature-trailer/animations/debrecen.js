@@ -3,7 +3,7 @@
    On the left, the Great Reformed Church, yellow, its two towers with clock
    faces under green copper caps either side of the columned portico and
    its pediment. In the middle, a row of houses with red roofs. On the
-   right, the research centre the federal grants paid for, a long block
+   right, the research center the federal grants paid for, a long block
    with ribbon windows. In front, the street, and below it, on its
    embankment, the high-speed line, where the trains pass in a flash.
 
@@ -30,7 +30,7 @@ const FPS = 8, FRAMES = 24, STREET = 44, RAIL = 59;
    trees are planted along the pavement; the monorail, found to obstruct
    the street, is moved to the rail line */
 const BIKES = 2067, MONORAIL = 2070, GREENERY = 2072, MOVED = 2074;
-/* The trees along the pavement, centred in the gaps between the
+/* The trees along the pavement, centered in the gaps between the
    buildings and between the buildings and the edges of the picture; the
    monorail's pylons, on the pavement too, clear of them */
 const TREES = [7, 52, 80, 123], PYLONS = [3, 33, 61, 102], BEAM = 33;
@@ -45,9 +45,9 @@ const panel = (k, total, y) => ((k * 37) % total) < Math.round(covered(y) * tota
 function draw(fr, n) {
   const { d, obj } = fr, dark = night(n, FPS), y = year(n, FRAMES, 2063, 2079);
   sky(d, n, FPS, STREET);
-  /* The ground, back to front: the pavement and its kerb, the far lane,
+  /* The ground, back to front: the pavement and its curb, the far lane,
      the dashed median, the near lane (a red bike lane from 2067), the
-     kerb, the parking strip (a planted strip with flowers from 2072), and
+     curb, the parking strip (a planted strip with flowers from 2072), and
      to the bottom edge the fence of the high-speed line, its grassed
      verge, its rails and the embankment, which from 2074 are a park */
   obj("ground", { edge: true }, () => {
@@ -102,9 +102,9 @@ function draw(fr, n) {
       d.fill(x + 3, 43, 1, STREET - 43, DARK);
     });
   });
-  /* The research centre: a long block with ribbon windows, a flat roof
+  /* The research center: a long block with ribbon windows, a flat roof
      taking on rows of panels */
-  obj("research centre", { on: ["ground"] }, () => {
+  obj("research center", { on: ["ground"] }, () => {
     d.fill(82, 24, 38, STREET - 24, LIGHT);
     for (let wy = 26; wy < STREET - 1; wy += 3) for (let wx = 84; wx < 118; wx++) d.set(wx, wy, dark && ((wx >> 2) + wy) % 3 === 0 ? GOLD : BLUE);
     d.line(82, 23, 119, 23, GREY);

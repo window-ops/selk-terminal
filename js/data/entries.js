@@ -166,7 +166,7 @@ On site       {NTorch|ntorch} 3, on units and
 Crack finder  see [[units/FAULT-MODEL]]
 Planner       {layout planner|planner},
               places new parts
-Summariser    writes INDEX entries and
+Summarizer    writes INDEX entries and
               short summaries
 Rule          crew checks every model output
               before units act on it`);
@@ -673,8 +673,8 @@ then take the phone apart step by step.`, {
      table under it (article and facts, printEntry in listing.js). */
   E("history/2026-FAR-RIGHT", "CESEA archive",
   `In the European Parliament election of June 2024, the three groups to the right of the European People's Party won 187 of the 720 seats between them: Patriots for Europe 84, the European Conservatives and Reformists 78, and Europe of Sovereign Nations 25. The Left group, GUE/NGL, won 46 seats and the Greens/EFA 53.
-Between 2024 and 2031, far-right parties entered government in 11 of the 27 member states, either leading coalitions or supporting minority cabinets. Their campaigns centred on migration, national sovereignty and the cost of energy.
-In office, these governments lowered or delayed national climate targets, restricted asylum procedures and weakened labour protections, including limits on strikes in public services. In the Council, several of them blocked common positions on climate and on the reception of refugees.
+Between 2024 and 2031, far-right parties entered government in 11 of the 27 member states, either leading coalitions or supporting minority cabinets. Their campaigns centered on migration, national sovereignty and the cost of energy.
+In office, these governments lowered or delayed national climate targets, restricted asylum procedures and weakened labor protections, including limits on strikes in public services. In the Council, several of them blocked common positions on climate and on the reception of refugees.
 Opposition formed around trade unions, climate groups and the member parties of GUE/NGL and the Greens/EFA, which built electoral alliances in several countries. By 2031 most of these governments had left office through elections or the collapse of their coalitions.`, {
     article: true,
     facts: `Group, European Parliament 2024  Seats
@@ -691,7 +691,7 @@ Non-attached  33`,
     cap: "Archive picture, 2026, a rally under storm clouds"
   });
   E("history/2034-CLIMATE-STRIKES", "CESEA archive",
-  `The climate general strikes began in 2033, after a summer of heatwaves and failed harvests across southern Europe. Unions, student organisations and tenant groups called coordinated stoppages with three demands: binding emission cuts, a shorter working week and public control of energy.
+  `The climate general strikes began in 2033, after a summer of heatwaves and failed harvests across southern Europe. Unions, student organizations and tenant groups called coordinated stoppages with three demands: binding emission cuts, a shorter working week and public control of energy.
 Strike committees in 14 states exchanged delegates and timed their actions together, forming the first lasting cross-border strike network in the Union. The largest action, in March 2035, stopped transport, energy and schools for five days.
 By 2036, 9 states had passed a 32-hour working week, and several had returned their energy grids to public ownership. The committees later formed the core of the federalist and eurocommunist campaigns of the 2040s.`, {
     article: true,
@@ -716,7 +716,7 @@ Member states  27 governments and parliaments  education, policing, local planni
   });
   E("history/2044-ELECTION", "CESEA archive",
   `The first election to the Federal Parliament was held in May 2044. The eurocommunists ran as the European Left Alliance, founded in 2038 by the member parties of The Left group (GUE/NGL), the left wing of the Greens/EFA and the strike committees of the 2030s. The alliance won 432 of the 800 seats, 54 %.
-Its programme proposed a directly elected Commission, a central bank accountable to the parliament, the repeal of the federal debt rules, and public ownership of energy and rail. With a majority of its own, the alliance formed the federal government without coalition partners.
+Its program proposed a directly elected Commission, a central bank accountable to the parliament, the repeal of the federal debt rules, and public ownership of energy and rail. With a majority of its own, the alliance formed the federal government without coalition partners.
 Turnout was 71 %, the highest recorded in a European election up to that year. The successors of the EPP and Renew Europe sat together as the Liberal and Conservative Bloc.`, {
     article: true,
     facts: `Group, Federal Parliament 2044  Seats  Share
@@ -741,8 +741,8 @@ The treaties fixed market rules  energy and rail in public ownership`,
   });
   E("history/2047-EASTERN-EUROPE", "CESEA archive",
   `After the 2045 reforms, the Federation directed investment grants to Central and Eastern Europe, where wages and public services had trailed the west of the continent since the 1990s.
-The grants paid for high-speed rail, the renovation and insulation of prefabricated housing estates, and research centres in cities including Bucharest, Brno, Kraków and Debrecen.
-Average wages in the region reached the federal average in 2058. The research centres trained many of the engineers who later worked for CESEA.`, {
+The grants paid for high-speed rail, the renovation and insulation of prefabricated housing estates, and research centers in cities including Bucharest, Brno, Kraków and Debrecen.
+Average wages in the region reached the federal average in 2058. The research centers trained many of the engineers who later worked for CESEA.`, {
     article: true,
     facts: `Measure  2045  2060
 Wages, share of the federal average  58 %  101 %
@@ -752,8 +752,8 @@ Renovated panel flats  0.4 million  3.1 million`,
     cap: "Archive picture, 2047, renovated panel blocks"
   });
   E("history/2049-PANEL-ROBOTS", "CESEA archive",
-  `In 2049 the research centre in Brno presented the first construction robot built to assemble prefabricated panel housing. The project automated the work done since the 1950s to build panelák, blocuri and Plattenbau estates: casting standard wall and floor panels, lifting them and joining them on site.
-The robots ran on rails along the building, lifted each panel from the stack, set it in place and welded its joints. In 2051, on the Lesná estate in Brno, a team of three robots and one supervisor put up a ten-storey block in eleven weeks. By 2055 the robots worked on most renovation and building sites in the Federation.
+  `In 2049 the research center in Brno presented the first construction robot built to assemble prefabricated panel housing. The project automated the work done since the 1950s to build panelák, blocuri and Plattenbau estates: casting standard wall and floor panels, lifting them and joining them on site.
+The robots ran on rails along the building, lifted each panel from the stack, set it in place and welded its joints. In 2051, on the Lesná estate in Brno, a team of three robots and one supervisor put up a ten-story block in eleven weeks. By 2055 the robots worked on most renovation and building sites in the Federation.
 CESEA adapted the design for other worlds after 2052. The units at Selk are derived from these robots; they print ice and fit carbon fibre ties.`, {
     article: true,
     facts: `Year  Event
@@ -766,7 +766,7 @@ CESEA adapted the design for other worlds after 2052. The units at Selk are deri
   });
   E("history/2052-CESEA", "CESEA archive",
   `The Central-European Space Exploration Agency, CESEA, was founded in 2052 as an alternative to the European Space Agency. ESA continued its Earth observation and science missions, and CESEA was set up to build infrastructure on other worlds.
-The agency's headquarters occupy a constructivist building, with a banded tower, a cantilevered office block and the agency's name on the roof. Its founding programme was the development of construction robots able to print and assemble structures in hostile environments.
+The agency's headquarters occupy a constructivist building, with a banded tower, a cantilevered office block and the agency's name on the roof. Its founding program was the development of construction robots able to print and assemble structures in hostile environments.
 CESEA is funded from the federal budget. Its first launcher flew in 2054.`, {
     article: true,
     facts: `Year  Event
@@ -815,7 +815,7 @@ The first positive sample came from plot 3 in 2083. Work on the colony tower MAS
   });
   E("history/2091-SELECTION", "CESEA archive",
   `In 2091 CESEA selected @NAME@, a citizen of the Federation of Europe, as the only supervisor of the Selk site. The selection took two years and combined practical and theoretical tests.
-The practical tests covered long isolation and judgement with incomplete information. The theoretical tests covered the site's PyTorch and NTorch systems and media literacy, including telling filler from substance in science communication.
+The practical tests covered long isolation and judgment with incomplete information. The theoretical tests covered the site's PyTorch and NTorch systems and media literacy, including telling filler from substance in science communication.
 Like every federal citizen, the supervisor holds a citizen pass with its title and the word for citizen in the 24 official languages of the Federation. The supervisor arrived at Selk in 2091 and entered long sleep on 20-04-2092.`, {
     article: true,
     facts: `Language  On the pass
@@ -896,6 +896,12 @@ VARIANT="Thin client"
 HOME_URL="http://docs.cesea.internal/siteos"`, {
     fmt: "kv"
   });
+  F("changelog", "/usr/share/doc",
+  `Change notes of the programs on this terminal, by group, with every
+version and what it changed. Also the command changenote.`, {
+    fmt: "text",
+    action: "changenote"
+  });
   F("hostname", "/etc/hostname", `selk-t01`, {
     fmt: "text"
   });
@@ -961,6 +967,48 @@ files:/home     /home   nfs4      sec=krb5p,_netdev   0 0`, {
       "Dump",
       "Pass"
     ]
+  });
+  F("cpuinfo", "/proc/cpuinfo",
+  `processor\t: 0
+vendor\t\t: CESEA
+model name\t: R-64, revision 1 (2075)
+isa\t\t: r64gv, 64-bit, with floating point and vector units
+matrix unit\t: m8, 8-bit and 16-bit numbers, used by NTorch
+clock\t\t: 1200 MHz
+cache\t\t: 64 KB L1 for instructions and 64 KB for data, 2 MB L2 shared by the 4 cores, all with ECC
+hardening\t: radiation hardened: triple-voted registers, ECC on every cache and bus, memory scrubbing every 24 h
+process\t\t: 22 nm silicon on insulator
+
+processor\t: 1
+vendor\t\t: CESEA
+model name\t: R-64, revision 1 (2075)
+isa\t\t: r64gv, 64-bit, with floating point and vector units
+matrix unit\t: m8, 8-bit and 16-bit numbers, used by NTorch
+clock\t\t: 1200 MHz
+cache\t\t: 64 KB L1 for instructions and 64 KB for data, 2 MB L2 shared by the 4 cores, all with ECC
+hardening\t: radiation hardened: triple-voted registers, ECC on every cache and bus, memory scrubbing every 24 h
+process\t\t: 22 nm silicon on insulator
+
+processor\t: 2
+vendor\t\t: CESEA
+model name\t: R-64, revision 1 (2075)
+isa\t\t: r64gv, 64-bit, with floating point and vector units
+matrix unit\t: m8, 8-bit and 16-bit numbers, used by NTorch
+clock\t\t: 1200 MHz
+cache\t\t: 64 KB L1 for instructions and 64 KB for data, 2 MB L2 shared by the 4 cores, all with ECC
+hardening\t: radiation hardened: triple-voted registers, ECC on every cache and bus, memory scrubbing every 24 h
+process\t\t: 22 nm silicon on insulator
+
+processor\t: 3
+vendor\t\t: CESEA
+model name\t: R-64, revision 1 (2075)
+isa\t\t: r64gv, 64-bit, with floating point and vector units
+matrix unit\t: m8, 8-bit and 16-bit numbers, used by NTorch
+clock\t\t: 1200 MHz
+cache\t\t: 64 KB L1 for instructions and 64 KB for data, 2 MB L2 shared by the 4 cores, all with ECC
+hardening\t: radiation hardened: triple-voted registers, ECC on every cache and bus, memory scrubbing every 24 h
+process\t\t: 22 nm silicon on insulator`, {
+    fmt: "cpuinfo"
   });
   F("motd", "/etc/motd",
   `CESEA Site OS 7.2, Selk terminal 01.

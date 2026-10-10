@@ -5,16 +5,16 @@
    it up, and the check fails the frame when it does not:
      on: [names]     a pixel of the object sits directly on one of them
      hangs: [names]  a pixel of the object sits directly under one of them
-     touch: [names]  the object touches every one of them (4-neighbours)
+     touch: [names]  the object touches every one of them (4-neighbors)
      edge: true      the object reaches the edge of the picture
      mounted: true   fixed to the wall behind (a window, a shelf)
      free: true      flies or floats by nature (flame, smoke, a rocket in
                      flight, a star); no support check. With whole: true
                      it must still be one piece (a satellite and its
                      antennas).
-   Unless parts: true, an object must also be one piece (8-neighbours), so a
+   Unless parts: true, an object must also be one piece (8-neighbors), so a
    part that came loose from its object is caught as well. Only the pixels
-   that can be seen count for this: a pixel drawn in the colour of what is
+   that can be seen count for this: a pixel drawn in the color of what is
    behind it joins nothing on screen. The checks use the pixels each object
    drew, so an object in front does not hide a contact behind it. */
 "use strict";
@@ -25,7 +25,7 @@ const RULES = ["on", "hangs", "touch", "edge", "mounted", "free"];
 
 function frame(name, opts, prebuilt) {
   const s = prebuilt || sheet(name, opts);
-  /* Whether a pixel shows against what was behind it: any other colour */
+  /* Whether a pixel shows against what was behind it: any other color */
   const differs = (a, b) => a !== b;
   const W = s.w, H = s.h, objs = {}, order = [];
   let cur = null;
@@ -125,7 +125,7 @@ function frame(name, opts, prebuilt) {
   return { s, d: s.d, obj, check };
 }
 
-/* A PNG of the sheet, pal mapping colour indexes to #RRGGBB */
+/* A PNG of the sheet, pal mapping color indexes to #RRGGBB */
 function png(s, pal) {
   const W = s.w, H = s.h, rgb = pal.map((h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16)));
   const raw = Buffer.alloc((W * 3 + 1) * H);
@@ -196,7 +196,7 @@ function writeC(d, cx, y, s, c) {
 }
 
 /* An RGB picture for scenes copied from the game's js/game/scenes.js,
-   which draw in free colours with opacity on a 160 by 90 grid. Its pixels
+   which draw in free colors with opacity on a 160 by 90 grid. Its pixels
    are 0xRRGGBB numbers; R and P are the game's rect and pixel, rounded the
    same way, blended over what is there. It takes the same objects and the
    same check as the archive pictures (frameRGB). */

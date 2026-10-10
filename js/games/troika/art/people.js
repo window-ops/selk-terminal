@@ -3,7 +3,7 @@
 (function () {
   var S = window.SELK, A = S.troikaArt, C = A.C;
   var r = A.r;
-  /* Greece, in the colours of the flag. pose is "run", "air", "duck" or
+  /* Greece, in the colors of the flag. pose is "run", "air", "duck" or
      "sit"; phase is the step of the run, 0 to 3. */
   function runner(x, b, pose, phase, flash) {
     var shirt = flash ? C.red : C.blue;
@@ -86,7 +86,7 @@
     if (near) { bubble(x, b - 42); }
   }
   /* The speech bubble that says Greece can talk to someone, the same over
-     everyone: a white box with a dark edge, three dots and a tail, centred
+     everyone: a white box with a dark edge, three dots and a tail, centered
      on a figure whose middle is between x - 1 and x, its top at y */
   function bubble(x, y) {
     r(x - 6, y, 12, 10, C.dark);

@@ -37,6 +37,12 @@
   width: min(14em, 40vw);
   accent-color: var(--titan);
 }
+/* Setup > Sound > Sound seed: a field as wide as a long seed */
+.set-seed {
+  width: 12ch;
+  max-width: 40vw;
+  padding: 0.15em 0.5em;
+}
 /* Drop-down list, drawn by the game so it follows the game's styles */
 .set-pick {
   position: relative;
@@ -133,7 +139,7 @@
 .set-warn p + p {
   margin-top: 0.5em;
 }
-/* Rows that cannot apply now: greyed, with the reason under the label */
+/* Rows that cannot apply now: grayed, with the reason under the label */
 .set-unavail .set-label,
 .set-unavail .set-ctl {
   opacity: 0.55;
@@ -211,14 +217,16 @@
 .set-sec-head.open .set-sec-mark {
   color: var(--titan);
 }
-/* Levels are colour coded in every view: sections in titan, groups in
-   lamp green, settings that belong to another setting on a dust rule */
+/* Levels are color coded in every view: sections in titan, groups in
+   lamp green, groups inside a group in haze, settings that belong to
+   another setting on a dust rule */
 .set-body {
   --set-sec: var(--titan);
   --set-grp: var(--lamp);
+  --set-grp2: var(--haze);
   --set-sub: var(--dust);
 }
-/* A group: its title and its settings, on a rule in the group colour */
+/* A group: its title and its settings, on a rule in the group color */
 .set-sub,
 .set-subgroup {
   display: flex;
@@ -234,6 +242,13 @@
   color: var(--set-grp);
   font-size: 0.85em;
   letter-spacing: 0.1em;
+}
+/* A group inside a group */
+.set-subgroup-inner {
+  border-left-color: color-mix(in srgb, var(--set-grp2) 60%, transparent);
+}
+.set-subgroup-inner > .set-sub-h {
+  color: var(--set-grp2);
 }
 /* Settings that belong to the setting above */
 .set-sub {
@@ -286,6 +301,9 @@
   font-size: 0.85em;
   letter-spacing: 0.1em;
 }
+.set-link-grp2 .set-link-name {
+  color: var(--set-grp2);
+}
 .set-link-sub .set-link-name {
   color: var(--dust);
 }
@@ -304,7 +322,7 @@
 .set-link:focus-visible .set-link-mark {
   color: var(--titan);
 }
-/* A page starts with BACK and the path to it, each part in the colour of
+/* A page starts with BACK and the path to it, each part in the color of
    its level */
 .set-crumb {
   display: flex;
@@ -326,11 +344,14 @@
 .set-crumb-grp {
   color: var(--set-grp);
 }
+.set-crumb-grp2 {
+  color: var(--set-grp2);
+}
 .set-crumb-set {
   color: var(--haze);
   letter-spacing: 0;
 }
-/* The mark is drawn, centred on the capitals of the count beside it
+/* The mark is drawn, centered on the capitals of the count beside it
    (0.349em above the baseline in Plex Mono), as the drop-down arrow is. The
    box is as wide as it is tall, so the two strokes open at the angle of a
    typed ">". The height rounds to an even number of pixels, which puts the

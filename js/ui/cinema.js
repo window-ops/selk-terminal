@@ -198,7 +198,7 @@
     clear: function () {
       stopScene(); stage.replaceChildren(); layer = null; picker = null;
     },
-    /* Lines typed one under another, centred, with room between them */
+    /* Lines typed one under another, centered, with room between them */
     lines: function (texts, cps, gap) {
       return swap(function () {
         var box = el("div", "cine-lines"); layer.appendChild(box); return box;

@@ -20,9 +20,14 @@
       if (S.debug) { S.debug("save", "shell history saved to sessionStorage, key " + S.HIST_KEY); }
     } catch (e) {}
   }
+  /* The shell's own prompt, with the current section. Commands echo it
+     even while the agent is open, since they run in the shell */
+  S.shellPromptText = function () {
+    return S.mode === "login" ? "login:" : "selk:/" + (S.state.cwd || "") + ">";
+  };
   S.promptText = function () {
     if (S.mode === "shell" && S.agent && S.agent.active()) { return "agent>"; }
-    return S.mode === "login" ? "login:" : "selk:/" + (S.state.cwd || "") + ">";
+    return S.shellPromptText();
   };
   S.prompt = function () {
     $("prompt").textContent = S.promptText();
@@ -107,11 +112,10 @@
   }
   function title() {
     var scr = S.scr;
-    /* The sound engine is built as the page loads, so the first press does
-       not wait for the audio device. The browser keeps it suspended until
-       the first gesture (sound.js). The saved Sound setting applies on the
-       title screen too */
-    S.snd.init();
+    /* The sound engine is built at the first gesture on the page, since a
+       browser refuses to start audio before one (sound.js). The saved
+       Sound setting applies on the title screen too */
+    S.snd.initOnGesture();
     S.snd.setOn(S.state.sound !== false);
     /* S.mode is "title" by now, so this puts data-theme="title" on <html>
        and the popups take the title screen's own shape (css/themes/title.css) */
@@ -137,7 +141,9 @@
       w.appendChild(scr.el("div", "title-sub", S.t("CESEA site terminal 01, Titan")));
       w.appendChild(scr.el("div", "title-sub dim", "7.0 N, 199.0 W"));
       var go = scr.el("button", "btn primary title-go", S.t("POWER ON"));
-      go.type = "button"; go.dataset.title = "power";
+      /* POWER ON plays the press of the click alone, with no release, in
+         either Control sounds setting (ui-sound.js) */
+      go.type = "button"; go.dataset.title = "power"; go.dataset.sound = "press";
       w.appendChild(go);
       var row = scr.el("div", "title-row");
       [
@@ -155,6 +161,8 @@
         ]
       ].forEach(function (b) {
         var x = scr.el("button", "btn", S.t(b[0])); x.type = "button"; x.dataset.title = b[1];
+        /* SETUP and ABOUT open a dialog; CREDITS opens a page in a new tab */
+        x.dataset.sound = b[1] === "credits" ? "link" : "open";
         if (b[1] === "tutorial") {
           x.setAttribute("aria-pressed", "false");
         }
@@ -199,6 +207,8 @@
        ending */
     S.snd.init(); S.snd.setOn(S.state.sound); S.snd.hush(false); S.snd.boot(); S.snd.spinup(); S.snd.ambient(true);
     S.live.start();
+    /* Power on, read by dmesg for its uptime */
+    S.bootAt = Date.now();
     boot();
   }
   /* Mail waiting in the save: the first message if the game has not started,
@@ -225,6 +235,7 @@
     }
     S.snd.hush(false); S.snd.spinup(); S.snd.ambient(true);
     S.live.start();
+    S.bootAt = S.bootAt || Date.now(); S.signInAt = Date.now();
     S.mode = "shell";
     S.enterMode();
     S.snd.hdd(5);
@@ -293,6 +304,8 @@
     scr.wait(350);
     scr.task(function () {
       S.mode = "shell";
+      /* Sign-in, read by dmesg: /home is mounted over NFS now */
+      S.signInAt = Date.now();
       S.snd.spinup();
       S.enterMode();
       S.snd.hdd(5);
@@ -487,8 +500,8 @@
       e.preventDefault(); S.snd.key(); submitInput(); return;
     }
     if (S.mode !== "shell") {
-      if (e.key.length === 1) {
-        S.snd.key();
+      if (e.key.length === 1 || e.key === "Backspace") {
+        S.snd.typed(e.key);
       } return;
     }
     if (e.key === "ArrowUp") {
@@ -504,7 +517,7 @@
       } return;
     }
     if (e.key.length === 1 || e.key === "Backspace") {
-      S.snd.key();
+      S.snd.typed(e.key);
     }
   }
   function globalKey(e) {

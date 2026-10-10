@@ -17,7 +17,7 @@
   var LAYERS = {
     fairphone: {
       /* The cover of the edition: the transparent edition's smoky
-         translucent grey, plain, with the parts and their prints showing
+         translucent gray, plain, with the parts and their prints showing
          through; the opaque Sky Blue; or Matte Black with the wordmark. It
          has a triangular hole at the top left for the camera bump, which
          belongs to the top module. */
@@ -75,7 +75,7 @@
         round(x + 12, y + 9, 14, 14, 3, C.frame); round(x + 11, y + 26, 14, 14, 3, C.frame);
         lens(x + 19, y + 16); lens(x + 18, y + 33);
       },
-      /* The USB-C port under its small grey metal bracket at the far left */
+      /* The USB-C port under its small gray metal bracket at the far left */
       usb: function (x, y) {
         round(x + 7, y + 152.5, 5.5, 10.5, 1, C.edge); f(x + 7.5, y + 152.5, 9, 1, C.white);
         screw(x + 9.7, y + 154.6); screw(x + 9.7, y + 160.4);

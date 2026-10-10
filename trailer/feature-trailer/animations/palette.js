@@ -1,6 +1,6 @@
 /* The warm archive palette of the History pictures (tools/history-pictures.js
    in the game): ground, sky texture, dark shape, light, red, gold, blue,
-   Titan orange, grey. Green is added from the game's SV-4 scene palette
+   Titan orange, gray. Green is added from the game's SV-4 scene palette
    (js/game/scenes.js, "lamp"), for the Hungarian flag. */
 "use strict";
 module.exports = {

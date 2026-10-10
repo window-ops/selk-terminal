@@ -79,7 +79,7 @@ Source: D1, 0-5 s of the clip. The cursor clicks HISTORY in the left panel of FI
 
 ### 32.25-52.25 s, the timelapse
 
-After the game's own timelapse in the TROIKA.RUN ending: a large year counter centred at the top that counts every year, and day and night passing, one day a second, with windows lit at night. It replaces the archive navigation, from the Greek crisis to the game's present, through cities of the region. The scenes are 128x64 in the archive palette, except Selk, which is 160x90 in the SV-4 camera palette, the grid of the alarm that follows.
+After the game's own timelapse in the TROIKA.RUN ending: a large year counter centered at the top that counts every year, and day and night passing, one day a second, with windows lit at night. It replaces the archive navigation, from the Greek crisis to the game's present, through cities of the region. The scenes are 128x64 in the archive palette, except Selk, which is 160x90 in the SV-4 camera palette, the grid of the alarm that follows.
 
 | Scene | File | Length | What changes |
 | --- | --- | --- | --- |
@@ -88,15 +88,15 @@ After the game's own timelapse in the TROIKA.RUN ending: a large year counter ce
 | Ax-4, 2025 | `ax4.js` | 5 s | The Dragon docks at the ISS. The flags of Poland and Hungary beside UZNAŃSKI and KAPU. The year rolls from 2025 to 2026, where the game's archive begins |
 | Bucharest, 2026-2047 | `bucharest.js` | 2 s | The Palace of the Parliament between blocuri, traffic. The 2033 climate strike under a red banner; from 2041 the Federation's flag on the tower; from 2045 scaffolding on a block |
 | Brno, 2047-2063 | `brno.js` | 2 s | Petrov and the cathedral, the Lesná estate. The panel robot on its site from 2049, the block in 2051; trees planted in 2052 on the bare side grow. A tram on the boulevard; from 2061 a light on the Moon |
-| Debrecen, 2063-2079 | `debrecen.js` | 3 s | The Great Reformed Church, houses, the research centre. A busy street becomes a bike lane in 2067; a monorail on pylons in 2070 is moved to the rail line in 2074, which becomes a park; trees and planting from 2072; solar panels spread over the roofs |
+| Debrecen, 2063-2079 | `debrecen.js` | 3 s | The Great Reformed Church, houses, the research center. A busy street becomes a bike lane in 2067; a monorail on pylons in 2070 is moved to the rail line in 2074, which becomes a park; trees and planting from 2072; solar panels spread over the roofs |
 | Selk crater, 2079-2097 | `selk.js` | 4 s | The counter holds on 2079 while the units build the lab on the barren crater. Plot 3 lights in 2083; MAST-01 rises from 2089 with CRANE-L at its top; in 2092 the lab goes dark and plot 9 glows, and in 2093 FOOTING-B stands on it; 2097 holds for the cut |
 
 The Federation is shown by the flag over Bucharest from 2041, the year of the game's Federal Treaty. The style stays the same across the 2025-2026 seam: the game's archive is written in 2097 and its 2026 entry already reports real 2024 election results.
 
 ### 52.25-56.25 s, the alarm
 
-1. **Boot close-up, 1 s:** The boot resumes with `Structure monitor ...... ALARM` in the error colour, and the game's error sound plays once. The camera holds close on that line. The next line, `Supervisor sleep ....... ended 26-02-2097`, sits at the bottom edge of the frame and is cut after "ended 26-0".
-2. **Shelter scene, 3 s** (`alarm.js`): The finale's first scene (`scenes.js`, `intro` panel 0), copied as the game draws it: the old terminal in the site shelter, and through the round window the dusty site and the tower. An industrial beacon hangs on a bracket from a cable conduit along the top of the wall and pulses amber once a second, washing the room. The supervisor, seen from behind, pulls the robot chair in toward the desk while it centres itself under the terminal, and reaches at once for the right edge of the screen, fast at first and slowing; the hand stays a moment, then comes back down. A scared calm. The new alarm tone runs under it.
+1. **Boot close-up, 1 s:** The boot resumes with `Structure monitor ...... ALARM` in the error color, and the game's error sound plays once. The camera holds close on that line. The next line, `Supervisor sleep ....... ended 26-02-2097`, sits at the bottom edge of the frame and is cut after "ended 26-0".
+2. **Shelter scene, 3 s** (`alarm.js`): The finale's first scene (`scenes.js`, `intro` panel 0), copied as the game draws it: the old terminal in the site shelter, and through the round window the dusty site and the tower. An industrial beacon hangs on a bracket from a cable conduit along the top of the wall and pulses amber once a second, washing the room. The supervisor, seen from behind, pulls the robot chair in toward the desk while it centers itself under the terminal, and reaches at once for the right edge of the screen, fast at first and slowing; the hand stays a moment, then comes back down. A scared calm. The new alarm tone runs under it.
 
 ### 56.25-69.25 s, STOPPED-REPAIRS and WATCH
 
@@ -104,7 +104,7 @@ The Federation is shown by the flag over Bucharest from 2041, the year of the ga
 | --- | --- | --- |
 | 56.25-59.25 | C1 | VIEW shows STRUCTURE / STOPPED-REPAIRS. The camera moves in on "zone 14 flagged", then on "26-02-2097 all supervisor woken". The Build column stays out of frame |
 | 59.25-63.25 | A1, 0-9 s | The camera widens to the desk, framed on its lower half with the tmux bar. The cursor waits, then clicks 2:WATCH |
-| 63.25-69.25 | A1, from 9 s | WATCH opens. The frame holds the SV-4 camera and the meter rows. "MAST-01 load" stands at 117.4 % in the error colour and climbs with the gusts. One gust shakes the screen. A close-up on "117.4 %" follows the wide view. The alarm tone cuts out and the first creak sounds |
+| 63.25-69.25 | A1, from 9 s | WATCH opens. The frame holds the SV-4 camera and the meter rows. "MAST-01 load" stands at 117.4 % in the error color and climbs with the gusts. One gust shakes the screen. A close-up on "117.4 %" follows the wide view. The alarm tone cuts out and the first creak sounds |
 
 The WATCH header carries the only full date on screen: 14-03-2097.
 
@@ -116,7 +116,7 @@ The WATCH header carries the only full date on screen: 14-03-2097.
 
 1. About 1 s of black after the last creak.
 2. The game's title screen fades in, as the game draws it: SELK, "CESEA site terminal 01, Titan", "7.0 N, 199.0 W", POWER ON, and SETUP / ABOUT / CREDITS.
-3. One added line under the coordinates, in the same dim colour, size and font: `gitlab.com/window-ops-web/selk-terminal`
+3. One added line under the coordinates, in the same dim color, size and font: `gitlab.com/window-ops-web/selk-terminal`
 4. Source: E1. The cursor rests, moves to POWER ON, and the button lights up amber on hover.
 5. The click of POWER ON sounds, and the trailer cuts to black while the button is lit.
 
@@ -242,7 +242,7 @@ Dropped: A2, A3 (optional takes) and B1 (covered by A1).
 
 The original recordings are excluded from this folder: they are rarely needed and leaving them out keeps the folder light. The cursor paths in `feature-trailer/shots/` are written by hand after them.
 
-### Cursor behaviour
+### Cursor behavior
 
 The hand-written cursor paths follow how the player moved in the recordings:
 
@@ -269,7 +269,7 @@ trailer/
     tools/           snapshot-game.js
     vendor/          copies from the game: pixel-sheet.js, the shelter and
                      site camera pieces from scenes.js, all the CSS, the
-                     sound engine and sounds, the fonts and the licences
+                     sound engine and sounds, the fonts and the licenses
   feature-trailer/
     DESIGN.md        this document
     timeline.js      the shots in order
@@ -291,7 +291,7 @@ External tools: Node, Playwright's Chromium, and ffmpeg through the `ffmpeg-stat
 
 ## 12. Licenses
 
-The folder keeps the game's licences for what it copies: GPL-3.0 for program code, CC BY-SA 4.0 for story text, SIL OFL 1.1 for the fonts, CC0 1.0 for the Selk illustrations. The license files travel with the copies.
+The folder keeps the game's licenses for what it copies: GPL-3.0 for program code, CC BY-SA 4.0 for story text, SIL OFL 1.1 for the fonts, CC0 1.0 for the Selk illustrations. The license files travel with the copies.
 
 ## 13. Known limits
 

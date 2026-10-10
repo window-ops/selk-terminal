@@ -163,7 +163,7 @@
 .wb-icon.locked .wb-label {
   color: var(--flag);
 }
-/* Windows: a 2px frame with a hard shadow; a maximised window fills the desktop exactly */
+/* Windows: a 2px frame with a hard shadow; a maximized window fills the desktop exactly */
 .wb-win {
   position: absolute;
   display: flex;
@@ -181,7 +181,7 @@
   box-shadow: none;
   border-width: 0;
 }
-/* The striped title bar. Each gadget sits centred in a slot of equal space: the bar's padding and the gap. */
+/* The striped title bar. Each gadget sits centered in a slot of equal space: the bar's padding and the gap. */
 .wb-tbar {
   display: flex;
   align-items: stretch;

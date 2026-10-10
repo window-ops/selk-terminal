@@ -465,7 +465,7 @@
        the timer here, so the menu opens once.
      - The press sends a synthetic contextmenu event to the pressed element,
        so the listener above builds the menu from the same target.
-     - The click that follows the lift is cancelled, since the menu opens
+     - The click that follows the lift is canceled, since the menu opens
        under the finger. */
   var LONG_MS = 500, SLOP = 10, press = null, firedAt = 0;
   function endPress() {

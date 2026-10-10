@@ -1,7 +1,7 @@
-/* MSG 002. The notice for MSG 002 slides in at the centre of the frame,
+/* MSG 002. The notice for MSG 002 slides in at the center of the frame,
    and the REPORT 2 tab appears below; the pointer goes up to OPEN MSG 002
    (recording G3, 9.6-16.5 s, at its speed, a still second left out) and
-   clicks. MAIL opens; the camera holds the message's news at the centre
+   clicks. MAIL opens; the camera holds the message's news at the center
    while the text cursor rests under it. */
 "use strict";
 (function () {

@@ -1,6 +1,6 @@
 /* The locked section, from recording G4 (48.9-57.3 s) at its speed. The
    pointer clicks ARCHIVE, marked LOCKED; the frame ends above EXPORT. The
-   game's dialog ARCHIVE IS LOCKED, at the centre, is read while the pointer
+   game's dialog ARCHIVE IS LOCKED, at the center, is read while the pointer
    goes to ENTER PASSWORD (a still second left out). The UNLOCK ARCHIVE
    dialog: SELK is typed, the pointer hidden; Enter, after a shorter wait
    than the recording's. The password is rejected and the box turns the

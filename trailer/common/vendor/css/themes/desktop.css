@@ -1,7 +1,7 @@
 /* Desktop mode: popups after a Workbench requester. A 2px haze frame with
    a hard shadow, the striped title bar of the desktop windows, text set
    flush left and flat controls. Menus and lists keep a 1px frame. The
-   accent is haze, the colour of the frames; the stripes keep the orange. */
+   accent is haze, the color of the frames; the stripes keep the orange. */
 html[data-theme="desktop"] {
   --accent: var(--haze);
   --on-accent: var(--hall);

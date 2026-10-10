@@ -74,7 +74,7 @@ function lab(d, x, lit) {
    the wide view draws it pixel for pixel, and a close-up projects the same
    geometry larger. x is the axis column, h the pixels of the 1 180 m
    built; positions are in columns and in pixels above the foot (up). The
-   shell is symmetric: odd widths centred on the axis, tapering in four even
+   shell is symmetric: odd widths centered on the axis, tapering in four even
    tiers from 9 pixels to 3, as 18 m to 6 m, the tiers of the design sheet.
    The cables and the outriggers keep the proportions of the design sheet
    (tools/design-drawings.js, MAST-01 drawn 29 pixels tall): the guy
@@ -135,7 +135,7 @@ function mast(d, x, h) {
     if (hh > 0) d.fill(x + i, base - hh + 1, 1, hh, Math.abs(i) % 3 === 0 ? RIB : DARK);
   }
 }
-/* A close-up of the model, s times larger, centred on the column cx and
+/* A close-up of the model, s times larger, centered on the column cx and
    the height cup of the wide view: the same shell, tie bands, cables and
    crane where the wide view has them, each drawn with the detail the
    nearer view shows. A wide-view pixel (column c, up u) covers the
@@ -167,7 +167,7 @@ function closeUp(d, m, cx, cup, s) {
 }
 
 const PICTURES = {
-  /* MAST-01 in the equinox dust of 2097, at the centre with its cables to
+  /* MAST-01 in the equinox dust of 2097, at the center with its cables to
      their anchors on both sides; the corridor from the sealed lab, west
      of the picture, stops a few pixels short of HALL-R, as in the
      feature trailer */
@@ -215,7 +215,7 @@ const PICTURES = {
   }],
   /* The equinox storm of 2083 from the archive: the wind drives the dust
      from the west in streaks, thickest near the ground, and the far rim
-     is gone in it. The lab, four years old, and its hallway show as grey
+     is gone in it. The lab, four years old, and its hallway show as gray
      shapes, the dust between them and the camera; only the lab's lit
      windows stand out. The roped plots are a few posts. MAST-01 was begun
      in 2089. */
@@ -241,7 +241,7 @@ const PICTURES = {
       for (let k = 0; k < len; k++) d.set(x + k, y + Math.floor(k / 6), c);
     }
     /* The hallway from the shelter, the lab, and the plots' posts, in the
-       grey of things seen through dust */
+       gray of things seen through dust */
     d.fill(0, HORIZON - 3, 40, 3, CABLE); d.fill(0, HORIZON - 3, 40, 1, HAZE);
     d.fill(40, HORIZON - 8, 20, 8, CABLE); d.fill(42, HORIZON - 10, 16, 2, CABLE);
     for (let i = 0; i < 4; i++) d.fill(43 + i * 4, HORIZON - 6, 2, 2, AMBER);

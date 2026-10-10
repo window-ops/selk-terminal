@@ -40,6 +40,35 @@ SELK.i18n.register("ro", {
   "Click HOME, then click README.": "Dă clic pe ACASĂ, apoi pe README.",
   "Confirm before all progress is erased.": "Cere confirmarea înainte de ștergerea întregului progres.",
   "Control sounds": "Sunete pentru controale",
+  "Drive sound": "Sunetul discului",
+  "The hard drive seeking when an entry or a page is read.": "Hard diskul care caută datele când se citește o intrare sau o pagină.",
+  "The drive is heard as it reads.": "Discul se aude când citește.",
+  "The drive is silent.": "Discul nu se aude.",
+  "SEEDS": "SEMINȚE",
+  "Same seed everywhere": "Aceeași sămânță peste tot",
+  "{name} seed": "Sămânța pentru {name}",
+  "One seed for every sound, from the wind to the clicks. Type digits or a word and press Enter; it replaces the seeds set below, and a seed always gives the same sounds.": "O singură sămânță pentru toate sunetele, de la vânt la clicuri. Tastează cifre sau un cuvânt și apasă Enter; înlocuiește semințele alese mai jos, iar o sămânță dă mereu aceleași sunete.",
+  "A random seed for every sound.": "O sămânță aleatorie pentru toate sunetele.",
+  "The seed the game starts with, for every sound.": "Sămânța cu care pornește jocul, pentru toate sunetele.",
+  "The noise of this sound. An empty field uses the seed of Same seed everywhere.": "Zgomotul acestui sunet. Un câmp gol folosește sămânța din Aceeași sămânță peste tot.",
+  "The seed the game starts with.": "Sămânța cu care pornește jocul.",
+  "Only for controls without a sound of their own": "Doar pentru controalele fără sunet propriu",
+  "Applies while Control sounds is ON": "Se aplică atunci când Sunete pentru controale are valoarea PORNIT",
+  "CONTROL SOUNDS": "SUNETE PENTRU CONTROALE",
+  "Click": "Clic",
+  "Function key": "Tastă funcțională",
+  "Typing": "Tastare",
+  "Toggle": "Comutare",
+  "Fold": "Pliere",
+  "Action": "Acțiune",
+  "Menu": "Meniu",
+  "Tab": "Filă",
+  "Choice": "Alegere",
+  "Card flip": "Întoarcerea cardului",
+  "Link": "Legătură",
+  "Select": "Selectare",
+  "Try a random seed.": "Încearcă o sămânță aleatorie.",
+  "DEFAULT": "IMPLICITĂ",
   "Each window fills the screen. The bar at the bottom switches between them, and so does Ctrl+B then a digit.": "Fiecare fereastră ocupă tot ecranul. Bara de jos comută între ele, la fel și Ctrl+B urmat de o cifră.",
   "Each window fills the screen; the buttons at the bottom switch between them.": "Fiecare fereastră ocupă tot ecranul; butoanele de jos comută între ele.",
   "Earth sends you messages. Each one takes a few seconds to arrive, then waits for you in MAIL.": "Pământul îți trimite mesaje. Fiecare sosește după câteva secunde și te așteaptă apoi în POȘTĂ.",
@@ -703,6 +732,33 @@ SELK.i18n.register("ro", {
   "show the reasoning": "arată raționamentul",
   "this list": "lista asta",
   "(hidden)": "(ascuns)",
+  "how the programs on this terminal changed, {changenote} linux lists its versions": "cum s-au schimbat programele acestui terminal, {changenote} linux îi listează versiunile",
+  "CHANGE NOTES": "NOTE DE MODIFICARE",
+  "Programs on this terminal. Open one to see its versions.": "Programele acestui terminal. Deschide unul ca să-i vezi versiunile.",
+  "not installed": "neinstalat",
+  "ALL PROGRAMS": "TOATE PROGRAMELE",
+  "ALL VERSIONS": "TOATE VERSIUNILE",
+  "OLDER: {version}": "MAI VECHE: {version}",
+  "NEWER: {version}": "MAI NOUĂ: {version}",
+  "[not listed yet]": "[încă nelistat]",
+  "CESEA data sheet, {ref}": "Fișa tehnică CESEA, {ref}",
+  "Manual page {ref}": "Pagina de manual {ref}",
+  "{source}: \"{quote}\"": "{source}: „{quote}”",
+  "Linux kernel documentation, {ref}": "Documentația nucleului Linux, {ref}",
+  "IETF standard RFC {ref}": "Standardul IETF RFC {ref}",
+  "CESEA supervisor course, {ref}": "Cursul CESEA pentru supraveghetori, {ref}",
+  "CESEA archive, {ref}": "Arhiva CESEA, {ref}",
+  "CESEA logistics office, brief of {ref}": "Biroul de logistică CESEA, notă din {ref}",
+  "Note: {name}": "Notă: {name}",
+  "{n} of {total}": "{n} din {total}",
+  "installed": "instalată",
+  "Installed": "Instalat",
+  "Changelog": "Jurnal de modificări",
+  "Group": "Grupa",
+  "{n} more programs are listed once their sections are open.": { "one": "Încă {n} program apare în listă după ce i se deschide secțiunea.", "few": "Încă {n} programe apar în listă după ce li se deschid secțiunile.", "other": "Încă {n} de programe apar în listă după ce li se deschid secțiunile." },
+  "{n} links in these notes open once their sections are open.": { "one": "{n} legătură din aceste note se deschide după ce i se deschide secțiunea.", "few": "{n} legături din aceste note se deschid după ce li se deschid secțiunile.", "other": "{n} de legături din aceste note se deschid după ce li se deschid secțiunile." },
+  "No change notes for {name}. Type {changenote} to list the programs.": "Nu există note de modificare pentru {name}. Scrie {changenote} ca să vezi programele.",
+  "{name} has no version {version}. Type {changenote} {id} to list its versions.": "{name} nu are versiunea {version}. Scrie {changenote} {id} ca să-i vezi versiunile.",
   "Reasoning hidden.": "Raționament ascuns.",
   "Reasoning shown.": "Raționament afișat.",
   "The supervisor wants that again.": "Supraveghetorul vrea asta din nou.",
@@ -890,7 +946,7 @@ SELK.i18n.register("ro", {
   "Show the hints page.": "Afișează pagina de indicii.",
   "Show the screen at once.": "Afișează ecranul imediat.",
   "Show the situation and buttons that trigger test actions.": "Afișează situația și butoane care declanșează acțiuni de test.",
-  "Show them greyed, with the reason beside each one.": "Le afișează estompate, cu motivul lângă fiecare.",
+  "Show them grayed, with the reason beside each one.": "Le afișează estompate, cu motivul lângă fiecare.",
   "Show three panes.": "Afișează trei panouri.",
   "Show tooltips.": "Afișează indicațiile.",
   "Pretty wrap": "Rânduri îngrijite",
@@ -1061,7 +1117,7 @@ SELK.i18n.register("ro", {
   "THREE PANES": "TREI PANOURI",
   "TITLE SCREEN": "ECRANUL DE PORNIRE",
   "TMUX": "TMUX",
-  "tmux 3.4 on Selk shell": "tmux 3.4 pe consola Selk",
+  "tmux 10.7 on Selk shell": "tmux 10.7 pe consola Selk",
   "tmux command prompt": "linia de comandă tmux",
   "to": "către",
   "To CESEA audit office via relay R-09.": "Către biroul de audit CESEA, prin releul R-09.",
@@ -1297,7 +1353,7 @@ SELK.i18n.register("ro", {
   "The Commission has been elected since 2045, the central bank answers to the parliament, and the old rescue fund became part of the federal treasury.": "Comisia este aleasă din 2045, banca centrală răspunde în fața parlamentului, iar vechiul fond de salvare a devenit parte a trezoreriei federale.",
   "The crisis of 2010 ended, but not its causes. Every downturn since has brought the cuts back.": "Criza din 2010 s-a încheiat, dar nu și cauzele ei. Fiecare recesiune de atunci a adus înapoi reducerile.",
   "The debt crisis is over. A deep recession would still leave each country alone with its own budget.": "Criza datoriilor s-a terminat. O recesiune adâncă ar lăsa totuși fiecare țară singură cu bugetul ei.",
-  "The European Stability Mechanism still lends, and the IMF left the European programmes long ago.": "Mecanismul European de Stabilitate încă dă împrumuturi, iar FMI a ieșit de mult din programele europene.",
+  "The European Stability Mechanism still lends, and the IMF left the European programs long ago.": "Mecanismul European de Stabilitate încă dă împrumuturi, iar FMI a ieșit de mult din programele europene.",
   "What became of the Troika?": "Ce s-a ales de Troică?",
   "What happened to the euro?": "Ce s-a întâmplat cu euro?",
   "Yes. A recession in one region is met by the federal budget, as between the states of any federation.": "Da. O recesiune într-o regiune este preluată de bugetul federal, ca între statele oricărei federații.",
@@ -1340,7 +1396,7 @@ SELK.i18n.register("ro", {
   "The young come back to farm. Land is not cheap any more, but there is work.": "Tinerii se întorc să lucreze pământul. Pământul nu mai e ieftin, dar există de lucru.",
   "The sea is warmer than when I was a boy. The fish have moved north.": "Marea e mai caldă decât pe când eram copil. Peștii s-au mutat spre nord.",
   "Porto Rafti fills with Athenians every August, as it always did.": "Porto Rafti se umple de atenieni în fiecare august, ca întotdeauna.",
-  "The harbour was rebuilt with the investment fund. Half my catch goes to the city by train.": "Portul a fost refăcut din fondul de investiții. Jumătate din pescuitul meu ajunge în oraș cu trenul.",
+  "The harbor was rebuilt with the investment fund. Half my catch goes to the city by train.": "Portul a fost refăcut din fondul de investiții. Jumătate din pescuitul meu ajunge în oraș cu trenul.",
   "The sea is warmer, but the coast is protected now, and the fish are coming back.": "Marea e mai caldă, dar acum coasta e protejată, iar peștii se întorc.",
   "Walk with the arrow keys, or A and D.": "Mergi cu săgețile sau cu A și D.",
   "Hold the right or left side to walk.": "Ține apăsat în dreapta sau în stânga ca să mergi.",
@@ -1702,6 +1758,13 @@ SELK.i18n.register("ro", {
   ],
   "whoami": [
    "cine"
+  ],
+  "dmesg": [
+   "dmesg"
+  ],
+  "changenote": [
+   "changenote",
+   "modificari"
   ],
   "decide": [
    "decide",
@@ -2127,6 +2190,222 @@ SELK.i18n.register("ro", {
    }
   },
   "notes": {
+   "r64": [
+    "R-64",
+    "Procesorul mașinilor de la bazele CESEA din 2075: 64 de biți, 4 nuclee la 1,2 GHz, construit să funcționeze sub radiații."
+   ],
+   "ecc": [
+    "Memorie ECC",
+    "Memorie care păstrează biți de control lângă date și corectează un bit inversat de radiații."
+   ],
+   "matrixunit": [
+    "Unitate matriceală",
+    "O parte a procesorului R-64 care înmulțește deodată tabele de numere, pentru modelele neuronale."
+   ],
+   "squashfs": [
+    "squashfs",
+    "Un sistem de fișiere comprimat, care poate fi doar citit. Terminalele bazelor își păstrează sistemul într-o singură imagine squashfs."
+   ],
+   "dmverity": [
+    "dm-verity",
+    "O verificare a nucleului, care compară fiecare bloc citit din imaginea sistemului cu un hash semnat de CESEA."
+   ],
+   "tmpfs": [
+    "tmpfs",
+    "Un sistem de fișiere păstrat în memorie. Fișierele lui se pierd la repornire."
+   ],
+   "nfs": [
+    "NFS",
+    "Network File System: serverul de fișiere pune /home la dispoziția terminalelor prin rețeaua bazei."
+   ],
+   "kerberos": [
+    "Kerberos",
+    "Sistemul de autentificare al bazei. Directorul emite tichete care dovedesc cine este un utilizator; cu krb5p, traficul este și criptat."
+   ],
+   "pkinit": [
+    "PKINIT",
+    "Autentificare Kerberos cu un certificat, aici cel de pe ecusonul echipajului, așa că nu se tastează nicio parolă."
+   ],
+   "ldap": [
+    "LDAP",
+    "Protocolul directorului bazei, care păstrează conturile și grupurile bazei."
+   ],
+   "binfmt": [
+    "binfmt_misc",
+    "Un tabel al nucleului care numește programul pornit pentru un tip de fișier. Site OS pornește cu jsrt fișierele scrise în ECMAScript."
+   ],
+   "initramfs": [
+    "initramfs",
+    "Un sistem mic, încărcat odată cu nucleul. Rulează verificările de pornire și apoi pornește sistemul propriu-zis."
+   ],
+   "rootslots": [
+    "Sloturi de sistem",
+    "Cardul păstrează două copii ale sistemului, pe partițiile p1 și p2. Un slot conține sistemul folosit, iar celălalt conține copia care a rulat înainte, păstrată ca rezervă. O actualizare se scrie mereu pe slotul nefolosit, iar terminalul pornește de pe el la următoarea repornire. Dacă noul sistem nu pornește de trei ori la rând, terminalul revine la celălalt slot."
+   ],
+   "delta": [
+    "Imagine delta",
+    "O actualizare care conține doar blocurile modificate, pentru legătura lentă cu Pământul."
+   ],
+   "ota": [
+    "Actualizare prin radio",
+    "O actualizare primită prin legătura cu Pământul și aplicată la următoarea repornire, fără vizită la bază."
+   ],
+   "ecmascript": [
+    "ECMAScript",
+    "Limbajul standard cunoscut și ca JavaScript. Fiecare program al bazei este scris în el."
+   ],
+   "wayland": [
+    "Wayland",
+    "Protocolul dintre programe și compozitor, care le desenează ferestrele pe ecran."
+   ],
+   "controlmode": [
+    "Modul de control",
+    "Un mod tmux în care alt program desenează panourile unei sesiuni tmux."
+   ],
+   "sixel": [
+    "SIXEL",
+    "O metodă veche prin care un terminal desenează imagini printre textele sale."
+   ],
+   "osc8": [
+    "OSC 8",
+    "Un cod de terminal care transformă o bucată de text într-o legătură."
+   ],
+   "seccomp": [
+    "seccomp",
+    "Un filtru al nucleului care limitează apelurile de sistem permise unui program."
+   ],
+   "namespaces": [
+    "Spații de nume",
+    "Separări ale nucleului care dau unui program propria vedere asupra fișierelor, rețelei și proceselor."
+   ],
+   "argon2": [
+    "Argon2id",
+    "O funcție lentă care transformă o parolă într-o cheie, astfel încât ghicirea parolelor durează mult."
+   ],
+   "keyring": [
+    "Inelul de chei al sesiunii",
+    "Spațiul nucleului pentru chei, păstrat până la deconectare."
+   ],
+   "pstore": [
+    "pstore",
+    "Memorie a nucleului care rezistă la repornire și păstrează ultimele mesaje ale pornirii anterioare."
+   ],
+   "dmesgrestrict": [
+    "dmesg_restrict",
+    "O setare a nucleului care lasă jurnalul nucleului doar conturilor cu capabilitatea cap_syslog."
+   ],
+   "bundle": [
+    "Bundle Protocol",
+    "Rețea pentru legături cu întârzieri mari: fiecare stație păstrează un pachet până când următoarea îl poate prelua."
+   ],
+   "ltp": [
+    "LTP",
+    "Licklider Transmission Protocol: transmisie pe o legătură cu ore de întârziere, sub Bundle Protocol."
+   ],
+   "lighttime": [
+    "Timpul luminii",
+    "Timpul în care un semnal parcurge distanța dintre Pământ și Saturn cu viteza luminii, între 74 și 84 de minute într-un sens."
+   ],
+   "ephemeris": [
+    "Efemeride",
+    "Un tabel cu pozițiile planetelor în fiecare moment, folosit pentru calculul distanțelor și al întârzierilor."
+   ],
+   "xband": [
+    "Banda X",
+    "Frecvențe radio în jur de 8 GHz, folosite pentru legăturile cu spațiul îndepărtat."
+   ],
+   "unitbus": [
+    "Magistrala unităților",
+    "Rețeaua prin cablu dintre terminalele bazei și unitățile de asamblare."
+   ],
+   "lts": [
+    "Nucleu cu suport extins",
+    "O versiune Linux care primește corecturi timp de mai mulți ani. Site OS urmează câte una."
+   ],
+   "stable": [
+    "Actualizare stabilă",
+    "O versiune cu corecturi pentru o serie de nucleu, fără funcții noi."
+   ],
+   "smp": [
+    "SMP",
+    "Mai multe procesoare care împart aceeași memorie și același nucleu."
+   ],
+   "scheduler": [
+    "Planificator de procese",
+    "Partea nucleului care decide ce sarcină rulează pe fiecare procesor și cât timp."
+   ],
+   "preemptrt": [
+    "PREEMPT_RT",
+    "O opțiune a nucleului pentru lucrul în timp real: o sarcină cu termen poate întrerupe aproape orice altă sarcină."
+   ],
+   "bpf": [
+    "BPF",
+    "Programe mici pe care nucleul le verifică și apoi le rulează în interiorul său."
+   ],
+   "rust": [
+    "Rust",
+    "Un limbaj de programare care previne multe erori de memorie încă de la compilarea programului."
+   ],
+   "mglru": [
+    "LRU pe mai multe generații",
+    "Un mod în care nucleul alege paginile de memorie de eliberat, după cât de recent au fost folosite."
+   ],
+   "meltdown": [
+    "Meltdown",
+    "O vulnerabilitate a procesoarelor, descoperită în 2018, prin care programele puteau citi memoria nucleului. Izolarea tabelelor de pagini o închide."
+   ],
+   "wireguard": [
+    "WireGuard",
+    "Un protocol mic și rapid pentru legături criptate între rețele."
+   ],
+   "livepatch": [
+    "Corectare din mers",
+    "Corectarea nucleului în timpul funcționării, fără repornire."
+   ],
+   "lto": [
+    "Optimizare la legare",
+    "Compilatorul îmbunătățește programul ca întreg, în momentul în care părțile lui sunt legate."
+   ],
+   "ssa": [
+    "Tree SSA",
+    "O formă a programului în interiorul GCC în care fiecare valoare este atribuită o singură dată, ceea ce ușurează optimizarea."
+   ],
+   "sframe": [
+    "SFrame",
+    "Un format mic care permite instrumentelor să parcurgă stiva unui program care rulează."
+   ],
+   "linker": [
+    "Editor de legături",
+    "Programul care unește părțile compilate într-un singur program. GNU ld și gold sunt editoare de legături."
+   ],
+   "cgroup": [
+    "Grupuri de control",
+    "Grupuri de procese ale nucleului, care împart limite de timp de procesor și de memorie."
+   ],
+   "pid1": [
+    "Procesul 1",
+    "Primul program pornit de nucleu. Pornește și supraveghează toate celelalte servicii."
+   ],
+   "tls": [
+    "TLS",
+    "Criptare pentru conexiunile de rețea, folosită între terminal și director."
+   ],
+   "debian": [
+    "Debian",
+    "Un sistem de operare liber. CESEA Site OS se bazează pe el de la versiunea 1.0."
+   ],
+   "tpaneza": [
+    "TPANEZA",
+    "ΤΡΑΠΕΖΑ, „bancă” în greacă, scris cu litere latine care seamănă cu cele grecești. Se citește trapeza."
+   ],
+   "troika": [
+    "Troika",
+    "Comisia Europeană, Banca Centrală Europeană și FMI, care au împrumutat Grecia între 2010 și 2015 în condiții de austeritate."
+   ],
+   "debtcrisis": [
+    "Criză a datoriilor",
+    "Un stat nu se mai poate împrumuta ca să-și plătească datoriile, iar băncile, plățile și comerțul lui se opresc sau încetinesc."
+   ],
    "author": [
     "Scris de",
     "Autorul înregistrat al unei înregistrări. Rezumatele generate de modele pot conține erori, iar etichetele pot fi greșite."
@@ -2808,7 +3087,7 @@ SELK.i18n.register("ro", {
  "pages": {
   "concept": "<nav class=\"note-nav drawing-back\" aria-label=\"Înapoi la autori și referințe\">\n        <a class=\"note-button\" href=\"credits.html\">Înapoi la autori și referințe</a>\n      </nav>\n      <h1>Selk: conceptul jocului</h1>\n      <p class=\"dim\">Un joc scurt despre viață extraterestră în Sistemul Solar, infrastructură automatizată și turbocapitalism.</p>\n      <h2>Cadrul</h2>\n      <p>Selk este un crater de impact real de pe Titan. Jocul amplasează acolo o megastructură izolată: o bază de cercetare și construcție ridicată pentru a afla dacă, în condițiile de sub suprafața lui Titan, există viață chemosintetică microscopică.</p>\n      <p>În acest viitor imaginat, omenirea a ținut sub control schimbările climatice printr-o combinație de planificare ecosocialistă și politici de urgență adoptate în grabă. După ultimele etape ale capitalismului, formele democratice de socialism devin norma. Prefabricatele transformă locuințele de mare densitate, iar cercetarea roboților de asamblare se accelerează. Aceste mașini construiesc repede, lucrează cu multe materiale și preiau munca periculoasă, cu risc mai mic pentru oameni.</p>\n      <p>Cercetătorii Agenției Central-Europene de Explorare Spațială (CESEA) observă că aceeași tehnologie ar putea ajuta la întemeierea unor colonii pe Marte, Titan, Europa, Enceladus, Io și alte lumi solide. Ei dezvoltă roboți adaptabili, capabili să imprime și să asambleze structuri, să reziste în condiții dure și să funcționeze perioade lungi cu energie puțină. Titan devine baza-prototip, pentru că acolo energia este rară.</p>\n      <h2>Misiunea</h2>\n      <p>Prima instalație este un laborator modest și izolat, destinat să testeze posibilitatea vieții chemosintetice. Cercetările sugerează că energia chimică și cea nucleară ar putea susține împreună colonii în medii sărace în energie. Echipele de roboți sunt apoi pregătite pentru o folosire mai largă. Regulile lor de funcționare includ măsuri de protecție menite să apere viața microscopică de construcții și de activitatea industrială.</p>\n      <p>Ești primul și singurul supraveghetor uman trimis pe Titan. Ai fost ales pentru rezistența psihică în izolare extremă și pentru cunoașterea sistemelor PyTorch și NTorch ale bazei.</p>\n      <h2>Scopul</h2>\n      <p>Investighezi ce s-a întâmplat în bază pe baza înregistrărilor, instrumentelor, rapoartelor și mesajelor de pe Pământ, apoi decizi soarta bazei.</p>\n      <h2>Breșa</h2>\n      <p>O facțiune turbocapitalistă compromite roboții și le elimină măsurile de protecție ecologică. Mașinile sunt redirecționate să construiască la nesfârșit infrastructură de extracție a metanului. Hidrogenul gri este trimis pe Pământ și prezentat drept hidrogen albastru sau verde. Substanțe aduse de pe Pământ sunt pompate în atmosfera lui Titan pentru a face industria mai rentabilă, în detrimentul bacteriilor chemosintetice locale.</p>\n      <p>Apoi sosește o actualizare de pe Pământ. Odată instalată, produce un val de rezultate fals pozitive. Megastructura începe să cedeze sub propria presiune, iar sistemele rămase nu mai cad de acord asupra a ceea ce se întâmplă sau a ceea ce trebuie făcut.</p>\n      <h2>Cum se spune povestea</h2>\n      <p class=\"callout\">Povestea se dezvăluie prin înregistrări incomplete, relatări contradictorii și sisteme modelate de interese instituționale.</p>\n      <p>Sistemul de operare Selk, CESEA, HX Holdings și misiunea sunt fictive. Craterul Selk este un loc real de pe Titan.</p>\n      <nav class=\"note-nav\" aria-label=\"Paginile de note\">\n        <a class=\"note-button\" href=\"credits.html\">Autori și referințe</a>\n        <a class=\"note-button\" href=\"devnotes.html\">Notele dezvoltatorului, cu dezvăluiri</a>\n        <a class=\"note-button\" href=\"drawings.html\">Desene</a>\n        <a class=\"note-button\" href=\"glossary.html\">Glosar</a>\n        <a class=\"note-button\" href=\"themes.html\">Context politic și de design</a>\n        <a class=\"note-button\" href=\"trailers.html\">Trailere</a>\n        <a class=\"note-button\" href=\"warranty.html\">Garanție și licențe</a>\n      </nav>",
   "concept:title": "Selk, conceptul jocului",
-  "credits": "<h1>Selk: autori și referințe</h1>\n      <p>Concept și poveste originale. Programare și implementare asistate de Claude (Anthropic) și Codex (OpenAI).</p>\n      <h2>Fonturi</h2>\n      <ul>\n        <li>IBM Plex Mono, copyright 2017 IBM Corp., SIL Open Font License 1.1.&#8239;<a class=\"citation-button\" href=\"../fonts/OFL-IBMPlexMono.txt\">Licență</a></li>\n        <li>VT323, copyright 2011 The VT323 Project Authors, SIL Open Font License 1.1.&#8239;<a class=\"citation-button\" href=\"../fonts/OFL-VT323.txt\">Licență</a></li>\n      </ul>\n      <h2>Știința din spatele ficțiunii</h2>\n      <ul class=\"citations\">\n        <li>Temperatura și presiunea la suprafață: măsurătorile Huygens HASI, Fulchignoni și colaboratorii, <cite>Nature</cite>, 2005.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1038/nature04314\">DOI</a></li>\n        <li>Hidrogenul și acetilena ca semne ale vieții bazate pe metan: McKay și Smith, <cite>Icarus</cite>, 2005.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1016/j.icarus.2005.05.018\">DOI</a></li>\n        <li>Concentrația scăzută de acetilenă la suprafață: Clark și colaboratorii, Cassini VIMS, 2010.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1029/2009JE003369\">DOI</a></li>\n        <li>Fluxul de hidrogen spre suprafață: Strobel, <cite>Icarus</cite>, 2010.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1016/j.icarus.2010.03.003\">DOI</a></li>\n        <li>Craterul Selk, bazinele de topitură și clatratul de metan: Wakita și colaboratorii, <cite>Planetary Science Journal</cite>, 2023.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.3847/PSJ/acbe40\">DOI</a></li>\n        <li>Furtunile ecuatoriale: Turtle și colaboratorii, <cite>Science</cite>, 2011.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1126/science.1201063\">DOI</a></li>\n        <li>Furtunile de praf din preajma echinocțiului: Rodriguez și colaboratorii, <cite>Nature Geoscience</cite>, 2018.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1038/s41561-018-0233-2\">DOI</a></li>\n        <li>Efectul de seră și efectul antiseră pe Titan: McKay, Pollack și Courtin, <cite>Science</cite>, 1991.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1126/science.11538492\">DOI</a></li>\n        <li>Concentrația limită de oxigen pentru metanul în azot: Perry's Chemical Engineers' Handbook.</li>\n        <li>Întârzierea semnalului între Pământ și Saturn: datele de sincronizare ale misiunii NASA Cassini.</li>\n      </ul>\n      <nav class=\"note-nav\" aria-label=\"Paginile de note\">\n        <a class=\"note-button\" href=\"concept.html\">Conceptul jocului</a>\n        <a class=\"note-button\" href=\"devnotes.html\">Notele dezvoltatorului, cu dezvăluiri</a>\n        <a class=\"note-button\" href=\"drawings.html\">Desene</a>\n        <a class=\"note-button\" href=\"glossary.html\">Glosar</a>\n        <a class=\"note-button\" href=\"themes.html\">Context politic și de design</a>\n        <a class=\"note-button\" href=\"trailers.html\">Trailere</a>\n        <a class=\"note-button\" href=\"warranty.html\">Garanție și licențe</a>\n      </nav>",
+  "credits": "<h1>Selk: autori și referințe</h1>\n      <p>Concept și poveste originale. Programare și implementare asistate de Claude (Anthropic) și Codex (OpenAI).</p>\n      <h2>Fonturi</h2>\n      <ul>\n        <li>IBM Plex Mono, copyright 2017 IBM Corp., SIL Open Font License 1.1.&#8239;<a class=\"citation-button\" href=\"../fonts/OFL-IBMPlexMono.txt\">Licență</a></li>\n        <li>VT323, copyright 2011 The VT323 Project Authors, SIL Open Font License 1.1.&#8239;<a class=\"citation-button\" href=\"../fonts/OFL-VT323.txt\">Licență</a></li>\n      </ul>\n      <h2>Știința din spatele ficțiunii</h2>\n      <ul class=\"citations\">\n        <li>Temperatura și presiunea la suprafață: măsurătorile Huygens HASI, Fulchignoni și colaboratorii, <cite>Nature</cite>, 2005.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1038/nature04314\">DOI</a></li>\n        <li>Hidrogenul și acetilena ca semne ale vieții bazate pe metan: McKay și Smith, <cite>Icarus</cite>, 2005.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1016/j.icarus.2005.05.018\">DOI</a></li>\n        <li>Concentrația scăzută de acetilenă la suprafață: Clark și colaboratorii, Cassini VIMS, 2010.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1029/2009JE003369\">DOI</a></li>\n        <li>Fluxul de hidrogen spre suprafață: Strobel, <cite>Icarus</cite>, 2010.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1016/j.icarus.2010.03.003\">DOI</a></li>\n        <li>Craterul Selk, bazinele de topitură și clatratul de metan: Wakita și colaboratorii, <cite>Planetary Science Journal</cite>, 2023.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.3847/PSJ/acbe40\">DOI</a></li>\n        <li>Furtunile ecuatoriale: Turtle și colaboratorii, <cite>Science</cite>, 2011.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1126/science.1201063\">DOI</a></li>\n        <li>Furtunile de praf din preajma echinocțiului: Rodriguez și colaboratorii, <cite>Nature Geoscience</cite>, 2018.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1038/s41561-018-0233-2\">DOI</a></li>\n        <li>Efectul de seră și efectul antiseră pe Titan: McKay, Pollack și Courtin, <cite>Science</cite>, 1991.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1126/science.11538492\">DOI</a></li>\n        <li>Concentrația limită de oxigen pentru metanul în azot: Perry's Chemical Engineers' Handbook.</li>\n        <li>Întârzierea semnalului între Pământ și Saturn: datele de sincronizare ale misiunii NASA Cassini.</li>\n      </ul>\n      <nav class=\"note-nav\" aria-label=\"Paginile de note\">\n        <a class=\"note-button\" href=\"concept.html\">Conceptul jocului</a>\n        <a class=\"note-button\" href=\"devnotes.html\">Notele dezvoltatorului, cu dezvăluiri</a>\n        <a class=\"note-button\" href=\"drawings.html\">Desene</a>\n        <a class=\"note-button\" href=\"glossary.html\">Glosar</a>\n        <a class=\"note-button\" href=\"themes.html\">Context politic și de design</a>\n        <a class=\"note-button\" href=\"euro-crisis.html\">Criza euro în joc</a>\n        <a class=\"note-button\" href=\"trailers.html\">Trailere</a>\n        <a class=\"note-button\" href=\"warranty.html\">Garanție și licențe</a>\n      </nav>",
   "credits:title": "Selk, autori și referințe",
   "devnotes": "<nav class=\"note-nav drawing-back\" aria-label=\"Înapoi la autori și referințe\">\n        <a class=\"note-button\" href=\"credits.html\">Înapoi la autori și referințe</a>\n      </nav>\n      <h1>Notele dezvoltatorului Selk</h1>\n      <p class=\"warn\">Aceste note conțin toate răspunsurile, parolele și finalurile.</p>\n      <p class=\"dim\">Concept și poveste originale. Programare și implementare asistate de Claude (Anthropic) și Codex (OpenAI).</p>\n      <h2>Design</h2>\n      <p>Selk este un joc de investigație într-o bază de date, după modelul Lost wiki Kozlovka. Jucătorul este singurul supraveghetor al unui șantier CESEA de pe Titan, trezit dintr-un somn lung pentru că turnul principal cedează. Biroul de audit de pe Pământ trimite pagini de raport cu spații libere. Jucătorul completează fiecare spațiu cu numele înregistrării din baza de date care îi răspunde.</p>\n      <p>Două căi explică avaria. Calea A urmează poarta de detectare a vieții: o actualizare a restabilit o valoare de referință a hidrogenului din 2083, instalația de export scăzuse deja hidrogenul local, iar poarta a blocat reparațiile din toată zona 14. Calea B urmează detectorul de fisuri: aceeași actualizare a instalat un model antrenat pe oțel și beton de pe Pământ, iar unitățile de tăiere au înlăturat piese intacte. Ambele căi duc la HX Holdings și la o persoană din interiorul CESEA care deține cheia de semnare 7.</p>\n      <p>Trei tipuri de text nesigur îl pun la încercare pe jucător. Rezumatele generate de modele conțin erori. Unele etichete de autor sunt false, iar jucătorul le poate descoperi comparând semnăturile personalului cu datele somnului lung, deoarece baza are un singur membru de echipaj. Trei note din manual sunt învechite, iar anul ediției le trădează.</p>\n      <h2>Graf</h2>\n      <div class=\"graph\" id=\"graph\"></div>\n      <h2>Parole</h2>\n      <div id=\"locks\"></div>\n      <h2>Răspunsurile rapoartelor</h2>\n      <div id=\"reports\"></div>\n      <h2>Text nesigur</h2>\n      <div id=\"unreliable\"></div>\n      <h2>Mesaje</h2>\n      <div id=\"messages\"></div>\n      <h2>Finaluri</h2>\n      <div id=\"endings\"></div>\n      <h2>Toate înregistrările</h2>\n      <div id=\"articles\"></div>\n      <nav class=\"note-nav\" aria-label=\"Paginile de note\">\n        <a class=\"note-button\" href=\"credits.html\">Autori și referințe</a>\n        <a class=\"note-button\" href=\"concept.html\">Conceptul jocului</a>\n        <a class=\"note-button\" href=\"drawings.html\">Desene</a>\n        <a class=\"note-button\" href=\"glossary.html\">Glosar</a>\n        <a class=\"note-button\" href=\"themes.html\">Context politic și de design</a>\n        <a class=\"note-button\" href=\"trailers.html\">Trailere</a>\n        <a class=\"note-button\" href=\"warranty.html\">Garanție și licențe</a>\n      </nav>",
   "devnotes:title": "Selk, notele dezvoltatorului",
@@ -2818,6 +3097,8 @@ SELK.i18n.register("ro", {
   "glossary:title": "Glosarul Selk",
   "themes": "<nav class=\"note-nav drawing-back\" aria-label=\"Înapoi la autori și referințe\">\n        <a class=\"note-button\" href=\"credits.html\">Înapoi la autori și referințe</a>\n      </nav>\n      <h1>Context politic și de design</h1>\n      <p class=\"note\">Teoriile politice și sociale din spatele temelor jocului.</p>\n      <h2>Ecosocialism și redresare climatică</h2>\n      <p>Conceptul imaginează o omenire care ține sub control schimbările climatice prin politici ecosocialiste, urmate de un socialism democratic. Măsurile de urgență rapide, instituțiile îndepărtate și interesele industriale continuă să creeze alegeri dificile.</p>\n      <h2>Centru și periferie: cine construiește viitorul?</h2>\n      <p>CESEA amplasează cercetarea la scară planetară în Europa Centrală și de Est. Analiza sistemului-lume și teoria dependenței examinează modul în care investițiile, cunoștințele tehnice și deciziile se concentrează în anumite regiuni, lăsând altor regiuni un control mai mic asupra dezvoltării.</p>\n      <p>Jocul imaginează regiuni mai sărace ale Sudului Global care câștigă resurse și influență în știință și dezvoltare. Europa de Est și Sudul Global au istorii distincte. În acest viitor, ambele pot influența cercetarea spațială și infrastructura.</p>\n      <p>André Gunder Frank susține că subdezvoltarea poate rezulta din relații economice inegale. Immanuel Wallerstein descrie centrul, semiperiferia și periferia ca poziții într-o economie mondială interconectată. Jocul analizează felul în care accesul mai larg la infrastructură avansată ar putea schimba aceste relații.</p>\n      <h2>Antiimperialism, extracție și noua frontieră</h2>\n      <p>Exploatarea metanului concentrează profitul și deciziile pe Pământ, iar costurile ecologice rămân pe Titan.</p>\n      <p>Analiza imperialismului la Lenin se concentrează pe monopol, capitalul financiar și exportul de capital. Teoria dependenței și teoriile anticoloniale adaugă alte istorii și perspective. Povestea se întreabă dacă expansiunea spațială va reproduce relațiile extractive.</p>\n      <h2>Blocuri din panouri, prefabricate și roboți</h2>\n      <p>Roboții constructori pornesc de la un experiment de gândire: ce s-ar întâmpla dacă producția și asamblarea repetitive din panelák, blocuri, Plattenbau și alte locuințe prefabricate din Europa de Est ar fi automatizate? Acești termeni numesc forme regionale înrudite, cu istorii distincte.</p>\n      <p>Jocul prezintă locuințele prefabricate ca exemplu de producție colectivă: componentele standard, planificarea și asamblarea pot asigura locuințe la scară mare. Roboții aplică această metodă construcției cu materiale neobișnuite și în medii ostile. Efectele lor sociale depind de cine le stabilește obiectivele, cine le poate schimba și nevoile cui le servesc.</p>\n      <p>În <em>Capitalul</em>, Marx discută modul în care mașinile schimbă producția și felul în care efectele lor depind de controlul social. La Selk, modificările de software pot elimina măsurile de protecție ale roboților și pot redirecționa spre extracție mașini construite pentru cercetare.</p>\n      <h2>Megaproiecte, sisteme și scară ascunsă</h2>\n      <p>La Selk, \"mega\" descrie o rețea coordonată, întinsă pe sau sub terenul prăfuit.</p>\n      <p>Supraveghetorul evaluează megaproiectul prin mesaje întârziate, înregistrări revizuite și rezumate înșelătoare, scrise de organizații cu interese concurente.</p>\n      <h2>Viața dincolo de proprietatea umană</h2>\n      <p>Regulile de protecție a vieții din bază pornesc de la protecția planetară și de la etica mediului. Biosfera profundă a Pământului arată că viața microbiană poate persista în medii sărace în energie. Interiorul lui Titan este încă studiat și nu s-a confirmat nicio formă de viață extraterestră. Bacteriile de la Selk sunt fictive. Jucătorul decide ce dovezi sunt suficiente pentru a proteja un posibil ecosistem înainte de începerea lucrărilor industriale.</p>\n      <h2>Referințe teoretice și de cercetare</h2>\n      <ul class=\"citations\">\n        <li>Immanuel Wallerstein, <cite>World-Systems Analysis: An Introduction</cite>, Duke University Press.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1215/9780822399018\">DOI</a></li>\n        <li>André Gunder Frank, <cite>The Development of Underdevelopment</cite>, <cite>Monthly Review</cite>, 1966.&#8239;<a class=\"citation-button\" href=\"https://monthlyreview.org/9980018041966/\">Articol</a></li>\n        <li>V. I. Lenin, <cite>Imperialismul, stadiul cel mai înalt al capitalismului</cite>.&#8239;<a class=\"citation-button\" href=\"https://www.marxists.org/archive/lenin/works/1916/imp-hsc/\">Text</a></li>\n        <li>Michael Löwy, <cite>The Ecosocialist Alternative</cite>, <cite>The Cambridge Handbook of Environmental Sociology</cite>.&#8239;<a class=\"citation-button\" href=\"https://www.cambridge.org/core/books/abs/cambridge-handbook-of-environmental-sociology/ecosocialist-alternative/343A985DDDE8DAD0309D2A49C88B4208\">Capitol</a></li>\n        <li>Karl Marx, <cite>Capitalul</cite>, volumul I, capitolul 15, <cite>Mașinismul și marea industrie</cite>.&#8239;<a class=\"citation-button\" href=\"https://www.marxists.org/archive/marx/works/1867-c1/ch15.htm\">Text</a></li>\n        <li>Bent Flyvbjerg, <cite>What You Should Know About Megaprojects, and Why</cite>, <cite>Project Management Journal</cite>, 2014.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1002/pmj.21409\">DOI</a></li>\n        <li>Lucyna Błażejczyk-Majka și colaboratorii, studiu comparativ al locuințelor prefabricate din Europa Centrală și de Est, 2026.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.14746/sho.2026.44.1.007\">DOI</a></li>\n        <li>FengPing Wang și colaboratorii, <cite>Discovering the Roles of Subsurface Microorganisms</cite>, <cite>Chinese Science Bulletin</cite>, 2013.&#8239;<a class=\"citation-button\" href=\"https://doi.org/10.1007/s11434-012-5358-x\">DOI</a></li>\n        <li>NASA Astrobiology, <cite>The Habitability of Titan and its Ocean</cite>.&#8239;<a class=\"citation-button\" href=\"https://astrobiology.nasa.gov/nai/articles/2019/5/9/the-habitability-of-titan-and-its-ocean/\">Prezentare</a></li>\n        <li>Departamentul pentru Afaceri Economice și Sociale al ONU, <cite>What Is South-South Cooperation and Why Does It Matter?</cite>&#8239;<a class=\"citation-button\" href=\"https://www.un.org/development/desa/en/news/intergovernmental-coordination/south-south-cooperation-2019.html\">Prezentare</a></li>\n      </ul>\n      <nav class=\"note-nav\" aria-label=\"Paginile de note\">\n        <a class=\"note-button\" href=\"credits.html\">Autori și referințe</a>\n        <a class=\"note-button\" href=\"concept.html\">Conceptul jocului</a>\n        <a class=\"note-button\" href=\"devnotes.html\">Notele dezvoltatorului, cu dezvăluiri</a>\n        <a class=\"note-button\" href=\"drawings.html\">Desene</a>\n        <a class=\"note-button\" href=\"glossary.html\">Glosar</a>\n        <a class=\"note-button\" href=\"trailers.html\">Trailere</a>\n        <a class=\"note-button\" href=\"warranty.html\">Garanție și licențe</a>\n      </nav>",
   "themes:title": "Selk: context politic și de design",
+  "euro-crisis": "<nav class=\"note-nav drawing-back\" aria-label=\"Înapoi la autori și referințe\">\n        <a class=\"note-button\" href=\"credits.html\">Înapoi la autori și referințe</a>\n      </nav>\n      <h1>Criza euro în joc</h1>\n      <p class=\"note\">Acțiunea din Selk are loc în 2097, însă multe dintre texte trimit la criza euro dintre 2009 și 2015. Această pagină arată unde apare și de ce.</p>\n      <h2>Criza pe scurt</h2>\n      <p>Din 2009, Grecia și alte state din zona euro nu s-au mai putut împrumuta la dobânzi pe care să le poată plăti. În 2010, Grecia a luat primul împrumut de la Troika: Comisia Europeană, Banca Centrală Europeană și Fondul Monetar Internațional. Împrumuturile au venit cu condiții: tăieri de salarii, de pensii și de servicii publice și vânzarea unor bunuri publice.</p>\n      <p>Între 2008 și 2013, economia Greciei s-a micșorat cu aproximativ un sfert, iar șomajul în rândul tinerilor s-a apropiat de 60%. În iulie 2015, 61% dintre alegătorii greci au respins condițiile Troikăi într-un referendum, iar un al treilea program de împrumut a urmat în câteva săptămâni. În afara zonei euro, România a tăiat cu un sfert salariile din sectorul public în 2010, ca să îndeplinească condițiile împrumutului de la FMI și UE.</p>\n      <h2>Unde apare</h2>\n      <ul>\n        <li>Ecranul de încărcare: informații despre împrumuturile Greciei, referendumul din 2015 și tăierile de salarii din România.</li>\n        <li>Secțiunea Istorie: reformele din 2045, care răspund obiecțiilor făcute concrete de criză, și TROIKA.RUN, un joc de alergare în care Grecia fuge de Troika din 2010 până în 2015, cu câte o decizie pentru fiecare an.</li>\n        <li>Un puzzle din finalul jocului, construit pe bancnotele euro și pe țările crizei. Răspunsul se află pe pagina cu notele dezvoltatorului.</li>\n        <li>Notele de modificare ale terminalului: TPANEZA, un program care prognozează crizele datoriilor de pe Pământ, ca unitățile de construcție să știe ce aprovizionări se pot opri.</li>\n      </ul>\n      <h2>De ce revine jocul la ea</h2>\n      <p>În istoria jocului, criza este unul dintre motivele pentru care a fost înființată Federația Europei. În 2041 Grecia încă plătea împrumuturile dintre 2010 și 2018, în condiții care urmau să dureze până în 2070. Federația s-a format în acel an, în parte ca o soluție permanentă la criză, cu un singur buget și o singură datorie, comune statelor membre. Reformele ei din 2045 răspund obiecțiilor pe care criza le-a făcut concrete: un organ executiv neales, o bancă centrală în afara controlului democratic, reguli fiscale care au impus austeritatea și tratate care au pus regulile pieței în afara alegerilor.</p>\n      <p>Criza dă formă și cadrului jocului. Ea a arătat cum investițiile și industria se adunau în statele mai bogate ale uniunii, în timp ce statele mai sărace suportau tăierile. CESEA întoarce acest tipar: plasează în Europa Centrală și de Est munca de construcție pe alte lumi. Pagina <a href=\"themes.html\">context politic și de design</a> descrie acest lucru prin raportul dintre centru și periferie. Pe Titan, o criză a datoriilor de pe Pământ poate opri lansări și livrări de piese peste ani, iar TPANEZA prognozează astfel de crize pentru unitățile de construcție. TROIKA.RUN, parte din colecția didactică a arhivei, prezintă fiecare an al crizei grecești ca pe o decizie.</p>\n      <nav class=\"note-nav\" aria-label=\"Paginile de note\">\n        <a class=\"note-button\" href=\"concept.html\">Conceptul jocului</a>\n        <a class=\"note-button\" href=\"devnotes.html\">Notele dezvoltatorului, cu dezvăluiri</a>\n        <a class=\"note-button\" href=\"drawings.html\">Desene</a>\n        <a class=\"note-button\" href=\"glossary.html\">Glosar</a>\n        <a class=\"note-button\" href=\"themes.html\">Context politic și de design</a>\n        <a class=\"note-button\" href=\"trailers.html\">Trailere</a>\n        <a class=\"note-button\" href=\"warranty.html\">Garanție și licențe</a>\n      </nav>",
+  "euro-crisis:title": "Selk: criza euro în joc",
   "warranty": "<nav class=\"note-nav drawing-back\" aria-label=\"Înapoi la autori și referințe\">\n        <a class=\"note-button\" href=\"credits.html\">Înapoi la autori și referințe</a>\n      </nav>\n      <h1>Note privind garanția</h1>\n      <p>Acest proiect este furnizat \"ca atare\", fără nicio garanție.</p>\n      <h2>Surse</h2>\n      <p>Citările susțin premisa jocului. Este posibil ca autorul să fi consultat rezumate sau versiuni cu acces deschis, nu documentele originale complete.</p>\n      <h2>Autori</h2>\n      <p>Autor și direcție artistică: miculpionier (window-ops). Claude (Anthropic) și Codex (OpenAI) au asistat la programare și implementare, din cauza timpului și a cunoștințelor tehnice limitate. Direcția artistică aparține autorului.</p>\n      <h2>Licențe</h2>\n      <ul class=\"citations\">\n        <li>Codul sursă al programului: GNU General Public License, versiunea 3.0.&#8239;<a class=\"citation-button\" href=\"../licenses/GPL-3.0.txt\">Textul complet</a>&#8239;<a class=\"citation-button\" href=\"https://www.gnu.org/licenses/gpl-3.0.en.html\">Sursa oficială</a></li>\n        <li>Povestea originală și documentația: Creative Commons Atribuire-Distribuire în condiții identice 4.0 Internațional, pentru forma scrisă a ideilor.&#8239;<a class=\"citation-button\" href=\"../licenses/CC-BY-SA-4.0.txt\">Textul complet</a>&#8239;<a class=\"citation-button\" href=\"https://creativecommons.org/licenses/by-sa/4.0/\">Sursa oficială</a></li>\n        <li>Ilustrațiile originale Selk: trecute în domeniul public prin CC0 1.0, în limita drepturilor autorului. Imaginile RADIOSOL folosite ca referințe vizuale nu sunt incluse și nu fac obiectul acestei dedicări.&#8239;<a class=\"citation-button\" href=\"../licenses/CC0-1.0.txt\">Textul complet</a>&#8239;<a class=\"citation-button\" href=\"https://creativecommons.org/publicdomain/zero/1.0/\">Sursa oficială</a></li>\n        <li>Fonturile își păstrează condițiile SIL Open Font License 1.1.&#8239;<a class=\"citation-button\" href=\"../licenses/OFL-1.1.txt\">Textul complet</a></li>\n      </ul>\n      <nav class=\"note-nav\" aria-label=\"Paginile de note\">\n        <a class=\"note-button\" href=\"credits.html\">Autori și referințe</a>\n        <a class=\"note-button\" href=\"concept.html\">Conceptul jocului</a>\n        <a class=\"note-button\" href=\"devnotes.html\">Notele dezvoltatorului, cu dezvăluiri</a>\n        <a class=\"note-button\" href=\"drawings.html\">Desene</a>\n        <a class=\"note-button\" href=\"glossary.html\">Glosar</a>\n        <a class=\"note-button\" href=\"themes.html\">Context politic și de design</a>\n        <a class=\"note-button\" href=\"trailers.html\">Trailere</a>\n      </nav>",
   "warranty:title": "Selk, note privind garanția",
   "trailers": "\n      <nav class=\"note-nav drawing-back\" aria-label=\"Înapoi la autori și referințe\">\n        <a class=\"note-button\" href=\"credits.html\">Înapoi la autori și referințe</a>\n      </nav>\n      <h1>Selk: trailere</h1>\n      <p class=\"dim\">Două trailere, făcute în cod din ecranele, imaginile și sunetele jocului.</p>\n      <nav class=\"note-nav trailer-tabs\" aria-label=\"Trailere\">\n        <a class=\"note-button\" href=\"#feature\" data-trailer=\"feature\" data-src=\"../trailer/out/selk-feature-trailer.mp4\">Trailerul de prezentare</a>\n        <a class=\"note-button\" href=\"#gameplay\" data-trailer=\"gameplay\" data-src=\"../trailer/out/selk-gameplay-trailer.mp4\">Trailerul de joc</a>\n      </nav>\n      <section class=\"trailer-player\" tabindex=\"0\" aria-label=\"Playerul trailerelor. Spațiu pornește sau oprește, săgețile mută cu 5 secunde, M oprește sunetul, F trece pe tot ecranul.\">\n        <div class=\"trailer-screen\">\n          <video class=\"trailer-video\" preload=\"metadata\" playsinline></video>\n          <button class=\"trailer-big\" type=\"button\" data-play=\"REDĂ\" data-pause=\"PAUZĂ\">REDĂ</button>\n        </div>\n        <div class=\"trailer-controls\">\n          <button class=\"note-button trailer-play\" type=\"button\" data-play=\"REDĂ\" data-pause=\"PAUZĂ\">REDĂ</button>\n          <span class=\"trailer-time\">0:00 / 0:00</span>\n          <input class=\"trailer-seek\" type=\"range\" min=\"0\" max=\"1000\" step=\"1\" value=\"0\" aria-label=\"Poziție\">\n          <button class=\"note-button trailer-mute\" type=\"button\" data-mute=\"FĂRĂ SUNET\" data-unmute=\"CU SUNET\">FĂRĂ SUNET</button>\n          <input class=\"trailer-volume\" type=\"range\" min=\"0\" max=\"100\" step=\"5\" value=\"80\" aria-label=\"Volum\">\n          <a class=\"note-button trailer-download\" href=\"../trailer/out/selk-feature-trailer.mp4\" download>DESCARCĂ</a>\n          <button class=\"note-button trailer-full\" type=\"button\">TOT ECRANUL</button>\n        </div>\n      </section>\n      <div class=\"trailer-info\" data-trailer=\"feature\">\n        <h2>Trailerul de prezentare</h2>\n        <p>De la primii pași în spațiu ai Europei Centrale și de Est până în prezentul jocului: istoria arhivei în animații pixel, pornirea terminalului Selk, alarma structurii și MAST-01 în praf. 87 de secunde, 2560 pe 1440, 60 de cadre pe secundă.</p>\n      </div>\n      <div class=\"trailer-info\" data-trailer=\"gameplay\" hidden>\n        <h2>Trailerul de joc</h2>\n        <p>O rundă de joc: un mesaj de la biroul de audit, fișierele bazei, nume de intrări trase pe o pagină de raport, pagina trimisă spre Pământ și o a doua rundă care se încheie cu un refuz și o secțiune blocată. 68 de secunde, 2560 pe 1440, 60 de cadre pe secundă.</p>\n      </div>\n      <nav class=\"note-nav\" aria-label=\"Paginile de note\">\n        <a class=\"note-button\" href=\"credits.html\">Autori și referințe</a>\n        <a class=\"note-button\" href=\"concept.html\">Conceptul jocului</a>\n        <a class=\"note-button\" href=\"devnotes.html\">Notele dezvoltatorului, cu dezvăluiri</a>\n        <a class=\"note-button\" href=\"drawings.html\">Desene</a>\n        <a class=\"note-button\" href=\"glossary.html\">Glosar</a>\n        <a class=\"note-button\" href=\"themes.html\">Context politic și de design</a>\n        <a class=\"note-button\" href=\"warranty.html\">Garanție și licențe</a>\n      </nav>\n    ",

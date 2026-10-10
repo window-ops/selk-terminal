@@ -49,9 +49,9 @@
   outline: none;
 }
 /* The title and the place stay on one line and are cut off on a narrow
-   screen. The ellipsis takes the colour of the line, so the line is in the
-   place's grey and the name in the title's colour: a cut place ends in a
-   grey ellipsis like the rest of its text. */
+   screen. The ellipsis takes the color of the line, so the line is in the
+   place's gray and the name in the title's color: a cut place ends in a
+   gray ellipsis like the rest of its text. */
 .troika-title {
   min-width: 0;
   overflow: hidden;

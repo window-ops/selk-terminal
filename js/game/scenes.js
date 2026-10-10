@@ -344,7 +344,7 @@
   }
   /* The site from above, north up: buildings joined by hallways, half under
      sand, with zone 14 drawn around the tower. Labels sit above their
-     feature, apart from other labels, with a halo in the sand colour. */
+     feature, apart from other labels, with a halo in the sand color. */
   function siteMap(g, t) {
     R(g, 0, 0, W, H, C.sky[1]);
     for (var i = 0; i < 380; i++) { P(g, rnd(i) * W, rnd(i + 300) * H, i % 3 ? C.sky[0] : C.sky[2], 0.55); }

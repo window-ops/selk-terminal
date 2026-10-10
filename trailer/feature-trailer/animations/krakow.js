@@ -63,7 +63,7 @@ function draw(fr, n) {
     d.line(102, 22, 105, 22, GREEN); d.line(103, 21, 104, 21, GREEN); d.line(103, 20, 104, 20, GOLD);
     d.fill(97, 31, 3, 10, dark ? GOLD : DARK); d.set(98, 30, dark ? GOLD : DARK);
   });
-  /* The Old Town houses either side of the church, which stands centred
+  /* The Old Town houses either side of the church, which stands centered
      between them, two pixels clear of each */
   [[60, 9, 10], [70, 8, 13], [79, 10, 9], [108, 8, 12], [117, 8, 9]].forEach(([x, w, h], i) => {
     obj("house " + (i + 1), { on: ["bank"] }, () => house(d, x, w, h, dark));

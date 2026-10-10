@@ -237,6 +237,16 @@
     if (e.sys) {
       $("articles").appendChild(S.renderSys(e, e.body.replace(/@USER@/g, "user.id")));
     }
+    /* An entry that opens a program (TROIKA.RUN, DISASSEMBLY.RUN) is a
+       description, shown in paragraphs as the change notes entry is; its
+       source lines are joined, and a blank line starts a paragraph */
+    else if (e.action) {
+      var box = el("div", null, "sysfile");
+      plain(e.body).split(/\n\s*\n/).forEach(function (para) {
+        box.appendChild(el("p", para.replace(/\s*\n\s*/g, " ")));
+      });
+      $("articles").appendChild(box);
+    }
     else {
       var text = e.body.replace(/@ENDING@/g, "(the ending chosen)");
       $("articles").appendChild(e.article ? S.renderParas(text, inline) : S.renderBody(text, inline, e.table));

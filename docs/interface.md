@@ -6,7 +6,7 @@
 
 `S.ctx()` in `js/core/context.js` answers every question about the current situation: interface mode, narrow screen, keyboard present, pointer drawn, screen reader mode, reduced motion and screen frame. `S.syncContext()` copies the answer onto `<html>` as `data-mode`, `data-theme`, `data-sr`, `data-motion`, `data-frame`, `data-screen` and `data-keys`, and the stylesheets read the same attributes. `data-theme` names the popup theme: it follows the mode in the session and is `title` on the title screen (see [Styles and themes](styles.md)).
 
-The same file decides which Setup rows are hidden and which are greyed, by one rule.
+The same file decides which Setup rows are hidden and which are grayed, by one rule.
 
 **Hidden** (`S.SETTING_RULES`): no Setup choice can make the row apply.
 
@@ -14,7 +14,7 @@ The same file decides which Setup rows are hidden and which are greyed, by one r
 - Cursor size on a device that draws no pointer, such as a phone or a tablet without a mouse. `pointer` in `S.ctx()` is false when no input has a fine pointer and no mouse has moved since the page loaded. The row returns once a mouse moves.
 - Motion, Text appears, Scanlines, Flicker, Interference, Power-on, Rolling scanline, Glare and curvature, and Scroll long messages in screen reader mode, which turns each of them off. Glow stays: screen reader mode leaves the glow on, and the row serves sighted players who use a screen reader.
 
-**Greyed with a reason** (`S.SETTING_OFF`): another Setup choice makes the row apply, and the reason names that choice.
+**Grayed with a reason** (`S.SETTING_OFF`): another Setup choice makes the row apply, and the reason names that choice.
 
 - Layout, Sole pane frames, Redirect notices, Panel results and Shell-only DESK in desktop mode: "Used in tmux mode".
 - Redirect notices while Shell results is IN SHELL: "Applies while Shell results is IN VIEW".
@@ -22,9 +22,9 @@ The same file decides which Setup rows are hidden and which are greyed, by one r
 - Rolling scanline and Scroll long messages while motion is reduced, and Glare and curvature with the MONITOR frame.
 - Text appears while motion is reduced: "AT ONCE while motion is reduced". The row shows AT ONCE, and `S.textSpeed()` returns `instant`; the saved choice returns with full motion.
 
-Setup > Display > Setup screen > Unavailable settings (`settings.unavailable`) chooses whether greyed rows show. SHOW keeps them greyed with their reason; HIDE leaves them out until they can apply. A group or section with no row left is skipped. Hidden rows stay hidden in both cases. When a row is hidden, the rows under it take its place.
+Setup > Display > Setup screen > Unavailable settings (`settings.unavailable`) chooses whether grayed rows show. SHOW keeps them grayed with their reason; HIDE leaves them out until they can apply. A group or section with no row left is skipped. Hidden rows stay hidden in both cases. When a row is hidden, the rows under it take its place.
 
-A new conditional row follows the same rule: hide it when only the screen, the input devices or screen reader mode decide, and grey it when a Setup choice decides.
+A new conditional row follows the same rule: hide it when only the screen, the input devices or screen reader mode decide, and gray it when a Setup choice decides.
 
 ## Setup views
 
@@ -34,7 +34,7 @@ A new conditional row follows the same rule: hide it when only the screen, the i
 - SECTIONS (`sections`): one folding header per section, with the settings under a setting indented below it and each group under its title.
 - FULL LIST (`list`): every section under a plain heading, nested in the same way.
 
-In every view the levels have one colour each: sections titan, groups lamp green on a green rule, and settings under a setting on a dust rule. Groups come after the settings of their list in `SECTIONS`.
+In every view the levels have one color each: sections titan, groups lamp green on a green rule, and settings under a setting on a dust rule. Groups come after the settings of their list in `SECTIONS`.
 
 Game code announces what happened with `S.emit(name, data)`, for example `S.emit("submit")` or `S.emit("open:" + id)`. The tour, the accessibility layer and the debug log subscribe with `S.on(name, fn)`; `S.on("*", fn)` receives every event.
 
@@ -69,13 +69,13 @@ Screens 700 px wide or narrower always use tmux mode with bottom navigation butt
 
 Panes that rebuild their content (the inbox, MESSAGE, REPORT) keep their scroll position through `S.keepScroll` in `js/core/dom.js`.
 
-Until the saved settings are applied, `<html class="booting">` keeps the room hidden, so the default screen frame never shows for a moment at load. Meanwhile `#loading`, written into `index.html` with its own inline style and script, counts the stylesheets and scripts as they arrive (LOADING FILES n OF 121), shows the file that arrived last and one DID YOU KNOW tip picked at random: the euro crisis, the region's space history, Titan and the game, all free of story spoilers. It speaks Romanian when that is the saved language; `main.js` removes it when the room appears. The stylesheets are linked in `<body>`, right after it, so it paints on the first round trip; everything after them waits for them as it would in `<head>`, and a small inline style in `<head>` gives the page its ground colour from the start. Its `data-total` must match the number of stylesheets and `<script src>` tags in `index.html`. With Setup > Debug > Loading screen key ON, Ctrl+Shift+L shows it again from `SELK_LOADING`, the copy the inline script keeps: `js/dev/debug.js` counts the files in load order, 30 ms each, with a new tip, and holds the screen until the key restarts it or Escape closes it.
+Until the saved settings are applied, `<html class="booting">` keeps the room hidden, so the default screen frame never shows for a moment at load. Meanwhile `#loading`, written into `index.html` with its own inline style and script, counts the stylesheets and scripts as they arrive (LOADING FILES n OF 121), shows the file that arrived last and one DID YOU KNOW tip picked at random: the euro crisis, the region's space history, Titan and the game, all free of story spoilers. It speaks Romanian when that is the saved language; `main.js` removes it when the room appears. The stylesheets are linked in `<body>`, right after it, so it paints on the first round trip; everything after them waits for them as it would in `<head>`, and a small inline style in `<head>` gives the page its ground color from the start. Its `data-total` must match the number of stylesheets and `<script src>` tags in `index.html`. With Setup > Debug > Loading screen key ON, Ctrl+Shift+L shows it again from `SELK_LOADING`, the copy the inline script keeps: `js/dev/debug.js` counts the files in load order, 30 ms each, with a new tip, and holds the screen until the key restarts it or Escape closes it.
 
 ## Status line
 
 `S.msg(text, kind)` in `js/ui/status.js` writes the status line of both modes. The status bar repeats a notice only when no toast shows it: new mail and the transmission countdown appear as toasts.
 
-The text sits on a chip blended from the bar's text colour, with the flag colour for errors. It sits at the left of the free space of the bar, in both modes.
+The text sits on a chip blended from the bar's text color, with the flag color for errors. It sits at the left of the free space of the bar, in both modes.
 
 A text wider than its space scrolls under the player's control, as the bottom bar of Midnight Commander does: the wheel, a drag, and Left, Right, Home and End while the message has the keyboard focus. `<` and `>` mark the ends that still hide text.
 
@@ -86,7 +86,7 @@ How long a message stays:
 - The rest of the bar is free space. A pointer resting there lets the message clear.
 - Whether the pointer or the focus keeps the message is read from the live `:hover` and `:focus-visible` states every 400 ms. A missed or stale pointer event, a bar hidden by a mode switch, a touch that leaves `:hover` behind, or a mouse click that leaves the focus on the message cannot keep the message on the bar.
 
-Setup > Display > Messages > Scroll long messages (`settings.barScroll`, OFF in a new game) makes a long message scroll by itself, one character every 110 ms, as a terminal status line does. It waits 1 s, steps to its end and clears 2.5 s later. A hover, focus, wheel or drag stops it where it is and hands the message to the player. The row is hidden in screen reader mode and greyed while motion is reduced.
+Setup > Display > Messages > Scroll long messages (`settings.barScroll`, OFF in a new game) makes a long message scroll by itself, one character every 110 ms, as a terminal status line does. It waits 1 s, steps to its end and clears 2.5 s later. A hover, focus, wheel or drag stops it where it is and hands the message to the player. The row is hidden in screen reader mode and grayed while motion is reduced.
 
 ## Errors and dialogs
 

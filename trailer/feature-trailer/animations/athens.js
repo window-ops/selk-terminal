@@ -1,6 +1,6 @@
 /* Timelapse, 2008 to 2015: Athens, the easter egg, a nod to TROIKA.RUN.
    The Acropolis rock over the roofs of the basin, the Parthenon on it;
-   along the street, Greece runs across the picture in the colours of its
+   along the street, Greece runs across the picture in the colors of its
    flag, blue shirt with a white stripe and white shorts, and the three
    officials of the Troika follow in black suits with briefcases, as in
    the game. Two days pass; the windows light up at night. The
@@ -11,7 +11,7 @@ const { GROUND, DARK, LIGHT, RED, GOLD, BLUE, ORANGE, GREY } = require("./palett
 
 const FPS = 8, FRAMES = 16, STREET = 58;
 
-/* The figures, after TROIKA.RUN's, 9 pixels tall and 3 wide, centred on
+/* The figures, after TROIKA.RUN's, 9 pixels tall and 3 wide, centered on
    column x, feet on row b - 1: a row of hair, a row of face, the body,
    and always two legs, each ending in a single dark foot. Two poses a
    step: passing, both legs straight down at the two sides of the hips;
@@ -39,7 +39,7 @@ function runner(d, x, b, step) {
   legs(d, x, b, step, ORANGE, GROUND);
 }
 /* An official: silver hair, which stands out against the rock and the
-   houses, a black suit darker than the rock behind, a tie in colour, the
+   houses, a black suit darker than the rock behind, a tie in color, the
    briefcase at the side */
 function official(d, x, b, step, tie) {
   head(d, x, b, LIGHT);
@@ -59,7 +59,7 @@ function draw(fr, n) {
       d.line(64 - half, y, 64 + half, y, y < 32 ? GREY : DARK);
     }
   });
-  /* The Parthenon, centred on the line between columns 63 and 64: the
+  /* The Parthenon, centered on the line between columns 63 and 64: the
      steps, the eight columns of its front, the entablature, and the low pediment */
   obj("parthenon", { on: ["rock"] }, () => {
     d.line(51, 29, 76, 29, LIGHT); d.line(52, 28, 75, 28, LIGHT);

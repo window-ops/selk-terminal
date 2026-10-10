@@ -1,11 +1,11 @@
 /* Sign-in. The login prompt at the foot of the boot screen, held in the
-   frame's centre as far as the screen's corner allows. The name is typed
+   frame's center as far as the screen's corner allows. The name is typed
    with the rhythm of recording G1 (7.7-10.5 s); the shot cuts on Enter,
    after a shorter wait than the recording's. The pointer is hidden, as
    Windows hides it while a player types. Over the empty top of the frame,
    before the music starts, a line pokes fun at that music: "You will be
    listening to one of the greatest pieces of musique concrète ever made",
-   in the game's font and the colour of the typed name, fading in and out.
+   in the game's font and the color of the typed name, fading in and out.
    It is set on the game's screen, under its CRT glass, so it has the
    scanlines and glow of everything else, at a fixed place and size in the frame. */
 "use strict";

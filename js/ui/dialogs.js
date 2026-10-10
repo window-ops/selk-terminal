@@ -92,9 +92,11 @@
     var list = o.buttons || [{ label: "CLOSE" }];
     list.forEach(function (b, i) {
       var x = el("button", "btn" + (i === 0 ? " primary" : ""), S.t(b.label)); x.type = "button";
-      /* Control sounds: a button that only closes the dialog sounds as a
-         close; the first of several buttons is the dialog's action */
-      if (CLOSERS.indexOf(b.label) !== -1 || !b.action) { x.dataset.sound = "close"; }
+      /* Control sounds: a button may name its kind (b.sound); otherwise a
+         button that only closes the dialog sounds as a close, and the first
+         of several buttons is the dialog's action */
+      if (b.sound) { x.dataset.sound = b.sound; }
+      else if (CLOSERS.indexOf(b.label) !== -1 || !b.action) { x.dataset.sound = "close"; }
       else if (i === 0 && list.length > 1) { x.dataset.sound = "action"; }
       x.addEventListener("click", function () {
         var vals = inputs.map(function (n) {
@@ -119,7 +121,7 @@
         return;
       }
       if (e.target.tagName === "INPUT" && (e.key.length === 1 || e.key === "Backspace")) {
-        S.snd.key();
+        S.snd.typed(e.key);
       }
       if (e.key === "Enter" && (e.target.tagName === "INPUT" || e.target === box)) {
         e.preventDefault(); row.firstChild.click(); return;
@@ -199,7 +201,7 @@
     errBox = ov;
     ok.focus({ preventScroll: true });
   };
-  /* A rejected password marks the open dialog's answer in the error colour
+  /* A rejected password marks the open dialog's answer in the error color
      (css/ui/dialogs.css): its fields, or the pressed choices of a sort, until
      the player edits a field or changes a choice */
   function markRejected() {
@@ -275,7 +277,7 @@
      takes as many characters as its group and passes the focus on when full;
      Backspace in an empty box and the arrow keys at either end move between
      boxes, and a pasted key fills the boxes from the one pasted into. A wrong
-     key leaves the boxes as they are, marked in the error colour until one is
+     key leaves the boxes as they are, marked in the error color until one is
      edited. */
   function keyDialog(sec, s, lock) {
     var boxes = [];
@@ -372,7 +374,7 @@
      line with its source and one button per choice. A choice stays pressed
      until another is chosen for that line; UNLOCK sends one letter per line,
      with a dash for a line left open. A wrong answer leaves the choices as
-     they are, the pressed ones marked in the error colour until one changes. */
+     they are, the pressed ones marked in the error color until one changes. */
   function sortDialog(sec, s, lock) {
     var picked = lock.sort.items.map(function () { return "-"; });
     S.dialog({

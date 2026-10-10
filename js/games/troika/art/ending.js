@@ -50,7 +50,7 @@
     for (var f = 0; f < 3; f++) {
       var fy = b - 112 + f * 30;
       r(L - 2, fy + 22, 224, 2, C.farEdge);
-      /* Five columns of windows centred on the door; none over the door */
+      /* Five columns of windows centered on the door; none over the door */
       for (var w = 0; w < 5; w++) {
         var wx = x - 6 + (w - 2) * 40, office = f === 1 && w === 1;
         if (f === 2 && w === 2) { continue; }
@@ -71,7 +71,7 @@
     if (level >= 2) { solar(L + 8, b - 128, 90); solar(L + 120, b - 128, 90); }
     if (level >= 3) { r(x + 60, b - 160, 1, 32, C.dust); federalFlag(x + 61, b - 160); }
   }
-  /* The economist, feet at (x, b): grey hair and beard, glasses, a tweed
+  /* The economist, feet at (x, b): gray hair and beard, glasses, a tweed
      jacket over a white shirt and a tie in its middle. With grandson, his
      grandson of 2097: darker hair greying at the temples, clean-shaven,
      thin glasses, a navy jacket and an open collar. mouth opens his mouth;
@@ -255,7 +255,7 @@
     /* The front row on the street, with the economist's building */
     roofs(o, [G], 4);
     /* The economist's building as in the street (entrance), at half its
-       size: three floors of five windows centred on the door, the
+       size: three floors of five windows centered on the door, the
        office's lit on the first floor, the door in the middle between its
        columns under the pediment. cx is the middle of its front. */
     var cx = Math.round(W * 0.42) + 37, L = cx - 55;
@@ -307,7 +307,7 @@
      coast, at Porto Rafti, where the road ends on the beach at the water
      (FAR); Greece can walk to SHORE */
   var DENSE = 500, EDGE = 1080, STOP = 1420, COAST = 2640, FAR = 2900, SHORE = FAR - 38;
-  /* The colours of the country for each level: grass and the near
+  /* The colors of the country for each level: grass and the near
      fields; drier under the status quo, greener with each level */
   var GRASS = [["#6E6A3C", "#7C7642"], ["#5E6B3E", "#6A7848"], ["#4E7040", "#5A7E4A"], ["#3F7A3E", "#4C8A48"]];
   function clamp01(f) {
@@ -394,7 +394,7 @@
   function school(bx) {
     var G = A.GROUND, wall = "#D9C38F";
     /* The front fills two plots but their last 2 pixels, like every block,
-       so it keeps the street's gap to its neighbours; everything on it is
+       so it keeps the street's gap to its neighbors; everything on it is
        mirrored about its middle, between bx + 44 and bx + 45 */
     r(bx, G - 62, 90, 62, wall);
     r(bx - 2, G - 65, 94, 3, C.white);
@@ -480,7 +480,7 @@
   }
   /* The sea as pixel landscapes draw it, seen from the shore: horizontal
      bands from the horizon down to the front of the picture, thin far away
-     and wider near, taking the sky's hazy colour at the horizon (low) and
+     and wider near, taking the sky's hazy color at the horizon (low) and
      a deep blue in front; glints that grow longer and sparser as the
      water comes nearer, drifting on the clock t and moving with the walk
      (off) more the nearer they are. from(y) is where the water starts on
@@ -699,7 +699,7 @@
     if (level === 0) { g.globalAlpha = 0.12; g.fillStyle = C.titan; g.fillRect(0, 0, W, G); g.globalAlpha = 1; }
     /* The road, its pavement turning into a gravel verge past the houses,
        then the road itself into a lighter, narrower country road with a
-       grass verge and no centre line */
+       grass verge and no center line */
     A.road(off);
     for (var vx = 0; vx < W; vx += 2) {
       var va = clamp01((rel(vx) - 850) / 220), ra = clamp01((rel(vx) - 950) / 320);

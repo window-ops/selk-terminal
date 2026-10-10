@@ -63,6 +63,109 @@
   border-bottom: 0;
   padding-right: 1.6em;
 }
+/* changenote pages (js/shell/commands.js). Spacing, headings, colors and
+   navigation follow docs/interface-rules.md. */
+.changenote .cn-sub,
+.changenote .cn-meta {
+  margin: 0;
+}
+.changenote .cn-path {
+  margin: 0 0 0.75em;
+}
+.changenote .cn-path,
+.changenote .cn-meta,
+.changenote .cn-bar .cn-mid {
+  color: var(--dust);
+}
+.changenote .cn-sub {
+  color: var(--haze);
+}
+.changenote .cn-fields,
+.changenote .cn-body,
+.changenote .cn-note {
+  margin: 0.75em 0;
+}
+/* The bar, between two rules: the older or previous item at the left,
+   the position in the middle, the newer or next item at the right */
+.changenote .cn-bar {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 0 1.5em;
+  margin: 0.75em 0;
+  padding: 0.375em 0;
+  border-top: 1px solid var(--rib);
+  border-bottom: 1px solid var(--rib);
+}
+.changenote .cn-bar .cn-right {
+  text-align: right;
+}
+/* Headings: groups, decades, and the headings inside the notes */
+/* 0.5em below, since the line box of IBM Plex Mono leaves more space under
+   the text than above it, and the heading then looks equally spaced */
+.changenote .cn-group,
+.changenote .cn-subhead {
+  margin: 0.75em 0 0.5em;
+  color: var(--haze);
+}
+/* The listings of programs and versions: full-width tables with fixed
+   columns, so the tables of one page line up */
+.etable.changenotes {
+  table-layout: fixed;
+  width: 100%;
+}
+.etable.changenotes td:nth-child(-n+2) {
+  white-space: nowrap;
+}
+.etable.changenotes .lnk {
+  text-align: left;
+}
+.etable.cn-programs td:nth-child(1) {
+  width: calc(16ch + 1.2em);
+}
+.etable.cn-programs td:nth-child(2) {
+  width: calc(9ch + 1.2em);
+}
+.etable.cn-versions td:nth-child(1) {
+  width: calc(10ch + 1.2em);
+}
+.etable.cn-versions td:nth-child(2) {
+  width: calc(11ch + 1.2em);
+}
+/* The heading's own gap stays the only gap above a table */
+.changenote .cn-group + .etable-wrap {
+  margin-top: 0;
+}
+.changenote .cn-tag {
+  margin-left: 1em;
+  color: var(--lamp);
+}
+/* The changes of a version: plain lines in lists; a change that wraps
+   continues under its text, past the dash */
+.changenote .cn-body > :first-child {
+  margin-top: 0;
+}
+.changenote .cn-body > :last-child {
+  margin-bottom: 0;
+}
+.changenote .cn-changes {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.changenote .cn-changes li {
+  margin: 0;
+  padding-left: 2ch;
+  text-indent: -2ch;
+}
+.changenote .cn-changes li .lnk {
+  text-indent: 0;
+}
+/* What the page leaves out */
+.changenote .cn-note {
+  padding-left: 1ch;
+  border-left: 2px solid var(--rib);
+  color: var(--dust);
+}
 .log .entry {
   margin: 0.75em 0;
   border-left: 2px solid var(--rib);
@@ -203,6 +306,7 @@
   .log {
     padding: 0.6em 0.7em;
   }
+
 }
 /* The agent joke (js/shell/agent.js): its reasoning and its replies are
    blocks with the gap of a block. The thoughts are indented in italics; the

@@ -1,6 +1,6 @@
 /* 52.25-53.25 s, the boot resumes on ALARM. The same boot, from just after
    its seventh check, Structure monitor .... ALARM, has typed out in the
-   error colour, with the game's error sound on it (audio). The camera
+   error color, with the game's error sound on it (audio). The camera
    holds close on that line; the next line, Supervisor sleep ..... ended
    26-02-2097, types along the frame's bottom edge, and the frame's right
    edge cuts it after "ended 26-0", which it reaches at 0.9 s. */

@@ -1,5 +1,5 @@
 /* tmux mode: popups after a tmux display-popup. A single-line frame in the
-   accent colour, no shadow. Titles and labels sit in the top border in a
+   accent color, no shadow. Titles and labels sit in the top border in a
    small frame of their own. Buttons are text in a thin border, all alike. */
 html[data-theme="tmux"] :is(.dlg, .mail-toast, .tut, .status-info-pop, .switcher) {
   border: 1px solid var(--accent);
@@ -45,7 +45,7 @@ html[data-theme="tmux"] :is(.dlg, .mail-toast, .tut) .btn {
   color: var(--haze);
 }
 /* Toast and tour heads: a row of no height on the top border, so each
-   label is centred on it. The margin keeps the text below clear. */
+   label is centered on it. The margin keeps the text below clear. */
 html[data-theme="tmux"] :is(.mail-toast-head, .tut-bar) {
   height: 0;
   margin: calc(-1 * var(--pop-pt)) 0 0.9em;
@@ -90,7 +90,7 @@ html[data-theme="tmux"] .switcher-head {
   border-bottom: 1px solid var(--line);
 }
 /* The FILES status line (.mc-mini in css/ui/files.css) sits on the screen
-   like the panels' own text: no strip of its own colour, no top border,
+   like the panels' own text: no strip of its own color, no top border,
    and a single tight line. Its space runs from the panel's frame, drawn
    inside the panel, to the pane border, so the line is lifted into the
    panel's margin by as much as it gains below, which keeps it in the

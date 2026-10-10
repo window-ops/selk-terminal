@@ -201,7 +201,7 @@
     note: function (id) {
       var base = S.NOTES && S.NOTES[id], pack = packs[current], translated = pack && pack.story && pack.story.notes && pack.story.notes[id];
       if (!base) { return null; }
-      return translated ? [translated[0] || base[0], translated[1] || base[1], base[2]] : base;
+      return translated ? [translated[0] || base[0], translated[1] || base[1], base[2], base[3]] : base;
     },
     commandWords: function (names) {
       var out = [];
@@ -285,6 +285,28 @@
     }
   };
   S.cmdName = function (c) { return shown("commands", c); };
+  /* The line under a note that names where it comes from: the CESEA field
+     handbook with its edition, or the source of the note (js/data/notes.js) */
+  S.noteSource = function (n) {
+    var src = n[3], ref = src && src[1];
+    if (!src) { return S.t("CESEA field handbook, edition {year}", { year: n[2] }); }
+    var name = ({
+      sheet: S.t("CESEA data sheet, {ref}", { ref: ref }),
+      man: S.t("Manual page {ref}", { ref: ref }),
+      kernel: S.t("Linux kernel documentation, {ref}", { ref: ref }),
+      rfc: S.t("IETF standard RFC {ref}", { ref: ref }),
+      course: S.t("CESEA supervisor course, {ref}", { ref: ref }),
+      archive: S.t("CESEA archive, {ref}", { ref: ref }),
+      brief: S.t("CESEA logistics office, brief of {ref}", { ref: ref })
+    })[src[0]] || ref;
+    /* A quote stays in the language of its source */
+    return src[2] ? S.t("{source}: \"{quote}\"", { source: name, quote: src[2] }) : name;
+  };
+  /* The name of a dotted term for its tooltip and for screen readers */
+  S.noteLabel = function (n, fallback) {
+    var name = n ? n[0] : fallback;
+    return n && n[3] ? S.t("Note: {name}", { name: name }) : S.t("Handbook note: {name}", { name: name });
+  };
   S.argName = function (a) { return shown("args", a); };
   /* S.t with every command and argument word as a placeholder, so a sentence
      can say "Type {hints} {on}" in the words of the language */

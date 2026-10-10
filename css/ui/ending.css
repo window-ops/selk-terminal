@@ -18,7 +18,7 @@ html[data-motion="full"] .screen :is(.fbar, .tmux, .wb-bar, .pane-head) {
   max-width: 62ch;
   line-height: 1.6;
 }
-/* The stage: black over the whole terminal, everything centred */
+/* The stage: black over the whole terminal, everything centered */
 .cine {
   position: absolute;
   inset: 0;
@@ -98,7 +98,7 @@ html[data-motion="full"] .cine-layer {
   padding: 0.55em 0.8em;
   display: flex;
   justify-content: space-between;
-  /* Choice notes sit on the choice's centre line */
+  /* Choice notes sit on the choice's center line */
   align-items: center;
   gap: 1em;
 }
@@ -173,7 +173,7 @@ html[data-motion="full"] .cine-layer {
 .cine-sub {
   color: var(--dust);
 }
-/* Button groups: each row centred, a short caption before its buttons */
+/* Button groups: each row centered, a short caption before its buttons */
 .cine-actions {
   display: flex;
   flex-direction: column;

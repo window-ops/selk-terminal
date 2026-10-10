@@ -6,12 +6,12 @@
   var r = A.r, line = A.line, mix = A.mix, mixRgb = A.mixRgb, hash = A.hash;
   /* The sky of each year, top and horizon: a May morning, a summer day, a
      March dusk, a June night, an April morning and a July dusk. The hills
-     take the horizon's colour, darkened. */
+     take the horizon's color, darkened. */
   var SKIES = [
     ["#2A3A48", "#5E6E78"], ["#33506A", "#8AA0A8"], ["#2A2438", "#7A5A4E"],
     ["#0E1418", "#1E2A30"], ["#2C4050", "#9A8A70"], ["#3A2420", "#B0603A"]
   ];
-  /* The colours at a point between two years: year is a whole year plus
+  /* The colors at a point between two years: year is a whole year plus
      the blend toward the next one, 0 to 1 */
   function skyAt(year) {
     var a = SKIES[Math.floor(year)], b = SKIES[Math.min(5, Math.floor(year) + 1)], f = year - Math.floor(year);
@@ -47,7 +47,7 @@
     return h;
   }
   function hills(off, year) {
-    /* The colour is set for each column: the quarry marks below set their
+    /* The color is set for each column: the quarry marks below set their
        own, which must not carry on to the next columns */
     var tone = mixRgb(skyAt(year)[1], "rgb(30,37,40)", 0.85);
     for (var x = 0; x < A.W; x += 2) {

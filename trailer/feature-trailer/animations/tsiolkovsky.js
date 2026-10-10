@@ -45,7 +45,7 @@ function draw(fr, n) {
   write(d, 72, 27, "O", BLUE);
   write(d, 53, 27, "H", GOLD);
   /* Oxygen and hydrogen running along the feed lines to the chamber: the
-     lines drawn in grey, the liquid moving along them in dashes */
+     lines drawn in gray, the liquid moving along them in dashes */
   obj("feed", { touch: ["rocket"], parts: true }, () => {
     OXY.forEach((p, i) => d.set(p[0], p[1], (i - n) % 4 === 0 ? BLUE : GREY));
     HYD.forEach((p, i) => d.set(p[0], p[1], (i - n) % 2 === 0 ? GOLD : GREY));

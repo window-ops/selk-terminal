@@ -52,7 +52,7 @@ The player is signed in as Cornelius, the name used in the feature trailer's scr
 
 The camera is close on the login prompt under the boot lines: "Enter your name. Sign-in uses CESEA SSO through the site directory." The name is typed with the rhythm of the recording, a short pause in the middle of the word, and Enter. Windows hides the pointer while a player types, and the trailer hides it too.
 
-Over the empty top of the frame, before the music starts, a caption pokes fun at that music: "You will be listening to one of the greatest pieces of musique concrète ever made". It is set in the game's font and the colour of the typed name, on the game's screen under its CRT glass, so it has the same scanlines and glow, and it fades in and out.
+Over the empty top of the frame, before the music starts, a caption pokes fun at that music: "You will be listening to one of the greatest pieces of musique concrète ever made". It is set in the game's font and the color of the typed name, on the game's screen under its CRT glass, so it has the same scanlines and glow, and it fades in and out.
 
 ### 4-8.9 s, the first message
 
@@ -64,7 +64,7 @@ MAIL opens: the inbox on the left, the message on the right. The camera reads al
 
 ### 13.5-15.1 s, REPORT 1
 
-Back on the desk, the REPORT pane opens under VIEW: REPORT 1 / SITE ORIGIN, "From supervisor Cornelius, Selk site. Where is the site, and why was it built?", four empty blanks, the greyed SUBMIT PAGE button and "0 of 4 filled".
+Back on the desk, the REPORT pane opens under VIEW: REPORT 1 / SITE ORIGIN, "From supervisor Cornelius, Selk site. Where is the site, and why was it built?", four empty blanks, the grayed SUBMIT PAGE button and "0 of 4 filled".
 
 ### 15.1-21 s, SELK onto blank 1
 
@@ -145,7 +145,7 @@ All audio is generated in code: the score by `gameplay-trailer/audio/score.js` w
 | Tempo | A base of about 79 BPM, between 74 and 83 BPM, eased between the moments it catches and slower in the second round |
 | Form | 14 bars of 4/4 in phrases of four bars: Em C G D, Em Am7 Cmaj7 D, Cmaj7 Bsus B7 Em, Cmaj7 D |
 | Voices | Mallets (the melody), a plucked guitar, a held pad, a soft bass, brushes and a soft kick, in a small room |
-| Stereo | The guitar a little left, the mallets a little right, the pad's voices spread, the bass, the kick and the machine hum in the centre |
+| Stereo | The guitar a little left, the mallets a little right, the pad's voices spread, the bass, the kick and the machine hum in the center |
 
 The score is written as notes before it is heard, in `gameplay-trailer/audio/cue.js`: a clock that maps beats to the trailer's seconds, the chords, a dynamic for each bar (p to f), each part as a list of notes with the moment on screen they belong to, and the game's own sounds at their times. `score.js` plays the cue exactly as written. Notes written together sound together, and the players' small differences are in loudness only. A note with a moment on screen is struck a little harder. `sh gameplay-trailer/tools/score/cue.sh` prints the cue as sheet music, with the game's sounds on a staff of their own, and checks it (`gameplay-trailer/tools/README.md`).
 
@@ -174,7 +174,7 @@ The game plays its own sound for each event, and the trailer keeps them, except 
 - the sweep when a page is sent, and a blip with each step of the countdown, on the score's sixteenths;
 - the click and the error sound on the rejected page; the error sound on the locked section and on the rejected password, with the click of ENTER PASSWORD;
 - key sounds in the sign-in and in the password box;
-- the machine hum under the desk, centred, 6 dB under the game's level.
+- the machine hum under the desk, centered, 6 dB under the game's level.
 
 The mail chime is the score's. The locked prompt opens without its click, which tells a player more than it adds to a trailer.
 
@@ -213,7 +213,7 @@ External tools: Node, Playwright's Chromium, and ffmpeg through the `ffmpeg-stat
 
 ## 11. Licenses
 
-The folder keeps the game's licences for what it copies: GPL-3.0 for program code, CC BY-SA 4.0 for story text, SIL OFL 1.1 for the fonts, CC0 1.0 for the Selk picture of the lab (`common/vendor/img/lab.svg`). The license files are in `common/vendor/licenses/`.
+The folder keeps the game's licenses for what it copies: GPL-3.0 for program code, CC BY-SA 4.0 for story text, SIL OFL 1.1 for the fonts, CC0 1.0 for the Selk picture of the lab (`common/vendor/img/lab.svg`). The license files are in `common/vendor/licenses/`.
 
 ## 12. Known limits
 

@@ -13,10 +13,10 @@
      toward the desk and reaches for the terminal at once, fast at first
      and slowing as the hand arrives, keeps still a moment with the hand on
      the edge of the screen, then puts the hand back down: a scared calm;
-   - the chair, a robot chair. As it rolls in it also centres itself under
+   - the chair, a robot chair. As it rolls in it also centers itself under
      the terminal, at an even speed, a pixel at a time, stopping exactly.
      Rolling closer moves chair and supervisor three pixels up the picture,
-     centring moves them four pixels left. The chair stays there and still
+     centering moves them four pixels left. The chair stays there and still
      reaches the floor.
 
    The chair reaches the floor at the bottom edge, the supervisor touches
@@ -31,7 +31,7 @@ const DARKEST = "#0F0D0B";
 const PULSE = [1, 0.85, 0.55, 0.25, 0, 0, 0, 0.35];
 const lerp = (a, b, k) => a + (b - a) * k;
 
-/* A line two pixels thick in the supervisor's colour */
+/* A line two pixels thick in the supervisor's color */
 function limb(d, x0, y0, x1, y1) {
   const n = Math.max(Math.abs(x1 - x0), Math.abs(y1 - y0), 1);
   for (let i = 0; i <= n; i++) d.R(lerp(x0, x1, i / n), lerp(y0, y1, i / n), 2, 2, DARKEST);
@@ -45,7 +45,7 @@ function draw(fr, n) {
      18, slowing as it settles, while the chair stays in */
   const k = Math.max(0, Math.min(1, (n - REACH_FROM) / (REACH_TO - REACH_FROM)));
   const out = 1 - (1 - k) * (1 - k);
-  /* The robot chair: an even, mechanical move, in and to the centre */
+  /* The robot chair: an even, mechanical move, in and to the center */
   const dy = Math.round(3 * k), dx = -Math.round(4 * k);
   const b = Math.max(0, Math.min(1, (n - DOWN_FROM) / (DOWN_TO - DOWN_FROM)));
   const reach = out * (1 - (1 - (1 - b) * (1 - b)));

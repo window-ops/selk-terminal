@@ -40,7 +40,7 @@
   { const ui = K.bus("ui"), soft = ctx.createBiquadFilter(); soft.type = "lowpass"; soft.frequency.value = 6000; soft.Q.value = 0.5;
     ui.disconnect(); ui.connect(soft); soft.connect(K.duck().ui); }
   /* The game pans the computer's hum a little left; in the trailer it is
-     centred, so the opening is not lopsided on stereo speakers */
+     centered, so the opening is not lopsided on stereo speakers */
   { const hum = K.duck().machine; hum.disconnect(); hum.connect(K.master()); }
 
   /* The players' small differences: a seeded random of the score's own,

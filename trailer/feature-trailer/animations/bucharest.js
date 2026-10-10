@@ -12,7 +12,7 @@ const { GROUND, DARK, LIGHT, RED, GOLD, BLUE, ORANGE, GREY } = require("./palett
 
 const FPS = 8, FRAMES = 16, STREET = 49;
 
-/* A panel block: grey slabs, a grid of windows, lit at night */
+/* A panel block: gray slabs, a grid of windows, lit at night */
 function block(d, x, w, top, dark) {
   d.fill(x, top, w, STREET - top, GREY);
   for (let y = top + 2; y < STREET - 1; y += 3) for (let wx = x + 1; wx < x + w - 1; wx += 2) d.set(wx, y, dark && (wx * 5 + y * 3) % 7 < 3 ? GOLD : DARK);

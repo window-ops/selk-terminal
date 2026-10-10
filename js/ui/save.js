@@ -24,7 +24,7 @@
     });
   }
   /* Saving. Progress stays in this tab until the player chooses to keep it on
-     this computer. The choice is offered after a close attempt is cancelled. */
+     this computer. The choice is offered after a close attempt is canceled. */
   var NUDGED_KEY = "selk-save-nudged", saveToast = null;
   function dismissSaveToast() {
     if (saveToast) {

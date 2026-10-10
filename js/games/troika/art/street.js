@@ -29,7 +29,7 @@
       kiosk(px + 20, f); olive(px + 170); lamp(px + 300);
     }
   }
-  /* The pavement with its slabs, the kerb and the road below */
+  /* The pavement with its slabs, the curb and the road below */
   function road(off) {
     r(0, A.GROUND, A.W, A.H - A.GROUND, C.road);
     r(0, A.GROUND, A.W, 20, C.pave);

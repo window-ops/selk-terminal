@@ -64,7 +64,7 @@ function draw(fr, n) {
      printed sheets hanging from it on pegs */
   obj("line", { edge: true, touch: ["press"] }, () => { d.line(1, 22, 51, 22, GREY); });
   /* The sheets are sized so that what is printed on them sits in their
-     centre, to the pixel: sheet 1 is 29 wide round column 20, sheet 2 is
+     center, to the pixel: sheet 1 is 29 wide round column 20, sheet 2 is
      13 wide round column 43, both 18 high with 3 rows above and below the print */
   obj("sheet 1", { hangs: ["line"] }, () => {
     d.fill(6, 23, 29, 18, LIGHT);

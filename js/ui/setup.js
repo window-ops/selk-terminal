@@ -7,15 +7,15 @@
 
   /* The settings tree. row() is one setting. Its kind is empty for ON and
      OFF, a list of [value, label] pairs for a choice, "range" for a volume
-     slider, "select" for a drop-down list and "link" for a button that
-     opens another page. sub lists the settings that belong to it. group()
+     slider, "select" for a drop-down list, "seed" for the sound seed field
+     and "link" for a button that opens another page. sub lists the settings that belong to it. group()
      names a set of settings that has no value of its own; the sections are
      groups. */
   function row(label, key, kind, sub) {
     return { label: label, key: key, kind: kind || null, sub: sub || [] };
   }
-  function group(id, title, sub) {
-    return { id: id, title: title, sub: sub };
+  function group(id, title, sub, sorted) {
+    return { id: id, title: title, sub: sub, sorted: !!sorted };
   }
   var VIEW_ROW = row("Setup view", "setupView", [["pages", "PAGES"], ["sections", "SECTIONS"], ["list", "FULL LIST"]]);
   /* The Language label keeps the English word after the translation */
@@ -24,6 +24,30 @@
     return row(l === "Language" ? l : l + " / Language", "lang", "select");
   }
   var VOLUME = "range";
+  /* Setup > Sound > Seeds: Same seed everywhere, a quick control that sets
+     one seed for every sound and clears the seeds of single sounds; then
+     the click and typing, which play
+     whatever Control sounds is set to, then the control sounds in a group
+     of their own, sorted by name in the language shown and grayed while
+     Control sounds is OFF. These are the sounds made of
+     noise (S.snd.SEED_KINDS in sounds/interface.js); the key of a sound
+     row is "seed:" and its kind */
+  var SEED_CONTROLS = [["action", "Action"], ["flip", "Card flip"], ["choice", "Choice"], ["close", "Close"],
+    ["fold", "Fold"], ["key", "Function key"], ["link", "Link"], ["menu", "Menu"], ["select", "Select"],
+    ["tab", "Tab"], ["toggle", "Toggle"]];
+  var SEED_SOUNDS = [["click", "Click"], ["typing", "Typing"]].concat(SEED_CONTROLS);
+  /* A line under the label of a setting that still applies, in part: with
+     Control sounds ON, a control with a sound of its own plays it in place
+     of the click (ui-sound.js), so the click rows say where it remains */
+  function clickNote() {
+    return S.state && S.state.settings.ctlSounds ? "Only for controls without a sound of their own" : "";
+  }
+  var ROW_NOTE = { vClick: clickNote, "seed:click": clickNote };
+  SEED_CONTROLS.forEach(function (x) {
+    S.SETTING_OFF["seed:" + x[0]] = function () {
+      return S.state && !S.state.settings.ctlSounds ? "Applies while Control sounds is ON" : "";
+    };
+  });
   /* Groups come after the settings of their list, so additional settings
      are always at the bottom */
   var SECTIONS = [
@@ -75,6 +99,7 @@
       row("Preset", "soundPreset", [["balanced", "BALANCED"], ["speakers", "DESK SPEAKERS"], ["headphones", "HEADPHONES"], ["quiet", "QUIET"]]),
       row("Master", "vol", VOLUME),
       row("Control sounds", "ctlSounds"),
+      row("Drive sound", "hddSound"),
       group("channels", "CHANNELS", [
         row("Machine", "vMachine", VOLUME),
         row("Wind", "vWind", VOLUME),
@@ -82,6 +107,14 @@
         row("Clicks", "vClick", VOLUME),
         row("Structure", "vStruct", VOLUME),
         row("Music", "vMusic", VOLUME)
+      ]),
+      group("seeds", "SEEDS", [
+        row("Same seed everywhere", "soundSeed", "seed"),
+        row("Click", "seed:click", "seed"),
+        row("Typing", "seed:typing", "seed"),
+        group("seedcontrols", "CONTROL SOUNDS", SEED_CONTROLS.map(function (x) {
+          return row(x[1], "seed:" + x[0], "seed");
+        }), true)
       ])
     ]),
     group("hints", "HINTS", [
@@ -116,6 +149,8 @@
     if (k === "_light") { return st.light; }
     /* While motion is reduced, text appears at once (S.textSpeed) */
     if (k === "speed") { return S.textSpeed(); }
+    /* A sound's own seed, or the shared seed it follows */
+    if (k.indexOf("seed:") === 0) { return (st.settings.soundSeeds || {})[k.slice(5)] || st.settings.soundSeed; }
     return st.settings[k];
   }
   function setv(k, v) {
@@ -314,7 +349,9 @@
     debugLog: "A log of everything the game does, in the browser's console.",
     loaderKey: "Ctrl+Shift+L shows the loading screen again, for checking it.",
     setupView: "How Setup lists the settings.",
-    ctlSounds: "A sound of its own for each kind of control."
+    ctlSounds: "A sound of its own for each kind of control.",
+    hddSound: "The hard drive seeking when an entry or a page is read.",
+    soundSeed: "One seed for every sound, from the wind to the clicks. Type digits or a word and press Enter; it replaces the seeds set below, and a seed always gives the same sounds."
   };
   var OPTION_HELP = {
     sr: {
@@ -383,7 +420,7 @@
       bar: "The status bar in both modes."
     },
     unavailable: {
-      show: "Show them greyed, with the reason beside each one.",
+      show: "Show them grayed, with the reason beside each one.",
       hide: "Leave them out until they can apply."
     },
     scan: {
@@ -482,12 +519,24 @@
       on: "Keys, switches, tabs, pages and menus each make their own sound.",
       off: "Every control makes the same click."
     },
+    hddSound: {
+      on: "The drive is heard as it reads.",
+      off: "The drive is silent."
+    },
+    soundSeed: {
+      new: "A random seed for every sound.",
+      default: "The seed the game starts with, for every sound."
+    },
     setupView: {
       pages: "Open each section on its own page.",
       sections: "Group settings under headers that open.",
       list: "Show all settings."
     }
   };
+  SEED_SOUNDS.forEach(function (x) {
+    HELP["seed:" + x[0]] = "The noise of this sound. An empty field uses the seed of Same seed everywhere.";
+    OPTION_HELP["seed:" + x[0]] = { new: "Try a random seed.", default: "The seed the game starts with." };
+  });
   var tip = null, tipSeq = 0;
   function tipText(text) { return String(text).replace(/\.\s*$/, ""); }
   function showTip(row, key, optKey, ev) {
@@ -625,12 +674,19 @@
   function shown(r) {
     return S.settingVisible(r.key) && (S.state.settings.unavailable !== "hide" || !S.settingOff(r.key));
   }
+  /* A sorted group lists its rows by name in the language shown */
+  function byLabel(list) {
+    var lang = S.i18n.lang();
+    return list.slice().sort(function (a, b) {
+      return S.t(a.label).localeCompare(S.t(b.label), lang);
+    });
+  }
   function visible(list) {
     var out = [];
     list.forEach(function (n) {
       var sub = visible(n.sub || []);
       if (n.key == null) {
-        if (sub.length) { out.push(group(n.id, n.title, sub)); }
+        if (sub.length) { out.push(group(n.id, n.title, n.sorted ? byLabel(sub) : sub)); }
       } else if (shown(n)) {
         out.push(row(n.label, n.key, n.kind, sub));
       } else {
@@ -665,6 +721,54 @@
       ctl.appendChild(open);
     } else if (r.kind === "select") {
       ctl.appendChild(pick(k, v, S.t(r.label), S.i18n.choices()));
+    } else if (r.kind === "seed") {
+      /* The seed applies on Enter or when the field loses focus, then the
+         sound plays with the new noise: the click for Same seed everywhere,
+         which also clears the seeds of single sounds. The keys stay in the
+         field, so the arrow keys move the caret. A sound that follows the
+         shared seed shows it, and an empty field makes it follow again.
+         DEFAULT gives the seed the game starts with, and is pressed only
+         while that seed is in use: on every sound for Same seed
+         everywhere, on this sound for a sound row */
+      var set = S.state.settings, sound = k === "soundSeed" ? null : k.slice(5);
+      var own = set.soundSeeds || {}, D = S.snd.DEFAULT_SEED;
+      var anyOwn = Object.keys(own).length > 0;
+      var allDefault = set.soundSeed === D && Object.keys(own).every(function (x) { return own[x] === D; });
+      var inp = el("input", "dlg-in set-seed"); inp.type = "text"; inp.value = v;
+      inp.maxLength = 24; inp.spellcheck = false; inp.autocomplete = "off";
+      inp.setAttribute("aria-label", sound ? S.t("{name} seed", { name: S.t(r.label) }) : S.t(r.label));
+      var useSeed = function (text) {
+        text = text == null ? "" : String(text).trim().toUpperCase();
+        if (!sound) {
+          text = text || S.snd.DEFAULT_SEED;
+          if (text === set.soundSeed && !anyOwn) { inp.value = text; return; }
+          set.soundSeed = text; set.soundSeeds = {};
+        } else {
+          var seeds = set.soundSeeds = set.soundSeeds || {};
+          if ((seeds[sound] || "") === text || (!text && !seeds[sound])) { inp.value = text || set.soundSeed; return; }
+          if (text) { seeds[sound] = text; } else { delete seeds[sound]; }
+        }
+        S.save();
+        S.snd.reseed(); setTimeout(function () { S.snd.preview(sound || "click"); }, 150);
+        fill(body);
+      };
+      inp.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" || e.key === "Tab") { return; }
+        e.stopPropagation();
+        if (e.key === "Enter") { e.preventDefault(); useSeed(inp.value); return; }
+        if (e.key.length === 1 || e.key === "Backspace") { S.snd.typed(e.key); }
+      });
+      inp.addEventListener("change", function () { useSeed(inp.value); });
+      ctl.appendChild(inp);
+      var nw = opt("NEW", false, function () { useSeed(String(Math.floor(Math.random() * 1e7))); });
+      nw.dataset.value = "new";
+      var df = opt("DEFAULT", sound ? v === D : allDefault, function () {
+        /* A sound returns to following the shared seed when that is the
+           default, and takes the default as its own seed otherwise */
+        useSeed(sound && set.soundSeed === D ? null : D);
+      });
+      df.dataset.value = "default";
+      ctl.appendChild(nw); ctl.appendChild(df);
     } else if (r.kind === "range") {
       var rg = el("input", "set-range"); rg.type = "range"; rg.min = 0; rg.max = 100; rg.step = 5; rg.value = v;
       rg.dataset.sound = "slide";
@@ -690,7 +794,7 @@
     line.appendChild(ctl);
     ctl.querySelectorAll("button, input").forEach(function (c) { c.dataset.settingKey = k; });
     attachHelp(line, k);
-    /* A setting that cannot apply now stays in view, greyed, with the reason */
+    /* A setting that cannot apply now stays in view, grayed, with the reason */
     var why = S.settingOff(k);
     if (why) {
       line.classList.add("set-unavail");
@@ -698,26 +802,31 @@
         c.disabled = true;
       });
       line.querySelector(".set-label").appendChild(el("span", "set-why", S.t(why)));
+    } else if (ROW_NOTE[k] && ROW_NOTE[k]()) {
+      line.querySelector(".set-label").appendChild(el("span", "set-why", S.t(ROW_NOTE[k]())));
     }
     return line;
   }
 
   /* SECTIONS and FULL LIST: settings that belong to another one sit under
      it, indented on a rule; a group adds its title above its settings */
-  function nested(list, body, into) {
+  /* depth counts the groups around list; a group inside a group takes the
+     inner group color */
+  function nested(list, body, into, depth) {
+    depth = depth || 0;
     list.forEach(function (n) {
       if (n.key == null) {
-        var g = el("div", "set-subgroup");
+        var g = el("div", "set-subgroup" + (depth ? " set-subgroup-inner" : ""));
         var h = el("div", "set-sub-h", S.t(n.title)); h.setAttribute("role", "heading"); h.setAttribute("aria-level", "4");
         g.appendChild(h);
-        nested(n.sub, body, g);
+        nested(n.sub, body, g, depth + 1);
         into.appendChild(g);
         return;
       }
       into.appendChild(makeRow(n, body));
       if (n.sub.length) {
         var box = el("div", "set-sub");
-        nested(n.sub, body, box);
+        nested(n.sub, body, box, depth);
         into.appendChild(box);
       }
     });
@@ -766,10 +875,11 @@
   }
   /* PAGES: a line, as tall as a setting row, that opens a group or the
      settings under a setting. A group's line shows its title; the line
-     under a setting names the settings it opens. */
-  function linkRow(n, body) {
+     under a setting names the settings it opens. inner: the page is a
+     group, so a group it opens is a group inside a group */
+  function linkRow(n, body, inner) {
     var grp = n.key == null;
-    var b = el("button", "set-link " + (grp ? "set-link-grp" : "set-link-sub")); b.type = "button";
+    var b = el("button", "set-link " + (grp ? "set-link-grp" + (inner ? " set-link-grp2" : "") : "set-link-sub")); b.type = "button";
     b.dataset.sound = "page"; b.dataset.nav = idOf(n);
     var name = grp ? S.t(n.title) : n.sub.map(function (x) {
       return x.key != null ? S.t(x.label) : S.t(x.title);
@@ -793,9 +903,10 @@
     page = page.slice(0, path.length);
     return path;
   }
-  /* One part of the page path, coloured by its level like the headings */
-  function crumbPart(n, i) {
-    var cls = n.key != null ? "set-crumb-set" : i === 0 ? "set-crumb-sec" : "set-crumb-grp";
+  /* One part of the page path, colored by its level like the headings.
+     inner: a group inside another group */
+  function crumbPart(n, i, inner) {
+    var cls = n.key != null ? "set-crumb-set" : i === 0 ? "set-crumb-sec" : inner ? "set-crumb-grp set-crumb-grp2" : "set-crumb-grp";
     return el("span", cls, n.key != null ? S.t(n.label) : S.t(n.title));
   }
   var focusNext = null;
@@ -819,9 +930,11 @@
     bk.addEventListener("click", function () { back(body); });
     crumb.appendChild(bk);
     var where = el("span", "set-where");
+    var groups = 0;
     path.forEach(function (n, i) {
       if (i) { where.appendChild(document.createTextNode(" / ")); }
-      where.appendChild(crumbPart(n, i));
+      if (i && n.key == null) { groups++; }
+      where.appendChild(crumbPart(n, i, groups > 1));
     });
     where.setAttribute("role", "heading"); where.setAttribute("aria-level", "3");
     crumb.appendChild(where);
@@ -836,7 +949,8 @@
     here.sub.forEach(function (n) { if (n.key == null) { more.push(n); } });
     if (more.length) {
       var box = el("div", "set-more");
-      more.forEach(function (n) { box.appendChild(linkRow(n, body)); });
+      var inGroup = path.length > 1 && here.key == null;
+      more.forEach(function (n) { box.appendChild(linkRow(n, body, inGroup)); });
       part.appendChild(box);
     }
     if (here.id === "data" && saveConflict()) { part.appendChild(conflictNote()); }

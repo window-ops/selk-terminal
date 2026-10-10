@@ -504,7 +504,7 @@ const GROUPS = {
     await ctx.close();
   },
 
-  /* Text appears is greyed and at once while motion is reduced, and the
+  /* Text appears is grayed and at once while motion is reduced, and the
      saved choice returns with full motion */
   async speed(b) {
     const { ctx, pg } = await boot(b, { setupView: "list", speed: "slow", motion: "reduce" });
@@ -516,7 +516,7 @@ const GROUPS = {
       return r;
     });
     const reduced = await row();
-    check("reduced motion: Text appears shows AT ONCE, greyed", reduced[0] === "AT ONCE" && reduced[1] && reduced[2] === "instant", reduced);
+    check("reduced motion: Text appears shows AT ONCE, grayed", reduced[0] === "AT ONCE" && reduced[1] && reduced[2] === "instant", reduced);
     await pg.evaluate(() => SELK.setupKit.setv("motion", "always"));
     const full = await row();
     check("full motion: the saved SLOW returns", full[0] === "SLOW" && !full[1] && full[2] === "slow", full);
@@ -558,8 +558,7 @@ const GROUPS = {
            release as it comes up */
         await pg.evaluate(() => {
           window.bursts = [];
-          const K = SELK.snd.kit, burst = K.burst;
-          K.burst = function (f) { bursts.push([f, Date.now()]); return burst.apply(this, arguments); };
+          SELK.snd.onBurst = function (f) { bursts.push([f, Date.now()]); };
         });
         const bar = await pg.$('.fbar [data-f="9"]'), box = await bar.boundingBox();
         await pg.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
@@ -569,7 +568,7 @@ const GROUPS = {
         const all = await pg.evaluate(() => bursts);
         const gap = all.length === 2 ? all[1][1] - all[0][1] : 0;
         check("a mouse click plays the press on down and the release on up",
-          JSON.stringify(down) === "[3200]" && all.length === 2 && all[1][0] === 1100 && gap >= 120, [down, all.map((x) => x[0]), gap]);
+          JSON.stringify(down) === "[2900]" && all.length === 2 && all[1][0] === 1100 && gap >= 120, [down, all.map((x) => x[0]), gap]);
       }
       check("no page errors", !pg.errs.length, pg.errs);
       await ctx.close();
@@ -591,7 +590,7 @@ const GROUPS = {
   },
   /* TROIKA.RUN: loan tranches stay on the road, every year has one, the
      obstacles come at an even distance, the rating stays in the middle of
-     the beam over it, the place's ellipsis is grey, and the ending runs
+     the beam over it, the place's ellipsis is gray, and the ending runs
      from 2016 to the end card in both motion modes */
   async troika(b) {
     const { ctx, pg } = await boot(b);
@@ -668,7 +667,7 @@ const GROUPS = {
     });
     check("troika: each fragile platform stands in the middle of its hole", over.every((o) => o[2] === o[3] && o[2] > 0), over);
     const grey = await pg.evaluate(() => getComputedStyle(document.querySelector(".troika-title")).color === getComputedStyle(document.querySelector(".troika-place")).color);
-    check("troika: the title's ellipsis has the place's grey", grey);
+    check("troika: the title's ellipsis has the place's gray", grey);
     await ctx.close();
     for (const motion of ["full", "reduce"]) {
       const { ctx: c2, pg: p2 } = await boot(b, { motion });
@@ -700,7 +699,7 @@ const GROUPS = {
     }
   },
   /* DISASSEMBLY.RUN: every repair of both phones can be done with no
-     mistake, and the part's ellipsis is grey */
+     mistake, and the part's ellipsis is gray */
   async disassembly(b) {
     const { ctx, pg } = await boot(b);
     await pg.evaluate(() => SELK.disassembly.open()); await wait(300);
@@ -730,7 +729,7 @@ const GROUPS = {
     });
     check("disassembly: every repair ends with no mistake", res.every((r) => / 0 mistakes$/.test(r)), res);
     const grey = await pg.evaluate(() => getComputedStyle(document.querySelector(".dis-title")).color === getComputedStyle(document.querySelector(".dis-sub")).color);
-    check("disassembly: the title's ellipsis has the part's grey", grey);
+    check("disassembly: the title's ellipsis has the part's gray", grey);
     check("disassembly: no page errors", !pg.errs.length, pg.errs);
     await ctx.close();
   }

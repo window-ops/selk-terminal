@@ -29,7 +29,7 @@ const FPS = 8, FRAMES = 64, MAST = 80, HEIGHT = 58, M = HEIGHT / 1180;
 /* HALL-R two pixels narrower than the game's 22, the same vaulted shape,
    so its roof stays clear of the lowest guy cables in every frame */
 const HALL = 20;
-/* The guy levels, in metres, and the crane's height */
+/* The guy levels, in meters, and the crane's height */
 const LEVELS = [350, 700, 1050], CRANE = 680;
 /* How far the top leans, in pixels, at time t: a slow sway and two gusts */
 const gust = (t) => 3.5 * Math.exp(-(((t - 3.2) / 0.55) ** 2)) + 2.5 * Math.exp(-(((t - 6.1) / 0.45) ** 2));

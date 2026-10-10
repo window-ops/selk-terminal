@@ -101,7 +101,7 @@ window.SIM = (function () {
     };
   }
   /* The boot lines of js/main.js, boot(): dot leaders sized from the
-     longest label; the ALARM line in the error colour */
+     longest label; the ALARM line in the error color */
   const checks = [
     ["Memory check", "64 GB OK"], ["Drive 0", "spun up, 4 TB"], ["Reactor link", "48 MW OK"],
     ["Uplink relay", "R-09 idle"], ["Directory", "ldaps://dir.selk.cesea.internal OK"],
@@ -314,16 +314,16 @@ window.SIM = (function () {
   /* The camera operator. operator(setups, t) returns the camera [x, y, w] at
      time t, for camera(). setups are the shot's setups in order, each with:
      - from, the time it starts (a new setup is a cut);
-     - aim(t), which returns the point to hold at the centre and the width
+     - aim(t), which returns the point to hold at the center and the width
        to show, [x, y, w], and may add a fourth value from 0 to 1 that
-       scales the dead zone (0 centres the target exactly);
+       scales the dead zone (0 centers the target exactly);
      - dead, the dead zone, [fx, fy] as fractions of the frame around its
-       centre (after Unity Cinemachine);
+       center (after Unity Cinemachine);
      - smooth, the smoothing in seconds, 0.18 by default;
      - top and bottom, page lines the frame stays between.
      The camera works as screen-recording tools do. It holds still while
      the aim stays inside the dead zone, and moves just enough to keep it
-     there when it leaves. The whole path is then smoothed with a centred
+     there when it leaves. The whole path is then smoothed with a centered
      Gaussian, which has no lag, so the camera moves with the cursor. The
      zoom stays as the setup sets it: a change of zoom is a new setup or one
      deliberate move. The path is worked out once per setup, 120 samples a
@@ -370,7 +370,7 @@ window.SIM = (function () {
      drifts, hooks or slides back while a button is pressed.
 
      The recording's small jitter is then taken out: each place is averaged
-     with its neighbours, weighted 1, 2, 1, inside a run of one cursor kind.
+     with its neighbors, weighted 1, 2, 1, inside a run of one cursor kind.
      Each move between two rests keeps its route, its start and its end, and
      is retimed to the minimum-jerk profile of a human reach (Flash and
      Hogan, 1985). A move whose peak would pass 1200 px a second takes the

@@ -20,7 +20,7 @@ Both files are made by `node build.js feature` and `node build.js gameplay` (`..
 How the picture is made before encoding:
 
 - **Game screens:** headless Chromium lays the page out at 1920x1080, as the game does, and draws it at a device pixel ratio of 4/3, so each frame comes out at 2560x1440 with nothing scaled after it.
-- **Pixel animations** (feature trailer): scaled by nearest neighbour to whole multiples, 20 times for the 128 by 64 archive scenes (2560x1280 on a dark ground) and 16 times for the 160 by 90 camera scenes (the full frame). Each 8 fps frame is held for 7.5 frames of 60.
+- **Pixel animations** (feature trailer): scaled by nearest neighbor to whole multiples, 20 times for the 128 by 64 archive scenes (2560x1280 on a dark ground) and 16 times for the 160 by 90 camera scenes (the full frame). Each 8 fps frame is held for 7.5 frames of 60.
 
 ## Why CRF 12
 
@@ -34,4 +34,4 @@ CRF is x264's quality setting: 0 is lossless, lower is better, and each step of 
 | H.264 CRF 10, 4:2:0 | 7.1 MB | 44.4 dB |
 | H.264 CRF 14, 4:2:0 | 4.5 MB | 43.1 dB |
 
-Lossless would make each trailer several hundred MB, and 4:4:4 H.264 does not play in every browser. VP9 and AV1 lossless came out larger than H.264 lossless. Most of the measured loss is the 4:2:0 colour, which every widely playable option shares, so CRF 12 keeps the trailers close to that limit at a size suited to a web page.
+Lossless would make each trailer several hundred MB, and 4:4:4 H.264 does not play in every browser. VP9 and AV1 lossless came out larger than H.264 lossless. Most of the measured loss is the 4:2:0 color, which every widely playable option shares, so CRF 12 keeps the trailers close to that limit at a size suited to a web page.

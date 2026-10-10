@@ -32,7 +32,7 @@ The checks open `common/lib/stage.html` in headless Chromium, as the build does.
 | `camlog.js` | `<trailer folder> <shot script> <t> ...` | Prints the camera's scale and place at each time `t` in seconds |
 | `probe.js` | `<trailer folder> <snapshot> '<expression>'` | Loads one snapshot on the stage and prints the value of a JavaScript expression, for measuring where things are: `SIM.box(SIM.find("SUBMIT PAGE"))` gives a button's box in screen pixels |
 | `audio-check.py` | `<audio or video> [reference.wav]` | Checks a soundtrack, or the sound of a trailer, for the faults heard as crackle, sizzle or clicks, or as a lopsided or hollow stereo image: peak and true peak, samples at full scale, DC offset, isolated one-sample jumps, windows whose energy above 9 kHz rises far above the usual, and per second the left-right balance and the level lost when summed to mono (a phone speaker). With a reference, the soundtrack before encoding, it also measures the encoder's error. Ends with a line of problems found. Needs NumPy and ffmpeg; run it with `python3 -I` |
-| `cmpdir.py` | `<folder a> <folder b> [tolerance]` | Compares the PNG frames of two folders and prints the largest difference of any colour channel. Two Chromium runs differ by up to 3 levels, so the tolerance is 4 by default |
+| `cmpdir.py` | `<folder a> <folder b> [tolerance]` | Compares the PNG frames of two folders and prints the largest difference of any color channel. Two Chromium runs differ by up to 3 levels, so the tolerance is 4 by default |
 
 ## Score engraving (`score/`)
 

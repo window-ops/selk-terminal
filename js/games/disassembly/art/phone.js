@@ -6,7 +6,7 @@
   var K = A.K, W = A.W, H = A.H, PX = A.PX, PY = A.PY, PW = A.PW, PH = A.PH, TRAY = A.TRAY, DRAWER = A.DRAWER, RADIUS = A.RADIUS;
   var r = A.r, f = A.f, round = A.round, disc = A.disc, ring = A.ring, poly = A.poly, hull = A.hull;
   var bump = A.bump, RECTS = A.RECTS, LAYERS = A.LAYERS;
-  /* The frame's colour: the Fairphone's follows its edition, black for the
+  /* The frame's color: the Fairphone's follows its edition, black for the
      transparent and Matte Black editions and blue for Sky Blue */
   function frameColour(phone) {
     if (phone !== "fairphone") { return C.frame; }
@@ -46,7 +46,7 @@
       round(x + 6, y + 152, 72, 16, 6, C.lens); r(x + 6, y + 152, 72, 8, C.lens); round(x + 6.5, y + 152, 7, 12, 1, C.dark);
       r(x + 8.5, y + 156, 3, 4, C.gold);
     } else {
-      /* The main board at the top, the battery well under the vapour
+      /* The main board at the top, the battery well under the vapor
          chamber's copper, the sub-board's place at the bottom, and the
          ribbon cables' channel between them */
       r(x + 34, y + 8, 42, 60, C.board); f(x + 34, y + 8, 84, 1, C.boardLit);

@@ -1,7 +1,5 @@
 # Selk
 
-NOTE: THIS IS A MANUAL COPY OF THE REPOSITORY [FROM GITLAB](https://gitlab.com/window-ops-web/selk-terminal) BECAUSE I AM TOO TIRED TO ALSO MIRROR THIS REPOSITORY. MAY BE OUTDATED.
-
 Selk is a short, browser-based investigation game set at a fictional research and construction site inside the real Selk crater on Titan. Read the site's files, follow the evidence, complete reports, and decide what happens to the base.
 
 The game explores possible microbial life, automated infrastructure, and turbocapitalism. Its setting imagines a future led by an Eastern European space agency. The Selk Operating System, CESEA, HX Holdings, and the mission are fictional.
@@ -61,7 +59,7 @@ The SHELL OUTPUT group has three more rows, which act in tmux mode. Two of them 
 - **Panel results** sets what the FILES panel, the F keys and the status bar do. IN VIEW opens their windows only, so the shell and the panes stay separate. BOTH opens their windows and prints their results in the shell.
 - **Shell-only DESK** keeps SHELL alone on DESK, including when the shell was popped out into its own window. MAIL and WATCH stay available, and messages still open in MESSAGE. In SINGLE layout or on narrow screens, FILES and VIEW are normally hidden; a direct request to open either reveals it temporarily, until the next typed command. Reports opened from MAIL still print in SHELL.
 
-A row that another Setup choice would make usable stays in view, greyed, with the reason beside it. Display > Setup screen > Unavailable settings > HIDE leaves those rows out until they can apply. In desktop mode these rows, Layout and Redirect notices are greyed, since they act in tmux mode; switching Mode to TMUX makes them usable again. Redirect notices is greyed while Shell results is IN SHELL, since the note marks typed results that open in a window.
+A row that another Setup choice would make usable stays in view, grayed, with the reason beside it. Display > Setup screen > Unavailable settings > HIDE leaves those rows out until they can apply. In desktop mode these rows, Layout and Redirect notices are grayed, since they act in tmux mode; switching Mode to TMUX makes them usable again. Redirect notices is grayed while Shell results is IN SHELL, since the note marks typed results that open in a window.
 
 ## Project notes
 

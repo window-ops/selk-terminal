@@ -1,4 +1,4 @@
-/* Shared parts of the interface: text colours, links, buttons, focus,
+/* Shared parts of the interface: text colors, links, buttons, focus,
    scrolling, text blocks and screen reader text. */
 button {
   text-transform: uppercase;
@@ -31,6 +31,10 @@ button {
   display: none;
   width: 0;
   height: 0;
+}
+/* Pretty wrap: the last words of a block kept on one line (js/core/dom.js) */
+.pw-keep {
+  white-space: nowrap;
 }
 /* Entry links and handbook terms */
 .lnk,

@@ -1,7 +1,7 @@
 /* The economist's voice in TROIKA.RUN (js/games/troika/talk.js): no words,
    as in old pixel games, but a deep blip for the letters as they are typed.
    Each blip is a square wave near 80 Hz with a sawtooth an octave up,
-   through a band-pass round 500 Hz that gives it the colour of a vowel.
+   through a band-pass round 500 Hz that gives it the color of a vowel.
    The letter sets the pitch, a few semitones up or down, so the same
    sentence always sounds the same. The text types at the pace of speech in
    every motion setting (talk.js), so the voice always follows it. The

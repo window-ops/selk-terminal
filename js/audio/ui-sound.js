@@ -5,8 +5,8 @@
    release sound. A control with a kind plays its sound whole. A touch sounds with the click that
    follows it, so a touch that starts a scroll makes no sound. Keyboard
    activation sounds through the click event. Choosing from a list or
-   moving a slider ticks, and picking up and dropping an entry have their
-   own sounds.
+   moving a slider ticks. Picking up an entry makes only the press sound,
+   and dropping it clicks.
 
    One action makes one sound. A press owns the sound from pointer down
    until 150 ms after release, so S.snd.click() and S.snd.tick() called by
@@ -44,6 +44,10 @@
      press, whose plain click waits for the release to finish it. With
      Control sounds ON every press plays one whole sound */
   function sound(n, own, split) {
+    /* A control marked data-sound="press" (POWER ON) plays the press of
+       the click alone, with no release, whatever Control sounds is set to */
+    var pressOnly = n && n.closest && n.closest('[data-sound="press"]');
+    if (pressOnly && !pressOnly.disabled) { play(rawPress, [], own); return; }
     var k = kindOf(n);
     if (k) { play(snd.ui, [k], own); }
     else if (split && !S.state.settings.ctlSounds) { pressHalf(own); }
@@ -56,13 +60,6 @@
      (the citizen pass), so a press on it is silent */
   function inert(n) {
     return !!(n && n.closest && n.closest(".cam img") && !n.closest(".cam.flip"));
-  }
-  /* Only entries and the command links that open them can be dragged onto a
-     report; a drag of anything else (a picture, selected text) is silent */
-  function validDrag(n) {
-    var m = n && n.closest && n.closest("[data-entry], [data-cmd^='open ']");
-    var id = m && (m.dataset.entry || (m.dataset.cmd || "").slice(5));
-    return !!id && S.entryDraggable(id);
   }
   function release() {
     lifting = 0;
@@ -104,9 +101,9 @@
       snd.tick();
     }
   }, true);
-  document.addEventListener("dragstart", function (e) {
-    lifting = 0;
-    if (validDrag(e.target)) { play(rawTick, [], true); }
-  }, true);
+  /* Picking up an entry keeps the press sound alone. A tick here passed
+     the 60 ms gate only when the drag began late, so it played on some
+     drags and stayed silent on others */
+  document.addEventListener("dragstart", function () { lifting = 0; }, true);
   document.addEventListener("drop", function () { play(rawClick, [], true); }, true);
 })();

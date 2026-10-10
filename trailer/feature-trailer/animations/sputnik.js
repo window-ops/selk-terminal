@@ -11,7 +11,7 @@ const { SKY, LIGHT, BLUE, GREY, GOLD } = require("./palette");
 const FPS = 8, FRAMES = 18;
 /* The Earth: a circle far below, of which only the top shows */
 const EX = 64, EY = 250, ER = 200;
-/* The orbit, round the same centre; the satellite moves along it */
+/* The orbit, round the same center; the satellite moves along it */
 const OR = ER + 30;
 /* It enters with its antennas still behind the left edge and leaves with
    its sphere and its last signal past the right edge, so it crosses the

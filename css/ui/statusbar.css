@@ -62,7 +62,7 @@
   flex: 0 0 auto;
 }
 /* Status line message (S.msg). The text sits on a chip tinted from the
-   bar's text colour; an error takes the flag colour. A message wider than
+   bar's text color; an error takes the flag color. A message wider than
    its space scrolls in its track, with "<" and ">" at the hidden ends. */
 .bar-msg {
   flex: 1;
@@ -125,7 +125,7 @@
 .bar-msg.over:not(.at-end) .bar-msg-r {
   visibility: visible;
 }
-/* Bar buttons take the bar's text colour and have no hover state. The
+/* Bar buttons take the bar's text color and have no hover state. The
    focus outline sits outside, so nothing on a bar changes size. */
 .st-btn,
 .wb-btn {
@@ -173,7 +173,7 @@ html[data-motion="full"] :is(.st-btn, .wb-btn).live {
   padding: 0 0.4em;
   white-space: nowrap;
 }
-/* A 1em line box centres one line of capitals */
+/* A 1em line box centers one line of capitals */
 .st-btn,
 .st-uplink,
 .st-save {

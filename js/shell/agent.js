@@ -374,7 +374,8 @@
       d.appendChild(hint());
       return d;
     });
-    S.scr.task(function () { S.snd.tick(); return null; }, 0);
+    /* A received answer ticks about 4 dB above the plain tick (0.045) */
+    S.scr.task(function () { S.snd.tick(0.070); return null; }, 0);
   }
   function filled(pair) {
     var L = lang();

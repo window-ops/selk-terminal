@@ -10,7 +10,7 @@
 
    Labels need one clear pixel around them: a label that touches a line or
    another label, or a line drawn over a label, is added to the sheet's
-   problems. Pixels drawn with soft colours (hatching, sky texture) do not
+   problems. Pixels drawn with soft colors (hatching, sky texture) do not
    count. Symmetric parts are drawn on one side and mirrored pixel for pixel. */
 "use strict";
 /* What each pixel is, for the label check */
@@ -109,14 +109,14 @@ function glyph(font, ch) {
   return typeof g === "string" ? { rows: g.split(" "), above: 0 } : g;
 }
 
-/* Rounds away from zero at .5, so positions mirrored about a centre stay
+/* Rounds away from zero at .5, so positions mirrored about a center stay
    mirrored */
 const round = (v) => Math.sign(v) * Math.round(Math.abs(v));
 
 /* A new sheet. opts: w and h (128 by 64 when left out), font (SMALL when
-   left out), ground (the colour index of the empty sheet), soft (colour
-   indexes the label check ignores), grid (colour of a grid every 8 pixels,
-   or null), frame (colour of the frame, or null), dim (colour of dimension
+   left out), ground (the color index of the empty sheet), soft (color
+   indexes the label check ignores), grid (color of a grid every 8 pixels,
+   or null), frame (color of the frame, or null), dim (color of dimension
    lines). Returns { d, px, problems, w, h }. */
 function sheet(name, opts) {
   const W = opts.w || 128, H = opts.h || 64, font = opts.font || SMALL;
@@ -202,7 +202,7 @@ function sheet(name, opts) {
       }
       return out;
     },
-    /* Diagonal hatching on cleared ground in colour c, which should be soft */
+    /* Diagonal hatching on cleared ground in color c, which should be soft */
     hatch(x, y, w, h, c) {
       d.clear(x, y, w, h);
       for (let j = 0; j < h; j++) for (let i = 0; i < w; i++) if ((x + i + y + j) % 4 === 0) d.set(x + i, y + j, c);
@@ -242,7 +242,7 @@ function sheet(name, opts) {
         if (i >= 0 && j >= 0 && i < W && j < H) kind[j * W + i] = K_TEXT;
       }
     },
-    /* A label centred on column cx */
+    /* A label centered on column cx */
     textC(cx, y, s, c) {
       d.text(cx - Math.floor((d.width(s) - 1) / 2), y, s, c);
     },
@@ -265,7 +265,7 @@ function sheet(name, opts) {
 }
 
 /* The sheet as an SVG, one element per line indented by two spaces, and the
-   rects of each pixel row together; pal maps colour indexes to colours */
+   rects of each pixel row together; pal maps color indexes to colors */
 function svg(s, label, pal, ground) {
   ground = ground || 0;
   const W = s.w, H = s.h, px = s.px, out = [];

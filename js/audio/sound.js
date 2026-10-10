@@ -8,6 +8,11 @@
   var ctx = null, master = null, bus = {}, duck = {}, pan = {}, hp = null, noiseBuf = null, on = true;
   /* The clicks' own level (Setup > Sound > Clicks), inside the interface channel */
   var clicks = null;
+  /* Work that must finish before the first sound plays: the sound files
+     register it with S.snd.kit.prepare (the interface sounds render their
+     bursts there). prepared settles once the context is built and every
+     piece of that work is done */
+  var preparers = [], prepared = null;
   /* Sound presets. Each sets the four channel levels once (the sliders stay
      adjustable), a high-pass filter against bass the speakers cannot play,
      and the stereo width. DESK SPEAKERS suits a left and right pair without a
@@ -52,9 +57,15 @@
     if (t <= f.t0) { return f.from; }
     return f.from + (f.to - f.from) * (t - f.t0) / (f.t1 - f.t0);
   }
+  /* dur 0 sets the level at once */
   function glide(p, to, dur) {
     var t = ctx.currentTime, from = levelOf(p);
-    dur = Math.max(0.01, dur || 0);
+    if (!dur) {
+      try { p.cancelScheduledValues(t); p.setValueAtTime(to, t); } catch (e) {}
+      p.value = to; p._glide = { from: to, to: to, t0: t, t1: t };
+      return;
+    }
+    dur = Math.max(0.01, dur);
     try {
       p.cancelScheduledValues(t);
       p.setValueAtTime(from, t);
@@ -87,6 +98,13 @@
     }
   }
   ["pointerdown", "keydown", "touchend"].forEach(function (k) { document.addEventListener(k, wake, true); });
+  /* The context is made only after the first gesture on the page, since a
+     browser refuses to start one before it and warns. Where the browser
+     reports no user activation, the context is made at once */
+  function activated() {
+    var ua = navigator.userActivation;
+    return !ua || ua.hasBeenActive;
+  }
   function init() {
     if (ctx) {
       if (ctx.state !== "running" && ctx.state !== "closed" && on) {
@@ -94,7 +112,7 @@
       } return;
     }
     var AC = window.AudioContext || window.webkitAudioContext;
-    if (!AC) {
+    if (!AC || !activated()) {
       return;
     }
     ctx = new AC();
@@ -118,43 +136,110 @@
       }
     });
     clicks = ctx.createGain(); clicks.connect(bus.ui);
-    master.gain.value = 0;
-    Object.keys(BUS).forEach(function (k) { bus[k].gain.value = 0; });
-    apply();
+    apply(true);
     if (!on) {
       try {
         ctx.suspend();
       } catch (e) {}
     }
-    var len = ctx.sampleRate * 3;
-    noiseBuf = ctx.createBuffer(1, len, ctx.sampleRate);
-    var d = noiseBuf.getChannelData(0), b0 = 0, b1 = 0;
+    noiseBuf = makeNoise(set().soundSeed, 3);
+    /* The levels are set again whenever the context starts running, so a
+       context resumed after a fast load plays at the levels of Setup */
+    ctx.addEventListener("statechange", function () {
+      if (ctx.state === "running") { apply(); } else { warmed = null; }
+    });
+    warm();
+    /* The graph and the noise exist now: run the preparation, and let
+       ready() wait for it */
+    runPrep();
+  }
+  function runPrep() {
+    prepared = Promise.all(preparers.map(function (fn) {
+      try { return Promise.resolve(fn()); } catch (e) { return null; }
+    })).then(function () {}, function () {});
+  }
+  /* The noise every burst and wind is made of: three seconds, built with
+     mulberry32 from the shared seed (Setup > Sound > Seeds > Same seed
+     everywhere, settings.soundSeed), so the same seed makes the same
+     buffer at every load. The click and the control sounds read it from a
+     fixed offset, so the seed decides how they sound; each of them can
+     also take a seed of its own (noiseFor).
+
+     The default seed gives the most probable sound of a random buffer: out
+     of 2000 seeds, its click and control bursts lie closest to the average
+     over all seeds (third-octave band levels, peak and energy, at 44.1 and
+     48 kHz, the click weighted four times). */
+  var DEFAULT_SEED = "3436859";
+  /* A seed of digits is used as a number; any other text is hashed to one
+     (FNV-1a), so a word works as a seed too */
+  function seedOf(text) {
+    text = String(text == null ? "" : text).trim();
+    if (!text) { text = DEFAULT_SEED; }
+    if (/^\d{1,10}$/.test(text)) { return Number(text) >>> 0; }
+    var h = 0x811c9dc5;
+    text = text.toUpperCase();
+    for (var i = 0; i < text.length; i++) {
+      h ^= text.charCodeAt(i); h = Math.imul(h, 0x01000193);
+    }
+    return h >>> 0;
+  }
+  /* seconds: three for the main buffer, which the wind loops; one for the
+     buffer of a single sound, which reads it at 0.5 s. A seed makes the
+     same samples whatever the length, so a sound given the shared seed
+     sounds as it does on the main buffer */
+  function makeNoise(text, seconds) {
+    var len = Math.round(ctx.sampleRate * seconds), buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    var d = buf.getChannelData(0), b0 = 0, b1 = 0, seed = seedOf(text) | 0;
+    function rnd() {
+      seed = (seed + 0x6d2b79f5) | 0;
+      var r = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+      r = (r + Math.imul(r ^ (r >>> 7), 61 | r)) ^ r;
+      return ((r ^ (r >>> 14)) >>> 0) / 4294967296;
+    }
     for (var i = 0; i < len; i++) {
-      var w = Math.random() * 2 - 1;
+      var w = rnd() * 2 - 1;
       b0 = 0.997 * b0 + 0.03 * w; b1 = (b1 + 0.02 * w) / 1.02;
       d[i] = i % 3 === 0 ? w : (i % 3 === 1 ? b1 * 3.5 : b0 * 2);
     }
+    return buf;
   }
-  function apply() {
+  /* The noise of one interface sound (Setup > Sound > Seeds): its own
+     seed from settings.soundSeeds, or the main buffer when it has none.
+     seconds is the length of its own buffer: one by default, three for a
+     sound that reads it at a random point, like typing. Buffers are kept
+     by sound and seed until the next reseed */
+  var own = {};
+  function noiseFor(kind, seconds) {
+    var seeds = set().soundSeeds || {}, text = kind && seeds[kind];
+    if (!ctx || !text) { return noiseBuf; }
+    var key = kind + " " + text;
+    if (!own[key]) { own[key] = makeNoise(text, seconds || 1); }
+    return own[key];
+  }
+  /* instant: set the levels at once, when the engine is built. A glide
+     from silence there would leave the first sound, played at once after
+     the first gesture, inside the fade and unheard */
+  function apply(instant) {
     if (!ctx) {
       return;
     }
+    var fade = instant === true ? 0 : 0.05;
     var masterVol = on ? set().vol / 100 : 0, pr = preset();
     if (hp) { hp.frequency.value = pr.hp; }
     /* The computer's hum is panned slightly left; the other channels are
-       centred */
+       centered */
     if (pan.machine) { pan.machine.pan.value = -0.5 * pr.width; }
     /* Level changes from a slider or from SOUND ON glide over 50 ms, since a
        jump in level is heard as a click */
-    glide(master.gain, masterVol, 0.05);
+    glide(master.gain, masterVol, fade);
     Object.keys(BUS).forEach(function (k) {
       var busVol = on ? (set()[BUS[k]] != null ? set()[BUS[k]] : 100) / 100 : 0;
       /* Wind sits well under the machine, the interface and the structure */
       if (k === "wind") { busVol *= 0.35; }
-      glide(bus[k].gain, busVol, 0.05);
+      glide(bus[k].gain, busVol, fade);
     });
     /* 50 plays the click as designed; the default, 70, is 3 dB above it */
-    glide(clicks.gain, (set().vClick != null ? set().vClick : 70) / 50, 0.05);
+    glide(clicks.gain, (set().vClick != null ? set().vClick : 70) / 50, fade);
   }
   function tone(freq, dur, type, vol, when, glideTo, dest) {
     if (!ctx || !on) {
@@ -175,14 +260,15 @@
   }
   /* A burst of filtered noise. offset is where in the noise buffer it reads,
      in seconds; when left out it is random, so wind and creaks never repeat.
+     noise is the buffer to read, the main one when left out.
      Interface sounds pass a fixed offset, so a control sounds the same every
      time (sounds/interface.js). */
-  function burst(freq, q, vol, dur, when, type, dest, attack, offset) {
+  function burst(freq, q, vol, dur, when, type, dest, attack, offset, noise) {
     if (!ctx || !on) {
       return;
     }
     var t = ctx.currentTime + (when || 0);
-    var s = ctx.createBufferSource(); s.buffer = noiseBuf;
+    var s = ctx.createBufferSource(); s.buffer = noise || noiseBuf;
     var f = ctx.createBiquadFilter(); f.type = type || "bandpass"; f.frequency.value = freq; f.Q.value = q;
     var g = ctx.createGain();
     g.gain.setValueAtTime(0.0001, t);
@@ -215,19 +301,52 @@
      (before the first gesture, or after the tab was hidden) resumes
      asynchronously, and a sound scheduled before that is lost; this waits for
      the resume, so the first press after a pause sounds like every other */
+  /* The output device takes a moment to open after the context starts,
+     and drops what plays before then: the first click after a start was
+     silent. warmed settles once the audio clock has run for the output
+     latency the browser reports, 60 ms at least and 250 ms at most, or
+     after 1 s in any case. A context that stops running (Sound OFF, a
+     hidden tab, a call) warms again at its next start. */
+  var warmed = null;
+  function warm() {
+    if (warmed) { return warmed; }
+    warmed = new Promise(function (done) {
+      var t0 = null, give = Date.now() + 1000;
+      (function check() {
+        if (ctx.state === "running") {
+          if (t0 === null) { t0 = ctx.currentTime; }
+          var need = Math.min(0.25, Math.max(0.06, (ctx.outputLatency || 0) + (ctx.baseLatency || 0)));
+          if (ctx.currentTime - t0 >= need) { done(); return; }
+        }
+        if (Date.now() > give) { done(); return; }
+        setTimeout(check, 10);
+      })();
+    });
+    return warmed;
+  }
   function ready(fn) {
     init();
     if (!ctx) { return; }
     /* "suspended" in every browser; Safari also reports "interrupted" after
-       a call or another app took the audio */
-    if (ctx.state !== "running" && on) {
-      ctx.resume().then(fn, function () {});
-    } else {
-      fn();
-    }
+       a call or another app took the audio. The sound also waits for the
+       preparation, so the first sounds after a fast load play whole, and
+       for the output to open (warm) */
+    var running = ctx.state !== "running" && on ? ctx.resume() : null;
+    Promise.all([running, prepared, on ? warm() : null]).then(fn, function () {});
   }
   S.snd = {
     init: init,
+    /* Builds the engine at the first gesture: a key, a press or a tap.
+       The capture listeners run before the control's own sound */
+    initOnGesture: function () {
+      if (ctx) { return; }
+      var kinds = ["pointerdown", "keydown", "touchend", "click"];
+      function go() {
+        init();
+        if (ctx) { kinds.forEach(function (k) { document.removeEventListener(k, go, true); }); }
+      }
+      kinds.forEach(function (k) { document.addEventListener(k, go, true); });
+    },
     apply: apply,
     PRESETS: PRESETS,
     /* A preset sets the four channel levels */
@@ -254,6 +373,15 @@
         }
       }
     },
+    DEFAULT_SEED: DEFAULT_SEED,
+    /* Builds the noise again from the seed in Setup and renders the
+       interface sounds again from it. Sounds already playing, like the
+       wind, keep the old noise until they start again. */
+    reseed: function () {
+      if (!ctx) { return; }
+      noiseBuf = makeNoise(set().soundSeed, 3); own = {};
+      runPrep();
+    },
     /* What the files in sounds/ build with. ctx, master and the buses exist
        only after init, so they are read through functions. */
     kit: {
@@ -262,6 +390,7 @@
       bus: function (k) { return bus[k]; },
       clicks: function () { return clicks; },
       noise: function () { return noiseBuf; },
+      noiseFor: noiseFor,
       duck: function () { return duck; },
       on: function () { return on; },
       preset: preset,
@@ -272,7 +401,17 @@
       burst: burst,
       loopNoise: loopNoise,
       osc: osc,
-      ready: ready
+      ready: ready,
+      /* Registers work to run once the context is built and again after a
+         new seed; fn may return a promise. Work registered after the build
+         also runs at once */
+      prepare: function (fn) {
+        preparers.push(fn);
+        if (ctx) {
+          var done = Promise.resolve().then(fn);
+          prepared = Promise.all([prepared, done]).then(function () {}, function () {});
+        }
+      }
     }
   };
 })();

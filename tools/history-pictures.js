@@ -14,7 +14,7 @@ const fs = require("fs"), path = require("path");
 const { sheet: newSheet, svg: toSvg, BIG } = require("./pixel-sheet");
 const OUT = path.join(__dirname, "..", "img", "history");
 /* Ground, sky texture, dark shape, light, red, gold, blue, Titan orange,
-   grey */
+   gray */
 const PAL = ["#191410", "#2A221C", "#4E4136", "#E8DCC4", "#C8433A", "#E3B25A", "#5B8BC4", "#D47F2C", "#9A8F84"];
 const GROUND = 0, SKY = 1, DARK = 2, LIGHT = 3, RED = 4, GOLD = 5, BLUE = 6, ORANGE = 7, GREY = 8;
 function sheet(name, opts) {
@@ -113,7 +113,7 @@ const PICTURES = {
     year(d, "2044");
   }],
   /* The Commission elected for the first time: a ballot with its mark
-     going into the box; everything centred on column 64 */
+     going into the box; everything centered on column 64 */
   "2045-reforms": ["2045", (d) => {
     sky(d, 1, 62, 9);
     d.box(40, 30, 49, 30, LIGHT);
@@ -126,9 +126,9 @@ const PICTURES = {
     year(d, "2045");
   }],
   /* A sídliště, a panel housing estate, after renovation: a long slab
-     block in front with its stairwell columns in a new colour, a longer slab
+     block in front with its stairwell columns in a new color, a longer slab
      and a point tower behind, solar roofs, trees between the blocks, a tram
-     on the street. Storeys are 3 pixels, windows 2 by 1 */
+     on the street. Stories are 3 pixels, windows 2 by 1 */
   "2047-eastern-europe": ["2047", (d) => {
     const ground = 56;
     sky(d, 1, ground - 1, 7);
@@ -154,9 +154,9 @@ const PICTURES = {
     year(d, "2047");
   }],
   /* The panel robots on a building site, drawn about 1 pixel for 0.47 m, so
-     a storey of 2.8 m is 6 pixels; parts thinner than a pixel, such as the
+     a story of 2.8 m is 6 pixels; parts thinner than a pixel, such as the
      stacked panels, are drawn one pixel or more thick. The
-     block, 30 m long in 6 m wall panels, has five storeys done and the sixth
+     block, 30 m long in 6 m wall panels, has five stories done and the sixth
      half closed. Three robots and their supervisor: the tower robot on its
      rails lowers the next panel into the gap, the welding robot on the top
      slab joins the last panel, the carrier robot brings a panel from the
@@ -165,13 +165,13 @@ const PICTURES = {
     const ground = 53, storey = 6, panel = 13, x0 = 40;
     sky(d, 1, ground - 1, 7);
     d.line(1, ground, 126, ground, GREY);
-    /* Five storeys of five panels, a window in each */
+    /* Five stories of five panels, a window in each */
     const top = ground - 5 * storey;
     d.clear(x0, top, 5 * panel + 1, ground - top); d.box(x0, top, 5 * panel + 1, ground - top, LIGHT);
     for (let f = 1; f < 5; f++) d.line(x0 + 1, top + f * storey, x0 + 5 * panel - 1, top + f * storey, LIGHT);
     for (let k = 1; k < 5; k++) d.line(x0 + k * panel, top + 1, x0 + k * panel, ground - 1, DARK);
     for (let f = 0; f < 5; f++) for (let k = 0; k < 5; k++) d.fill(x0 + k * panel + 5, top + f * storey + 2, 3, 3, GOLD);
-    /* The sixth storey: two panels set, a gap for the third */
+    /* The sixth story: two panels set, a gap for the third */
     const t6 = top - storey;
     d.clear(x0, t6, 2 * panel + 1, storey); d.box(x0, t6, 2 * panel + 1, storey + 1, LIGHT);
     d.line(x0 + panel, t6 + 1, x0 + panel, top - 1, DARK);
@@ -269,7 +269,7 @@ const PICTURES = {
     year(d, "2079");
   }],
   /* The citizen pass of the Federation: its title, and the word for citizen
-     in the 24 official languages, in alternating colours */
+     in the 24 official languages, in alternating colors */
   /* The selection test: the test screen with its answers checked */
   "2091-test": ["2091", (d) => {
     d.box(30, 6, 68, 38, LIGHT);
@@ -282,14 +282,14 @@ const PICTURES = {
     year(d, "2091");
   }],
   /* The front of the citizen pass, at 320 by 160 in the 5 by 7 font: the
-     title centred in its band, photograph, the words CITIZEN PASS, number,
+     title centered in its band, photograph, the words CITIZEN PASS, number,
      issue year, validity, signature, the twelve stars. The pass carries its
      year as ISSUED, so it has no year in its corner. */
   "2091-pass-front": ["2091", (d) => {
     d.box(4, 4, 312, 152, BLUE);
     d.textC(160, 11, "FEDERATION OF EUROPE", LIGHT);
     d.line(5, 24, 314, 24, BLUE);
-    /* The photograph: frame columns 16 to 86, head and shoulders centred on
+    /* The photograph: frame columns 16 to 86, head and shoulders centered on
        column 51, the shoulders down to the frame */
     d.box(16, 34, 71, 90, GREY); d.disc(51, 64, 14, GREY); d.fill(30, 84, 43, 39, GREY);
     d.text(100, 36, "CITIZEN PASS", GOLD);

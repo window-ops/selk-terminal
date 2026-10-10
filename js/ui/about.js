@@ -14,7 +14,7 @@
       ],
       [
         "Interface",
-        S.isDesktop() ? "Selk Workbench 1.0" : "tmux 3.4 on Selk shell"
+        S.isDesktop() ? "Selk Workbench 1.0" : "tmux 10.7 on Selk shell"
       ],
       [
         "Boot ROM",
@@ -71,6 +71,8 @@
         },
         {
           label: "CREDITS",
+          /* Opens a page in a new tab, as the title screen's CREDITS */
+          sound: "link",
           action: function () {
             window.open("notes/credits.html", "_blank");
           }

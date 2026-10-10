@@ -39,11 +39,11 @@ ffmpeg comes from the `ffmpeg-static` package. Without it, the `ffmpeg` on the P
 | Path | Contents |
 | --- | --- |
 | `build.js` | Draws, renders, encodes and joins the shots of one trailer |
-| `common/` | What both trailers use: `lib/` (the screen simulation `sim.js`, its page `stage.html`, the frame renderer `render.js`, the soundtrack renderer `audio.js` and its page), `snapshots/` (the game's markup), `shots/title.js` (the title screen that ends both trailers), `tools/snapshot-game.js`, and `vendor/`, the copies from the game: `pixel-sheet.js`, the camera pieces from `scenes.js`, all its CSS, its sound engine and sounds, its fonts and licences |
+| `common/` | What both trailers use: `lib/` (the screen simulation `sim.js`, its page `stage.html`, the frame renderer `render.js`, the soundtrack renderer `audio.js` and its page), `snapshots/` (the game's markup), `shots/title.js` (the title screen that ends both trailers), `tools/snapshot-game.js`, and `vendor/`, the copies from the game: `pixel-sheet.js`, the camera pieces from `scenes.js`, all its CSS, its sound engine and sounds, its fonts and licenses |
 | `feature-trailer/` | The feature trailer: `DESIGN.md`, `timeline.js`, the pixel animations in `animations/`, its game screens in `shots/`, its score in `audio/score.js`, and the animation tools in `tools/` |
 | `gameplay-trailer/` | The gameplay trailer: `DESIGN.md`, `timeline.js`, its game screens in `shots/`, its score written as notes in `audio/cue.js` and played by `audio/score.js`, and the score tools in `tools/` |
 | `out/` | The finished trailers; `out/build/<trailer>/` holds the intermediate files, `out/score/` both scores as sheet music; `out/README.md` gives the encoding settings |
 
-## Licences
+## Licenses
 
-The program code is GPL-3.0, as the game's. The fonts are under the SIL Open Font License 1.1 (`common/vendor/fonts/OFL-*.txt`). The licence texts are in `common/vendor/licenses/`.
+The program code is GPL-3.0, as the game's. The fonts are under the SIL Open Font License 1.1 (`common/vendor/fonts/OFL-*.txt`). The license texts are in `common/vendor/licenses/`.

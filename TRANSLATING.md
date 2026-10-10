@@ -65,6 +65,8 @@ Passwords must still be findable. The archive password SERKET appears in `site/S
 
 ## Language conventions
 
+The rules for interface text in every language are in [Interface rules](docs/interface-rules.md#interface-text). The points below add what each language needs.
+
 - Write in the register of the original: plain, neutral, no marketing tone.
 - Use the language's own quotation marks in the `ui` and `story` values (Romanian „...” and «...», German „...“, French « ... »). Use straight quotes inside `pages` HTML.
 - Use the language's decimal separator and unit spacing (Romanian `7,0`, `117%` closed up, `-179 °C`).

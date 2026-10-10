@@ -4,7 +4,7 @@
    style: the repository's address. The cursor rests, then moves to POWER
    ON, which the game's hover lights amber; the shot, and the trailer, cut
    to black while it is lit, before any click. The camera holds the title,
-   the lines under it and the buttons at the centre, close enough to read
+   the lines under it and the buttons at the center, close enough to read
    on a small screen, and eases in a little over the shot. */
 "use strict";
 (function () {

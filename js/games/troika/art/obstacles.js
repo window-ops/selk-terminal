@@ -14,7 +14,7 @@
     r(o.x + inset, 0, 1, top, C.dust); r(o.x + o.w - 1 - inset, 0, 1, top, C.dust);
   }
   /* The middle column of an obstacle: for an odd width the pixel in the
-     middle, so odd text centres on it exactly */
+     middle, so odd text centers on it exactly */
   function mid(o) {
     return o.x + Math.floor(o.w / 2);
   }

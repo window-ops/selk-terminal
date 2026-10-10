@@ -18,7 +18,7 @@ const STROKES = [
   [[[90, 41], [92, 43]], DARK],
   [[[88, 42], [88, 44]], RED]
 ];
-/* Every inked pixel in order, with its colour */
+/* Every inked pixel in order, with its color */
 const INK = [];
 STROKES.forEach(([pts, c]) => {
   for (let i = 1; i < pts.length; i++) {
@@ -92,7 +92,7 @@ function draw(f, n) {
     d.line(tx, ty, tx + 9, ty - 9, GREY);
     d.line(tx + 6, ty - 7, tx + 8, ty - 9, LIGHT);
   });
-  /* A dark sleeve, a grey cuff at the wrist, the hand lit by the candle,
+  /* A dark sleeve, a gray cuff at the wrist, the hand lit by the candle,
      closed round the quill. Sleeve, cuff and hand touch without a gap, and
      every part shows against the page. */
   obj("arm", { edge: true }, () => {

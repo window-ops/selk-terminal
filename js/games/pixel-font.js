@@ -1,7 +1,7 @@
 /* A 5 by 7 pixel font for the canvas games, the same letters as the BIG font
    of tools/pixel-sheet.js. It has the Romanian letters, and Greek capitals
    that share a Latin shape use the Latin glyph. Text is drawn in capitals.
-   Each text in each colour is drawn once to a small canvas and reused. */
+   Each text in each color is drawn once to a small canvas and reused. */
 (function () {
   var S = window.SELK;
   var G = {
@@ -77,7 +77,7 @@
     return (cache[key] = c);
   }
   /* Draws s with the top of its capitals at y; align is "left", "center" or
-     "right" of x. With an outline colour, each letter gets an edge in it,
+     "right" of x. With an outline color, each letter gets an edge in it,
      so the text reads over any background. scale draws each font pixel as
      a square of that many canvas pixels. */
   function draw(g, s, x, y, color, align, outline, scale) {

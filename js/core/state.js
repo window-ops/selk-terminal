@@ -46,7 +46,7 @@
          tmux.js) */
       soloFrames: true,
       /* Setup > Display > Unavailable settings. "show": rows that cannot
-         apply now are greyed with the reason (S.SETTING_OFF in context.js).
+         apply now are grayed with the reason (S.SETTING_OFF in context.js).
          "hide": those rows are left out. */
       unavailable: "show",
       motion: "system",
@@ -72,6 +72,19 @@
       /* Setup > Sound > Control sounds. true: controls marked data-sound
          play their own sound (ui-sound.js) */
       ctlSounds: false,
+      /* Setup > Sound > Drive sound. false: the hard drive makes no seek
+         sound when an entry or a page is read (S.snd.hdd in
+         sounds/machine.js) */
+      hddSound: true,
+      /* Setup > Sound > Seeds > Same seed everywhere: the seed of the noise
+         the interface sounds, the wind and the creaks are made of
+         (S.snd.reseed). Digits are used as a number; other text is
+         hashed */
+      soundSeed: "3436859",
+      /* Setup > Sound > Seeds: a seed of its own for the click or a control
+         sound, by kind ("click", "key", "page"...). A sound with none
+         follows soundSeed */
+      soundSeeds: {},
       debug: false,
       debugLog: false,
       loaderKey: false,
@@ -184,17 +197,16 @@
           S.state = Object.assign(fresh(), data);
           var ds = data.settings || {};
           S.state.settings = ds.sv === 2 ? Object.assign(defaults(), ds) : defaults();
-          /* Older builds had the rolling scanline on by default; it returns
-             to off unless the player chose it */
+          /* The rolling scanline stays off unless the player chose it */
           if (!S.state.settings.scanRollChosen) {
             S.state.settings.scanRoll = false;
           }
-          /* Panel results had IN SHELL ("shell") before BOTH replaced it */
+          /* A saved Panel results value of "shell" reads as BOTH */
           if (S.state.settings.panelOut === "shell") {
             S.state.settings.panelOut = "both";
           }
-          /* Older builds had one Debug switch for the panel and the console
-             log. A save with it on keeps both on. */
+          /* A save with Debug on and no Debug log value keeps the console
+             log on too */
           if (ds.sv === 2 && ds.debug && ds.debugLog === undefined) {
             S.state.settings.debugLog = true;
           }

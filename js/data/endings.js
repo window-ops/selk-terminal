@@ -92,7 +92,7 @@ SELK.ENDINGS = [
       "The gate is switched off, and the repairs start again the same day.",
       "By August the load on MAST-01 falls to 94 percent. Tanker T-5 leaves on schedule.",
       "In June 2098 the bio cells stop producing power.",
-      "T-5 is labelled green hydrogen. No one on Earth checks the label."
+      "T-5 is labeled green hydrogen. No one on Earth checks the label."
     ]
   },
   {

@@ -131,7 +131,7 @@
     var masterVol = on ? set().vol / 100 : 0, pr = preset();
     if (hp) { hp.frequency.value = pr.hp; }
     /* The computer's hum is panned slightly left; the other channels are
-       centred */
+       centered */
     if (pan.machine) { pan.machine.pan.value = -0.5 * pr.width; }
     /* Level changes from a slider or from SOUND ON glide over 50 ms, since a
        jump in level is heard as a click */

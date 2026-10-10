@@ -13,11 +13,20 @@ All story content sits in `js/data/`. The code reads these objects and contains 
 - `id` is `section/NAME`, for example `home/README`. Report answers, links and hints refer to entries by this id.
 - `by` is the author label shown with the entry. Some labels are false on purpose; `SELK.FALSE_LABELS` in `story.js` lists them.
 - `body` is the text, in the markup described in [TRANSLATING.md](../TRANSLATING.md): `{text|note-key}` for handbook notes, `[[section/ID]]` for links, `@NAME@` for the player's name, and two or more spaces between a label and a value for a field line.
-- `extra` adds optional fields: `table: true` for a table, `img` and `cap` for a camera picture and its caption, `action` for the entries that open a screen (`settings`, `tutorial`, `about` and `storage` in Home, `troika` in History, which opens the running game in `js/games/troika/`, and `disassembly` in Design, which opens the repair game in `js/games/disassembly/`), and `sys`, `path`, `fmt` and `cols` for system files, which render as files at their `path`.
+- `extra` adds optional fields: `table: true` for a table, `img` and `cap` for a camera picture and its caption, `action` for the entries that open a screen (listed below), and `sys`, `path`, `fmt` and `cols` for system files, which render as files at their `path`.
+
+Opening an entry with an `action` starts a screen:
+
+| Action | Entry | Opens |
+| --- | --- | --- |
+| `settings`, `tutorial`, `about`, `storage` | `home/SETTINGS`, `home/TUTORIAL`, `home/ABOUT`, `home/STORAGE` | Setup, the refresher, ABOUT and the Storage page |
+| `troika` | `history/TROIKA.RUN` | The running game in `js/games/troika/` |
+| `disassembly` | `design/DISASSEMBLY.RUN` | The repair game in `js/games/disassembly/` |
+| `changenote` | `system/changelog` | The change notes, described in [Shell](shell.md) |
 
 ## Handbook notes (`notes.js`)
 
-`SELK.NOTES` maps a note key to `[title, text, edition year]`. The edition year is part of the puzzle: some notes are outdated.
+`SELK.NOTES` maps a note key to `[title, text, edition year]`. The edition year is part of the puzzle: some notes are outdated. The notes at the end of the file explain the terms of the change notes; [Shell](shell.md) describes how the change notes link them.
 
 ## Locks, reports and messages (`story.js`)
 

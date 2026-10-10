@@ -1,6 +1,6 @@
 /* BIO and LAB, from recording G2 (12.55-21.95 s) at its speed. The pointer
    clicks BIO and then LAB, the camera following it over FILES. Cut to VIEW,
-   LAB and its picture at the centre, for a moment of reading. Cut back:
+   LAB and its picture at the center, for a moment of reading. Cut back:
    LAB is dragged onto blank 2, its label moving with the pointer from the
    grip, and held over the blank before the drop, as in the recording. The
    camera moves ahead to blank 2 once the drag starts and holds it. */
@@ -81,7 +81,7 @@
   /* The recording dropped LAB above blank 2, on the line of blank 1 as the
      snapshot lays the report out; the trailer aims the long move at blank
      2 from its start (SWEEP, after the pause in VIEW) and holds the label on
-     the blank's centre until the drop. The recording's hook before that
+     the blank's center until the drop. The recording's hook before that
      move is left out, and so is its overshoot past the blank. */
   const SWEEP = BACK + 6.85 - FROM;
   PATH = SIM.land(PATH, DROP, blank.cx, blank.cy, DROP - SWEEP, DROP - 0.25);

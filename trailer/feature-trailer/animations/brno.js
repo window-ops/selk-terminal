@@ -9,10 +9,10 @@
    carriageway, a red and cream tram on its own grassed track, and the near
    carriageway. At night the Moon is up.
 
-   - 2049 and 2050: the panel robot from the Brno research centre stands on
+   - 2049 and 2050: the panel robot from the Brno research center stands on
      its rails on the site, its supervisor beside it, a panel hanging from
      its boom over the empty plot, the stack of panels waiting;
-   - 2051: the block rises under it, ten storeys in eleven weeks;
+   - 2051: the block rises under it, ten stories in eleven weeks;
    - 2052: the robot is gone and the block is lived in, and saplings are
      planted on the bare side of the boulevard beside it;
    - 2058: the saplings are full trees;
@@ -29,7 +29,7 @@ const FPS = 8, FRAMES = 16, STREET = 46, RAIL = 58, STOREY = 3;
 const TREES = [7, 21, 35, 49, 63], LATE = [91, 105, 119], PLANTED = 2052;
 /* Foliage: green with dark leaf shade in a checker */
 const leaf = (x, y) => ((x + y) % 2 ? GREEN : DARK);
-/* The new block: its columns and how many storeys stand in a given year */
+/* The new block: its columns and how many stories stand in a given year */
 const B0 = 82, B1 = 102;
 const storeys = (y) => (y < 2051 ? 0 : y === 2051 ? 6 : 10);
 
@@ -37,7 +37,7 @@ function draw(fr, n) {
   const { d, obj } = fr, dark = night(n, FPS), y = year(n, FRAMES, 2047, 2063);
   const site = y >= 2049 && y <= 2051, top = STREET - STOREY * storeys(y);
   sky(d, n, FPS, STREET);
-  /* The boulevard to the bottom edge: the far pavement and its kerb, the
+  /* The boulevard to the bottom edge: the far pavement and its curb, the
      far carriageway in two lanes with a dashed line between them, the
      tram's own track on a grassed bed between two kerbs, its rails, and
      the near carriageway, cut by the bottom of the picture */
@@ -78,7 +78,7 @@ function draw(fr, n) {
     d.line(58, 22, 58, STREET - 1, ORANGE); d.line(72, 22, 72, STREET - 1, ORANGE);
     for (let wy = 24; wy < STREET - 1; wy += STOREY) for (let wx = 60; wx < 71; wx += 2) d.set(wx, wy, dark && (wx * 3 + wy) % 4 === 0 ? GOLD : GREY);
   });
-  /* The robots' block, storey by storey; lived in once finished */
+  /* The robots' block, story by story; lived in once finished */
   if (storeys(y)) obj("block B", { on: ["boulevard"] }, () => {
     d.fill(B0, top, B1 - B0 + 1, STREET - top, LIGHT);
     for (let wy = top + 1; wy < STREET - 1; wy += STOREY) for (let wx = B0 + 2; wx < B1 - 1; wx += 2) d.set(wx, wy, dark && y > 2051 && (wx * 5 + wy) % 3 === 0 ? GOLD : GREY);
@@ -111,7 +111,7 @@ function draw(fr, n) {
     d.fill(x, RAIL - 4, 16, 3, RED); d.line(x + 1, RAIL - 3, x + 14, RAIL - 3, LIGHT);
     [2, 3, 12, 13].forEach((k) => d.set(x + k, RAIL - 1, GROUND));
   });
-  /* The trees along the far pavement, a grey trunk under the crown; the
+  /* The trees along the far pavement, a gray trunk under the crown; the
      late ones a sapling for the first years, then a small crown, then a
      full round one */
   TREES.concat(y >= PLANTED ? LATE : []).forEach((x) => {

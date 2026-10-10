@@ -9,6 +9,10 @@ main h2,
 main h3 {
   text-wrap: pretty;
 }
+/* Every notes page spaces its h2 the same */
+main h2 {
+  margin: 0.6rem 0;
+}
 .citations {
   list-style: disc;
   padding-left: 1.25rem;
@@ -122,7 +126,6 @@ body {
 }
 .page-concept h2 {
   font-size: 1.9rem;
-  margin: 1rem 0;
   border-bottom: 1px solid var(--rib);
   padding-bottom: 0.3rem;
 }
@@ -164,7 +167,6 @@ body {
 }
 .page-credits h2 {
   font-size: 1.8rem;
-  margin: 0.6rem 0;
   border-bottom: 1px solid var(--rib);
   padding-bottom: 0.3rem;
 }
@@ -195,7 +197,6 @@ body {
 }
 .page-devnotes h2 {
   font-size: 1.9rem;
-  margin: 1rem 0;
   border-bottom: 1px solid var(--rib);
   padding-bottom: 0.3rem;
 }
@@ -317,7 +318,6 @@ body {
 }
 .page-drawings h2 {
   font-size: 1.8rem;
-  margin: 1.8rem 0 0.6rem;
   border-bottom: 1px solid var(--rib);
   padding-bottom: 0.3rem;
 }
@@ -350,7 +350,6 @@ body {
 }
 .page-glossary h2 {
   font-size: 1.8rem;
-  margin: 1.8rem 0 0.6rem;
   border-bottom: 1px solid var(--rib);
   padding-bottom: 0.3rem;
 }
@@ -394,7 +393,6 @@ body {
 }
 .page-themes h2 {
   font-size: 1.8rem;
-  margin: 1.8rem 0 0.6rem;
   border-bottom: 1px solid var(--rib);
   padding-bottom: 0.3rem;
 }
@@ -432,7 +430,6 @@ body {
 }
 .page-warranty h2 {
   font-size: 1.8rem;
-  margin: 1.8rem 0 0.6rem;
   border-bottom: 1px solid var(--rib);
   padding-bottom: 0.3rem;
 }
@@ -488,7 +485,7 @@ body {
   background: var(--haze);
   outline: none;
 }
-/* The back button's row with the language box at its right, centred
+/* The back button's row with the language box at its right, centered
    vertically; the Language label is kept for screen readers only */
 .note-nav.with-lang {
   display: flex;
@@ -591,7 +588,7 @@ body {
 }
 
 /* trailers.html: the two trailers in a player of the page's own (notes/
-   trailer-player.js), in the colours of the game */
+   trailer-player.js), in the colors of the game */
 .page-trailers main {
   max-width: 1000px;
   margin: 0 auto;
@@ -608,7 +605,6 @@ body {
 }
 .page-trailers h2 {
   font-size: 1.9rem;
-  margin: 1.4rem 0 0.6rem;
   border-bottom: 1px solid var(--rib);
   padding-bottom: 0.3rem;
 }

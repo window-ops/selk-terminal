@@ -32,8 +32,8 @@
   border-bottom: 1px solid var(--rib);
 }
 /* The title and the part being replaced stay on one line and are cut off
-   on a narrow screen. The ellipsis takes the colour of the line, so the
-   line is in the grey of the part and the name in the title's colour. */
+   on a narrow screen. The ellipsis takes the color of the line, so the
+   line is in the gray of the part and the name in the title's color. */
 .dis-title {
   min-width: 0;
   overflow: hidden;

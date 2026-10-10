@@ -7,7 +7,7 @@
 "use strict";
 module.exports = {
   width: 2560, height: 1440, fps: 60, seconds: 87.25,
-  /* The colour round the 2:1 archive scenes in the 16:9 frame: the
+  /* The color round the 2:1 archive scenes in the 16:9 frame: the
      archive palette's ground */
   backdrop: "#191410",
   shots: [

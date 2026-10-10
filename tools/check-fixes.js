@@ -9,7 +9,7 @@
       of Home in entry text shows the plain hand; a link to Site keeps the
       dots.
    2. Rejected answers: a wrong password marks the UNLOCK dialog's field in
-      the error colour with aria-invalid, keeps the typed text, and clears
+      the error color with aria-invalid, keeps the typed text, and clears
       the mark when the field is edited; the Design key boxes and the
       History sort choices are marked the same way.
    png, if given, receives a picture of the rejected password dialog.

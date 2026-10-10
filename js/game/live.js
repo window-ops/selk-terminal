@@ -38,7 +38,7 @@
     crest.push(dune[x] - 4 + Math.round(Math.sin(x / 7) * 1.2));
   }
   /* The crests behind the dunes: a dip one or two columns wide is filled
-     level with its neighbours */
+     level with its neighbors */
   for (x = 1; x < W - 1; x++) {
     if (crest[x] > crest[x - 1] && crest[x] > crest[x + 1]) { crest[x] = Math.max(crest[x - 1], crest[x + 1]); }
     else if (x < W - 2 && crest[x] > crest[x - 1] && crest[x + 1] === crest[x] && crest[x] > crest[x + 2]) {
@@ -141,7 +141,7 @@
        (tools/site-pictures.js, js/game/scenes.js): the printed ice shell,
        symmetric, in four tiers from 9 pixels to 3, with tie bands; the
        guys of levels 1 to 3 and the slack loop of level 4, all in one
-       cable colour, and the outriggers, in the proportions of the design
+       cable color, and the outriggers, in the proportions of the design
        sheet (the tower 29 pixels tall there); CRANE-L parked and stowed
        on the west face; the AMBER vent and the beacon on top; HALL-R at the
        foot. The tower sways with the gusts, more at the top; the tight

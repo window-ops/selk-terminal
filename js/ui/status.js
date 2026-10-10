@@ -93,7 +93,7 @@
     if (e.key === "Escape" && statusPrompt) { closeStatusPrompt(true); }
   });
   /* Status line (S.msg). The message sits on a chip tinted from the bar's
-     text colour, or the flag colour for an error. A message wider than its
+     text color, or the flag color for an error. A message wider than its
      space scrolls by wheel, drag, or Left, Right, Home and End, with "<" and
      ">" at the ends that hide text.
 

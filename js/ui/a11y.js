@@ -192,7 +192,7 @@
     q("[aria-label*=' > ']", function (n) { set(n, "aria-label", S.spoken(n.getAttribute("aria-label"))); });
     q(".term", function (b) {
       var cmd = b.dataset.cmd || "", id = cmd.replace(/^note\s+/, "").toLowerCase(), note = S.i18n.note(id);
-      set(b, "aria-label", S.spoken(S.t("Handbook note: {name}", { name: note ? note[0] : txt(b) })));
+      set(b, "aria-label", S.spoken(S.noteLabel(note, txt(b))));
     });
     q(".lnk.locked", function (b) { set(b, "aria-label", txt(b).replace(/\s*\[locked\]$/, "") + S.t(", in a locked section")); });
     q(".lnk[data-entry]:not(.nodrag)", function (b) { set(b, "aria-description", DRAG()); });

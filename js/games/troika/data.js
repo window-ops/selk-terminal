@@ -159,7 +159,7 @@
       { rel: 2560, kind: "fisher", name: S.t("FISHER"), hint: S.t("Talk to the fisher."), pitch: 1.1, lines: [
         S.t("The sea is warmer than when I was a boy. The fish have moved north."),
         S.t("Porto Rafti fills with Athenians every August, as it always did."),
-        S.t("The harbour was rebuilt with the investment fund. Half my catch goes to the city by train."),
+        S.t("The harbor was rebuilt with the investment fund. Half my catch goes to the city by train."),
         S.t("The sea is warmer, but the coast is protected now, and the fish are coming back.")] }
     ];
   };
@@ -189,7 +189,7 @@
         [S.t("What became of the Troika?"), [
           S.t("It never left. The names changed, but a country in trouble still borrows on conditions written elsewhere."),
           S.t("It never left. The names changed, but a country in trouble still borrows on conditions written elsewhere."),
-          S.t("The European Stability Mechanism still lends, and the IMF left the European programmes long ago."),
+          S.t("The European Stability Mechanism still lends, and the IMF left the European programs long ago."),
           S.t("The Commission has been elected since 2045, the central bank answers to the parliament, and the old rescue fund became part of the federal treasury.")]],
         [S.t("Could I have chosen differently?"), [
           S.t("Every answer had a price. Keeping things as they were cost the least at first and the most in the end."),

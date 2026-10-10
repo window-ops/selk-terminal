@@ -6,7 +6,7 @@
 
 Every script is an immediately invoked function that adds its part to one global object, `window.SELK`, which the code calls `S`. There are no modules and no bundler. The load order in `index.html` is the dependency order:
 
-1. Data: `js/data/notes.js`, `entries.js`, `story.js`, `endings.js`
+1. Data: `js/data/notes.js`, `entries.js`, `story.js`, `endings.js`, `changenotes.js`
 2. Core: `js/core/dom.js`, `state.js`, `i18n.js`, then `js/lang/en.js` and `js/core/context.js`
 3. Audio, shell output, the interface parts, the game systems and the shell commands
 4. `js/main.js`, which starts the game
@@ -22,7 +22,7 @@ The notes pages in `notes/` load a subset of the same scripts: `dom.js`, `state.
 
 | Path | Contents |
 | --- | --- |
-| `js/data/` | Sections, entries, locks, reports, messages, handbook notes, endings |
+| `js/data/` | Sections, entries, locks, reports, messages, handbook notes, endings, change notes |
 | `js/core/` | DOM helpers, state and saving, localization, the situation (`S.ctx`), the event bus, the window API |
 | `js/lang/` | One language pack per file |
 | `js/shell/` | The terminal output queue, entry rendering, scrolling, listings and the shell commands |

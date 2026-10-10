@@ -133,7 +133,7 @@
 .set-warn p + p {
   margin-top: 0.5em;
 }
-/* Rows that cannot apply now: greyed, with the reason under the label */
+/* Rows that cannot apply now: grayed, with the reason under the label */
 .set-unavail .set-label,
 .set-unavail .set-ctl {
   opacity: 0.55;
@@ -211,14 +211,14 @@
 .set-sec-head.open .set-sec-mark {
   color: var(--titan);
 }
-/* Levels are colour coded in every view: sections in titan, groups in
+/* Levels are color coded in every view: sections in titan, groups in
    lamp green, settings that belong to another setting on a dust rule */
 .set-body {
   --set-sec: var(--titan);
   --set-grp: var(--lamp);
   --set-sub: var(--dust);
 }
-/* A group: its title and its settings, on a rule in the group colour */
+/* A group: its title and its settings, on a rule in the group color */
 .set-sub,
 .set-subgroup {
   display: flex;
@@ -304,7 +304,7 @@
 .set-link:focus-visible .set-link-mark {
   color: var(--titan);
 }
-/* A page starts with BACK and the path to it, each part in the colour of
+/* A page starts with BACK and the path to it, each part in the color of
    its level */
 .set-crumb {
   display: flex;
@@ -330,7 +330,7 @@
   color: var(--haze);
   letter-spacing: 0;
 }
-/* The mark is drawn, centred on the capitals of the count beside it
+/* The mark is drawn, centered on the capitals of the count beside it
    (0.349em above the baseline in Plex Mono), as the drop-down arrow is. The
    box is as wide as it is tall, so the two strokes open at the angle of a
    typed ">". The height rounds to an even number of pixels, which puts the

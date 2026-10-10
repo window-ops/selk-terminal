@@ -77,7 +77,7 @@
         var term = cmdButton(m[1], "note " + m[2], "term"), note = S.i18n.note(m[2].toLowerCase());
         if (m[1].indexOf(" > ") !== -1) { term.setAttribute("aria-label", S.spoken(m[1])); }
         if (note) {
-          term.title = S.t("Handbook note: {name}", { name: note[0] });
+          term.title = S.noteLabel(note);
         }
         parent.appendChild(term);
       } else if (m[3]) {
@@ -219,8 +219,13 @@
         var d = el("div", "ln " + (cls || ""));
         /* An echoed command: the prompt is hidden from screen readers, which
            hear "Command:" before the typed text */
-        var ps = S.promptText ? S.promptText() : "";
-        if (/\becho\b/.test(cls || "") && ps && String(text).indexOf(ps) === 0) {
+        /* The agent's prompt or the shell's, since a command run while the
+           agent is open echoes the shell's prompt with the section it was
+           run in */
+        var ps = [S.promptText ? S.promptText() : "", S.shellPromptText ? S.shellPromptText() : ""].filter(function (p) {
+          return p && String(text).indexOf(p) === 0;
+        })[0] || (/^selk:\/[^\s>]*>/.exec(String(text)) || [""])[0];
+        if (/\becho\b/.test(cls || "") && ps) {
           var p = el("span", "", ps); p.setAttribute("aria-hidden", "true");
           d.appendChild(p);
           d.appendChild(el("span", "sr-only", S.t("Command:") + " "));

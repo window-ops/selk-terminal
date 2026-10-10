@@ -94,7 +94,7 @@
        once History is open */
     vMusic: function () { return !!(S.sectionById && S.sectionById("history")); }
   };
-  /* Greyed Setup rows. A rule returns the reason a row cannot apply now, or
+  /* Grayed Setup rows. A rule returns the reason a row cannot apply now, or
      "" when it can. Another Setup choice, such as Mode, Motion or Shell
      results, makes the row usable. */
   function tmuxOnly(c) { return c.desktop ? "Used in tmux mode" : ""; }

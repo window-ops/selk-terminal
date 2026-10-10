@@ -68,25 +68,55 @@
      with a no-break space, so the last line has two words at least. Setup
      tooltips always use it; Setup > Display > Pretty wrap
      (settings.prettyWrap) applies it to every text block through
-     S.prettyWrap. Returns the changed text node, or null. */
+     S.prettyWrap. The words may sit in different text nodes, as when a
+     block ends with a link or a handbook term: the last breakable space of
+     the whole block is replaced, in whichever node holds it. A browser may
+     still break before a link or term, a button laid out as an inline
+     block, so when one follows the space, the space and what follows it
+     go into a span.pw-keep that does not wrap (css/ui/base.css).
+     Returns the changed text node, or null. */
+  var SPACE = /[ \t\n\r\f]/;
   S.wrapLast = function (node) {
-    var walk = document.createTreeWalker(node, NodeFilter.SHOW_TEXT), n, last = null;
-    while ((n = walk.nextNode())) { if (n.nodeValue.trim()) { last = n; } }
-    if (!last || last._pwVal === last.nodeValue) { return null; }
-    var text = last.nodeValue, match = /(\s+)(\S+)(\s*)$/.exec(text);
-    if (!match) { return null; }
-    var prefix = text.slice(0, match.index);
-    if (!/\S[\s\S]*\s\S/.test(prefix + match[2])) { return null; }
-    last._pwOrig = text;
-    last._pwVal = last.nodeValue = prefix + "\u00a0" + match[2] + match[3];
-    return last;
+    if (node._pwText != null && node.textContent === node._pwText) { return null; }
+    var walk = document.createTreeWalker(node, NodeFilter.SHOW_TEXT), n, list = [];
+    while ((n = walk.nextNode())) { list.push(n); }
+    /* From the end: skip trailing space, pass the last word, then find the
+       space before it, and require a word before that space */
+    var stage = 0, hit = null, at = -1;
+    for (var k = list.length - 1; k >= 0 && stage < 3; k--) {
+      var v = list[k].nodeValue;
+      for (var c = v.length - 1; c >= 0; c--) {
+        var sp = SPACE.test(v.charAt(c));
+        if (stage === 0 && !sp) { stage = 1; }
+        else if (stage === 1 && sp) { stage = 2; hit = list[k]; at = c; }
+        else if (stage === 2 && !sp) { stage = 3; break; }
+      }
+    }
+    if (stage < 3) { return null; }
+    var text = hit.nodeValue, start = at;
+    while (start > 0 && SPACE.test(text.charAt(start - 1))) { start--; }
+    if (hit._pwOrig == null || hit._pwVal !== text) { hit._pwOrig = text; }
+    var rest = "\u00a0" + text.slice(at + 1), after = [];
+    for (var x = hit.nextSibling; x; x = x.nextSibling) { after.push(x); }
+    if (hit.parentNode === node && after.some(function (y) { return y.nodeType === 1; })) {
+      var keep = document.createElement("span");
+      keep.className = "pw-keep";
+      keep.appendChild(document.createTextNode(rest));
+      after.forEach(function (y) { keep.appendChild(y); });
+      node.appendChild(keep);
+      hit._pwVal = hit.nodeValue = text.slice(0, start);
+    } else {
+      hit._pwVal = hit.nodeValue = text.slice(0, start) + rest;
+    }
+    node._pwText = node.textContent;
+    return hit;
   };
   /* The text blocks Pretty wrap acts on. New blocks are wrapped as they are
      added, and S.scr.reveal wraps shell, VIEW and MESSAGE text before it is
      revealed. Turning the option off walks the page once and restores every
      text that has not changed since; no list of changed texts is kept, so
      lines that leave the page are not held in memory. */
-  var WRAP_BLOCKS = "p, li, dd, .ln, .mail-toast-body, .status-info-copy, .set-note, .set-why, .cine-caption, .dlg-body > div:not([class])";
+  var WRAP_BLOCKS = "p, li, dd, .ln, .note-text, .note-source, .mail-toast-body, .status-info-copy, .set-note, .set-why, .cine-caption, .dlg-body > div:not([class])";
   var wrapObs = null;
   function wrapIn(root) {
     if (!root || !root.querySelectorAll) { return; }
@@ -108,11 +138,19 @@
         wrapObs.observe(document.body, { childList: true, subtree: true });
       } else {
         if (wrapObs) { wrapObs.disconnect(); wrapObs = null; }
+        /* A kept span gives back its content, without its first text,
+           which the restored text node holds again */
+        [].forEach.call(document.querySelectorAll("span.pw-keep"), function (k) {
+          var host = k.parentNode;
+          k.removeChild(k.firstChild);
+          while (k.firstChild) { host.insertBefore(k.firstChild, k); }
+          host.removeChild(k);
+        });
         var walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT), x;
         while ((x = walk.nextNode())) {
           if (x._pwVal != null) {
             if (x.nodeValue === x._pwVal) { x.nodeValue = x._pwOrig; }
-            x._pwVal = null;
+            x._pwVal = null; x._pwOrig = null;
           }
         }
       }

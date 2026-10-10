@@ -5,17 +5,100 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="description" content="Selk, a database investigation game on a failing Titan megastructure.">
     <title data-i18n>Selk terminal</title>
-    <!-- The ground colour from the first paint. The stylesheets are linked in
+    <!-- The ground color from the first paint. The stylesheets are linked in
          <body>, after the loading screen, so that screen paints before they
          arrive; everything after them waits for them, as in <head>. -->
     <style>html, body { margin: 0; background: #151719; }</style>
+    <!-- Without JavaScript the loading screen would wait forever: it is
+         hidden and the kernel panic in <body> takes the screen. -->
+    <noscript>
+      <style>
+        #loading { display: none !important; }
+        html, body { background: #000; }
+        .nojs { position: fixed; inset: 0; z-index: 20; overflow: auto; display: flex; flex-direction: column-reverse; padding: 16px; box-sizing: border-box; background: #000; color: #AAAAAA; font: 18px/1.25 "VT323", ui-monospace, monospace; }
+        /* column-reverse opens the console scrolled to its last line, as a
+           real console shows the end of the panic; the auto margin keeps a
+           short log at the top of a tall screen */
+        .nojs .con { margin-bottom: auto; }
+        /* One item per kernel message: the uptime centered in brackets 10
+           columns wide, then the text. A long message
+           wraps to the first column, as on a text console */
+        .nojs .klog { margin: 0; padding: 0; list-style: none; font-variant-ligatures: none; overflow-wrap: anywhere; }
+        .nojs .ts { display: inline-grid; grid-template-columns: 1ch 10ch 1ch; text-align: center; white-space: nowrap; }
+        .nojs .ts::before { content: "["; }
+        .nojs .ts::after { content: "]"; }
+        /* Call trace frames and partition lists start one column in */
+        .nojs .in .msg { padding-left: 1ch; }
+        .nojs .hi { color: #FFFFFF; }
+        .nojs .klog a { color: inherit; text-decoration: underline; text-underline-offset: 0.15em; }
+        .nojs .klog a:focus-visible { outline: 1px solid #C7843A; outline-offset: 1px; }
+        .nojs .cur { animation: nojs-blink 1s steps(1) infinite; }
+        .nojs .note { max-width: 40em; margin: 0.75em 0 0; padding: 12px 16px; border: 1px solid #C7843A; color: #D6C396; font: 15px/1.6 "Plex Mono", ui-monospace, monospace; }
+        .nojs .note b { display: block; margin-bottom: 0.4em; color: #C7843A; letter-spacing: 0.12em; }
+        @keyframes nojs-blink { 50% { opacity: 0; } }
+        @media (prefers-reduced-motion: reduce) { .nojs .cur { animation: none; } }
+      </style>
+    </noscript>
   </head>
   <body>
+    <!-- With JavaScript off, SELK-T01 boots its kernel and panics: the
+         programs of Site OS are written in ECMAScript and run on the jsrt
+         runtime, the host refuses to run jsrt, and init has nothing to
+         execute. The note under the panic says what to do. -->
+    <noscript>
+      <div class="nojs"><div class="con">
+        <!-- Screen readers hear the two panic lines and their kernel.org
+             link; the other lines are hidden from them -->
+        <ol class="klog">
+          <li aria-hidden="true"><span class="ts">0.000000</span> <span class="msg">Linux version 26.3.55-cesea-site (build@lab.selk.cesea.internal) (gcc (CESEA 85.2.0-19) 85.2.0, GNU ld (GNU Binutils for CESEA) 2.186) #1 SMP PREEMPT_DYNAMIC CESEA 26.3.55-3 (2096-11-04)</span></li>
+          <li aria-hidden="true"><span class="ts">0.000000</span> <span class="msg">Command line: BOOT_IMAGE=/boot/vmlinuz-26.3.55-cesea-site root=/dev/mmcblk0p2 ro console=tty0 cesea.site=selk</span></li>
+          <li aria-hidden="true"><span class="ts">0.000000</span> <span class="msg">DMI: CESEA SELK-T01/SELK-T01, BIOS 7.2.1 03/12/2079</span></li>
+          <li aria-hidden="true"><span class="ts">0.000000</span> <span class="msg">Memory: 64912416K/67108864K available (24576K kernel code, 4096K rwdata, 12288K rodata, 3220K init, 2048K bss, 2196448K reserved)</span></li>
+          <li aria-hidden="true"><span class="ts">0.412907</span> <span class="msg">mmc0: new high speed SDHC card at address 0001</span></li>
+          <li aria-hidden="true"><span class="ts">0.413220</span> <span class="msg">mmcblk0: mmc0:0001 SELK8 7.40 GiB (ro)</span></li>
+          <li class="in" aria-hidden="true"><span class="ts">0.413544</span> <span class="msg">mmcblk0: p1 p2</span></li>
+          <li aria-hidden="true"><span class="ts">1.118302</span> <span class="msg">ata1: SATA link up 6.0 Gbps (SStatus 133 SControl 300)</span></li>
+          <li aria-hidden="true"><span class="ts">1.121877</span> <span class="msg">sd 0:0:0:0: [sda] 7814037168 512-byte logical blocks: (4.00 TB/3.64 TiB)</span></li>
+          <li aria-hidden="true"><span class="ts">1.402566</span> <span class="msg">cesea_rlink: reactor link up, 48 MW available</span></li>
+          <li aria-hidden="true"><span class="ts">1.417390</span> <span class="msg">cesea_unitbus: 31 units online</span></li>
+          <li aria-hidden="true"><span class="ts">1.420118</span> <span class="msg">cesea_sm: structure monitor ALARM, deferred to supervisor console</span></li>
+          <li aria-hidden="true"><span class="ts">1.633210</span> <span class="msg">VFS: Mounted root (squashfs filesystem) readonly on device 179:2.</span></li>
+          <li aria-hidden="true"><span class="ts">1.640781</span> <span class="msg">Freeing unused kernel image (initmem) memory: 3220K</span></li>
+          <li aria-hidden="true"><span class="ts">1.641002</span> <span class="msg">Write protecting the kernel read-only data: 28672k</span></li>
+          <li aria-hidden="true"><span class="ts">1.652118</span> <span class="msg">binfmt_misc: registered 'ecmascript' interpreter /usr/lib/cesea/jsrt</span></li>
+          <li aria-hidden="true"><span class="ts">1.652340</span> <span class="msg">jsrt: host terminal refuses script execution (policy: javascript disabled)</span></li>
+          <li aria-hidden="true"><span class="ts">1.652401</span> <span class="msg">binfmt_misc: 'ecmascript' entry disabled, interpreter unavailable</span></li>
+          <li aria-hidden="true"><span class="ts">1.653877</span> <span class="msg">Run /sbin/init as init process</span></li>
+          <li aria-hidden="true"><span class="ts">1.654012</span> <span class="msg">Starting init: /sbin/init exists but couldn't execute it (error -8)</span></li>
+          <li aria-hidden="true"><span class="ts">1.654220</span> <span class="msg">Run /etc/init as init process</span></li>
+          <li aria-hidden="true"><span class="ts">1.654310</span> <span class="msg">Run /bin/init as init process</span></li>
+          <li aria-hidden="true"><span class="ts">1.654398</span> <span class="msg">Run /bin/sh as init process</span></li>
+          <li aria-hidden="true"><span class="ts">1.654472</span> <span class="msg">Starting init: /bin/sh exists but couldn't execute it (error -8)</span></li>
+          <li class="hi"><span class="ts">1.654590</span> <span class="msg">Kernel panic - not syncing: No working init found. Try passing init= option to kernel. See <a href="https://docs.kernel.org/admin-guide/init.html">Linux Documentation/admin-guide/init.rst</a> for guidance.</span></li>
+          <li aria-hidden="true"><span class="ts">1.654711</span> <span class="msg">CPU: 3 PID: 1 Comm: swapper/0 Not tainted 26.3.55-cesea-site #1</span></li>
+          <li aria-hidden="true"><span class="ts">1.654790</span> <span class="msg">Hardware name: CESEA SELK-T01/SELK-T01, BIOS 7.2.1 03/12/2079</span></li>
+          <li aria-hidden="true"><span class="ts">1.654802</span> <span class="msg">Call Trace:</span></li>
+          <li class="in" aria-hidden="true"><span class="ts">1.654811</span> <span class="msg">&lt;TASK&gt;</span></li>
+          <li class="in" aria-hidden="true"><span class="ts">1.654823</span> <span class="msg">dump_stack_lvl+0x48/0x70</span></li>
+          <li class="in" aria-hidden="true"><span class="ts">1.654840</span> <span class="msg">panic+0x34a/0x3a0</span></li>
+          <li class="in" aria-hidden="true"><span class="ts">1.654861</span> <span class="msg">? __pfx_kernel_init+0x10/0x10</span></li>
+          <li class="in" aria-hidden="true"><span class="ts">1.654877</span> <span class="msg">kernel_init+0x1a8/0x1b0</span></li>
+          <li class="in" aria-hidden="true"><span class="ts">1.654890</span> <span class="msg">ret_from_fork+0x34/0x50</span></li>
+          <li class="in" aria-hidden="true"><span class="ts">1.654903</span> <span class="msg">? __pfx_kernel_init+0x10/0x10</span></li>
+          <li class="in" aria-hidden="true"><span class="ts">1.654917</span> <span class="msg">ret_from_fork_asm+0x1b/0x30</span></li>
+          <li class="in" aria-hidden="true"><span class="ts">1.654930</span> <span class="msg">&lt;/TASK&gt;</span></li>
+          <li aria-hidden="true"><span class="ts">1.655408</span> <span class="msg">Kernel Offset: 0x2b600000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)</span></li>
+          <li class="hi"><span class="ts">1.668201</span> <span class="msg">end Kernel panic - not syncing: No working init found. Try passing init= option to kernel. See <a href="https://docs.kernel.org/admin-guide/init.html">Linux Documentation/admin-guide/init.rst</a> for guidance.</span></li>
+          <li class="cur" aria-hidden="true">_</li>
+        </ol>
+        <p class="note" role="alert"><b>SELK-T01 CANNOT START</b>Every program on this terminal is written in JavaScript, and CESEA Site OS needs JavaScript to run them. This browser has JavaScript turned off, so the system stops before the supervisor console opens. Selk is a game written in JavaScript: the shell, the files, the reports and the sounds all run in this page. Turn JavaScript on for this site in the browser settings, then reload the page.</p>
+      </div></div>
+    </noscript>
     <!-- Shown while the game's files download, until the title screen is
          ready (main.js removes it): the count, the file that arrived last
          and one tip. data-total is the number of stylesheets and <script src>
          tags below. -->
-    <div id="loading" role="status" data-total="122" style="position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 16px; background: var(--wall, #151719); color: var(--haze, #D6C396); font: 16px/1.6 var(--font-mono, monospace); letter-spacing: 0.08em;">
+    <div id="loading" role="status" data-total="123" style="position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 16px; background: var(--wall, #151719); color: var(--haze, #D6C396); font: 16px/1.6 var(--font-mono, monospace); letter-spacing: 0.08em;">
       <div id="loading-bar" aria-hidden="true" style="white-space: pre;">LOADING</div>
       <div id="loading-file" aria-hidden="true" style="min-height: 1.6em; opacity: 0.55; font-size: 13px;"></div>
       <div style="max-width: 34em; margin-top: 2em; text-align: center; font-size: 14px; letter-spacing: 0.02em;">
@@ -58,7 +141,7 @@
         ], en: [
           "In 2010 Greece took its first loan from the Troika: the European Commission, the European Central Bank and the IMF.",
           "Between 2008 and 2013 the Greek economy shrank by about a quarter, and youth unemployment neared 60 percent.",
-          "In July 2015, 61 percent of Greek voters rejected the Troika's terms in a referendum. A third loan programme followed within weeks.",
+          "In July 2015, 61 percent of Greek voters rejected the Troika's terms in a referendum. A third loan program followed within weeks.",
           "In 2010 Romania cut public sector wages by a quarter to meet the terms of its loan from the IMF and the EU.",
           "Conrad Haas, an officer of the Sibiu arsenal, described multistage rockets in a manuscript written between 1529 and 1569.",
           "Hermann Oberth, born in Sibiu in 1894, published The Rocket into Planetary Space in 1923.",
@@ -70,7 +153,7 @@
           "Selk is a real crater on Titan, about 90 km wide, chosen as the landing region of NASA's Dragonfly mission.",
           "At Titan's surface the air is about 94 K, and its pressure is about one and a half times Earth's.",
           "In the game's history, the European Union becomes the Federation of Europe in 2041, and CESEA is founded in 2052 to build on other worlds.",
-          "In the game's history, robots from Brno put up a ten-storey panel block on the Lesná estate in eleven weeks, in 2051.",
+          "In the game's history, robots from Brno put up a ten-story panel block on the Lesná estate in eleven weeks, in 2051.",
           "Every sound in the game is generated in code from oscillators and filtered noise. The BBC Radiophonic Workshop built the 1963 Doctor Who theme from test oscillators, noise and a plucked string.",
           "Selk began as a game in the manner of Molleindustria, Paolo Pedercini's studio of games that argue through their rules.",
           "Every report blank takes the name of an entry from FILES: drag it, or select it and press F4.",
@@ -190,6 +273,7 @@
     <script src="js/data/entries.js"></script>
     <script src="js/data/story.js"></script>
     <script src="js/data/endings.js"></script>
+    <script src="js/data/changenotes.js"></script>
     <script src="js/core/dom.js"></script>
     <script src="js/core/state.js"></script>
     <script src="js/core/i18n.js"></script>

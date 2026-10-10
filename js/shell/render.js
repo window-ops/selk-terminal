@@ -127,6 +127,18 @@
     if (note && e.fmt !== "cols") {
       box.appendChild(mk("p", "dim", note));
     }
+    if (e.fmt === "cpuinfo") {
+      /* /proc/cpuinfo: one block per processor, "name : value" lines; each
+         block is a field list under its processor number */
+      text.split(/\n\s*\n/).forEach(function (blockText) {
+        var pairs = blockText.split("\n").map(function (l) {
+          var i = l.indexOf(":"); return [l.slice(0, i).trim(), l.slice(i + 1).trim()];
+        });
+        box.appendChild(mk("div", "sys-sec", pairs[0][0] + " " + pairs[0][1]));
+        box.appendChild(dl(pairs.slice(1)));
+      });
+      return box;
+    }
     if (e.fmt === "kv") {
       box.appendChild(dl(rows.map(function (l) {
         var i = l.indexOf("="); return [

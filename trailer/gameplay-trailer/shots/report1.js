@@ -1,5 +1,5 @@
 /* REPORT 1. The desk with the REPORT pane open under VIEW: REPORT 1 /
-   SITE ORIGIN, four empty blanks, "0 of 4 filled", at the centre. The
+   SITE ORIGIN, four empty blanks, "0 of 4 filled", at the center. The
    pointer comes onto the page (recording G1, 30.9-32.4 s). */
 "use strict";
 (function () {

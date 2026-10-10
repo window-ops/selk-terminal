@@ -74,7 +74,8 @@
   S.snd.hdd = function (n) {
     led();
     var ctx = K.ctx();
-    if (!ctx || !K.on()) {
+    /* Setup > Sound > Drive sound OFF silences the seeks */
+    if (!ctx || !K.on() || S.state.settings.hddSound === false) {
       return;
     }
     var t = 0, count = n || (3 + Math.floor(Math.random() * 5)), out = K.bus("machine");

@@ -4,7 +4,7 @@
    pointer as one piece, from the grip, the blanks show their outlines, the blank under the pointer lights. The camera
    follows the pointer a little behind it; once the drag starts it moves
    ahead to blank 1, where the label is going, and holds it with "SITE /
-   SELK" in it. The drop lands on the blank's centre. During the drag the trailer draws the game's grabbing hand. */
+   SELK" in it. The drop lands on the blank's center. During the drag the trailer draws the game's grabbing hand. */
 "use strict";
 (function () {
   const RAW = SIM.part([
@@ -61,7 +61,7 @@
   let PATH = SIM.smooth(RAW, [{ t: START, after: 0 }]);
   SIM.use("gp-report-1");
   const blank = SIM.box(document.querySelectorAll("#world .blank")[0]);
-  /* The drop lands on blank 1's centre */
+  /* The drop lands on blank 1's center */
   PATH = SIM.land(PATH, DROP, blank.cx, blank.cy);
   const view = [{ from: 0, dead: [0.3, 0.3], aim: (t) => {
     /* The camera follows the pointer and settles on the blank as the label

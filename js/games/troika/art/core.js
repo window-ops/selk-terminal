@@ -72,17 +72,17 @@
   function rgb(h) {
     return [1, 3, 5].map(function (i) { return parseInt(h.substr(i, 2), 16); });
   }
-  /* A colour between two "#rrggbb" colours, f from 0 to 1 */
+  /* A color between two "#rrggbb" colors, f from 0 to 1 */
   function mix(a, b, f) {
     var x = rgb(a), y = rgb(b);
     return "rgb(" + x.map(function (v, i) { return Math.round(v + (y[i] - v) * f); }).join(",") + ")";
   }
-  /* The same between two "rgb(r,g,b)" colours */
+  /* The same between two "rgb(r,g,b)" colors */
   function mixRgb(a, b, f) {
     var x = a.match(/\d+/g), y = b.match(/\d+/g);
     return "rgb(" + x.map(function (v, i) { return Math.round(+v + (y[i] - v) * f); }).join(",") + ")";
   }
-  /* An "rgb(r,g,b)" colour as "#rrggbb", for mixing it again */
+  /* An "rgb(r,g,b)" color as "#rrggbb", for mixing it again */
   function hex(c) {
     return "#" + c.match(/\d+/g).map(function (v) { return (+v).toString(16).padStart(2, "0"); }).join("");
   }

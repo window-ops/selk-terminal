@@ -540,7 +540,7 @@
         b.width,
         b.height
       ]; b.left = "0px"; b.top = "0px"; b.width = "100%"; b.height = "100%";
-      /* No drop shadow or outer border while maximised, so the window reaches
+      /* No drop shadow or outer border while maximized, so the window reaches
          every edge. */
       w.el.classList.add("maximised");
     }
@@ -595,7 +595,7 @@
   /* READER and MESSAGE take the height of their content: at least min lines,
      at most rows lines, with a scroll bar beyond. viewer.js calls this each
      time new text is put in, before the text is revealed, so the full height
-     is measured. A window the player resized or maximised keeps its size. The
+     is measured. A window the player resized or maximized keeps its size. The
      window stays inside the desk. */
   D.fitContent = function (kind) {
     if (!S.isDesktop()) { return; }
