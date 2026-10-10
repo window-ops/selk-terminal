@@ -145,7 +145,7 @@ Expect        storms, {dune dust|dust}
 Cranes stow   above 5 m/s wind`,
   {
     img: "img/storm.svg",
-    cap: "Camera SV-4, equinox 2068 archive, dust storm"
+    cap: "Camera SV-4, equinox 2083 archive, dust storm"
   });
   E("site/CREW", "site staff",
   `Crew          1
@@ -232,12 +232,12 @@ Repairs now     stopped, see [[bio/ZONE-14]]`,
   E("structure/CRANE-L", "site staff, 28-02-2097",
   `What it is      climbing crane on the mast
 Height          680 m
-State           parked since 06-01-2097
+State           parked, stowed, since 06-01-2097
 Reason          its path crosses zone 14
 {Guy cables|guy}      24 tight, 8 slack`,
   {
     img: "img/crane-l.svg",
-    cap: "Camera SV-4, 28-02-2097, crane parked"
+    cap: "Camera SV-4, 28-02-2097, crane stowed"
   });
   E("structure/HALL-R", "site staff, 01-03-2097",
   `What it is      hall inside the mast base

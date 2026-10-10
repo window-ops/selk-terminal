@@ -19,6 +19,7 @@
 | `read` | Entries the player opened |
 | `decision`, `preDecision`, `ended`, `endings`, `lastEnding` | The final decision and the ending records |
 | `designNoted` | The shell announced the Design section. It survives loading the save from before the decision, like `endings`, and so do `design` and `history` in `unlocked`. |
+| `euHelp` | I AM NOT AN EU CITIZEN is on: the unlock dialog and `unlock design` add the European facts behind the serial's clues |
 | `tut` | The tour: `on`, `step`, `kind` (`simple` or `technical`), `refresh` for the refresher, and `rolled` for a panel rolled up on a narrow screen. `kind` outlives a finished tour, so the kind dialog offers it first next time. |
 | `settings` | Every Setup value (below) |
 
@@ -38,6 +39,8 @@
 | `prettyWrap` | Pretty wrap |
 | `setupView` (`pages`, `sections` or `list`) | Setup view |
 | `ctlSounds` | Control sounds |
+| `loaderKey` | Loading screen key (Debug): Ctrl+Shift+L shows the loading screen again |
+| `vClick` (0 to 100, 70 by default) | Clicks: the click's own level |
 | `speed` | Text appears; read through `S.textSpeed()`, which returns `instant` while motion is reduced |
 | `fast` | Fast mode |
 | `mailList` (`dual` or `single`) | The inbox on narrow screens |

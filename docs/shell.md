@@ -4,6 +4,8 @@
 
 `S.run(text, echo, origin)` in `js/shell/commands.js` parses and runs a command. The command table sits in the same file. Shared helpers sit in `S.cmd` (`js/shell/cmdkit.js`), extended by `listing.js`, `mail.js` and `hints.js`.
 
+`ntorch`, `claude`, `codex` and `chatgpt`, left out of help, start the agent joke (`js/shell/agent.js`, `S.agent`): one to two minutes of streamed reasoning about the site under a changing status word, then the slogan of a 1955 Soviet poster with what it is in Cyrillic letters. While the agent is open, the prompt reads `agent>` and typed lines go to `S.agent.input`, matched in English or Romanian, with or without diacritics, as one word or a question in the player's words: `help` lists them with their one-letter shortcuts (more, author, meaning, am-1, lenin, who, site, why, hello, latin, again, hide, show, overthinking, clear, help, exit). hide and show fold the thoughts of every reasoning block, and clicking a block's heading folds that block. Told while it reasons that it is overthinking, it cuts the reasoning short and answers; any other line typed meanwhile it notes in the stream and reasons on (`S.agent.interrupt`); Escape interrupts it and Ctrl+C stops it and closes the agent. The log follows the reasoning only while it is scrolled to its foot.
+
 Output goes through the queue in `js/shell/screen.js`. `S.scr.line`, `S.scr.type`, `S.scr.node` and `S.scr.task` print in order, so a sequence of lines and actions can be written as a list of calls. `js/shell/render.js` turns entry bodies into HTML for the game and for the developer notes page.
 
 Command words and fixed arguments are translated. The English word always works as well, and `S.tc` fills placeholders such as `{unlock}` with the word of the current language.

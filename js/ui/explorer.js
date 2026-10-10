@@ -66,6 +66,11 @@
       row.appendChild(el("span", "mc-i", r.info));
       if (r.id) {
         row.dataset.entry = r.id;
+        /* An entry without a grip opens but cannot be dragged: the plain
+           hand, as on SYSTEM (css/cursors.css) */
+        if (noGrip) {
+          row.classList.add("nodrag");
+        }
       }
       row.addEventListener("click", function () {
         click(side, i);

@@ -27,6 +27,14 @@
     });
     return list;
   };
+  /* The European facts behind a lock's clues (lock.plain), for players
+     outside the EU: a heading, then a boxed list like the clues */
+  S.lockPlain = function (lock) {
+    var box = el("div", "lock-plain");
+    box.appendChild(el("div", "lock-plain-head", S.t("FOR PLAYERS OUTSIDE THE EU")));
+    box.appendChild(S.lockClues({ clues: lock.plain }));
+    return box;
+  };
   /* The lines of a lock with a sort (History) as a numbered list, each line
      with its source */
   S.sortLines = function (lock) {

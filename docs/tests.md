@@ -29,8 +29,18 @@ A full run takes about six minutes, most of it spent on message timers. The exit
 | `phone` | The error dialog fits a phone and no drawn pointer is detected |
 | `setup` | PAGES opens sections and the settings under a setting on pages that BACK and Escape leave; SECTIONS and FULL LIST nest those settings under their row |
 | `speed` | Text appears is greyed at AT ONCE while motion is reduced, and the saved choice returns with full motion |
-| `sounds` | With Control sounds ON, marked controls play their kind, Escape on a page plays back, a right press plays no kind and UNLOCK plays the neutral action; with it OFF, no kind plays |
+| `sounds` | With Control sounds ON, marked controls play their kind, Escape on a page plays back, a right press plays no kind and UNLOCK plays the neutral action; with it OFF, no kind plays, and a mouse click plays its press as the button goes down and its release as it comes up |
 | `troika` | TROIKA.RUN: a loan tranche every year that stays on the road, obstacles no more than 500 pixels apart, the rating in the middle under the debt beam, each fragile platform in the middle of its hole, the grey ellipsis of the place, and the 2016 ending from the door to the end card with four answers, Greece walked to the olive tree in 2097, with motion full and reduced |
 | `disassembly` | DISASSEMBLY.RUN: every repair of both phones done with no mistake, and the grey ellipsis of the part |
 
 Tests read the game through `window.SELK` and pass functions to `page.evaluate`. A string passed there runs as an expression: a string holding an arrow function returns the function, and the check reads nothing.
+
+## Checks for single fixes
+
+Two scripts check fixes of October 2026 on their own, in Chromium through Playwright, without a local server. Each prints PASS or FAIL per check and exits with code 1 when a check fails.
+
+| Script | Parameters | Checks |
+| --- | --- | --- |
+| `node tools/check-fixes.js` | `[png]` | Cursors: FILES rows and links of entries that cannot fill a blank (Home, Design, History) show the plain hand and carry no drag description for screen readers, while Site rows keep the hand with drag dots. Rejected answers: a wrong password marks the field in the error colour with `aria-invalid`, keeps the typed text and clears the mark on the next edit; the Design key boxes and the History choices are marked the same way. `png` receives a picture of the rejected password |
+| `node tools/check-phone.js` | `[folder]` | On Playwright's iPhone SE, FILES with History open: the list stays in its panel, a finger swipe scrolls it, and the strip under it is opaque. On a Pixel 7 upright, an iPhone SE upright and a Pixel 7 sideways, TROIKA.RUN: the canvas fits its window, the window fills the screen but a narrow margin, and the controls stay on one row. `folder` receives a screenshot of each |
+

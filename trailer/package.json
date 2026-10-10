@@ -1,13 +1,15 @@
 {
-  "name": "selk-trailer",
+  "name": "selk-trailers",
   "version": "0.1.0",
   "private": true,
-  "description": "The trailer for Selk, built in JavaScript: pixel animations and simulated game screens, compiled to video.",
+  "description": "The Selk trailers, built in JavaScript: pixel animations and simulated game screens, compiled to video.",
   "license": "GPL-3.0-only",
   "scripts": {
     "setup": "npx playwright install chromium",
-    "build": "node build.js",
-    "preview": "node tools/preview.js"
+    "build": "node build.js feature && node build.js gameplay",
+    "build:feature": "node build.js feature",
+    "build:gameplay": "node build.js gameplay",
+    "preview": "node feature-trailer/tools/preview.js"
   },
   "dependencies": {
     "ffmpeg-static": "^5.2.0",

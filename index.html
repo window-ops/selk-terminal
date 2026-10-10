@@ -5,6 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <meta name="description" content="Selk, a database investigation game on a failing Titan megastructure.">
     <title data-i18n>Selk terminal</title>
+    <!-- The ground colour from the first paint. The stylesheets are linked in
+         <body>, after the loading screen, so that screen paints before they
+         arrive; everything after them waits for them, as in <head>. -->
+    <style>html, body { margin: 0; background: #151719; }</style>
+  </head>
+  <body>
+    <!-- Shown while the game's files download, until the title screen is
+         ready (main.js removes it): the count, the file that arrived last
+         and one tip. data-total is the number of stylesheets and <script src>
+         tags below. -->
+    <div id="loading" role="status" data-total="122" style="position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 16px; background: var(--wall, #151719); color: var(--haze, #D6C396); font: 16px/1.6 var(--font-mono, monospace); letter-spacing: 0.08em;">
+      <div id="loading-bar" aria-hidden="true" style="white-space: pre;">LOADING</div>
+      <div id="loading-file" aria-hidden="true" style="min-height: 1.6em; opacity: 0.55; font-size: 13px;"></div>
+      <div style="max-width: 34em; margin-top: 2em; text-align: center; font-size: 14px; letter-spacing: 0.02em;">
+        <div id="loading-tip-head" style="margin-bottom: 0.5em; color: var(--accent, #C7843A); letter-spacing: 0.14em; font-weight: 600;"></div>
+        <div id="loading-tip"></div>
+      </div>
+    </div>
+    <script>
+      /* Counts the game's stylesheets and scripts as they arrive, shows the last one and a
+         tip, in the saved language when it is Romanian. SELK_LOADING keeps
+         a copy of the screen and its drawing, for the debug key that shows
+         it again (js/dev/debug.js) */
+      (function () {
+        var $ = function (id) { return document.getElementById(id); };
+        var total = +$("loading").dataset.total, n = 0, ro = false;
+        try {
+          var raw = localStorage.getItem("selk-terminal-v1") || sessionStorage.getItem("selk-terminal-v1");
+          ro = !!raw && (JSON.parse(raw).settings || {}).lang === "ro";
+        } catch (e) {}
+        var TIPS = { ro: [
+          "În 2010 Grecia a luat primul împrumut de la Troika: Comisia Europeană, Banca Centrală Europeană și FMI.",
+          "Între 2008 și 2013 economia Greciei s-a micșorat cu circa un sfert, iar șomajul în rândul tinerilor s-a apropiat de 60 la sută.",
+          "În iulie 2015, 61 la sută dintre votanții greci au respins condițiile Troikăi într-un referendum. Un al treilea program de împrumut a urmat în câteva săptămâni.",
+          "În 2010 România a tăiat cu un sfert salariile din sectorul public, ca să îndeplinească condițiile împrumutului de la FMI și UE.",
+          "Conrad Haas, ofițer al arsenalului din Sibiu, a descris rachetele în trepte într-un manuscris scris între 1529 și 1569.",
+          "Hermann Oberth, născut la Sibiu în 1894, a publicat Racheta în spațiul interplanetar în 1923.",
+          "În 1978 Vladimír Remek din Cehoslovacia a devenit primul om în spațiu care nu era nici sovietic, nici american. Mirosław Hermaszewski din Polonia l-a urmat în același an.",
+          "Dumitru Prunariu, primul român în spațiu, a zburat cu Soiuz 40 în mai 1981.",
+          "În 2025 misiunea Ax-4 a dus astronauți din Polonia, Ungaria și India la Stația Spațială Internațională.",
+          "Serghei Winogradsky a descoperit chemosinteza în 1887, la Strasbourg: viață care își ia energia din reacții chimice, în întuneric.",
+          "Peștera Movile din România, descoperită în 1986, adăpostește un ecosistem izolat de milioane de ani, hrănit prin chemosinteză.",
+          "Selk este un crater real pe Titan, larg de circa 90 km, ales ca regiune de aterizare a misiunii Dragonfly a NASA.",
+          "La suprafața lui Titan aerul are circa 94 K, iar presiunea este de circa o dată și jumătate cea de pe Pământ.",
+          "În istoria jocului, Uniunea Europeană devine Federația Europei în 2041, iar CESEA este fondată în 2052 ca să construiască pe alte lumi.",
+          "În istoria jocului, roboți din Brno ridică un bloc din panouri cu zece etaje în cartierul Lesná în unsprezece săptămâni, în 2051.",
+          "Fiecare sunet din joc este generat în cod, din oscilatoare și zgomot filtrat. BBC Radiophonic Workshop a construit tema Doctor Who din 1963 din oscilatoare de test, zgomot și o coardă ciupită.",
+          "Selk a început ca un joc în maniera Molleindustria, studioul lui Paolo Pedercini, ale cărui jocuri argumentează prin regulile lor.",
+          "Fiecare spațiu din raport primește numele unei intrări din FIȘIERE: trage-o sau selecteaz-o și apasă F4.",
+          "Tot jocul se poate juca tastând în shell: scrie help pentru lista comenzilor."
+        ], en: [
+          "In 2010 Greece took its first loan from the Troika: the European Commission, the European Central Bank and the IMF.",
+          "Between 2008 and 2013 the Greek economy shrank by about a quarter, and youth unemployment neared 60 percent.",
+          "In July 2015, 61 percent of Greek voters rejected the Troika's terms in a referendum. A third loan programme followed within weeks.",
+          "In 2010 Romania cut public sector wages by a quarter to meet the terms of its loan from the IMF and the EU.",
+          "Conrad Haas, an officer of the Sibiu arsenal, described multistage rockets in a manuscript written between 1529 and 1569.",
+          "Hermann Oberth, born in Sibiu in 1894, published The Rocket into Planetary Space in 1923.",
+          "In 1978 Vladimír Remek of Czechoslovakia became the first person in space who was neither Soviet nor American. Mirosław Hermaszewski of Poland followed the same year.",
+          "Dumitru Prunariu, the first Romanian in space, flew on Soyuz 40 in May 1981.",
+          "In 2025 the Ax-4 mission flew astronauts from Poland, Hungary and India to the International Space Station.",
+          "Sergei Winogradsky discovered chemosynthesis in 1887 in Strasbourg: life that draws its energy from chemical reactions, in the dark.",
+          "Movile Cave in Romania, found in 1986, holds an ecosystem sealed off for millions of years and fed by chemosynthesis.",
+          "Selk is a real crater on Titan, about 90 km wide, chosen as the landing region of NASA's Dragonfly mission.",
+          "At Titan's surface the air is about 94 K, and its pressure is about one and a half times Earth's.",
+          "In the game's history, the European Union becomes the Federation of Europe in 2041, and CESEA is founded in 2052 to build on other worlds.",
+          "In the game's history, robots from Brno put up a ten-storey panel block on the Lesná estate in eleven weeks, in 2051.",
+          "Every sound in the game is generated in code from oscillators and filtered noise. The BBC Radiophonic Workshop built the 1963 Doctor Who theme from test oscillators, noise and a plucked string.",
+          "Selk began as a game in the manner of Molleindustria, Paolo Pedercini's studio of games that argue through their rules.",
+          "Every report blank takes the name of an entry from FILES: drag it, or select it and press F4.",
+          "The whole game can be played by typing in the shell: type help for the list of commands."
+        ] };
+        var L = window.SELK_LOADING = {
+          total: total,
+          copy: $("loading").cloneNode(true),
+          tip: function (lang) {
+            var list = TIPS[lang === "ro" ? "ro" : "en"];
+            $("loading-tip-head").textContent = lang === "ro" ? "ȘTIAI CĂ?" : "DID YOU KNOW?";
+            $("loading-tip").textContent = list[Math.floor(Math.random() * list.length)];
+          },
+          draw: function (k, file, lang) {
+            k = Math.min(k, total);
+            var w = 24, f = Math.round(w * k / total);
+            $("loading-bar").textContent = (lang === "ro" ? "SE ÎNCARCĂ FIȘIERELE " + k + " DIN " : "LOADING FILES " + k + " OF ") + total +
+              "\n[" + new Array(f + 1).join("#") + new Array(w - f + 1).join(".") + "]";
+            if (file) { $("loading-file").textContent = file; }
+          }
+        };
+        var lang = ro ? "ro" : "en";
+        L.tip(lang);
+        document.addEventListener("load", function (e) {
+          var s = e.target;
+          if (s.tagName === "SCRIPT" && s.src) { n++; L.draw(n, s.getAttribute("src"), lang); }
+          else if (s.tagName === "LINK" && s.rel === "stylesheet") { n++; L.draw(n, s.getAttribute("href"), lang); }
+        }, true);
+        L.draw(0, "", lang);
+      })();
+    </script>
     <link rel="stylesheet" href="css/tokens.css">
     <link rel="stylesheet" href="css/crt/monitor.css">
     <link rel="stylesheet" href="css/crt/screen.css">
@@ -37,8 +134,6 @@
     <link rel="stylesheet" href="css/themes/tmux.css">
     <link rel="stylesheet" href="css/themes/desktop.css">
     <link rel="stylesheet" href="css/cursors.css">
-  </head>
-  <body>
     <div class="room">
       <div class="monitor">
         <div id="screen" class="screen">
@@ -176,6 +271,7 @@
     <script src="js/games/disassembly/input.js"></script>
     <script src="js/games/disassembly/screens.js"></script>
     <script src="js/games/disassembly/window.js"></script>
+    <script src="js/shell/agent.js"></script>
     <script src="js/shell/commands.js"></script>
     <script src="js/main.js"></script>
     <script src="js/ui/a11y.js"></script>

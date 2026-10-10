@@ -56,6 +56,7 @@
       list = c ? [] : [[["Esc"], S.t("pause")]];
     }
     box.textContent = "";
+    if (T.fitKeys) { setTimeout(T.fitKeys, 0); }
     (list.length ? list : [[["Esc"], S.t("pause")]]).forEach(function (k) {
       var item = el("span", "troika-key");
       k[0].forEach(function (name) { item.appendChild(el("kbd", "", name)); });
@@ -86,12 +87,15 @@
      times its height (a phone held upright) gets one 320 wide and up to 440
      tall, so the street is drawn larger. The canvas scales smoothly to fill
      the window, and the window takes the canvas's width, so its text rows
-     never widen it. On a small display the text on the canvas doubles. */
+     never widen it. On a small display the text on the canvas doubles. On
+     a phone the window keeps a narrower margin, so the game is larger, and
+     the controls stay on one row, shrunk only as far as they must to fit. */
   function fit() {
     var cv = T.cv;
     if (!cv) { return; }
     var box = T.q(".troika"), chrome = box.offsetHeight - cv.offsetHeight;
-    var aw = window.innerWidth - 40, ah = window.innerHeight - 40 - chrome;
+    var margin = Math.min(window.innerWidth, window.innerHeight) < 600 ? 12 : 40;
+    var aw = window.innerWidth - margin, ah = window.innerHeight - margin - chrome;
     var w = 640, h = 320;
     if (aw / ah < 1.2) { w = 320; h = Math.max(320, Math.min(440, Math.round(320 * ah / aw))); }
     if (w !== cv.width || h !== cv.height) {
@@ -104,8 +108,21 @@
     cv.style.height = Math.floor(h * s) + "px";
     box.style.width = Math.floor(w * s) + "px";
     A.textScale(s * 7 >= 10 ? 1 : 2);
+    fitKeys();
     if (T.st) { T.draw(); }
   }
+  /* The controls on one row: their size goes down from the bar's own until
+     the row fits the window's width (bar.css, --keys-scale) */
+  function fitKeys() {
+    var keys = T.q(".troika-keys");
+    if (!keys) { return; }
+    keys.style.setProperty("--keys-scale", 1);
+    var room = keys.parentNode.clientWidth - 2 * parseFloat(getComputedStyle(keys.parentNode).paddingLeft);
+    if (keys.scrollWidth > room) {
+      keys.style.setProperty("--keys-scale", Math.max(0.6, Math.floor(room / keys.scrollWidth * 100) / 100));
+    }
+  }
+  T.fitKeys = fitKeys;
   function onHidden() {
     if (document.hidden) { T.hold(true); }
   }

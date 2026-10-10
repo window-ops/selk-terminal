@@ -1,5 +1,8 @@
 /* Interface sounds for every control. A mouse or pen press sounds when it
-   goes down, before the control acts. A touch sounds with the click that
+   goes down, before the control acts. A plain click is split in two: the
+   press as the button goes down, the release as it comes up, at least
+   35 ms later. A drag, or a press lost outside the window, makes no
+   release sound. A control with a kind plays its sound whole. A touch sounds with the click that
    follows it, so a touch that starts a scroll makes no sound. Keyboard
    activation sounds through the click event. Choosing from a list or
    moving a slider ticks, and picking up and dropping an entry have their
@@ -15,16 +18,19 @@
    button activates it. Every other press clicks. */
 (function () {
   var S = window.SELK, snd = S.snd, last = 0, pressing = false, pressStart = 0, pressEnd = 0, touchPress = false;
-  var rawClick = snd.click, rawTick = snd.tick;
+  var rawClick = snd.click, rawTick = snd.tick, rawPress = snd.press, rawLift = snd.lift;
+  /* When the press half of a click played, waiting for its release, or 0 */
+  var lifting = 0;
   function play(fn, args, own) {
     var now = Date.now();
     /* A press whose release never arrived (a drag, a pointer lost outside
        the window) ends after 3 s, so it cannot silence later sounds */
     if (pressing && now - pressStart > 3000) { pressing = false; }
     if (!own && (pressing || now < pressEnd)) { return; }
-    if (now - last < 60) { return; }
+    if (now - last < 60) { return false; }
     last = now;
     fn.apply(snd, args);
+    return true;
   }
   snd.click = function () { play(rawClick, arguments); };
   snd.tick = function () { play(rawTick, arguments); };
@@ -34,10 +40,17 @@
     var m = n.closest("[data-sound]");
     return m && !m.disabled ? m.dataset.sound : "";
   }
-  /* The sound of activating the control under n */
-  function sound(n, own) {
+  /* The sound of activating the control under n. split: a mouse or pen
+     press, whose plain click waits for the release to finish it. With
+     Control sounds ON every press plays one whole sound */
+  function sound(n, own, split) {
     var k = kindOf(n);
-    if (k) { play(snd.ui, [k], own); } else { play(rawClick, [], own); }
+    if (k) { play(snd.ui, [k], own); }
+    else if (split && !S.state.settings.ctlSounds) { pressHalf(own); }
+    else { play(rawClick, [], own); }
+  }
+  function pressHalf(own) {
+    if (play(rawPress, [], own)) { lifting = Date.now(); }
   }
   /* A picture in an entry does nothing when pressed, unless it turns over
      (the citizen pass), so a press on it is silent */
@@ -52,6 +65,7 @@
     return !!id && S.entryDraggable(id);
   }
   function release() {
+    lifting = 0;
     if (pressing) { pressing = false; pressEnd = Date.now() + 150; }
   }
   document.addEventListener("pointerdown", function (e) {
@@ -60,10 +74,13 @@
     if (touchPress || inert(e.target)) { return; }
     /* A right or middle press activates nothing, so it clicks; a slider
        sounds as its value moves */
-    if (e.button !== 0) { play(rawClick, [], true); }
-    else if (kindOf(e.target) !== "slide") { sound(e.target, true); }
+    if (e.button !== 0) { sound(null, true, true); }
+    else if (kindOf(e.target) !== "slide") { sound(e.target, true, true); }
   }, true);
-  window.addEventListener("pointerup", release, true);
+  window.addEventListener("pointerup", function () {
+    if (lifting) { rawLift(Math.max(0, 0.035 - (Date.now() - lifting) / 1000)); }
+    release();
+  }, true);
   window.addEventListener("pointercancel", function () { touchPress = false; release(); }, true);
   window.addEventListener("blur", release);
   /* A drag replaces the pointer's release with dragend, and a hidden tab
@@ -88,6 +105,7 @@
     }
   }, true);
   document.addEventListener("dragstart", function (e) {
+    lifting = 0;
     if (validDrag(e.target)) { play(rawTick, [], true); }
   }, true);
   document.addEventListener("drop", function () { play(rawClick, [], true); }, true);

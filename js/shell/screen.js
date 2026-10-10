@@ -88,6 +88,11 @@
         }
         else {
           lk.dataset.entry = m[3];
+          /* An entry that cannot fill a blank keeps the plain hand
+             (css/cursors.css) */
+          if (!S.entryDraggable(m[3])) {
+            lk.classList.add("nodrag");
+          }
         }
         parent.appendChild(lk);
       } else {

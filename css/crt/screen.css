@@ -81,7 +81,7 @@ body.scan-roll .glass::after {
   from { background-position: 0 -40%, 0 0; }
   to { background-position: 0 140%, 0 48px; }
 }
-/* Vignette and curvature: dim edges and a faint curved glare. The curved
+/* Glare and curvature: dim edges and a faint curved glare. The curved
    outline is a clip path from js/ui/crtmask.js. */
 body.crt-curve .glass {
   background:

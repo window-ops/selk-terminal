@@ -553,6 +553,23 @@ const GROUPS = {
         await pg.click(".dlg-btns .btn:first-child"); await wait(150);
         const got2 = await pg.evaluate(() => played);
         check("right press plays no control sound; UNLOCK plays action", r && JSON.stringify(got2) === JSON.stringify(["action"]), got2);
+      } else {
+        /* A plain mouse click: the press as the button goes down, the
+           release as it comes up */
+        await pg.evaluate(() => {
+          window.bursts = [];
+          const K = SELK.snd.kit, burst = K.burst;
+          K.burst = function (f) { bursts.push([f, Date.now()]); return burst.apply(this, arguments); };
+        });
+        const bar = await pg.$('.fbar [data-f="9"]'), box = await bar.boundingBox();
+        await pg.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+        await pg.mouse.down(); await wait(150);
+        const down = await pg.evaluate(() => bursts.map((x) => x[0]));
+        await pg.mouse.up(); await wait(100);
+        const all = await pg.evaluate(() => bursts);
+        const gap = all.length === 2 ? all[1][1] - all[0][1] : 0;
+        check("a mouse click plays the press on down and the release on up",
+          JSON.stringify(down) === "[3200]" && all.length === 2 && all[1][0] === 1100 && gap >= 120, [down, all.map((x) => x[0]), gap]);
       }
       check("no page errors", !pg.errs.length, pg.errs);
       await ctx.close();

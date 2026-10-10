@@ -6,6 +6,8 @@
 (function () {
   var S = window.SELK;
   var ctx = null, master = null, bus = {}, duck = {}, pan = {}, hp = null, noiseBuf = null, on = true;
+  /* The clicks' own level (Setup > Sound > Clicks), inside the interface channel */
+  var clicks = null;
   /* Sound presets. Each sets the four channel levels once (the sliders stay
      adjustable), a high-pass filter against bass the speakers cannot play,
      and the stereo width. DESK SPEAKERS suits a left and right pair without a
@@ -77,6 +79,14 @@
     } catch (e) {}
     return node;
   }
+  /* The context is built when the page loads, before any gesture, and the
+     browser starts it suspended: the first press or key resumes it */
+  function wake() {
+    if (ctx && ctx.state !== "running" && ctx.state !== "closed" && on) {
+      try { ctx.resume(); } catch (e) {}
+    }
+  }
+  ["pointerdown", "keydown", "touchend"].forEach(function (k) { document.addEventListener(k, wake, true); });
   function init() {
     if (ctx) {
       if (ctx.state !== "running" && ctx.state !== "closed" && on) {
@@ -107,6 +117,7 @@
         duck[k].connect(master);
       }
     });
+    clicks = ctx.createGain(); clicks.connect(bus.ui);
     master.gain.value = 0;
     Object.keys(BUS).forEach(function (k) { bus[k].gain.value = 0; });
     apply();
@@ -142,6 +153,8 @@
       if (k === "wind") { busVol *= 0.35; }
       glide(bus[k].gain, busVol, 0.05);
     });
+    /* 50 plays the click as designed; the default, 70, is 3 dB above it */
+    glide(clicks.gain, (set().vClick != null ? set().vClick : 70) / 50, 0.05);
   }
   function tone(freq, dur, type, vol, when, glideTo, dest) {
     if (!ctx || !on) {
@@ -247,6 +260,8 @@
       ctx: function () { return ctx; },
       master: function () { return master; },
       bus: function (k) { return bus[k]; },
+      clicks: function () { return clicks; },
+      noise: function () { return noiseBuf; },
       duck: function () { return duck; },
       on: function () { return on; },
       preset: preset,

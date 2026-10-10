@@ -144,7 +144,7 @@
         set(r, "aria-setsize", String(rowCount));
         var n = txt(r.querySelector(".mc-n")), info = txt(r.querySelector(".mc-i"));
         set(r, "aria-label", n + (info ? ", " + info : "") + (r.classList.contains("lock") ? S.t(", locked") : "") + (r.classList.contains("read") ? S.t(", read") : ""));
-        if (r.dataset.entry) { set(r, "aria-description", DRAG()); }
+        if (r.dataset.entry && !r.classList.contains("nodrag")) { set(r, "aria-description", DRAG()); }
         if (r.classList.contains("sel")) { set(list, "aria-activedescendant", r.id); }
       });
       if (!list.querySelector(".mc-row.sel")) { list.removeAttribute("aria-activedescendant"); }
@@ -195,7 +195,7 @@
       set(b, "aria-label", S.spoken(S.t("Handbook note: {name}", { name: note ? note[0] : txt(b) })));
     });
     q(".lnk.locked", function (b) { set(b, "aria-label", txt(b).replace(/\s*\[locked\]$/, "") + S.t(", in a locked section")); });
-    q(".lnk[data-entry]", function (b) { set(b, "aria-description", DRAG()); });
+    q(".lnk[data-entry]:not(.nodrag)", function (b) { set(b, "aria-description", DRAG()); });
     q(".mrow", function (b) { set(b, "aria-label", txt(b).replace(new RegExp(" " + S.t("NEW") + "$"), S.t(", unread"))); });
     q(".count", function (c) { set(c, "aria-hidden", "true"); });
     q(".watch", function (w) { set(w, "role", "region"); set(w, "aria-label", S.t("Site telemetry")); });

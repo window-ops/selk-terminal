@@ -89,3 +89,17 @@ html[data-theme="tmux"] .switcher-head {
   text-align: left;
   border-bottom: 1px solid var(--line);
 }
+/* The FILES status line (.mc-mini in css/ui/files.css) sits on the screen
+   like the panels' own text: no strip of its own colour, no top border,
+   and a single tight line. Its space runs from the panel's frame, drawn
+   inside the panel, to the pane border, so the line is lifted into the
+   panel's margin by as much as it gains below, which keeps it in the
+   middle of that space */
+html[data-theme="tmux"] .mc-mini {
+  background: none;
+  border-top: 0;
+  line-height: 1.2;
+  margin-top: -0.12em;
+  padding-top: 0;
+  padding-bottom: 0.27em;
+}

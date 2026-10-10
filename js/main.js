@@ -21,6 +21,7 @@
     } catch (e) {}
   }
   S.promptText = function () {
+    if (S.mode === "shell" && S.agent && S.agent.active()) { return "agent>"; }
     return S.mode === "login" ? "login:" : "selk:/" + (S.state.cwd || "") + ">";
   };
   S.prompt = function () {
@@ -106,7 +107,11 @@
   }
   function title() {
     var scr = S.scr;
-    /* The saved Sound setting applies on the title screen too */
+    /* The sound engine is built as the page loads, so the first press does
+       not wait for the audio device. The browser keeps it suspended until
+       the first gesture (sound.js). The saved Sound setting applies on the
+       title screen too */
+    S.snd.init();
     S.snd.setOn(S.state.sound !== false);
     /* S.mode is "title" by now, so this puts data-theme="title" on <html>
        and the popups take the title screen's own shape (css/themes/title.css) */
@@ -451,6 +456,11 @@
   };
   function submitInput() {
     var input = $("cmd"), v = input.value;
+    /* A line typed while the agent reasons interrupts it */
+    if (S.mode === "shell" && S.agent && S.agent.busy()) {
+      if (v.trim()) { input.value = ""; S.agent.interrupt(v); }
+      return;
+    }
     input.value = "";
     if (S.mode === "login") {
       doLogin(v); return;
@@ -461,11 +471,17 @@
     if (v.trim()) {
       history.push(v.trim()); hPos = history.length; saveHistory();
     }
+    if (S.agent && S.agent.active()) {
+      S.agent.input(v); return;
+    }
     S.run(v);
   }
   function inputKey(e) {
     if (e.defaultPrevented) {
       return;
+    }
+    if (S.mode === "shell" && S.agent && S.agent.key(e)) {
+      e.preventDefault(); return;
     }
     if (e.key === "Enter") {
       e.preventDefault(); S.snd.key(); submitInput(); return;
@@ -562,6 +578,8 @@
     /* Settings are applied: show the room (html.booting in
        css/crt/monitor.css) */
     document.documentElement.classList.remove("booting");
+    var loading = $("loading");
+    if (loading) { loading.remove(); }
     document.addEventListener("keydown", globalKey, true);
     $("cmd").addEventListener("keydown", inputKey);
     var tp = $("tmux-prompt");

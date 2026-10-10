@@ -8,13 +8,65 @@
    first press after loading or after a hidden tab is not lost. */
 (function () {
   var S = window.SELK, K = S.snd.kit, lastKey = 0, OFFSET = 0.5;
+  /* The bursts here, rendered once each into a buffer. A live burst shapes
+     its sound with gain changes timed on the audio clock. Firefox hands
+     them to the audio thread only when the page finishes its current task,
+     and a click that redraws a list runs in the same task as the button's
+     release: the changes arrive after their times have passed and the
+     release plays silent. A buffer started late plays whole. Until its
+     buffer is ready, a burst plays live. */
+  var baked = {};
+  function bake(key, freq, q, vol, dur, type) {
+    var ctx = K.ctx(), noise = K.noise();
+    if (!ctx || !noise || baked[key] !== undefined || !window.OfflineAudioContext) { return; }
+    baked[key] = null;
+    var off = new OfflineAudioContext(1, Math.ceil((dur + 0.06) * ctx.sampleRate), ctx.sampleRate);
+    var s = off.createBufferSource(); s.buffer = noise;
+    var f = off.createBiquadFilter(); f.type = type || "bandpass"; f.frequency.value = freq; f.Q.value = q;
+    var g = off.createGain();
+    g.gain.setValueAtTime(0.0001, 0);
+    g.gain.exponentialRampToValueAtTime(vol, Math.min(0.004, dur / 4));
+    g.gain.exponentialRampToValueAtTime(0.0001, dur);
+    s.connect(f); f.connect(g); g.connect(off.destination);
+    s.start(0, OFFSET, dur + 0.05);
+    off.startRendering().then(function (buf) { baked[key] = buf; }, function () { delete baked[key]; });
+  }
+  function burst(freq, q, vol, dur, when, type, dest) {
+    var ctx = K.ctx(), key = [freq, q, vol, dur, type || ""].join(" ");
+    if (!ctx || !K.on()) { return; }
+    if (!baked[key]) {
+      bake(key, freq, q, vol, dur, type);
+      K.burst(freq, q, vol, dur, when, type, dest, null, OFFSET);
+      return;
+    }
+    var s = ctx.createBufferSource(); s.buffer = baked[key];
+    s.connect(dest || K.bus("ui")); s.start(ctx.currentTime + (when || 0));
+  }
   /* A burst at the fixed offset, on the interface bus */
   function b(freq, q, vol, dur, when, type) {
-    K.burst(freq, q, vol, dur, when, type, null, null, OFFSET);
+    burst(freq, q, vol, dur, when, type, null);
+  }
+  /* A burst of the click, through its own level */
+  function bc(freq, q, vol, dur, when) {
+    burst(freq, q, vol, dur, when, null, K.clicks());
   }
   var t = K.tone;
+  /* The click is a press and a release. A mouse or pen plays them apart,
+     as its button goes down and comes up (ui-sound.js); everything else
+     plays them 35 ms apart. Heard apart, the release at its level in the
+     click is about 6 dB quieter than the press, so the halves played apart
+     are set even: each carries half the click's loudness (K-weighted
+     energy, ITU-R BS.1770), and the click keeps its level */
+  function press(vol) { bc(3200, 2.5, vol || 0.32, 0.018); }
+  function lift(when, vol) { bc(1100, 1.2, vol || 0.15, 0.03, when); }
+  /* Both halves, whole and apart, rendered before they are needed */
+  function warm() {
+    [[3200, 2.5, 0.32, 0.018], [1100, 1.2, 0.15, 0.03], [3200, 2.5, 0.257, 0.018], [1100, 1.2, 0.24, 0.03]].forEach(function (a) {
+      bake(a.concat("").join(" "), a[0], a[1], a[2], a[3]);
+    });
+  }
   function click() {
-    b(3200, 2.5, 0.32, 0.018); b(1100, 1.2, 0.15, 0.03, 0.035);
+    press(); lift(0.035);
   }
   /* True when sound is on in Setup and in the status bar */
   function live() {
@@ -65,7 +117,17 @@
   };
   S.snd.click = function () {
     if (!live()) { return; }
-    K.ready(click);
+    K.ready(function () { warm(); click(); });
+  };
+  /* The click's two halves, for a mouse or pen press. lift(delay) plays
+     the release delay seconds from now */
+  S.snd.press = function () {
+    if (!live()) { return; }
+    K.ready(function () { warm(); press(0.257); });
+  };
+  S.snd.lift = function (delay) {
+    if (!live()) { return; }
+    K.ready(function () { lift(delay || 0, 0.24); });
   };
   /* The sound of a kind of control; an unknown kind clicks */
   S.snd.ui = function (kind, value) {

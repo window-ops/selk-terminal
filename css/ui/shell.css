@@ -204,3 +204,37 @@
     padding: 0.6em 0.7em;
   }
 }
+/* The agent joke (js/shell/agent.js): its reasoning and its replies are
+   blocks with the gap of a block. The thoughts are indented in italics; the
+   text under a reply's diamond, and the note under it, are indented by the
+   width of the mark */
+.agent-run,
+.agent-reply {
+  margin: 0.75em 0;
+}
+.agent-thought {
+  font-style: italic;
+  padding-left: 2ch;
+}
+.agent-indent {
+  padding-left: 2ch;
+}
+.agent-mark {
+  color: var(--accent);
+}
+.agent-head {
+  display: block;
+  font: inherit;
+  text-transform: none;
+  text-shadow: inherit;
+  text-align: left;
+  background: none;
+  border: 0;
+  padding: 0;
+}
+.agent-head:hover {
+  color: var(--titan);
+}
+.agent-folded .agent-think {
+  display: none;
+}

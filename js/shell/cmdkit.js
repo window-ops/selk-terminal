@@ -45,6 +45,7 @@
     if (lock.note) {
       scr().line(lock.note, "dim");
       scr().node(function () { return S.lockClues(lock); });
+      if (lock.plain && S.state.euHelp) { scr().node(function () { return S.lockPlain(lock); }); }
       err(S.tc("{name} is locked. Type: {unlock} {sec} {pw}", { name: s.name, sec: sec, pw: S.t("SERIAL") })); return;
     }
     err(S.tc("{name} is locked. Type: {unlock} {sec} {pw}", { name: s.name, sec: sec, pw: parts > 1 ? S.t("PART1") + " " + S.t("PART2") : S.t("PASSWORD") }));

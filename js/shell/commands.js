@@ -42,6 +42,11 @@
     return S.cmdName(h[0]) + (args ? " " + args : "");
   }
   var C = {
+    /* The agent joke (agent.js), left out of help */
+    ntorch: function () { S.agent.start("ntorch"); },
+    claude: function () { S.agent.start("claude"); },
+    codex: function () { S.agent.start("codex"); },
+    chatgpt: function () { S.agent.start("chatgpt"); },
     help: function () {
       S.display(S.t("HELP"), function () {
         var wrap = scr().el("div", "entry");

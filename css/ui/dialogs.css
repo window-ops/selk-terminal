@@ -52,6 +52,18 @@
 .dlg-in:focus {
   outline: none;
 }
+/* A rejected password (markRejected in dialogs.js): the fields in the error
+   colour until one is edited. The themes draw a field with a border
+   (desktop) or a line under it (tmux, title), and both turn red; :root
+   outranks their focus rules, which load later */
+:root .dlg-in.rejected,
+:root .dlg-in.rejected:focus {
+  color: var(--flag);
+  border-color: var(--flag);
+}
+:root:not([data-theme="desktop"]) .dlg-in.rejected {
+  box-shadow: inset 0 -2px 0 var(--flag);
+}
 /* The clues of a lock with a note (S.lockClues in common.js): a framed list,
    one row per clue, its label in a column of its own */
 .lock-clues {
@@ -75,6 +87,18 @@
 .lock-clues dt:first-of-type,
 .lock-clues dt:first-of-type + dd {
   border-top: 0;
+}
+/* I AM NOT AN EU CITIZEN under the clues, and the European facts it adds
+   (S.lockPlain in common.js): a heading in the accent colour over a second
+   framed list */
+.eu-btn {
+  margin: 0.6em 0 0;
+}
+.lock-plain-head {
+  margin: 0.2em 0 0;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-align: left;
 }
 /* The lines of a lock with a sort (sortDialog in dialogs.js, S.sortLines in
    common.js): a framed, numbered list, each line with its source and its choices */
@@ -104,6 +128,13 @@
   border-color: var(--accent);
   color: var(--accent);
   box-shadow: inset 0 -2px 0 var(--accent);
+}
+/* After a rejected answer, the pressed choices in the error colour until one
+   changes (markRejected in dialogs.js) */
+:root .sort-choices .btn.rejected[aria-pressed="true"] {
+  border-color: var(--flag);
+  color: var(--flag);
+  box-shadow: inset 0 -2px 0 var(--flag);
 }
 /* The activation-key boxes of a lock with a key (keyDialog in dialogs.js):
    each box is as wide as its group, with a dash between boxes */

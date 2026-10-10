@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Selk trailers</title>
+    <link rel="stylesheet" href="../css/tokens.css">
+    <link rel="stylesheet" href="notes.css">
+    <link rel="stylesheet" href="../css/cursors.css">
+    <script src="wrap-pretty.js" defer></script>
+  </head>
+  <body class="page-trailers cur-s">
+    <main data-i18n-page="trailers">
+      <nav class="note-nav drawing-back" aria-label="Back to Selk credits">
+        <a class="note-button" href="credits.html">Back to Selk credits</a>
+      </nav>
+      <h1>Selk: trailers</h1>
+      <p class="dim">Two trailers, made in code from the game's own screens, pictures and sounds.</p>
+      <nav class="note-nav trailer-tabs" aria-label="Trailers">
+        <a class="note-button" href="#feature" data-trailer="feature" data-src="../trailer/out/selk-feature-trailer.mp4">Feature trailer</a>
+        <a class="note-button" href="#gameplay" data-trailer="gameplay" data-src="../trailer/out/selk-gameplay-trailer.mp4">Gameplay trailer</a>
+      </nav>
+      <section class="trailer-player" tabindex="0" aria-label="Trailer player. Space plays or pauses, the arrows move 5 seconds, M mutes, F switches full screen.">
+        <div class="trailer-screen">
+          <video class="trailer-video" preload="metadata" playsinline></video>
+          <button class="trailer-big" type="button" data-play="PLAY" data-pause="PAUSE">PLAY</button>
+        </div>
+        <div class="trailer-controls">
+          <button class="note-button trailer-play" type="button" data-play="PLAY" data-pause="PAUSE">PLAY</button>
+          <span class="trailer-time">0:00 / 0:00</span>
+          <input class="trailer-seek" type="range" min="0" max="1000" step="1" value="0" aria-label="Position">
+          <button class="note-button trailer-mute" type="button" data-mute="MUTE" data-unmute="SOUND ON">MUTE</button>
+          <input class="trailer-volume" type="range" min="0" max="100" step="5" value="80" aria-label="Volume">
+          <a class="note-button trailer-download" href="../trailer/out/selk-feature-trailer.mp4" download>DOWNLOAD</a>
+          <button class="note-button trailer-full" type="button">FULL SCREEN</button>
+        </div>
+      </section>
+      <div class="trailer-info" data-trailer="feature">
+        <h2>Feature trailer</h2>
+        <p>From the first steps into space in Central and Eastern Europe to the game's present: the archive's history in pixel animations, the boot of the Selk terminal, the structure alarm and MAST-01 in the dust. 87 seconds, 2560 by 1440, 60 frames a second.</p>
+      </div>
+      <div class="trailer-info" data-trailer="gameplay" hidden>
+        <h2>Gameplay trailer</h2>
+        <p>A round of play: a message from the audit office, the site's files, entry names dragged onto a report page, the page sent to Earth, and a second round that ends on a refusal and a locked section. 68 seconds, 2560 by 1440, 60 frames a second.</p>
+      </div>
+      <nav class="note-nav" aria-label="Notes pages">
+        <a class="note-button" href="credits.html">Selk credits</a>
+        <a class="note-button" href="concept.html">Game concept</a>
+        <a class="note-button" href="devnotes.html">Developer notes, contains spoilers</a>
+        <a class="note-button" href="drawings.html">Drawings</a>
+        <a class="note-button" href="glossary.html">Glossary</a>
+        <a class="note-button" href="themes.html">Political and design context</a>
+        <a class="note-button" href="warranty.html">Warranty and licenses</a>
+      </nav>
+    </main>
+    <script src="../js/core/dom.js"></script>
+    <script src="../js/core/state.js"></script>
+    <script src="../js/core/i18n.js"></script>
+    <script src="../js/lang/en.js"></script>
+    <script src="page-i18n.js"></script>
+    <script src="trailer-player.js"></script>
+  </body>
+</html>

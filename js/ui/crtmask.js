@@ -1,4 +1,4 @@
-/* Curved glass for Vignette and curvature. The screen is clipped to the
+/* Curved glass for Glare and curvature. The screen is clipped to the
    outline of a tube's face: edges that bulge slightly outward and rounded
    corners. The outline is rebuilt only when the screen changes size, and the
    content is not warped, so the pointer position stays exact. The content is

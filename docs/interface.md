@@ -12,14 +12,14 @@ The same file decides which Setup rows are hidden and which are greyed, by one r
 
 - Mode and Layout on narrow screens, which always show one pane per page.
 - Cursor size on a device that draws no pointer, such as a phone or a tablet without a mouse. `pointer` in `S.ctx()` is false when no input has a fine pointer and no mouse has moved since the page loaded. The row returns once a mouse moves.
-- Motion, Text appears, Scanlines, Flicker, Interference, Power-on, Rolling scanline, Vignette and curvature, and Scroll long messages in screen reader mode, which turns each of them off. Glow stays: screen reader mode leaves the glow on, and the row serves sighted players who use a screen reader.
+- Motion, Text appears, Scanlines, Flicker, Interference, Power-on, Rolling scanline, Glare and curvature, and Scroll long messages in screen reader mode, which turns each of them off. Glow stays: screen reader mode leaves the glow on, and the row serves sighted players who use a screen reader.
 
 **Greyed with a reason** (`S.SETTING_OFF`): another Setup choice makes the row apply, and the reason names that choice.
 
 - Layout, Sole pane frames, Redirect notices, Panel results and Shell-only DESK in desktop mode: "Used in tmux mode".
 - Redirect notices while Shell results is IN SHELL: "Applies while Shell results is IN VIEW".
 - Panel results and Shell-only DESK while Shell results is IN VIEW: "Applies while Shell results is IN SHELL".
-- Rolling scanline and Scroll long messages while motion is reduced, and Vignette and curvature with the MONITOR frame.
+- Rolling scanline and Scroll long messages while motion is reduced, and Glare and curvature with the MONITOR frame.
 - Text appears while motion is reduced: "AT ONCE while motion is reduced". The row shows AT ONCE, and `S.textSpeed()` returns `instant`; the saved choice returns with full motion.
 
 Setup > Display > Setup screen > Unavailable settings (`settings.unavailable`) chooses whether greyed rows show. SHOW keeps them greyed with their reason; HIDE leaves them out until they can apply. A group or section with no row left is skipped. Hidden rows stay hidden in both cases. When a row is hidden, the rows under it take its place.
@@ -69,7 +69,7 @@ Screens 700 px wide or narrower always use tmux mode with bottom navigation butt
 
 Panes that rebuild their content (the inbox, MESSAGE, REPORT) keep their scroll position through `S.keepScroll` in `js/core/dom.js`.
 
-Until the saved settings are applied, `<html class="booting">` keeps the room hidden, so the default screen frame never shows for a moment at load.
+Until the saved settings are applied, `<html class="booting">` keeps the room hidden, so the default screen frame never shows for a moment at load. Meanwhile `#loading`, written into `index.html` with its own inline style and script, counts the stylesheets and scripts as they arrive (LOADING FILES n OF 121), shows the file that arrived last and one DID YOU KNOW tip picked at random: the euro crisis, the region's space history, Titan and the game, all free of story spoilers. It speaks Romanian when that is the saved language; `main.js` removes it when the room appears. The stylesheets are linked in `<body>`, right after it, so it paints on the first round trip; everything after them waits for them as it would in `<head>`, and a small inline style in `<head>` gives the page its ground colour from the start. Its `data-total` must match the number of stylesheets and `<script src>` tags in `index.html`. With Setup > Debug > Loading screen key ON, Ctrl+Shift+L shows it again from `SELK_LOADING`, the copy the inline script keeps: `js/dev/debug.js` counts the files in load order, 30 ms each, with a new tip, and holds the screen until the key restarts it or Escape closes it.
 
 ## Status line
 

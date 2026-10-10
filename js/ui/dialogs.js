@@ -199,6 +199,34 @@
     errBox = ov;
     ok.focus({ preventScroll: true });
   };
+  /* A rejected password marks the open dialog's answer in the error colour
+     (css/ui/dialogs.css): its fields, or the pressed choices of a sort, until
+     the player edits a field or changes a choice */
+  function markRejected() {
+    var ov = S.dlg;
+    if (!ov) {
+      return;
+    }
+    var marks = [].slice.call(ov.querySelectorAll(".dlg-in, .sort-choices .btn[aria-pressed='true']"));
+    function clear() {
+      marks.forEach(function (m) {
+        m.classList.remove("rejected"); m.removeAttribute("aria-invalid");
+      });
+      ov.removeEventListener("input", clear); ov.removeEventListener("click", choice);
+    }
+    function choice(e) {
+      if (e.target.closest && e.target.closest(".sort-choices .btn")) {
+        clear();
+      }
+    }
+    marks.forEach(function (m) {
+      m.classList.add("rejected");
+      if (m.tagName === "INPUT") {
+        m.setAttribute("aria-invalid", "true");
+      }
+    });
+    ov.addEventListener("input", clear); ov.addEventListener("click", choice);
+  }
   S.unlockDialog = function (sec) {
     var locked = S.sections().filter(function (s) {
       return s.locked && !S.isUnlocked(s.id);
@@ -229,7 +257,11 @@
         {
           label: "UNLOCK",
           action: function (v) {
-            S.runClick("unlock " + sec + " " + v.join(" ")); return S.isUnlocked(sec) ? true : false;
+            S.runClick("unlock " + sec + " " + v.join(" "));
+            if (S.isUnlocked(sec)) {
+              return true;
+            }
+            markRejected(); return false;
           }
         },
         {
@@ -243,7 +275,8 @@
      takes as many characters as its group and passes the focus on when full;
      Backspace in an empty box and the arrow keys at either end move between
      boxes, and a pasted key fills the boxes from the one pasted into. A wrong
-     key leaves the boxes as they are. */
+     key leaves the boxes as they are, marked in the error colour until one is
+     edited. */
   function keyDialog(sec, s, lock) {
     var boxes = [];
     function spread(from, text) {
@@ -262,6 +295,25 @@
       wide: true,
       build: function (b) {
         b.appendChild(S.lockClues(lock));
+        /* I AM NOT AN EU CITIZEN adds the European facts behind the clues;
+           the choice is kept in the save */
+        if (lock.plain) {
+          var eu = el("button", "btn eu-btn", S.t("I AM NOT AN EU CITIZEN")), plain = null;
+          eu.type = "button";
+          var showPlain = function () {
+            var on = !!S.state.euHelp;
+            eu.setAttribute("aria-pressed", on ? "true" : "false");
+            if (on && !plain) { plain = S.lockPlain(lock); eu.after(plain); }
+            if (!on && plain) { plain.remove(); plain = null; }
+          };
+          eu.addEventListener("click", function () {
+            S.state.euHelp = !S.state.euHelp;
+            if (S.save) { S.save(); }
+            showPlain();
+          });
+          b.appendChild(eu);
+          showPlain();
+        }
         var row = el("div", "key-boxes");
         row.setAttribute("role", "group");
         row.setAttribute("aria-label", S.t("Serial of this terminal"));
@@ -303,7 +355,10 @@
           label: "UNLOCK",
           action: function () {
             S.runClick("unlock " + sec + " " + boxes.map(function (x) { return x.value.trim(); }).join(""));
-            return S.isUnlocked(sec);
+            if (S.isUnlocked(sec)) {
+              return true;
+            }
+            markRejected(); return false;
           }
         },
         {
@@ -317,7 +372,7 @@
      line with its source and one button per choice. A choice stays pressed
      until another is chosen for that line; UNLOCK sends one letter per line,
      with a dash for a line left open. A wrong answer leaves the choices as
-     they are. */
+     they are, the pressed ones marked in the error colour until one changes. */
   function sortDialog(sec, s, lock) {
     var picked = lock.sort.items.map(function () { return "-"; });
     S.dialog({
@@ -352,7 +407,10 @@
           label: "UNLOCK",
           action: function () {
             S.runClick("unlock " + sec + " " + picked.join(""));
-            return S.isUnlocked(sec);
+            if (S.isUnlocked(sec)) {
+              return true;
+            }
+            markRejected(); return false;
           }
         },
         {

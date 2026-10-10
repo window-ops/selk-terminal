@@ -60,7 +60,7 @@
     meter("Dust", 14 - v.vis, 14, S.t("visibility {km} km", { km: S.num(v.vis, 1) }));
     field("Reactor", "48 MW heat, 11 MW electric");
     field("Uplink", st.pending.length ? "receiving" : S.transmitting ? "sending" : "idle, relay R-09", st.pending.length || S.transmitting ? "warn" : "");
-    field("CRANE-L", v.wind > 5 ? "stowed, wind above 5 m/s" : "parked, zone 14 hold", v.wind > 5 ? "warn" : "");
+    field("CRANE-L", v.wind > 5 ? "stowed, wind above 5 m/s" : "stowed, zone 14 hold", v.wind > 5 ? "warn" : "");
     box.appendChild(dl);
     var wrap = el("div", "etable-wrap"), tb = el("table", "etable"), hr = el("tr");
     [

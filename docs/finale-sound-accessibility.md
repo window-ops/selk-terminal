@@ -40,7 +40,7 @@ Setup > Sound > Control sounds (`settings.ctlSounds`, OFF in a new game) gives e
 | `select` | FILES rows and report blanks |
 | `slide` | Volume sliders, at a pitch that follows the value |
 
-A new control takes the kind that matches what it does; an unknown kind plays the click. Each kind is within about 2 dB of the click. A mouse or pen press sounds when the primary button goes down; a right or middle press clicks. A touch sounds with the click that follows it, so a scroll makes no sound. Desktop icons click, since a first click may only select them.
+A new control takes the kind that matches what it does; an unknown kind plays the click. Each kind is within about 2 dB of the click. A mouse or pen press sounds when the primary button goes down; a right or middle press clicks. With Control sounds OFF, a plain click is split in two: the press as the button goes down and the release as it comes up, at least 35 ms later; a drag makes no release sound. Played apart, the two halves are equally loud, each with half the loudness of the whole click. With Control sounds ON, every press plays one whole sound: its kind, or the whole click on an unmarked control. Setup > Sound > Clicks (`settings.vClick`, 70 by default) sets the click's own level inside the interface channel: 50 plays it as designed, and 70 is 3 dB above that. The sound engine is built when the page loads, and the first press or key resumes it, so the first sound does not wait for the audio device. A control with a kind plays its sound whole on the press. A touch sounds with the click that follows it, so a scroll makes no sound. Desktop icons click, since a first click may only select them.
 
 ## Accessibility
 

@@ -538,3 +538,202 @@ body {
   aspect-ratio: 16 / 9;
   border: 1px solid var(--rib);
 }
+/* The scene's buttons lie on its picture, at the lower left corner, as
+   scene-gallery.js places them */
+.scene-item {
+  position: relative;
+}
+.scene-item .scene {
+  display: block;
+}
+.scene-controls {
+  position: absolute;
+  left: 0.4rem;
+  bottom: 0.4rem;
+  display: flex;
+  gap: 0.3rem;
+}
+.scene-button {
+  padding: 0.1em 0.5em;
+  border: 1px solid var(--titan);
+  background: rgba(21, 23, 25, 0.8);
+  color: var(--titan);
+  font-family: inherit;
+  font-size: 0.75rem;
+  line-height: 1.3;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+}
+.scene-button:hover,
+.scene-button:focus-visible {
+  background: var(--titan);
+  color: var(--hall);
+  outline: none;
+}
+/* ZOOM: the scene as large as the window allows, pixels kept square */
+.scene-zoom {
+  width: min(96vw, 160vh);
+  max-width: none;
+  padding: 0;
+  border: 1px solid var(--rib);
+  background: #000;
+}
+.scene-zoom::backdrop {
+  background: rgba(0, 0, 0, 0.85);
+}
+.scene-zoom .scene {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  image-rendering: pixelated;
+}
+.scene-zoom .scene-button {
+  font-size: 0.9rem;
+}
+
+/* trailers.html: the two trailers in a player of the page's own (notes/
+   trailer-player.js), in the colours of the game */
+.page-trailers main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 3rem 1.25rem 5rem;
+}
+.page-trailers h1, .page-trailers h2 {
+  font-family: var(--font-crt);
+  font-weight: 400;
+  line-height: 1.1;
+}
+.page-trailers h1 {
+  font-size: 3rem;
+  margin: 0 0 0.5rem;
+}
+.page-trailers h2 {
+  font-size: 1.9rem;
+  margin: 1.4rem 0 0.6rem;
+  border-bottom: 1px solid var(--rib);
+  padding-bottom: 0.3rem;
+}
+.page-trailers .dim {
+  color: var(--dust);
+}
+.trailer-tabs {
+  margin-top: 0;
+}
+.trailer-tabs .note-button[aria-current] {
+  background: var(--titan);
+  border-color: var(--titan);
+  color: var(--hall);
+}
+.trailer-player {
+  margin-top: 1rem;
+  outline: none;
+}
+.trailer-player:focus-visible .trailer-screen {
+  border-color: var(--titan);
+}
+.trailer-screen {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border: 1px solid var(--rib);
+}
+.trailer-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.trailer-big {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  padding: 0.5em 1.4em;
+  border: 1px solid var(--titan);
+  background: rgba(21, 23, 25, 0.85);
+  color: var(--titan);
+  font: inherit;
+  font-size: 1.1rem;
+  letter-spacing: 0.12em;
+  cursor: pointer;
+}
+.trailer-big:hover,
+.trailer-big:focus-visible {
+  background: var(--titan);
+  color: var(--hall);
+  outline: none;
+}
+.trailer-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem 0.7rem;
+  margin-top: 0.5rem;
+}
+.trailer-controls .note-button {
+  box-sizing: border-box;
+  height: 1.7rem;
+  background: none;
+  text-decoration: none;
+  font-family: inherit;
+  font-size: 0.85rem;
+  line-height: 1.3;
+  cursor: pointer;
+}
+/* The hover and the keyboard focus of the player's controls, as on every
+   notes button */
+.trailer-controls .note-button:hover,
+.trailer-controls .note-button:focus-visible {
+  background: var(--haze);
+  color: var(--hall);
+  outline: none;
+}
+.trailer-seek:focus-visible,
+.trailer-volume:focus-visible {
+  outline: 1px solid var(--titan);
+  outline-offset: 2px;
+}
+.trailer-time {
+  color: var(--dust);
+  font-size: 0.85em;
+  font-variant-numeric: tabular-nums;
+  min-width: 7.5em;
+}
+.trailer-seek {
+  flex: 1 1 12rem;
+  accent-color: var(--titan);
+}
+.trailer-volume {
+  width: 6rem;
+  accent-color: var(--titan);
+}
+/* Full screen: the picture fills the whole screen and the bar lies over
+   its foot; while the trailer plays untouched (trailer-player.js) the bar
+   slides off the bottom and the pointer hides */
+.trailer-player:fullscreen {
+  margin: 0;
+  background: #000;
+}
+.trailer-player:fullscreen .trailer-screen {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+  border: 0;
+}
+.trailer-player:fullscreen .trailer-controls {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+  padding: 0.6rem 1rem;
+  background: rgba(21, 23, 25, 0.85);
+  transition: opacity 0.3s, transform 0.3s;
+}
+.trailer-player:fullscreen.idle .trailer-controls {
+  opacity: 0;
+  transform: translateY(100%);
+  pointer-events: none;
+}
+.trailer-player:fullscreen.idle,
+.trailer-player:fullscreen.idle * {
+  cursor: none;
+}

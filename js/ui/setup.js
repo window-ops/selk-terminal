@@ -67,7 +67,7 @@
       /* Both are OFF in a new game. S.syncContext lists when they apply. */
       group("crt", "CRT EXTRAS", [
         row("Rolling scanline", "scanRoll"),
-        row("Vignette and curvature", "crtCurve")
+        row("Glare and curvature", "crtCurve")
       ])
     ]),
     group("sound", "SOUND", [
@@ -79,6 +79,7 @@
         row("Machine", "vMachine", VOLUME),
         row("Wind", "vWind", VOLUME),
         row("Interface", "vUi", VOLUME),
+        row("Clicks", "vClick", VOLUME),
         row("Structure", "vStruct", VOLUME),
         row("Music", "vMusic", VOLUME)
       ])
@@ -90,6 +91,7 @@
     group("debug", "DEBUG", [
       row("Debug panel", "debug"),
       row("Debug log", "debugLog"),
+      row("Loading screen key", "loaderKey"),
       row("Fast mode", "fast")
     ]),
     group("data", "SAVED DATA", [
@@ -293,6 +295,7 @@
     vMachine: "The computer itself: fan, hum and hard drive.",
     vWind: "The wind outside the base.",
     vUi: "Clicks, key presses and alert tones.",
+    vClick: "The click of each press and release, within Interface.",
     vStruct: "Creaks and thuds from the tower.",
     vMusic: "The music of the games in the archive.",
     _hintsOn: "The HINTS command shows clues one at a time.",
@@ -309,6 +312,7 @@
     redirectNotes: "A note in the shell when a result opens in VIEW.",
     debug: "A movable DEBUG panel for testing.",
     debugLog: "A log of everything the game does, in the browser's console.",
+    loaderKey: "Ctrl+Shift+L shows the loading screen again, for checking it.",
     setupView: "How Setup lists the settings.",
     ctlSounds: "A sound of its own for each kind of control."
   };
@@ -469,6 +473,10 @@
     debugLog: {
       on: "Print commands, events, windows and saves. Filter by SELK.",
       off: "Keep the console quiet."
+    },
+    loaderKey: {
+      on: "Ctrl+Shift+L shows it again and restarts it; Escape closes it.",
+      off: "The key does nothing."
     },
     ctlSounds: {
       on: "Keys, switches, tabs, pages and menus each make their own sound.",

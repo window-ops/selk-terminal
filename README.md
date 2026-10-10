@@ -40,7 +40,7 @@ The interface works with keyboard, mouse, and touch. A right click, or a press h
 
 MAIL shows the inbox and, beside it, the MESSAGE pane, where messages open. In tmux mode, Setup > Display > Sole pane frames OFF draws a pane that is alone in its window without border or header; right-click the pane, or press and hold it on a touch screen, for CLOSE, POP IN or SHOW INBOX. Drag the line between two panes to resize them; a double click returns to the default size.
 
-Setup (F9) opens on a list of sections, each on its own page; BACK or Escape returns. Settings that belong to another one open from its MORE button. Setup view switches to SECTIONS or FULL LIST, which show every setting on one page. Sound > Control sounds gives each kind of control its own sound.
+Setup (F9) opens on a list of sections, each on its own page; BACK or Escape returns. Settings that belong to another one open from its MORE button. Setup view switches to SECTIONS or FULL LIST, which show every setting on one page. Sound > Control sounds gives each kind of control its own sound, and Sound > Clicks sets the level of the click.
 
 On mobile, use the bottom navigation buttons to switch between the available views. In MAIL, HIDE INBOX gives the open message the whole page and SHOW INBOX brings the list back.
 
@@ -67,6 +67,7 @@ A row that another Setup choice would make usable stays in view, greyed, with th
 - [Glossary](notes/glossary.html)
 - [Political and design context](notes/themes.html)
 - [Drawings](notes/drawings.html)
+- [Trailers](notes/trailers.html): the feature and gameplay trailers, also at `notes/trailers.html#feature` and `#gameplay`
 - [Credits and research references](notes/credits.html)
 - [Warranty and licenses](notes/warranty.html)
 - [Developer notes](notes/devnotes.html) (spoilers)

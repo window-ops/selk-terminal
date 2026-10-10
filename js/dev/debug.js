@@ -18,6 +18,39 @@
   }
   S.debug = log;
 
+  /* Setup > Debug > Loading screen key: Ctrl+Shift+L shows the loading
+     screen again (index.html), counting the stylesheets and scripts with
+     their names in load order, 30 ms each, with a new tip, then holds it for inspection.
+     The key restarts it; Escape closes it */
+  var replaying = null;
+  function closeLoader() {
+    clearInterval(replaying); replaying = null;
+    var box = document.getElementById("loading");
+    if (box) { box.remove(); }
+  }
+  function replayLoader() {
+    var L = window.SELK_LOADING;
+    if (!L) { return; }
+    closeLoader();
+    var box = L.copy.cloneNode(true), lang = S.state.settings.lang === "ro" ? "ro" : "en";
+    box.style.zIndex = "100000";
+    document.body.appendChild(box);
+    var files = [].map.call(document.querySelectorAll("link[rel=stylesheet], script[src]"), function (s) { return s.getAttribute("src") || s.getAttribute("href"); }), k = 0;
+    L.tip(lang); L.draw(0, "", lang);
+    replaying = setInterval(function () {
+      k++; L.draw(k, files[k - 1], lang);
+      if (k >= files.length) { clearInterval(replaying); }
+    }, 30);
+  }
+  document.addEventListener("keydown", function (e) {
+    var shown = !!document.getElementById("loading");
+    if (S.state && S.state.settings.loaderKey && e.ctrlKey && e.shiftKey && !e.altKey && (e.key === "L" || e.key === "l")) {
+      e.preventDefault(); e.stopPropagation(); replayLoader();
+    } else if (shown && replaying !== null && e.key === "Escape") {
+      e.preventDefault(); e.stopPropagation(); closeLoader();
+    }
+  }, true);
+
   /* Wrap obj[name] so each call is logged before it runs */
   function watch(obj, name, kind, describe) {
     var f = obj && obj[name];

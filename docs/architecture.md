@@ -12,11 +12,11 @@ Every script is an immediately invoked function that adds its part to one global
 4. `js/main.js`, which starts the game
 5. `js/ui/a11y.js` and `js/dev/debug.js`, which wrap what the other scripts built and load last
 
-A new script goes into `index.html` after everything it calls at load time. A function called later, from an event or a command, can live in any file loaded before the call.
+A new script goes into `index.html` after everything it calls at load time, and raises `data-total` on `#loading` by one; so does a new stylesheet. A function called later, from an event or a command, can live in any file loaded before the call.
 
 The chosen language loads at run time. `js/core/i18n.js` adds a `<script>` tag for `js/lang/<code>.js` and exposes the promise `S.i18n.ready`. `main.js` waits for it before it builds the screen, so every module starts in the chosen language. Switching language saves the choice and reloads the page.
 
-The notes pages in `notes/` load a subset of the same scripts: `dom.js`, `state.js`, `i18n.js`, `en.js` and `notes/page-i18n.js`. The developer notes page adds the data files, `js/shell/render.js` and `js/dev/devnotes.js`.
+The notes pages in `notes/` load a subset of the same scripts: `dom.js`, `state.js`, `i18n.js`, `en.js` and `notes/page-i18n.js`. The developer notes page adds the data files, `js/shell/render.js` and `js/dev/devnotes.js`. The trailers page adds `notes/trailer-player.js`, its own player for the two videos in `trailer/out/`; `trailers.html#feature` and `trailers.html#gameplay` open each one, and the game itself never loads them.
 
 ## Directory map
 
@@ -34,7 +34,7 @@ The notes pages in `notes/` load a subset of the same scripts: `dom.js`, `state.
 | `css/` | The stylesheets: `crt/`, `ui/` and `themes/`, described in [Styles and themes](styles.md) |
 | `notes/` | The notes pages, their stylesheet and their scripts |
 | `img/` | Camera pictures shown with entries |
-| `tools/` | `i18n-catalog.js`, the translation catalog, `test-ui.js`, the browser tests, `design-drawings.js` and `history-pictures.js`, which draw the Design sheets and the History pictures, and `pixel-sheet.js`, the raster they share |
+| `tools/` | `i18n-catalog.js`, the translation catalog, `test-ui.js`, the browser tests, `design-drawings.js`, `history-pictures.js` and `site-pictures.js`, which draw the Design sheets, the History pictures and the site camera pictures, and `pixel-sheet.js`, the raster they share |
 | `docs/` | These documents |
 
 ## Code conventions

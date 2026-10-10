@@ -22,6 +22,7 @@
       vMachine: 70,
       vWind: 40,
       vUi: 75,
+      vClick: 70,
       soundPreset: "balanced",
       vStruct: 65,
       vMusic: 70,
@@ -73,6 +74,7 @@
       ctlSounds: false,
       debug: false,
       debugLog: false,
+      loaderKey: false,
       /* Setup > Debug > Fast mode, read through S.fast */
       fast: false
     };

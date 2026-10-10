@@ -50,8 +50,10 @@ SELK.LOCKS = {
      groups. note and clues replace the usual locked-section text, since the
      serial is in no entry: clues is a boxed list of [label, text] pairs that
      nudge toward each step without stating its result, yet carry every
-     fact a player needs to solve it; the hint lines then
-     escalate to the full answer. */
+     fact a player needs to solve it; the hint lines then escalate to the
+     full answer. plain lists the European facts behind the clues, which
+     I AM NOT AN EU CITIZEN in the unlock dialog adds for players who did
+     not grow up with them. */
   design: {
     parts: [
       "kt",
@@ -84,7 +86,7 @@ SELK.LOCKS = {
     clues: [
       [
         "Start",
-        "the bank on a euro note, in latin letters"
+        "the initials of the European Central Bank on a euro note, in latin letters"
       ],
       [
         "Initials",
@@ -92,55 +94,97 @@ SELK.LOCKS = {
       ],
       [
         "Each set",
-        "one letter in every set stands for European; the serial uses what remains"
+        "drop the E, which stands for European; two letters remain"
       ],
       [
         "BCE",
-        "here the B goes instead; what remains is a mark printed on electronics"
+        "here the B goes and the E stays; what remains is a mark printed on electronics"
       ],
       [
         "First",
-        "the language of the country the euro crisis hit hardest"
+        "the pair in the language of the country the euro crisis hit hardest"
       ],
       [
         "Second",
-        "the language of the creditor that country argued with"
+        "the pair in the language of that country's main creditor"
       ],
       [
         "Middle",
-        "the other pairs keep their order"
+        "the remaining pairs except the mark, in the order above"
       ],
       [
         "Last",
-        "the mark"
+        "the conformity mark"
       ],
       [
         "Mirror",
-        "two pairs read as each other reversed; the first gives way to the number of the larger new motorway ring around Bucharest"
+        "two middle pairs read as each other reversed; write the larger new motorway ring around Bucharest, a letter and a digit, in place of the first"
       ],
       [
         "Before the mark",
-        "the 2011 European directive on hazardous substances (RoHS 2): the last letter of its abbreviation, then the last digit of its number"
+        "RoHS 2, the 2011 European directive on hazardous substances: the last letter of RoHS, then the last digit of its number"
       ],
       [
         "P",
-        "mirrored, it looks like a digit; turn that digit upside down"
+        "a mirrored P looks like a digit; turn that digit upside down and write it in place of the P"
       ],
       [
         "After SB",
-        "the Swiss railways, in German, repeat letter count"
+        "the initials of the Swiss railways in German have one letter twice; write after SB how many times it appears"
       ],
       [
         "Then",
-        "count characters so far; add the last digit of the count at the end"
+        "count every character so far, digits included; write the last digit of the count after the mark"
       ],
       [
         "Hidden",
-        "a broadcaster, in plain sight; its double B becomes B, R and 1"
+        "a broadcaster's initials now stand together across two pairs; write R1 in place of their second B"
       ],
       [
         "End",
-        "close with the last digit of the day the 500 stopped being printed, 27-04-2019"
+        "close with the last digit of the day the 500 euro note stopped being printed: 27-04-2019"
+      ]
+    ],
+    plain: [
+      [
+        "EKT",
+        "Greek (ΕΚΤ, Ευρωπαϊκή Κεντρική Τράπεζα)"
+      ],
+      [
+        "EZB",
+        "German (Europäische Zentralbank)"
+      ],
+      [
+        "Other sets",
+        "BCE French and others, ECB English and others, EKP Finnish and Estonian, ESB Croatian, EKB Hungarian, EBC Polish"
+      ],
+      [
+        "Euro crisis",
+        "from 2009 it hit Greece hardest; Germany was its main creditor"
+      ],
+      [
+        "Bucharest",
+        "the capital of Romania; the larger of its new motorway rings is the A0"
+      ],
+      [
+        "CE",
+        "the conformity mark on products sold in the European Economic Area"
+      ],
+      [
+        "RoHS",
+        "Restriction of Hazardous Substances, directive 2011/65/EU"
+      ],
+      [
+        "SBB",
+        "Schweizerische Bundesbahnen, the Swiss railways"
+      ],
+      [
+        "BBC",
+        "British Broadcasting Corporation, the British public broadcaster"
+      ],
+      [
+        "500 euro",
+        "the largest euro note; its printing stopped on 27-04-2019"
       ]
     ]
   },
