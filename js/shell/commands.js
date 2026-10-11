@@ -790,7 +790,7 @@
        read. Kernel text stays in English in every language */
     dmesg: function () {
       dmesgLines().forEach(function (l) {
-        scr().line("[" + ("     " + l[0].toFixed(6)).slice(-12) + "] " + l[1], l[2], 0);
+        scr().line("[" + (l[0].toFixed(6)).slice(-12) + "] " + l[1], l[2], 0);
       });
     },
     credits: function () {
