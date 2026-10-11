@@ -175,7 +175,7 @@ Rule          crew checks every model output
   `Built         2079
 Purpose       test for {chemosynthesis|chemo}
 Food source   {C2H2 + 3 H2 > 2 CH4|reaction}
-Home          {regolith|regolith} soaked with liquid methane
+Habitat          {regolith|regolith} soaked with liquid methane
 First find    2083, plot 3
 State         sealed 03-05-2092
 See           [[archive/LAB.R4]]`,
