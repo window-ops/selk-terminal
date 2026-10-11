@@ -588,8 +588,8 @@
     S.tmux.render();
     S.prompt();
     title();
-    /* Settings are applied: show the room (html.booting in
-       css/crt/monitor.css) */
+    /* Settings are applied: show the room (html.booting in the inline
+       <style> of index.html) */
     document.documentElement.classList.remove("booting");
     var loading = $("loading");
     if (loading) { loading.remove(); }

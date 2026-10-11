@@ -15,10 +15,9 @@ body {
   font-family: var(--font-mono);
   -webkit-font-smoothing: antialiased;
 }
-/* Hidden until main.js applies the saved frame, so the default frame never flashes */
-html.booting .room {
-  visibility: hidden;
-}
+/* html.booting .room, which hides the room until main.js applies the saved
+   settings, is in the inline <style> of index.html, so it holds before this
+   file arrives */
 .room {
   min-height: 100%;
   display: grid;

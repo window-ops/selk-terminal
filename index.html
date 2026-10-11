@@ -8,7 +8,21 @@
     <!-- The ground color from the first paint. The stylesheets are linked in
          <body>, after the loading screen, so that screen paints before they
          arrive; everything after them waits for them, as in <head>. -->
-    <style>html, body { margin: 0; background: #151719; }</style>
+    <!-- The loading screen stays invisible for its first 400 ms. A fast
+         browser has every file by then and main.js removes the screen
+         unseen, so it never flashes up for a frame before the room. The
+         debug key shows it after start-up, when html.booting is gone, so the
+         replay appears at once. -->
+    <!-- The room stays hidden until main.js applies the saved settings and
+         removes html.booting. The rule lives here, in <head>, so it holds
+         from the first paint: in a stylesheet linked in <body> it would
+         arrive after the room's unstyled buttons and text had painted. -->
+    <style>
+      html, body { margin: 0; background: #151719; }
+      html.booting .room { visibility: hidden; }
+      html.booting #loading { visibility: hidden; animation: loading-show 0s linear 0.4s forwards; }
+      @keyframes loading-show { to { visibility: visible; } }
+    </style>
     <!-- Without JavaScript the loading screen would wait forever: it is
          hidden and the kernel panic in <body> takes the screen. -->
     <noscript>
@@ -101,7 +115,7 @@
     <div id="loading" role="status" data-total="123" style="position: fixed; inset: 0; z-index: 10; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0 16px; background: var(--wall, #151719); color: var(--haze, #D6C396); font: 16px/1.6 var(--font-mono, monospace); letter-spacing: 0.08em;">
       <div id="loading-bar" aria-hidden="true" style="white-space: pre;">LOADING</div>
       <div id="loading-file" aria-hidden="true" style="min-height: 1.6em; opacity: 0.55; font-size: 13px;"></div>
-      <div style="max-width: 34em; margin-top: 2em; text-align: center; font-size: 14px; letter-spacing: 0.02em;">
+      <div style="max-width: 34em; margin-top: 1.5em; text-align: center; font-size: 14px; letter-spacing: 0.02em;">
         <div id="loading-tip-head" style="margin-bottom: 0.5em; color: var(--accent, #C7843A); letter-spacing: 0.14em; font-weight: 600;"></div>
         <div id="loading-tip"></div>
       </div>
