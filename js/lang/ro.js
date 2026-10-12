@@ -1434,6 +1434,7 @@ SELK.i18n.register("ro", {
   "That would end the eurocrisis once and for all. It takes a new treaty, and every member state has to vote for it. Go and see where it leads.": "Asta ar pune capăt crizei zonei euro o dată pentru totdeauna. Este nevoie de un tratat nou, iar fiecare stat membru trebuie să voteze pentru el. Du-te și vezi unde duce.",
   "The third memorandum asks for a primary surplus of 3.5% of GDP from 2018. Every euro of it is a euro not spent in Greece.": "Al treilea memorandum cere un excedent primar de 3,5% din PIB începând din 2018. Fiecare euro din el este un euro necheltuit în Grecia.",
   "Then the rules stay as they are, and the next crisis will find them unchanged. Go and see where it leads.": "Atunci regulile rămân cum sunt, iar următoarea criză le va găsi neschimbate. Du-te și vezi unde duce.",
+  "You chose to leave the euro. The creditors' timetable went on: within weeks the third memorandum was signed, and Greece stayed in.": "Ai ales să ieși din zona euro. Calendarul creditorilor și-a urmat cursul: în câteva săptămâni s-a semnat al treilea memorandum, iar Grecia a rămas în zona euro.",
   "EC": "CE",
   "ECB": "BCE",
   "IMF": "FMI",

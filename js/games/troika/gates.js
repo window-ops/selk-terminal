@@ -6,7 +6,7 @@
     var f = T.st.flags;
     if (flag === "laws") { f.laws++; }
     else if (flag === "yields") { f.yields++; }
-    else if (flag === "drachma") { f.runs = true; f.yields++; }
+    else if (flag === "drachma") { f.runs = true; f.yields++; f.euroExit = true; }
     else if (flag) { f[flag] = true; }
   }
   T.choose = function (i) {

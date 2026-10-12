@@ -68,11 +68,13 @@
   /* A new run. gap is the Troika's distance behind Greece, from 0 to 1, and
      Greece is caught at 0.08. spawnAt is the distance at which the next
      obstacle comes. door holds where the building of the ending stands, from
-     3.5 s before 2016, and end holds the ending once Greece reaches 2016. */
+     3.5 s before 2016, and end holds the ending once Greece reaches 2016.
+     flags holds the lasting effects of the choices; euroExit records that
+     Greece chose to leave the euro in 2015, for the economist in 2016. */
   T.fresh = function () {
     return {
       t: 0, last: 0, gap: 0.55, speed: 1, spacing: 1, nextGate: 0, gateAt: 0, gates: T.data.gates(), places: T.data.places(),
-      flags: { laws: 0, yields: 0, runs: false, crowd: false, ertOff: false },
+      flags: { laws: 0, yields: 0, runs: false, crowd: false, ertOff: false, euroExit: false },
       hold: false, y: 0, vy: 0, jumps: 0, on: true, duck: false, sit: false, duckT: 0, duckSpent: false, obstacles: [], platforms: [],
       spawnAt: 2.2 * T.SPEED, dist: 0, recent: [], tranches: {},
       banner: "", bannerT: 0, hitFlash: 0, cleared: 0, hits: 0, crash: false, year: -1, ahead: null,

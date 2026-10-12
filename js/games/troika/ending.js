@@ -74,7 +74,7 @@
   function startTalk() {
     var e = T.st.end, ways = D.ways();
     T.keys("talk");
-    T.talk.say(S.t("ECONOMIST"), D.talk(), ways.map(function (w) { return w[0]; }), function (i) {
+    T.talk.say(S.t("ECONOMIST"), D.talk(T.st.flags), ways.map(function (w) { return w[0]; }), function (i) {
       e.way = i; e.level = ways[i][3];
       T.talk.say(S.t("ECONOMIST"), [ways[i][1]], null, function () {
         phase("zoom");

@@ -93,16 +93,22 @@
      debt at about 180% of GDP and unemployment at 23.5% in 2016, capital
      controls from June 2015 to September 2019, the primary surplus of 3.5%
      of GDP the third memorandum asked for from 2018, 19 countries in the
-     euro, and DiEM25, founded by Varoufakis in Berlin on 9 February 2016. */
-  D.talk = function () {
+     euro, and DiEM25, founded by Varoufakis in Berlin on 9 February 2016.
+     flags are the run's lasting effects: after "Leave the euro" in 2015
+     (euroExit), the economist says that the history went on as it did, with
+     the third memorandum agreed in August 2015 and Greece kept in the euro. */
+  D.talk = function (flags) {
     return [
-      S.t("Come in, out of the street. You made it through 2015."),
+      S.t("Come in, out of the street. You made it through 2015.")
+    ].concat(flags && flags.euroExit ? [
+      S.t("You chose to leave the euro. The creditors' timetable went on: within weeks the third memorandum was signed, and Greece stayed in.")
+    ] : [], [
       S.t("But the crisis is not over. The public debt is about 180% of GDP, nearly one worker in four has no job, and the banks are still under capital controls."),
       S.t("The third memorandum asked for a primary surplus of 3.5% of GDP from 2018. Every euro of it is a euro not spent in Greece."),
       S.t("And the problem is bigger than Greece. The euro has one currency and one central bank, but nineteen treasuries. A country in trouble cannot devalue, and there is no common budget to help it."),
       S.t("That is why Varoufakis still argues about the euro. In February he founded DiEM25, a movement to make the Union democratic before it breaks apart."),
       S.t("So, Greece: what do you push for now?")
-    ];
+    ]);
   };
   /* The four ways on, from the economist's question to 2097. level is how
      far each goes, from 0 (nothing changes) to 3 (the eurocrisis ends for
