@@ -16,7 +16,7 @@ A new script goes into `index.html` after everything it calls at load time, and 
 
 The chosen language loads at run time. `js/core/i18n.js` adds a `<script>` tag for `js/lang/<code>.js` and exposes the promise `S.i18n.ready`. `main.js` waits for it before it builds the screen, so every module starts in the chosen language. Switching language saves the choice and reloads the page.
 
-The notes pages in `notes/` load a subset of the same scripts: `dom.js`, `state.js`, `i18n.js`, `en.js` and `notes/page-i18n.js`. The developer notes page adds the data files, `js/shell/render.js` and `js/dev/devnotes.js`. The trailers page adds `notes/trailer-player.js`, its own player for the two videos in `trailer/out/`; `trailers.html#feature` and `trailers.html#gameplay` open each one, and the game itself never loads them.
+The notes pages in `notes/` load a subset of the same scripts: `dom.js`, `state.js`, `i18n.js`, `en.js` and `notes/js/page-i18n.js`. The developer notes page adds the data files, `js/shell/render.js` and `js/dev/devnotes.js`. The trailers page adds `notes/js/trailer-player.js`, its own player for the two videos in `trailer/out/`; `trailers.html#feature` and `trailers.html#gameplay` open each one, and the game itself never loads them.
 
 ## Directory map
 
@@ -32,7 +32,7 @@ The notes pages in `notes/` load a subset of the same scripts: `dom.js`, `state.
 | `js/audio/` | The sound engine (`sound.js`), the sound of every control (`ui-sound.js`), and `sounds/`, the sounds, one file per family |
 | `js/dev/` | The debug panel and log, and the developer notes page |
 | `css/` | The stylesheets: `crt/`, `ui/` and `themes/`, described in [Styles and themes](styles.md) |
-| `notes/` | The notes pages, their stylesheet and their scripts |
+| `notes/` | The notes pages; their stylesheets are in `notes/css/` and their scripts in `notes/js/` |
 | `img/` | Camera pictures shown with entries |
 | `tools/` | `i18n-catalog.js`, the translation catalog, `test-ui.js`, the browser tests, `design-drawings.js`, `history-pictures.js` and `site-pictures.js`, which draw the Design sheets, the History pictures and the site camera pictures, and `pixel-sheet.js`, the raster they share |
 | `docs/` | These documents |

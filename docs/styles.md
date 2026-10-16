@@ -78,7 +78,7 @@ The spacing rules for text blocks are in [Interface rules](interface-rules.md). 
 
 Setup > Display > Pretty wrap (`settings.prettyWrap`, OFF in a new game) keeps the last word of every text block off a line of its own. It uses the rule of the Setup tooltips, `S.wrapLast` in `js/core/dom.js`, which joins the last word to the word before it with a no-break space. `S.prettyWrap` applies it to the text blocks on the page and to each block added later; shell, VIEW and MESSAGE text is wrapped in `S.scr.reveal` before it appears. Turning the option off restores the original spaces. The option also sets `body.pretty-wrap`, which adds `text-wrap: pretty` where the browser supports it.
 
-The title screen buttons have haze borders. A hover, the keyboard focus or a switched-on toggle fills them with haze. The notes pages always wrap this way (`notes/wrap-pretty.js` covers browsers without the CSS property).
+The title screen buttons have haze borders. A hover, the keyboard focus or a switched-on toggle fills them with haze. The notes pages always wrap this way (`notes/js/wrap-pretty.js` covers browsers without the CSS property).
 
 ## Stacking order
 

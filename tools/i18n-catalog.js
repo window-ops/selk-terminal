@@ -131,7 +131,9 @@ function pages() {
     const h = read("notes/" + f), id = f.slice(0, -5);
     const m = h.match(/<main data-i18n-page="[^"]+">([\s\S]*?)<\/main>/);
     const t = h.match(/<title>([^<]*)<\/title>/);
-    if (m) out[id] = m[1].trim();
+    /* A page without data-i18n-page stays in English, title included */
+    if (!m) return;
+    out[id] = m[1].trim();
     if (t) out[id + ":title"] = t[1];
   });
   return out;

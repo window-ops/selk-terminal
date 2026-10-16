@@ -1,0 +1,1837 @@
+/* friday.html: the roleplay "Every second Friday".
+
+   The page follows docs/interface-rules.md: the line box of 1.5em and its
+   half, 0.75em, for every gap; one left edge for every block, heading and
+   first column; headings in haze with no rule under them; controls and
+   names of things in capitals; a choice in reverse video; and the bar of
+   the change-notes pages, between two rules, for previous, position and
+   next. A part is the top-level separator, set between two rules.
+
+   Spacing: every container stacks its blocks with a flex gap, and every
+   block keeps margin 0, so the space above a block always equals the space
+   below it. Where a margin or a padding remains, its top equals its
+   bottom. The same holds inside the program screens.
+
+   Pointers use the pixel cursors of cursors.css. */
+
+.page-friday {
+  --who-c: #A7B07C;
+  --who-k: #D98BB0;
+  --who-p: #8FB3C9;
+  --who-col: 5.75rem;
+  --hover: rgba(199, 132, 58, 0.14);
+}
+.page-friday main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+  max-width: 54rem;
+  margin: 0 auto;
+  padding: 3rem 1.25rem;
+  line-height: 1.5;
+}
+.page-friday main :where(h1, h2, h3, h4, h5, p, ul, ol, dl, dd, figure, blockquote, pre, table) {
+  margin: 0;
+}
+.page-friday main .drawing-back {
+  margin: 0;
+}
+.page-friday h1,
+.page-friday h2,
+.page-friday h3 {
+  color: var(--haze);
+  font-family: var(--font-crt);
+  font-weight: 400;
+  line-height: 1.1;
+}
+.page-friday [hidden] {
+  display: none !important;
+}
+.page-friday .sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.page-friday .note-button:hover,
+.page-friday .note-button:focus-visible {
+  background: var(--hover);
+  border-color: var(--titan);
+  color: var(--haze);
+}
+
+/* The back button and the page header, 1rem apart as on the other notes
+   pages */
+.page-top {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+/* The page header: the title and one line, as plain lines with no gap */
+.page-head h1 {
+  font-size: 3rem;
+}
+.page-sub {
+  color: var(--dust);
+}
+
+/* Buttons: VIEW, PART and the chapter tabs share one look. A hover tints
+   the button and keeps its text light; the choice is in reverse video. */
+.controls,
+.view-switch,
+.part-switch,
+.tab-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375em;
+}
+.controls {
+  gap: 0.75em 1.5em;
+}
+.seg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 1.9rem;
+  padding: 0 0.75em;
+  border: 1px solid var(--rib);
+  background: none;
+  color: var(--titan);
+  font: inherit;
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: var(--cur-hand);
+}
+.seg:hover,
+.seg:focus-visible {
+  border-color: var(--titan);
+  background: var(--hover);
+  color: var(--haze);
+  outline: none;
+}
+.seg[aria-pressed="true"],
+.seg[aria-selected="true"] {
+  border-color: var(--haze);
+  background: var(--haze);
+  color: var(--hall);
+}
+.seg[aria-pressed="true"]:focus-visible,
+.seg[aria-selected="true"]:focus-visible {
+  outline: 1px solid var(--titan);
+  outline-offset: 2px;
+}
+
+/* Contents of the shown part: a group heading and a full-width listing */
+.toc,
+.toc-part {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+}
+.toc h2 {
+  font-size: 1.9rem;
+}
+.toc-group {
+  font-size: 1.4rem;
+}
+.toc-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+.toc-c1 {
+  width: 5ch;
+}
+.toc-table td {
+  padding: 0.1em 1.2em 0.1em 0;
+  border-bottom: 1px dotted var(--rib);
+}
+.toc-no {
+  color: var(--dust);
+  font-variant-numeric: tabular-nums;
+}
+.toc-wip {
+  color: var(--dust);
+}
+
+/* A part: the separator between two rules, then the part's body */
+.part {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+}
+.part-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375em;
+  padding: 0.75em 0;
+  border-top: 3px double var(--rib);
+  border-bottom: 1px solid var(--rib);
+}
+.part-no {
+  color: var(--dust);
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+}
+.part-title {
+  font-size: 2.6rem;
+}
+.cast {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.5em;
+  padding: 0;
+  list-style: none;
+  font-size: 0.9rem;
+}
+.cast-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.cast-item::before {
+  content: "";
+  width: 0.65em;
+  height: 0.65em;
+}
+.cast-item.c { color: var(--who-c); }
+.cast-item.k { color: var(--who-k); }
+.cast-item.p { color: var(--who-p); }
+.cast-item.c::before { background: var(--who-c); }
+.cast-item.k::before { background: var(--who-k); }
+.cast-item.p::before { background: var(--who-p); }
+.part-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5em;
+}
+
+/* The banner of a part with no chapters */
+.wip {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+  border: 1px solid var(--rib);
+  background: #1a1f22;
+  text-align: center;
+}
+.wip-tape {
+  height: 0.75em;
+  background: repeating-linear-gradient(-45deg, var(--titan) 0 0.75em, var(--wall) 0.75em 1.5em);
+}
+.wip-title {
+  padding: 0 1em;
+  color: var(--titan);
+  font-family: var(--font-crt);
+  font-size: 2.2rem;
+  line-height: 1.1;
+}
+.wip-text {
+  padding: 0 1em;
+  color: var(--dust);
+}
+
+/* Chapters: the heading and one line, the bar, the text, the bar */
+.chapter,
+.ch-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+}
+.ch-head h3 {
+  font-size: 2.1rem;
+}
+/* CONTENTS shows one part under its separator, so the part's name is not
+   repeated above the table. Without scripts every part shows, and the
+   table keeps its group headings. */
+.friday[data-view="contents"],
+.friday:has(> .controls:not([hidden])) .toc-group {
+  display: none;
+}
+
+/* Permalinks: a plain # after the heading's text, set in the heading's
+   own type, so it sits on the same line as its letters */
+.page-friday main a.permalink {
+  margin: 0 0 0 0.3em;
+  color: var(--dust);
+  font: inherit;
+  text-decoration: none;
+  opacity: 0;
+}
+.ch-head h3:hover .permalink,
+.part-title:hover .permalink,
+.page-friday main a.permalink:focus-visible {
+  opacity: 1;
+}
+.page-friday main a.permalink:hover,
+.page-friday main a.permalink:focus-visible {
+  color: var(--haze);
+}
+@media (hover: none) {
+  .page-friday main a.permalink {
+    opacity: 0.7;
+  }
+}
+
+/* The bar, between two rules: previous at the left, the position in the
+   middle, next at the right. Shown in TABS only. */
+.bar {
+  display: none;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 0 1.5em;
+  padding: 0.375em 0;
+  border-top: 1px solid var(--rib);
+  border-bottom: 1px solid var(--rib);
+  font-size: 0.85rem;
+}
+main[data-view="tabs"] .bar {
+  display: grid;
+}
+.bar-m {
+  color: var(--dust);
+  text-align: center;
+}
+.bar-r {
+  text-align: right;
+}
+.page-friday .lnk {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--titan);
+  font: inherit;
+  text-align: inherit;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: var(--cur-hand);
+}
+.page-friday .lnk:hover,
+.page-friday .lnk:focus-visible {
+  color: var(--haze);
+  outline: none;
+}
+
+/* The opening scene */
+.scene {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75em;
+  padding: 0.75em 1em;
+  border-left: 2px solid var(--titan);
+  background: #1a1f22;
+  font-style: italic;
+}
+
+/* Dialogue: a two-column listing, the speaker centered in the first
+   column and the line beside a bar in the speaker's color */
+.line {
+  display: grid;
+  grid-template-columns: var(--who-col) 1fr;
+  gap: 0 1em;
+}
+.line .who {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-crt);
+  font-size: 1.3rem;
+  line-height: 1.1;
+  text-align: center;
+}
+/* A one-line text beside a two-line name sits centered on it */
+.line .say {
+  align-self: center;
+  padding-left: 1em;
+  border-left: 2px solid;
+}
+.line.c .who { color: var(--who-c); }
+.line.k .who { color: var(--who-k); }
+.line.p .who { color: var(--who-p); }
+.line.c .say { border-left-color: var(--who-c); }
+.line.k .say { border-left-color: var(--who-k); color: #E6D3B0; }
+.line.p .say { border-left-color: var(--who-p); color: #CFD9DE; }
+.dir {
+  color: var(--dust);
+}
+.line.act .say {
+  color: var(--dust);
+}
+.gloss {
+  color: var(--dust);
+  font-style: italic;
+}
+
+/* Link copied: a note at the foot of the window */
+.copied {
+  position: fixed;
+  left: 50%;
+  bottom: 1rem;
+  z-index: 10;
+  padding: 0.375em 0.75em;
+  border: 1px solid var(--titan);
+  background: var(--hall);
+  color: var(--haze);
+  font-size: 0.85rem;
+  transform: translateX(-50%);
+  opacity: 0;
+  pointer-events: none;
+}
+.copied.on {
+  opacity: 1;
+}
+html[data-motion="full"] .copied {
+  transition: opacity 0.2s;
+}
+
+/* Programs shown on a phone: a label in capitals that folds the screen
+   away, then the screen. The label and the screen keep equal margins
+   above and below, so the space around a screen is the same on both
+   sides. */
+.app > summary {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  width: max-content;
+  max-width: 100%;
+  margin: 0.375em 0;
+  color: var(--dust);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  cursor: var(--cur-hand);
+  list-style: none;
+}
+.app > summary::-webkit-details-marker {
+  display: none;
+}
+/* The plus and minus are drawn as bars, so they sit in the exact middle
+   of their box whatever the font */
+.app > summary::before {
+  content: "";
+  flex: none;
+  box-sizing: border-box;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 1px solid var(--rib);
+  background:
+    linear-gradient(currentColor, currentColor) center / 0.5rem 1px no-repeat,
+    linear-gradient(currentColor, currentColor) center / 1px 0.5rem no-repeat;
+}
+.app[open] > summary::before {
+  background: linear-gradient(currentColor, currentColor) center / 0.5rem 1px no-repeat;
+}
+.app > summary:hover,
+.app > summary:focus-visible {
+  color: var(--haze);
+  outline: none;
+}
+.app > summary:hover::before,
+.app > summary:focus-visible::before {
+  border-color: var(--titan);
+  background-color: var(--hover);
+}
+.app-body {
+  margin: 0.375em 0;
+  overflow: hidden;
+  border-radius: 8px;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+.app-body pre {
+  overflow-x: auto;
+  white-space: pre;
+  font-family: var(--font-mono);
+}
+/* Under a screen's header bar, its content in one padded stack */
+.app-pad {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.75rem 0.9rem;
+}
+
+/* Narrow screens: names go above their lines */
+@media (max-width: 600px) {
+  .page-friday main {
+    padding: 2rem 1rem;
+  }
+  .line {
+    grid-template-columns: 1fr;
+    gap: 0.2em 0;
+  }
+  .line .who {
+    justify-content: flex-start;
+  }
+  .part-title {
+    font-size: 2.1rem;
+  }
+  .ch-head h3 {
+    font-size: 1.8rem;
+  }
+  .bar {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.375em 1.5em;
+  }
+  .bar-m {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+}
+
+/* Lojban translator: a phone app, dark teal */
+.app-jbo .app-body {
+  background: #0f2426;
+  border: 1px solid #2b5a57;
+  color: #CFE9E2;
+}
+.jbo-head {
+  display: flex;
+  align-items: center;
+  padding: 0.55rem 0.9rem;
+  background: #16393a;
+  color: #8FE0D2;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+}
+.jbo-logo {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0.5em 0 0;
+  padding: 0.1em 0.4em;
+  border-radius: 4px;
+  background: #8FE0D2;
+  color: #0f2426;
+  line-height: 1.2;
+}
+.jbo-row {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  align-items: stretch;
+  gap: 0 0.8rem;
+  padding: 0.4rem 0.9rem;
+  border-top: 1px solid #1f4645;
+}
+.jbo-k {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.1rem 0.3rem;
+  border-radius: 4px;
+  background: #13302f;
+  color: #6FB3A8;
+  font-size: 0.72rem;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-align: center;
+}
+.jbo-v {
+  align-self: center;
+}
+.jbo-out {
+  color: #FFFFFF;
+  font-size: 0.95rem;
+}
+.grp {
+  display: inline-block;
+  margin: 0.1rem 0;
+  padding: 0.05rem 0.4rem;
+  border: 1px solid;
+  border-radius: 999px;
+}
+.grp.g0 {
+  padding: 0.15rem 0.3rem;
+  border-style: dashed;
+  border-color: #4C8C86;
+}
+.grp.g1 { border-color: #C9A0E8; color: #E1C9F5; }
+.grp.g2 { border-color: #E8A08A; color: #F5CDBF; }
+.grp.g3 { border-color: #8FE0D2; color: #CFF5EE; }
+.arr {
+  color: #6FB3A8;
+}
+.jbo-status .jbo-v { color: #FFE29A; }
+.jbo-warn .jbo-k { color: #F0B85A; }
+.jbo-alt .jbo-k { color: #E89A8A; }
+.jbo-note .jbo-v { color: #9CC5BE; }
+@media (max-width: 520px) {
+  .jbo-row {
+    grid-template-columns: 1fr;
+    gap: 0.3rem;
+  }
+  .jbo-k {
+    justify-self: start;
+  }
+}
+
+/* Central bank memorandum: an official paper */
+.app-memo .app-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.2rem 1.4rem;
+  border-radius: 2px;
+  background: #F4EFE2;
+  color: #1E2427;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.92rem;
+  box-shadow: 0 2px 0 #0b0d0e;
+}
+.memo-head {
+  padding: 0.3rem 0;
+  border-bottom: 3px double #1E2427;
+  text-align: center;
+}
+.memo-org {
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+}
+.memo-org2 {
+  font-size: 1rem;
+  font-weight: bold;
+  letter-spacing: 0.12em;
+}
+.memo-title {
+  font-size: 1.3rem;
+  font-weight: normal;
+  font-variant: small-caps;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+.memo-ref {
+  color: #5A5140;
+  font-size: 0.8rem;
+  text-align: center;
+}
+.memo-arts {
+  padding-left: 1.6rem;
+}
+.memo-arts li {
+  margin: 0.225rem 0;
+}
+
+/* Museum exhibit page */
+.app-museum .app-body {
+  border: 1px solid #4A3A2A;
+  background: #1B1714;
+  color: #E8DCC6;
+}
+.mus-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding: 0.55rem 0.9rem;
+  background: #C7843A;
+  color: #1B1714;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+.mus-title {
+  color: #F0C27B;
+  font-family: var(--font-crt);
+  font-size: 1.7rem;
+  font-weight: 400;
+  line-height: 1.1;
+}
+.mus-facts {
+  display: grid;
+  grid-template-columns: 8.5rem 1fr;
+  align-items: stretch;
+  gap: 0.45rem 0.8rem;
+  padding: 0.6rem;
+  border-radius: 4px;
+  background: #221B15;
+}
+.mus-facts dt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.15rem 0.3rem;
+  border-radius: 3px;
+  background: #2E241B;
+  color: #A8957A;
+  font-size: 0.78rem;
+  line-height: 1.2;
+  text-align: center;
+}
+.mus-facts dd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.4rem;
+}
+.mus-langs span,
+.sim-langs span {
+  padding: 0 0.3rem;
+  border: 1px solid #4A3A2A;
+  font-size: 0.72rem;
+}
+.mus-queue {
+  padding: 0 0.4rem;
+  border-radius: 3px;
+  background: #3A2A1A;
+  color: #F0C27B;
+}
+.mus-btn {
+  padding: 0.1rem 0.6rem;
+  border-radius: 3px;
+  background: #F0C27B;
+  color: #1B1714;
+  font-size: 0.78rem;
+  font-weight: 500;
+}
+@media (max-width: 520px) {
+  .mus-facts {
+    grid-template-columns: 1fr;
+  }
+  .mus-facts dt {
+    justify-self: start;
+  }
+}
+
+/* Exhibit simulation: a printer bed on a black screen */
+.app-sim .app-body {
+  border: 1px solid #2E3336;
+  background: #0A0B0C;
+  color: #C9D1D3;
+}
+.sim-bar {
+  padding: 0.4rem 0.9rem;
+  background: #1C2124;
+  color: #8F9A9A;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+}
+.sim-log {
+  color: #9CB7A2;
+  font-size: 0.8rem;
+}
+.sim-warn {
+  color: #F0B85A;
+}
+.sim-langs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+.sim-langs span {
+  border-color: #3A4448;
+  border-radius: 3px;
+}
+.sim-paper {
+  padding: 1rem 1.2rem;
+  overflow-x: auto;
+  border-radius: 2px;
+  background: linear-gradient(#E9E6DD, #DAD6CB);
+  box-shadow: inset 0 0 0 1px #BDB8AA;
+}
+.sim-line {
+  display: inline-block;
+  padding: 0.25em 0;
+  color: #121314;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.45rem;
+  font-weight: bold;
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+.drop1 {
+  display: inline-block;
+  transform: translateY(0.55em) scaleY(1.35);
+  transform-origin: top;
+}
+.drop0 {
+  display: inline-block;
+  transform: translateY(0.18em) skewX(-6deg);
+}
+.pool {
+  display: inline-block;
+  transform: translateY(0.8em) scale(1.15, 0.55);
+  filter: blur(1.2px);
+  letter-spacing: -0.2em;
+}
+
+/* Central bank explainers: a light public website */
+.app-ecb .app-body {
+  border: 1px solid #C9D2DE;
+  background: #F3F5F8;
+  color: #1A2230;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.9rem;
+}
+.ecb-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  background: #16325C;
+  color: #FFFFFF;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+}
+.app-ecb .app-pad {
+  padding: 0.9rem 1rem;
+}
+.ecb-sec {
+  color: #F5C542;
+}
+.ecb-title {
+  color: #16325C;
+  font-size: 1.15rem;
+}
+.ecb-list dt {
+  margin: 0.3rem 0;
+  color: #16325C;
+  font-weight: 600;
+}
+.ecb-list dd {
+  margin: 0.3rem 0;
+}
+
+/* LabCoat: the Android client for GitLab by Commit 451, drawn after its
+   Material 3 dark theme with the LabCoat orange (#FB6C17). Screens show
+   the top app bar with title and subtitle, the Overview, Commits and
+   Changes tabs, the author and pipeline rows, the approval section, the
+   Add comment button, notes, diffs with two line-number gutters, and the
+   file viewer with its Monokai theme. The screens imagine a later LabCoat
+   where every action is a button of the same size. The screens start at phone width
+   and grow with the room they have, up to a tablet. */
+.app-lab .app-body {
+  overflow: visible;
+  border-radius: 0;
+}
+.lab-shots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.lab-screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 19.5rem;
+  box-sizing: border-box;
+  min-width: min(19.5rem, 100%);
+  overflow: hidden;
+  border: 6px solid #0B0B0D;
+  border-radius: 20px;
+  background: #141218;
+  color: #E6E0E9;
+  font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+.lab-ic {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  fill: currentColor;
+}
+.lab-ic-s {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+.lab-appbar {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  min-height: 3.4rem;
+  padding: 0 0.8rem;
+}
+.lab-titles {
+  flex: 1;
+  min-width: 0;
+}
+.lab-t {
+  font-size: 1.08rem;
+  line-height: 1.25;
+}
+.lab-st {
+  overflow: hidden;
+  color: #CAC4D0;
+  font-size: 0.74rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.lab-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid #49454F;
+}
+.lab-tabs span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.9rem;
+  color: #CAC4D0;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+.lab-tabs .on {
+  color: #FB6C17;
+  box-shadow: inset 0 -3px 0 #FB6C17;
+}
+.lab-avatar {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  color: #FFFFFF;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+.a-p { background: #5C6BC0; }
+.a-c { background: #7C8B4E; }
+.lab-author {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+.lab-pipe {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-top: 1px solid #49454F;
+  border-bottom: 1px solid #49454F;
+}
+.lab-pipe-t {
+  flex: 1;
+}
+.lab-pipe .chev {
+  color: #CAC4D0;
+}
+.lab-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  line-height: 1;
+}
+.lab-badge.ok {
+  background: rgba(16, 133, 72, 0.16);
+  color: #2DA160;
+}
+.lab-badge .lab-ic-s {
+  width: 14px;
+  height: 14px;
+}
+.lab-desc,
+.lab-approve {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+}
+.lab-approve {
+  padding-top: 0;
+}
+/* Directly under the tabs, as on the notes screen */
+.lab-tabs + .lab-approve {
+  margin-top: 0.75rem;
+}
+.lab-desc .lab-h {
+  font-size: 1rem;
+  font-weight: 500;
+}
+.lab-desc code {
+  padding: 0.05rem 0.3rem;
+  border-radius: 4px;
+  background: #2B2930;
+  font-size: 0.74rem;
+}
+.lab-approved {
+  color: #FB6C17;
+}
+.lab-filled {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.5rem;
+  border-radius: 20px;
+  background: #FB6C17;
+  color: #FFFFFF;
+  font-weight: 500;
+}
+/* Add comment: an outlined button the size of Approve, at the foot of
+   the screen */
+.lab-foot {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem 1rem;
+  border-top: 1px solid #49454F;
+}
+.lab-outlined {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  height: 2.5rem;
+  box-sizing: border-box;
+  border: 1px solid #938F99;
+  border-radius: 20px;
+  color: #FB6C17;
+  font-weight: 500;
+}
+.lab-divider {
+  border-top: 1px solid #49454F;
+}
+.lab-note {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+.lab-note-b {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
+}
+.lab-note-h {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.lab-note-h b {
+  font-weight: 500;
+}
+.lab-note-h span {
+  color: #CAC4D0;
+  font-size: 0.74rem;
+}
+.lab-filehead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.4rem 0.5rem;
+  background: #2B2930;
+  font-weight: 500;
+}
+.lab-filehead .chev {
+  width: 18px;
+  height: 18px;
+  color: #CAC4D0;
+}
+.lab-diff {
+  overflow-x: auto;
+  font-family: "Roboto Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.64rem;
+  line-height: 1.4;
+}
+.dl {
+  display: grid;
+  grid-template-columns: 2.25rem 2.25rem max-content;
+  min-width: 100%;
+  padding: 1px 0;
+}
+.dl .g {
+  padding-right: 0.3rem;
+  color: #CAC4D0;
+  text-align: right;
+}
+.dl .t {
+  padding-left: 0.3rem;
+  white-space: pre;
+}
+.dl.add {
+  background: rgba(27, 94, 32, 0.3);
+}
+.dl.hunk {
+  background: #1D1B20;
+  color: #CAC4D0;
+}
+/* The file viewer: the code on the Monokai background, with the theme
+   menu in its top right corner */
+.lab-codebox {
+  position: relative;
+  flex: 1;
+  background: #272822;
+}
+.lab-theme {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.1rem;
+  padding: 0.2rem 0.3rem 0.2rem 0.5rem;
+  border-radius: 4px;
+  background: #3E3D32;
+  color: #F8F8F2;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+.app-lab pre.lab-code {
+  padding: 0.6rem 0.75rem;
+  color: #F8F8F2;
+  font-family: "Roboto Mono", ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.64rem;
+  line-height: 1.45;
+}
+.mk { color: #F92672; }
+.ms { color: #E6DB74; }
+.mc { color: #75715E; }
+.mf { color: #A6E22E; }
+.mn { color: #AE81FF; }
+/* Monokai: def, class and built-in types in cyan italic, calls in cyan,
+   parameters and self in orange italic */
+.mt {
+  color: #66D9EF;
+  font-style: italic;
+}
+.mb {
+  color: #66D9EF;
+}
+.mp {
+  color: #FD971F;
+  font-style: italic;
+}
+
+/* GenPlan archive: a catalogue record */
+.app-archive .app-body {
+  border: 1px solid #BFB59A;
+  border-radius: 3px;
+  background: #E9E2CF;
+  color: #2B2A24;
+}
+.arc-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.3rem;
+  padding: 0.45rem 0.9rem;
+  border-bottom: 1px solid #BFB59A;
+  background: #DCD3BB;
+  color: #5A5140;
+  font-size: 0.74rem;
+  letter-spacing: 0.05em;
+}
+.arc-title {
+  font-size: 1.02rem;
+}
+.arc-photo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.arc-ph {
+  height: 9rem;
+  border: 2px dashed #9C9177;
+  background: repeating-linear-gradient(45deg, transparent 0 10px, rgba(156, 145, 119, 0.12) 10px 20px);
+}
+.arc-photo figcaption {
+  color: #5A5140;
+  font-size: 0.8rem;
+  font-style: italic;
+}
+.arc-dims {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 1.2rem;
+  padding: 0.4rem 0;
+  border-top: 1px solid #BFB59A;
+  border-bottom: 1px solid #BFB59A;
+  font-size: 0.8rem;
+}
+.arc-find {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.3rem;
+}
+.arc-find dt {
+  padding: 0 0.45rem;
+  color: #FFFFFF;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.f-safety { background: #A23B2A; }
+.f-comfort { background: #6B7A3A; }
+.f-access { background: #2E5E8C; }
+.arc-status {
+  color: #8A5A12;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+/* Research critique: a journal page */
+.app-paper .app-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.1rem 1.3rem;
+  border-radius: 2px;
+  background: #FFFFFF;
+  color: #1C1C1C;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+.pap-kicker {
+  color: #7A1F2B;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.pap-title {
+  font-size: 1.3rem;
+  font-weight: normal;
+  line-height: 1.25;
+}
+.pap-author {
+  color: #4A4A4A;
+  font-variant: small-caps;
+}
+.pap-abstract {
+  padding: 0.6rem 0.8rem;
+  border-left: 3px solid #7A1F2B;
+  background: #F6F1EE;
+}
+.pap-abstract b {
+  display: block;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.app-paper h5 {
+  color: #7A1F2B;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.pap-refs {
+  padding-left: 1.4rem;
+  font-size: 0.82rem;
+}
+
+/* CESEA incident archive: a report with a red band and terminal output */
+.app-incident .app-body {
+  border: 1px solid #3A4448;
+  background: #1A1E21;
+  color: #D6DCDE;
+}
+.inc-band {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.3rem;
+  padding: 0.45rem 0.9rem;
+  background: #8E2F22;
+  color: #FFE9E3;
+  font-size: 0.74rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+}
+.inc-title {
+  color: #FFFFFF;
+  font-size: 0.98rem;
+}
+.inc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.inc-list dt {
+  color: #E89A8A;
+  font-size: 0.76rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.inc-label {
+  color: #8F9A9A;
+  font-size: 0.74rem;
+}
+.inc-note {
+  color: #B8C2C4;
+  font-style: italic;
+}
+.klog {
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #2B3236;
+  background: #0B0D0E;
+  color: #D6C396;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+.kpanic {
+  color: #FF8A73;
+}
+
+/* Federal News Service: a newspaper page */
+.app-news .app-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.9rem 1.2rem;
+  border-radius: 2px;
+  background: #FBFAF6;
+  color: #111111;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 0.92rem;
+}
+.news-mast {
+  padding: 0.3rem 0;
+  border-bottom: 3px solid #111111;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.02em;
+}
+.news-sec {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.25rem 0;
+  border-bottom: 1px solid #111111;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.news-head {
+  font-size: 1.45rem;
+  line-height: 1.2;
+}
+.news-lede::first-letter {
+  float: left;
+  margin: 0 0.1em 0 0;
+  font-size: 2.6em;
+  line-height: 0.85;
+  font-weight: bold;
+}
+.news-quote {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.5rem 0.9rem;
+  border-left: 4px solid #1B3A6B;
+  background: #EEF1F6;
+}
+.news-quote p {
+  font-style: italic;
+}
+.news-quote .news-qlabel {
+  color: #1B3A6B;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.72rem;
+  font-style: normal;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* GitHub: a repository page in the dark theme, laid out as on
+   github.com: the header with Notifications, Fork and Star; the tabs; the
+   file browser with the branch, Go to file and Code, the latest commit and
+   one row per folder or file (name, last commit message, date); the
+   README box with its README and license tabs; and the sidebar with About,
+   Releases and Languages. Icons are Octicons (MIT license). The page
+   measures its own width: when it is narrow, as on a phone, the sidebar
+   moves above the files, the commit message column folds away, and the
+   tabs and code scroll inside their own box. */
+.app-gh .app-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  padding: 0.9rem;
+  border: 1px solid #30363D;
+  background: #0D1117;
+  color: #F0F6FC;
+  font-family: system-ui, -apple-system, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif;
+  font-size: 0.86rem;
+  container-type: inline-size;
+}
+.gh-ic {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  fill: #9198A1;
+}
+.gh-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem 1rem;
+}
+.gh-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 1.15rem;
+  line-height: 1.3;
+}
+.gh-owner {
+  color: #F0F6FC;
+}
+.gh-slash {
+  color: #9198A1;
+}
+.gh-top b {
+  font-weight: 600;
+}
+.gh-pub {
+  display: inline-flex;
+  align-items: center;
+  height: 1.3rem;
+  padding: 0 0.5rem;
+  border: 1px solid #3D444D;
+  border-radius: 999px;
+  color: #9198A1;
+  font-size: 0.72rem;
+  font-weight: 500;
+  line-height: 1;
+}
+.gh-btns,
+.gh-bar-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+.gh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 1.75rem;
+  padding: 0 0.7rem;
+  border: 1px solid #3D444D;
+  border-radius: 6px;
+  background: #212830;
+  color: #F0F6FC;
+  font-size: 0.78rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.gh-btn i,
+.gh-tabs i {
+  display: inline-flex;
+  align-items: center;
+  height: 1.15rem;
+  padding: 0 0.45rem;
+  border-radius: 999px;
+  background: #2F3742;
+  font-size: 0.72rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1;
+}
+.gh-tabs {
+  display: flex;
+  gap: 0 0.25rem;
+  margin: 0 -0.9rem;
+  padding: 0 0.9rem;
+  overflow-x: auto;
+  border-bottom: 1px solid #3D444D;
+  font-size: 0.84rem;
+  white-space: nowrap;
+  scrollbar-width: thin;
+}
+.gh-tabs span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.55rem;
+}
+.gh-tabs .on {
+  box-shadow: inset 0 -2px 0 #F78166;
+  font-weight: 600;
+}
+.gh-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 15rem;
+  gap: 1.2rem;
+}
+.gh-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  min-width: 0;
+}
+.gh-caret {
+  width: 14px;
+  height: 14px;
+}
+.gh-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #9198A1;
+  font-size: 0.8rem;
+}
+.gh-link b {
+  color: #F0F6FC;
+}
+.gh-find {
+  display: inline-flex;
+  flex: 1 1 8rem;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 1.75rem;
+  padding: 0 0.6rem;
+  border: 1px solid #3D444D;
+  border-radius: 6px;
+  background: #0D1117;
+  color: #9198A1;
+  font-size: 0.8rem;
+}
+.gh-green {
+  border-color: rgba(240, 246, 252, 0.1);
+  background: #238636;
+  color: #FFFFFF;
+}
+.gh-green .gh-ic {
+  fill: #FFFFFF;
+}
+.gh-files {
+  overflow: hidden;
+  border: 1px solid #3D444D;
+  border-radius: 6px;
+}
+.gh-commit {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 0.5rem;
+  padding: 0.6rem 0.8rem;
+  background: #151B23;
+  font-size: 0.8rem;
+}
+.gh-avatar {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: #6E5494;
+  color: #FFFFFF;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+.gh-commit .gh-msg {
+  color: #9198A1;
+}
+.gh-hash {
+  margin: 0 0 0 auto;
+  color: #9198A1;
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+}
+.gh-age {
+  color: #9198A1;
+  white-space: nowrap;
+}
+.gh-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: #9198A1;
+  white-space: nowrap;
+}
+.gh-count b {
+  color: #F0F6FC;
+}
+.gh-row {
+  display: grid;
+  grid-template-columns: minmax(0, 12rem) minmax(0, 1fr) 6.5rem;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.45rem 0.8rem;
+  border-top: 1px solid #3D444D;
+  font-size: 0.82rem;
+}
+.gh-row .gh-msg {
+  overflow: hidden;
+  color: #9198A1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.gh-row .gh-age {
+  text-align: right;
+}
+/* The folder and file icons of github.com, in the muted gray of the dark
+   theme */
+.gh-dir,
+.gh-file {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.gh-dir::before,
+.gh-file::before {
+  content: "";
+  flex: none;
+  width: 16px;
+  height: 16px;
+  background: #9198A1;
+  -webkit-mask: var(--gh-icon) center / 16px 16px no-repeat;
+  mask: var(--gh-icon) center / 16px 16px no-repeat;
+}
+.gh-dir {
+  --gh-icon: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.216.784 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1H1.75Z'/%3E%3C/svg%3E");
+}
+.gh-file {
+  --gh-icon: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2 1.75C2 .784 2.784 0 3.75 0h6.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.062V4.25c0 .138.112.25.25.25h2.688l-.011-.013-2.914-2.914-.013-.011Z'/%3E%3C/svg%3E");
+}
+.gh-readme {
+  overflow: hidden;
+  border: 1px solid #3D444D;
+  border-radius: 6px;
+}
+.gh-readme-tabs {
+  display: flex;
+  gap: 0 0.25rem;
+  padding: 0 0.6rem;
+  overflow-x: auto;
+  border-bottom: 1px solid #3D444D;
+  font-size: 0.82rem;
+  white-space: nowrap;
+}
+.gh-readme-tabs span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.5rem;
+  color: #9198A1;
+}
+.gh-readme-tabs .on {
+  box-shadow: inset 0 -2px 0 #F78166;
+  color: #F0F6FC;
+  font-weight: 600;
+}
+.gh-readme-tabs .on .gh-ic {
+  fill: #F0F6FC;
+}
+.gh-readme-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-width: 0;
+  padding: 0.9rem;
+}
+.gh-readme h5 {
+  padding: 0.2rem 0;
+  border-bottom: 1px solid #3D444D;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.gh-readme pre {
+  max-width: 100%;
+  padding: 0.6rem 0.7rem;
+  border-radius: 6px;
+  background: #151B23;
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+.gh-readme ul {
+  padding-left: 1.2rem;
+}
+.gh-readme .ok { color: #3FB950; }
+.gh-readme .bad { color: #F85149; }
+.gh-side {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  font-size: 0.82rem;
+}
+.gh-side-h {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.gh-side .gh-about {
+  font-size: 0.86rem;
+}
+.gh-muted {
+  color: #9198A1;
+}
+.gh-meta,
+.gh-langs {
+  padding: 0;
+  list-style: none;
+}
+.gh-meta li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.15rem 0;
+  color: #9198A1;
+}
+.gh-meta b,
+.gh-langs b {
+  color: #F0F6FC;
+  font-weight: 600;
+}
+.gh-hr {
+  width: 100%;
+  height: 0;
+  margin: 0.15rem 0;
+  border: 0;
+  border-top: 1px solid #3D444D;
+}
+.gh-bar {
+  display: flex;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 6px;
+}
+.gh-bar span {
+  display: block;
+  height: 100%;
+}
+.gh-langs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+}
+.gh-langs li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #9198A1;
+}
+.gh-langs .d {
+  display: inline-block;
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+}
+.l-c { background: #555555; }
+.l-sh { background: #89E051; }
+.l-ps { background: #012456; }
+@container (max-width: 44rem) {
+  .gh-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .gh-side {
+    order: -1;
+  }
+}
+@container (max-width: 30rem) {
+  .gh-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .gh-row .gh-msg,
+  .gh-commit .gh-msg,
+  .gh-hash {
+    display: none;
+  }
+  .gh-count {
+    margin: 0 0 0 auto;
+  }
+}
+
+/* Bugzilla: a classic bug list */
+.app-bz .app-body {
+  border: 1px solid #B5B5B5;
+  border-radius: 2px;
+  background: #FFFFFF;
+  color: #000000;
+  font-family: Verdana, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+.bz-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.2rem 0.8rem;
+  padding: 0.45rem 0.7rem;
+  border-bottom: 1px solid #A0A0A0;
+  background: linear-gradient(#EEEEEE, #D8D8D8);
+}
+.app-bz .app-pad {
+  gap: 0.4rem;
+  padding: 0.6rem 0.7rem;
+}
+.bz-head span,
+.bz-link {
+  color: #0645AD;
+  text-decoration: underline;
+}
+.bz-title {
+  font-size: 1rem;
+  font-weight: bold;
+}
+.bz-count,
+.bz-foot {
+  color: #555555;
+}
+.bz-wrap {
+  overflow-x: auto;
+}
+.bz-table {
+  width: 100%;
+  min-width: 36rem;
+  border-collapse: collapse;
+}
+.bz-table th {
+  padding: 0.2rem 0.35rem;
+  border: 1px solid #C8C8C8;
+  background: #E0E0E0;
+  color: #0645AD;
+  text-align: left;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+.bz-table td {
+  padding: 0.2rem 0.35rem;
+  border: 1px solid #DDDDDD;
+  vertical-align: top;
+}
+.bz-table td:first-child {
+  color: #0645AD;
+  text-decoration: underline;
+}
+.bz-table tbody tr:nth-child(even) {
+  background: #F2F2F7;
+}
+.bz-table tr.res td:nth-child(n+2) {
+  color: #707070;
+}
+.bz-table tr.res td:first-child {
+  text-decoration: line-through;
+}
+.bz-table td:last-child {
+  white-space: nowrap;
+}
+.st-n { color: #006100 !important; font-weight: bold; }
+.st-a { color: #8A4B00 !important; font-weight: bold; }
+.st-c { color: #00468C !important; font-weight: bold; }
+.st-r { color: #707070 !important; }
+.bz-table .bz-more td {
+  color: #555555;
+  font-style: italic;
+  text-align: center;
+  text-decoration: none;
+}

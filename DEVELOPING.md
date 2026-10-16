@@ -16,6 +16,7 @@ These documents describe how the game is built: the data files, the progression 
 | [Styles and themes](docs/styles.md) | The stylesheets, motion, the color roles, the two themes and the stacking order |
 | [Shell](docs/shell.md) | Commands, where results go, Shell-only DESK and the output rhythm |
 | [The euro crisis in the game](docs/euro-crisis.md) | Where the euro crisis appears in the game and why; the public version is `notes/euro-crisis.html` |
+| [Every second Friday](docs/every-second-friday.md) | The story hidden after the developer notes and how it was written |
 | [Site OS and the real techniques](docs/site-os.md) | What the game does that Debian does not, the CESEA component for each in the change notes, and the real technique behind it |
 | [Finale, sound and accessibility](docs/finale-sound-accessibility.md) | The ending stage, the synthesized sound and the accessibility layer |
 | [Localization](docs/localization.md) | Translated text in code and the catalog tool |
