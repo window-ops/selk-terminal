@@ -7,7 +7,7 @@
    pages: previous at the left, position in the middle, next at the right.
    The bar crosses from one part into the next.
    CONTENTS shows the part's table of contents and all its chapters in
-   order.
+   order, and at its foot a bar with the previous and the next part.
    A part without chapters shows its separator and its banner, and in TABS
    a bar.
 
@@ -151,6 +151,30 @@
     }
     parts[s.p].chapters[s.c].appendChild(bar(prev, next, s));
   });
+
+  /* In CONTENTS, the bar at the foot of each part: the previous part at
+     the left, the position in the middle, the next part at the right */
+  parts.forEach(function (p, i) {
+    var nav = document.createElement("nav");
+    nav.className = "bar bar-part";
+    nav.setAttribute("aria-label", "Previous and next part");
+    var l = document.createElement("span"), m = document.createElement("span"), r = document.createElement("span");
+    l.className = "bar-l"; m.className = "bar-m"; r.className = "bar-r";
+    if (i > 0) l.appendChild(barLink("PREVIOUS: " + parts[i - 1].el.getAttribute("data-label"), function () { jumpPart(i - 1); }));
+    if (i < parts.length - 1) r.appendChild(barLink("NEXT: " + parts[i + 1].el.getAttribute("data-label"), function () { jumpPart(i + 1); }));
+    m.textContent = p.el.getAttribute("data-label") + " of " + parts.length;
+    nav.appendChild(l); nav.appendChild(m); nav.appendChild(r);
+    p.body.appendChild(nav);
+  });
+
+  /* A part bar link opens the part in CONTENTS and brings its table of
+     contents into view, with the focus on its PART button */
+  function jumpPart(i) {
+    go(i, parts[i].chapters.length ? 0 : -1);
+    history.replaceState(null, "", "#contents/" + parts[i].el.id);
+    toc.scrollIntoView({ block: "start" });
+    partButtons[i].focus({ preventScroll: true });
+  }
 
   function bar(prev, next, here) {
     var nav = document.createElement("nav");

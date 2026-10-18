@@ -18,6 +18,9 @@
   --who-c: #A7B07C;
   --who-k: #D98BB0;
   --who-p: #8FB3C9;
+  --who-m: #D1A15E;
+  --who-s: #8CC0A0;
+  --who-v: #A3A9AC;
   --who-col: 5.75rem;
   --hover: rgba(199, 132, 58, 0.14);
 }
@@ -203,6 +206,16 @@
 .cast-item.c::before { background: var(--who-c); }
 .cast-item.k::before { background: var(--who-k); }
 .cast-item.p::before { background: var(--who-p); }
+.cast-item.m { color: var(--who-m); }
+.cast-item.s { color: var(--who-s); }
+.cast-item.v { color: var(--who-v); }
+.cast-item.m::before { background: var(--who-m); }
+.cast-item.s::before { background: var(--who-s); }
+/* A voice heard from a distance: a hollow mark */
+.cast-item.v::before {
+  box-sizing: border-box;
+  border: 1px dashed var(--who-v);
+}
 .part-body {
   display: flex;
   flex-direction: column;
@@ -247,7 +260,6 @@
 /* CONTENTS shows one part under its separator, so the part's name is not
    repeated above the table. Without scripts every part shows, and the
    table keeps its group headings. */
-.friday[data-view="contents"],
 .friday:has(> .controls:not([hidden])) .toc-group {
   display: none;
 }
@@ -277,7 +289,8 @@
 }
 
 /* The bar, between two rules: previous at the left, the position in the
-   middle, next at the right. Shown in TABS only. */
+   middle, next at the right. TABS shows one under each chapter, CONTENTS
+   one at the foot of the part. */
 .bar {
   display: none;
   grid-template-columns: 1fr auto 1fr;
@@ -289,6 +302,14 @@
   font-size: 0.85rem;
 }
 main[data-view="tabs"] .bar {
+  display: grid;
+}
+/* In CONTENTS, one bar closes the part, leading to the previous and the
+   next part */
+main[data-view="tabs"] .bar.bar-part {
+  display: none;
+}
+main[data-view="contents"] .bar.bar-part {
   display: grid;
 }
 .bar-m {
@@ -354,6 +375,37 @@ main[data-view="tabs"] .bar {
 .line.c .say { border-left-color: var(--who-c); }
 .line.k .say { border-left-color: var(--who-k); color: #E6D3B0; }
 .line.p .say { border-left-color: var(--who-p); color: #CFD9DE; }
+.line.m .who { color: var(--who-m); }
+.line.s .who { color: var(--who-s); }
+.line.m .say { border-left-color: var(--who-m); color: #EAD9BC; }
+.line.s .say { border-left-color: var(--who-s); color: #D4E6DA; }
+/* A background actor: a voice from a phone across the park, heard in
+   pieces. The name carries where it comes from, the bar is dashed, the
+   words are dimmer than the people in the scene, and the sounds between
+   them are cues. */
+.line.v .who {
+  flex-direction: column;
+  gap: 0.2em;
+  color: var(--who-v);
+}
+.line.v .who-sub {
+  color: var(--dust);
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.line.v .say {
+  border-left: 2px dashed var(--who-v);
+  color: #B9BFC2;
+  font-style: italic;
+}
+.line.v .cue {
+  color: var(--dust);
+  font-size: 0.85em;
+  font-style: normal;
+  letter-spacing: 0.02em;
+}
 .dir {
   color: var(--dust);
 }
@@ -464,6 +516,11 @@ html[data-motion="full"] .copied {
   }
   .line .who {
     justify-content: flex-start;
+  }
+  .line.v .who {
+    flex-direction: row;
+    align-items: baseline;
+    gap: 0.6em;
   }
   .part-title {
     font-size: 2.1rem;
@@ -1834,4 +1891,480 @@ html[data-motion="full"] .copied {
   font-style: italic;
   text-align: center;
   text-decoration: none;
+}
+
+/* NTorch 3: the phone app of the site's neural runtime, in the colors of
+   its torch mark. The typed prompt sits in a bubble at the right; the
+   reasoning is a dim folded block with its time at the foot; the answer
+   follows as plain text. NTorch assumes nothing, so an answer is often a
+   form: each field is a row with its label at the left, inputs drawn as
+   boxes, choices as chips with a square (several) or a circle (one), a
+   star for every required field, and a button that stays gray until the
+   form is complete. */
+.app-nt .app-body {
+  border: 1px solid #3B2F28;
+  background: #15110F;
+  color: #E9DFD6;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.86rem;
+}
+.nt-head {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 0.9rem;
+  border-bottom: 1px solid #3B2F28;
+  background: #1F1814;
+  color: #F2A65A;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+/* The torch mark: a flame drawn in two gradients, its pale core set in
+   the round lower half */
+.nt-mark {
+  flex: none;
+  width: 0.8rem;
+  height: 1.05rem;
+  border-radius: 50% 50% 45% 45% / 65% 65% 35% 35%;
+  background:
+    radial-gradient(circle at 50% 60%, #FFE2A8 0 22%, transparent 24%),
+    linear-gradient(#F2A65A, #D9542B);
+}
+.app-nt .app-pad {
+  gap: 0.75rem;
+}
+.nt-prompt {
+  align-self: flex-end;
+  max-width: 85%;
+  padding: 0.45rem 0.75rem;
+  border-radius: 14px 14px 4px 14px;
+  background: #3A2A20;
+  color: #FFF4EA;
+}
+/* The reasoning: a closed panel under the prompt. The title bar, the
+   steps on a thin line with a dot for each, and the time at the foot,
+   all dimmer than the answer that follows. */
+.nt-think {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #33281F;
+  border-radius: 8px;
+  background: #191310;
+  color: #A8968A;
+  font-size: 0.8rem;
+}
+.nt-think-h {
+  display: flex;
+  align-items: center;
+  padding: 0.4rem 0.75rem;
+  border-bottom: 1px solid #2A211A;
+  background: #1F1813;
+  color: #C9B3A3;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+.nt-think > p:not(.nt-think-h):not(.nt-think-t) {
+  position: relative;
+  padding: 0.2rem 0.75rem 0.2rem 1.9rem;
+  line-height: 1.45;
+}
+.nt-think-h + p {
+  margin-top: 0.35rem;
+}
+.nt-think > p:has(+ .nt-think-t) {
+  margin-bottom: 0.35rem;
+}
+/* The line joining the steps, and the dot of each step */
+.nt-think > p:not(.nt-think-h):not(.nt-think-t)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(1rem - 0.5px);
+  border-left: 1px solid #3E3128;
+}
+.nt-think-h + p::before {
+  top: 0.85em !important;
+}
+.nt-think > p:has(+ .nt-think-t)::before {
+  bottom: auto !important;
+  height: 0.85em;
+}
+.nt-think > p:not(.nt-think-h):not(.nt-think-t)::after {
+  content: "";
+  position: absolute;
+  top: calc(0.2rem + 0.725em - 0.2rem);
+  left: calc(1rem - 0.2rem);
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: #6E5646;
+}
+.nt-think-t {
+  padding: 0.35rem 0.75rem;
+  border-top: 1px solid #2A211A;
+  background: #1C1511;
+  color: #8A776B;
+  font-size: 0.72rem;
+  font-variant-numeric: tabular-nums;
+}
+.nt-req {
+  color: #F2A65A;
+  font-weight: 700;
+}
+.nt-form {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #3B2F28;
+  border-radius: 6px;
+}
+.nt-f {
+  display: grid;
+  grid-template-columns: 11rem 1fr;
+  align-items: center;
+  gap: 0.3rem 0.8rem;
+  padding: 0.45rem 0.7rem;
+}
+.nt-f + .nt-f {
+  border-top: 1px solid #2C231E;
+}
+.nt-l {
+  color: #D9CBBE;
+  font-size: 0.8rem;
+}
+.nt-in {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem 0.5rem;
+}
+.nt-sub {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+/* An input: an empty box with an underline, or the value it holds */
+.nt-box {
+  display: inline-flex;
+  align-items: center;
+  box-sizing: border-box;
+  min-width: 3.4rem;
+  height: 1.6rem;
+  padding: 0 0.45rem;
+  border: 1px solid #5A4536;
+  border-bottom: 2px solid #8A6A50;
+  border-radius: 4px 4px 0 0;
+  background: #0F0C0A;
+  color: #FFF4EA;
+  font-variant-numeric: tabular-nums;
+}
+.nt-box.nt-s {
+  min-width: 2.2rem;
+}
+.nt-from {
+  color: #8A776B;
+  font-size: 0.84rem;
+  font-style: italic;
+}
+.nt-opt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0.6rem 0.15rem 0.4rem;
+  border: 1px solid #4A3A2F;
+  border-radius: 999px;
+  color: #E9DFD6;
+  font-size: 0.8rem;
+  line-height: 1.35;
+}
+.nt-opt::before {
+  content: "";
+  flex: none;
+  box-sizing: border-box;
+  width: 0.8rem;
+  height: 0.8rem;
+  border: 1.5px solid #A8968A;
+}
+.nt-check::before {
+  border-radius: 2px;
+}
+.nt-radio::before {
+  border-radius: 50%;
+}
+.nt-opt .nt-box {
+  height: 1.3rem;
+}
+.nt-say {
+  color: #E9DFD6;
+}
+.nt-notice {
+  padding: 0.4rem 0.7rem;
+  border-left: 2px solid #F2A65A;
+  background: #211912;
+  color: #D9CBBE;
+  font-size: 0.8rem;
+}
+.nt-notice b {
+  color: #F2A65A;
+  font-weight: 600;
+}
+.nt-src {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 0.3rem 0.8rem;
+  padding: 0.55rem 0.7rem;
+  border: 1px solid #3B2F28;
+  border-radius: 6px;
+}
+.nt-src dt {
+  color: #A8968A;
+  font-size: 0.78rem;
+}
+.nt-src dd {
+  color: #FFF4EA;
+}
+.nt-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+}
+.nt-btn {
+  display: inline-flex;
+  align-items: center;
+  height: 2rem;
+  padding: 0 0.9rem;
+  border-radius: 999px;
+  background: #3A332E;
+  color: #7E746C;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+.nt-btn.on {
+  background: #F2A65A;
+  color: #1F1814;
+}
+@media (max-width: 560px) {
+  .nt-f,
+  .nt-src {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* PipePipe: the Android client for YouTube and other services, a fork of
+   NewPipe, in its dark theme with the red accent. The screen shows the
+   top bar, the player with its seek bar, the time and the current
+   chapter, then the title, the channel row and the chapter list, the
+   current chapter marked. While a chapter plays, what is said comes as
+   captions, in the order it is said, with what the video shows between
+   them. */
+.app-pp .app-body {
+  border: 1px solid #2A2A2A;
+  background: #121212;
+  color: #E8E8E8;
+  font-family: Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: 0.86rem;
+}
+.pp-top {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  height: 2.8rem;
+  padding: 0 0.9rem;
+  background: #1E1E1E;
+}
+/* The back arrow, drawn as a chevron */
+.pp-back {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-bottom: 2px solid #E8E8E8;
+  border-left: 2px solid #E8E8E8;
+  transform: rotate(45deg);
+}
+.pp-app {
+  font-size: 1rem;
+  font-weight: 500;
+}
+.pp-player {
+  background: #000000;
+}
+.pp-frame {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 9;
+  max-height: 10rem;
+  background: radial-gradient(ellipse at center, #1B1F22 0%, #000000 75%);
+}
+.pp-big {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6);
+  color: #FFFFFF;
+  font-size: 1.2rem;
+}
+.pp-frame-t {
+  color: #9FB59F;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  opacity: 0.8;
+}
+.pp-seek {
+  height: 3px;
+  background: #3A3A3A;
+}
+.pp-fill {
+  display: block;
+  height: 100%;
+  background: #E53935;
+}
+.pp-ctl {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.2rem 0.8rem;
+  padding: 0.35rem 0.9rem;
+  color: #CCCCCC;
+  font-size: 0.74rem;
+}
+.pp-time {
+  font-variant-numeric: tabular-nums;
+}
+.pp-chap {
+  color: #FFFFFF;
+}
+.pp-title {
+  font-size: 1.02rem;
+  font-weight: 500;
+  line-height: 1.3;
+}
+.pp-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #AAAAAA;
+  font-size: 0.78rem;
+}
+.pp-meta b {
+  color: #E8E8E8;
+  font-weight: 500;
+}
+.pp-avatar {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: #C62828;
+  color: #FFFFFF;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+.pp-h {
+  padding: 0.4rem 0 0;
+  border-top: 1px solid #2A2A2A;
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+.pp-chapters {
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  list-style: none;
+}
+.pp-chapters li {
+  display: grid;
+  grid-template-columns: 3.4rem 1fr;
+  gap: 0.6rem;
+  padding: 0.35rem 0.4rem;
+  border-radius: 4px;
+}
+.pp-chapters li.on {
+  background: #2A1515;
+}
+.pp-ts {
+  color: #64B5F6;
+  font-variant-numeric: tabular-nums;
+}
+/* Captions: what the presenter says, as subtitles on a dark band */
+.pp-cc {
+  padding: 0.45rem 0.7rem;
+  border-left: 3px solid #E53935;
+  background: #1C1C1C;
+  color: #F2F2F2;
+}
+
+/* Site OS in a virtual machine, as the video shows it: a window bar, then
+   the screen in the amber of the site terminal. Each command follows the
+   $ prompt; the answer is two columns of key and value. VALID and running
+   in green, a hold in amber, a rejection in red. */
+.vm {
+  overflow: hidden;
+  border: 1px solid #3A4448;
+  border-radius: 4px;
+}
+.vm-title {
+  padding: 0.25rem 0.6rem;
+  background: #2B3236;
+  color: #B8C2C4;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+}
+.vm-screen {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.55rem 0.7rem;
+  overflow-x: auto;
+  background: #0B0D0E;
+  color: var(--haze);
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+.vm-banner {
+  color: #F0D9A8;
+}
+.vm-cmd {
+  color: #FFFFFF;
+}
+.vm-ps {
+  color: var(--titan);
+}
+.vm-kv {
+  display: grid;
+  grid-template-columns: 7.5rem 1fr;
+  gap: 0 1rem;
+  padding: 0 0 0 1.2rem;
+}
+.vm-kv dt {
+  color: var(--dust);
+}
+.vm-out {
+  padding: 0 0 0 1.2rem;
+  color: var(--dust);
+}
+.vm-ok { color: #8FD18F; }
+.vm-hold { color: #F0B85A; }
+.vm-bad { color: #FF8A73; }
+@media (max-width: 520px) {
+  .vm-kv {
+    grid-template-columns: 1fr;
+  }
+  .vm-kv dd {
+    padding: 0 0 0.2rem 1rem;
+  }
 }
