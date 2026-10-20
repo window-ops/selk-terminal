@@ -2368,3 +2368,625 @@ html[data-motion="full"] .copied {
     padding: 0 0 0.2rem 1rem;
   }
 }
+
+/* NTorch 3, events in the reasoning: a search, a page read, a conflict
+   between sources, a rule that applies, a restriction, the account and a
+   test. Each step keeps its dot on the line, colored by its kind, and
+   starts with a small tag. */
+.nt-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  margin-right: 0.35em;
+  padding: 0 0.4em;
+  border-radius: 3px;
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  vertical-align: 0.08em;
+}
+.nt-ev-search .nt-tag { background: #1F2E3A; color: #8FC1E8; }
+.nt-ev-read .nt-tag { background: #2A2620; color: #CDBFA9; }
+.nt-ev-conflict .nt-tag,
+.nt-ev-restricted .nt-tag { background: #3A2A12; color: #F2C55A; }
+.nt-ev-rule .nt-tag { background: #3A1D18; color: #F08A72; }
+.nt-ev-account .nt-tag { background: #1C3324; color: #8FD3A6; }
+.nt-ev-test .nt-tag,
+.nt-ev-mode .nt-tag { background: #2E2140; color: #C6A6F0; }
+.nt-think > .nt-ev-search::after { background: #5B87A8 !important; }
+.nt-think > .nt-ev-conflict::after,
+.nt-think > .nt-ev-restricted::after { background: #C99A3A !important; }
+.nt-think > .nt-ev-rule::after { background: #C0614B !important; }
+.nt-think > .nt-ev-account::after { background: #5E9C73 !important; }
+.nt-think > .nt-ev-test::after,
+.nt-think > .nt-ev-mode::after { background: #8E6FBF !important; }
+.nt-fix {
+  color: #A8968A;
+  font-size: 0.8rem;
+}
+.nt-fix b {
+  color: #FFF4EA;
+}
+.nt-h {
+  color: #F2A65A;
+  font-size: 0.74rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.nt-tab {
+  width: 100%;
+  border: 1px solid #3B2F28;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+.nt-tab th {
+  padding: 0.4rem 0.6rem;
+  background: #1F1814;
+  color: #A8968A;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-align: left;
+  text-transform: uppercase;
+}
+.nt-tab td {
+  padding: 0.4rem 0.6rem;
+  border-top: 1px solid #2C231E;
+  color: #E9DFD6;
+  vertical-align: top;
+}
+.nt-ol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding-left: 1.4rem;
+  color: #E9DFD6;
+}
+.nt-ok { color: #8FD3A6; }
+.nt-bad { color: #F08A72; font-weight: 600; }
+/* A simulated answer: boxed with a dashed border and its own header, so
+   the tester does not take it for the real answer */
+.nt-sim {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.7rem 0.8rem;
+  border: 1px dashed #8E6FBF;
+  border-radius: 6px;
+  background: #1A1520;
+}
+.nt-sim-h {
+  color: #C6A6F0;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+/* A warning before leaving the safe zone: a dialog over the app */
+.nt-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.9rem;
+  border: 1px solid #C99A3A;
+  border-radius: 10px;
+  background: #241B10;
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.5);
+}
+.nt-dialog-h {
+  color: #F2C55A;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+.nt-dialog .nt-btn:not(.on) {
+  border: 1px solid #6E5646;
+  background: transparent;
+  color: #E9DFD6;
+}
+@media (max-width: 560px) {
+  .nt-tab,
+  .nt-tab tbody,
+  .nt-tab tr,
+  .nt-tab td {
+    display: block;
+  }
+  .nt-tab thead {
+    display: none;
+  }
+  .nt-tab td + td {
+    border-top: 0;
+    padding-top: 0;
+  }
+}
+
+/* Scrolling on a page: a faint dotted break where the reader moved
+   further down */
+.scroll {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #9A9A9A;
+}
+.scroll::before,
+.scroll::after {
+  content: "";
+  flex: 1;
+  border-top: 1px dotted currentColor;
+}
+.scroll span {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+/* Research critique, extras: a definition list, a table, a numbered list
+   and the status line */
+.pap-dl {
+  display: grid;
+  grid-template-columns: 11rem 1fr;
+  gap: 0.4rem 0.9rem;
+}
+.pap-dl dt {
+  color: #7A1F2B;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.8rem;
+}
+.pap-tab {
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+.pap-tab th,
+.pap-tab td {
+  padding: 0.3rem 0.6rem;
+  border-bottom: 1px solid #DDD3CF;
+  text-align: left;
+  vertical-align: top;
+}
+.pap-tab th {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.pap-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-left: 1.4rem;
+}
+.pap-status {
+  color: #8A5A12;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+@media (max-width: 560px) {
+  .pap-dl {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Intel developer documentation: a white page under the blue bar, with
+   the document's ID and version in a gray strip */
+.app-intel .app-body {
+  border: 1px solid #D0D4D9;
+  border-radius: 2px;
+  background: #FFFFFF;
+  color: #262626;
+  font-family: "Intel One Display", "Segoe UI", Roboto, Arial, sans-serif;
+}
+.in-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 1.2rem;
+  padding: 0.5rem 0.9rem;
+  background: #0068B5;
+  color: #FFFFFF;
+  font-size: 0.78rem;
+}
+.in-logo {
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.in-crumb {
+  padding: 0.4rem 0.9rem;
+  border-bottom: 1px solid #E2E5E8;
+  background: #F4F5F6;
+  color: #0068B5;
+  font-size: 0.74rem;
+}
+.app-intel .app-pad {
+  gap: 0.55rem;
+}
+.in-title {
+  color: #262626;
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.25;
+}
+.in-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 1.4rem;
+  padding: 0.4rem 0;
+  border-top: 1px solid #E2E5E8;
+  border-bottom: 1px solid #E2E5E8;
+  font-size: 0.76rem;
+}
+.in-meta div {
+  display: flex;
+  gap: 0.4rem;
+}
+.in-meta dt {
+  color: #6B6B6B;
+}
+.in-applies {
+  padding: 0.4rem 0.6rem;
+  border-left: 3px solid #00C7FD;
+  background: #EEF7FB;
+  font-size: 0.8rem;
+}
+.app-intel h5 {
+  color: #0068B5;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.in-steps,
+.in-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding-left: 1.4rem;
+}
+.app-intel code {
+  padding: 0 0.3em;
+  border-radius: 3px;
+  background: #EEF0F2;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+
+/* Helda, the open repository of the University of Helsinki: a black bar
+   with the university's name in three languages, then an item page with
+   the file and the record at the left */
+.app-helda .app-body {
+  border: 1px solid #CCCCCC;
+  border-radius: 2px;
+  background: #FFFFFF;
+  color: #222222;
+  font-family: "Open Sans", Arial, sans-serif;
+}
+.hd-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 0.9rem;
+  background: #000000;
+  color: #FFFFFF;
+}
+.hd-uni {
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.3;
+}
+.hd-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+.hd-crumb {
+  padding: 0.4rem 0.9rem;
+  border-bottom: 1px solid #E5E5E5;
+  background: #F5F5F5;
+  color: #555555;
+  font-size: 0.74rem;
+}
+.hd-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.9rem;
+}
+.hd-title {
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.hd-grid {
+  display: grid;
+  grid-template-columns: 13rem 1fr;
+  gap: 1rem;
+}
+.hd-side,
+.hd-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.hd-file {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #0B5DA8;
+  font-size: 0.78rem;
+}
+.hd-file small {
+  color: #555555;
+}
+.hd-pdf {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.7rem;
+  border: 1px solid #B00000;
+  color: #B00000;
+  font-size: 0.66rem;
+  font-weight: 700;
+}
+.hd-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.78rem;
+}
+.hd-meta dt {
+  margin-top: 0.35rem;
+  color: #555555;
+  font-weight: 700;
+}
+.app-helda h5 {
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+.hd-fade {
+  -webkit-mask-image: linear-gradient(#000 40%, transparent);
+  mask-image: linear-gradient(#000 40%, transparent);
+}
+.hd-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.9rem;
+}
+.hd-btn {
+  padding: 0.3rem 0.8rem;
+  border: 1px solid #000000;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.hd-link {
+  color: #0B5DA8;
+  font-size: 0.78rem;
+  text-decoration: underline;
+}
+@media (max-width: 560px) {
+  .hd-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Frontiers: a white article page under the journal bar, the article type
+   in small capitals, linked names in blue and the dates in a strip */
+.app-frontiers .app-body {
+  border: 1px solid #DADDE1;
+  border-radius: 2px;
+  background: #FFFFFF;
+  color: #1A1A1A;
+  font-family: "Museo Sans", "Helvetica Neue", Arial, sans-serif;
+}
+.fr-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3rem 1rem;
+  padding: 0.55rem 0.9rem;
+  border-bottom: 1px solid #DADDE1;
+}
+.fr-logo {
+  color: #0B1A2C;
+  font-size: 1.2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.fr-journal {
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.fr-sec {
+  color: #5F6B7A;
+  font-size: 0.74rem;
+}
+.fr-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.9rem 1.1rem;
+}
+.fr-type {
+  color: #5F6B7A;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+.fr-cite {
+  color: #5F6B7A;
+  font-size: 0.76rem;
+}
+.fr-title {
+  font-size: 1.3rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.fr-link {
+  color: #0C67C2;
+}
+.fr-more {
+  color: #5F6B7A;
+}
+.fr-authors {
+  font-size: 0.86rem;
+}
+.fr-aff {
+  color: #5F6B7A;
+  font-size: 0.74rem;
+}
+.fr-all {
+  color: #0C67C2;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.fr-dates {
+  border-collapse: collapse;
+  font-size: 0.76rem;
+}
+.fr-dates th {
+  padding: 0.2rem 1rem 0 0;
+  color: #5F6B7A;
+  font-weight: 400;
+  text-align: left;
+}
+.fr-dates td {
+  padding: 0 1rem 0.2rem 0;
+  font-weight: 600;
+}
+.fr-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.9rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid #DADDE1;
+  border-bottom: 1px solid #DADDE1;
+  color: #5F6B7A;
+  font-size: 0.76rem;
+}
+.fr-btn {
+  padding: 0.3rem 0.9rem;
+  border-radius: 999px;
+  background: #0C67C2;
+  color: #FFFFFF;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.fr-btn.fr-ghost {
+  border: 1px solid #0C67C2;
+  background: transparent;
+  color: #0C67C2;
+}
+.app-frontiers h5 {
+  font-size: 1rem;
+  font-weight: 600;
+}
+.fr-foot,
+.na-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1.2rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #DADDE1;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.fr-foot {
+  color: #0C67C2;
+}
+
+/* Nature: the black word mark over a thin rule, the article type and date
+   in capitals, a bold standfirst and the text in a serif face */
+.app-nature .app-body {
+  border: 1px solid #DDDDDD;
+  border-radius: 2px;
+  background: #FFFFFF;
+  color: #222222;
+  font-family: Harding, Georgia, "Times New Roman", serif;
+}
+.na-top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3rem 1.1rem;
+  padding: 0.55rem 0.9rem;
+  border-bottom: 1px solid #222222;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+.na-logo {
+  color: #000000;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.na-nav {
+  font-size: 0.76rem;
+}
+.na-crumb {
+  padding: 0.35rem 0.9rem;
+  color: #666666;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.72rem;
+}
+.na-page {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.4rem 1.1rem 0.9rem;
+  font-size: 0.92rem;
+  line-height: 1.6;
+}
+.na-type {
+  color: #222222;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.na-type span {
+  margin-left: 0.6em;
+  color: #666666;
+  font-weight: 400;
+}
+.na-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+.na-stand {
+  font-size: 1.02rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+.na-by {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.8rem;
+}
+.na-link {
+  color: #006699;
+}
+.na-pdf {
+  align-self: flex-start;
+  padding: 0.25rem 0.7rem;
+  border: 1px solid #006699;
+  color: #006699;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+.app-nature h5 {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+}
+.na-doi {
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-size: 0.76rem;
+}
+.na-foot {
+  color: #006699;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}

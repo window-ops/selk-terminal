@@ -4,13 +4,24 @@
    enough, a small button is ejected from under the bottom edge of the
    window and stays over the page; it opens friday.html. Scrolling back up
    into the page puts it away again. The button exists only after the pull,
-   so the page shows nothing of it before. */
+   so the page shows nothing of it before.
+
+   A fast scroll that reaches the end still carries on for a moment (the
+   momentum of a trackpad or a flicked wheel, a held key). That tail does
+   not count: the pull starts only after the input has rested at the end
+   for QUIET milliseconds, each event adds at most STEP, and the pull
+   empties again after IDLE milliseconds without input. */
 (function () {
   "use strict";
 
-  var PULL = 620;
+  var PULL = 820;
+  var QUIET = 300;
+  var STEP = 160;
+  var IDLE = 1200;
   var root = document.documentElement;
   var pull = 0;
+  var settled = false;
+  var lastInput = 0;
   var door = null;
   var out = false;
   var touchY = null;
@@ -63,12 +74,28 @@
     if (root.getAttribute("data-motion") !== "full") door.hidden = true;
   }
 
+  function now() {
+    return window.performance && performance.now ? performance.now() : Date.now();
+  }
+
+  /* Every downward input passes here, at the end of the page or not, so
+     the time of the last one is always known */
   function push(amount) {
+    var t = now();
+    var rest = t - lastInput;
+    lastInput = t;
     if (!atEnd()) {
       pull = 0;
+      settled = false;
       return;
     }
-    pull += amount;
+    if (!settled) {
+      /* Still the tail of the scroll that brought the page here */
+      if (rest < QUIET) return;
+      settled = true;
+    }
+    if (rest > IDLE) pull = 0;
+    pull += Math.min(amount, STEP);
     if (pull >= PULL) eject();
   }
 
@@ -103,6 +130,7 @@
   window.addEventListener("scroll", function () {
     if (atEnd()) return;
     pull = 0;
+    settled = false;
     if (out && gap() > 160) retract();
   }, { passive: true });
 })();
